@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class MqttClientV5 implements IMqttClient{
+public class MqttClientV5 implements IMqttClient {
 
     private MqttClient mqttClient;
 
@@ -59,9 +59,12 @@ public class MqttClientV5 implements IMqttClient{
         mqttProperties.setContentType(message.getContentType());
         mqttProperties.setMessageExpiryInterval(message.getMessageExpiryInterval());
         mqttProperties.setTopicAlias(message.getTopicAlias());
-        mqttProperties.setResponseTopic(message.getResponseTopic());
-        mqttProperties.setCorrelationData(message.getCorrelationData().getBytes(StandardCharsets.UTF_8));
         mqttProperties.setSubscriptionIdentifiers(message.getSubscriptionIdentifiers());
+        mqttProperties.setResponseTopic(message.getResponseTopic());
+        String correlationData = message.getCorrelationData();
+        if (correlationData != null) {
+            mqttProperties.setCorrelationData(correlationData.getBytes(StandardCharsets.UTF_8));
+        }
 
         Map<String, String> userProperties = message.getUserProperties();
         if (null != userProperties && userProperties.size() > 0) {
