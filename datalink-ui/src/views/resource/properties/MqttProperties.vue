@@ -34,13 +34,21 @@
         </a-form-model-item>
       </a-col>
       <a-col :span='12'>
-        <a-form-model-item label='连接超时'>
+        <a-form-model-item label='连接超时(秒)'>
           <a-input v-model='properties.connectionTimeout' placeholder='请输入连接超时' />
         </a-form-model-item>
       </a-col>
       <a-col :span='12'>
-        <a-form-model-item label='保活间隔'>
+        <a-form-model-item label='保活间隔(秒)'>
           <a-input v-model='properties.keepAliveInterval' placeholder='请输入保活间隔' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12'>
+        <a-form-model-item label='自动重连'>
+          <a-select v-model='properties.autoReconnect' placeholder='请选择是否自动重连'>
+            <a-select-option :value='true'>是</a-select-option>
+            <a-select-option :value='false'>否</a-select-option>
+          </a-select>
         </a-form-model-item>
       </a-col>
     </a-row>
@@ -58,7 +66,8 @@ export default {
         ssl: false,
         version: 3,
         connectionTimeout: 10,
-        keepAliveInterval: 30
+        keepAliveInterval: 30,
+        autoReconnect: true,
       },
       rules: {
         url: [{ required: true, message: '请输入URL', trigger: 'blur' }],

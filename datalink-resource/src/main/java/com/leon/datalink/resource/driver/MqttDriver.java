@@ -40,6 +40,7 @@ public class MqttDriver extends AbstractDriver {
         mqttClientConfig.setPassword(properties.getString("password", ""));
         mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
         mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
+        mqttClientConfig.setAutoReconnect(properties.getBoolean("autoReconnect", true));
         mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
         mqttClientConfig.setMqttVersion(version);
         MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);
@@ -108,6 +109,7 @@ public class MqttDriver extends AbstractDriver {
             mqttClientConfig.setPassword(properties.getString("password", ""));
             mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
             mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
+            mqttClientConfig.setAutoReconnect(properties.getBoolean("autoReconnect", true));
             mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
             mqttClientConfig.setMqttVersion(properties.getInteger("version", 3));
             MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);

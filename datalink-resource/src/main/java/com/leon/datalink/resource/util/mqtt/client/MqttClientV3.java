@@ -26,7 +26,7 @@ public class MqttClientV3 implements IMqttClient {
         // 增加 actualInFlight 的值
         options.setMaxInflight(1000);
         // 自动重连
-        options.setAutomaticReconnect(true);
+        options.setAutomaticReconnect(mqttClientConfig.getAutoReconnect());
         // 设置连接的用户名
         options.setUserName(mqttClientConfig.getUsername());
         // 设置连接的密码

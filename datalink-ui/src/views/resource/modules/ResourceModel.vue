@@ -53,7 +53,7 @@
       <kingbase-properties v-if="modal.resourceType === 'KINGBASE'" ref='PropertiesModal'></kingbase-properties>
       <file-properties v-if="modal.resourceType === 'FILE'" ref='PropertiesModal'></file-properties>
       <a-form-model-item label='备注' prop='description'>
-        <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
+        <a-textarea v-model='modal.description' :rows='2' placeholder='请输入备注'
         />
       </a-form-model-item>
     </a-form-model>

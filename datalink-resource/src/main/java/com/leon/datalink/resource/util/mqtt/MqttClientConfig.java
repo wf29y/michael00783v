@@ -15,6 +15,8 @@ public class MqttClientConfig {
 
     private Boolean ssl;
 
+    private Boolean autoReconnect;
+
     private int mqttVersion;
 
     public MqttClientConfig() {
@@ -63,6 +65,14 @@ public class MqttClientConfig {
     public MqttClientConfig setKeepAliveInterval(Integer keepAliveInterval) {
         this.keepAliveInterval = keepAliveInterval;
         return this;
+    }
+
+    public Boolean getAutoReconnect() {
+        return autoReconnect;
+    }
+
+    public void setAutoReconnect(Boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
     }
 
     public Boolean getSsl() {
