@@ -86,7 +86,7 @@ public class OpcUADriver extends AbstractDriver {
                     produceData(result);
                 });
             } else {
-                Loggers.DRIVER.error("modbus read {} error: {}", tag, response.getResponseCode(tag).name());
+                Loggers.DRIVER.error("opcua read {} error: {}", tag, response.getResponseCode(tag).name());
             }
         }
     }

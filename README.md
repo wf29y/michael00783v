@@ -24,7 +24,7 @@ git clone https://gitee.com/liyang9512/datalink.git
 cd datalink
 mvn -Prelease-datalink -Dmaven.test.skip=true clean install -U
 ```
-
+打包完成后安装包位于 datalink/distribution/target 目录下
 #### 安装
 
 ```bash
