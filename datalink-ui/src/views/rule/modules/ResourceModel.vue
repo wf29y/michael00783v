@@ -213,8 +213,10 @@ export default {
     }
     ,
     resourceChange(resourceId) {
+      let tempRuntimeId = this.modal.resourceRuntimeId;
       let index = this.resourceList.findIndex(resource => resource.resourceId === resourceId)
       this.modal = Object.assign({}, this.resourceList[index])
+      this.modal.resourceRuntimeId = tempRuntimeId
       this.$nextTick(() => {
         if (this.modal.resourceType) {
           this.$refs.PropertiesModal.set(this.modal.properties)

@@ -172,6 +172,7 @@ export default {
   },
   methods: {
     set(properties) {
+      delete this.properties.version
       this.properties = Object.assign({}, this.properties, properties)
       if (this.type === 'dest') {
         this.$nextTick(() => {
