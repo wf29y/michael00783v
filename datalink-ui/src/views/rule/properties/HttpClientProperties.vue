@@ -83,6 +83,10 @@ export default {
   },
   methods: {
     set(properties) {
+      if (this.type === 'dest') {
+        delete this.properties.initialDelayUnit
+        delete this.properties.cronExpression
+      }
       this.properties = Object.assign({}, this.properties, properties)
       this.$nextTick(() => {
         this.$refs.HttpHeadersModel.set(this.properties.headers)

@@ -6,6 +6,8 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 
 import java.util.HashMap;
@@ -41,6 +43,18 @@ public class OpcUATemplate extends GenericObjectPool<OpcUaClient> {
                 result.put(nodeIds.get(i), dataValues.get(i));
             }
             return result;
+        } finally {
+            if (client != null) {
+                super.returnObject(client);
+            }
+        }
+    }
+
+    public StatusCode writeValue(NodeId nodeId, Object value) throws Exception {
+        OpcUaClient client = null;
+        try {
+            client = super.borrowObject();
+            return client.writeValue(nodeId, new DataValue(new Variant(value), null, null)).get();
         } finally {
             if (client != null) {
                 super.returnObject(client);

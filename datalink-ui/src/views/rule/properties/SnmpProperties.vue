@@ -49,6 +49,11 @@ export default {
   },
   methods: {
     set(properties) {
+      if (this.type === 'dest') {
+        delete this.properties.initialDelayUnit
+        delete this.properties.cronExpression
+        delete this.properties.points
+      }
       this.properties = Object.assign({}, this.properties, properties)
     },
     get(callback) {

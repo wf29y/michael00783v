@@ -24,6 +24,24 @@
           </a-select>
         </a-form-model-item>
       </a-col>
+      <a-col :span='24' v-if='type==="dest"'>
+        <a-form-model-item label='点位地址' prop='address'>
+          <a-input v-model='properties.address' placeholder='请输入点位地址' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='type==="dest"'>
+        <a-form-model-item label='数据类型' prop='dataType'>
+          <a-select v-model='properties.dataType' placeholder='请选择数据类型'>
+            <a-select-option v-for='(item,index) in dataTypeList' :key='index' :value='item'>{{ item }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='type==="dest"'>
+        <a-form-model-item label='数据值' prop='dataValue'>
+          <a-input v-model='properties.dataValue' placeholder='请输入数据值' />
+        </a-form-model-item>
+      </a-col>
     </a-form-model>
   </a-row>
 </template>
@@ -43,11 +61,15 @@ export default {
         transferType: 'single'
       },
       timeUnitList: timeUnitList,
+      dataTypeList: ['Int16', 'UInt16', 'Int32', 'UInt32', 'Int64', 'UInt64', 'Float', 'Double', 'String', 'Boolean'],
       rules: {
         initialDelay: [{ required: true, message: '请输入启动延迟', trigger: 'blur' }],
         initialDelayUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }],
         cronExpression: [{ required: true, message: '请输入Cron表达式', trigger: 'blur' }],
         transferType: [{ required: true, message: '请选择传输方式', trigger: 'change' }],
+        address: [{ required: true, message: '请输入点位地址', trigger: 'blur' }],
+        dataType: [{ required: true, message: '请选择数据类型', trigger: 'change' }],
+        dataValue: [{ required: true, message: '请输入数据值', trigger: 'blur' }]
       }
     }
   },
@@ -59,6 +81,12 @@ export default {
   },
   methods: {
     set(properties) {
+      if (this.type === 'dest') {
+        delete this.properties.initialDelayUnit
+        delete this.properties.cronExpression
+        delete this.properties.points
+        delete this.properties.transferType
+      }
       this.properties = Object.assign({}, this.properties, properties)
     },
     get(callback) {

@@ -3,6 +3,7 @@ package com.leon.datalink.resource.driver;
 import cn.hutool.core.exceptions.ValidateException;
 import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.core.utils.Loggers;
+import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.resource.AbstractDriver;
 import com.leon.datalink.resource.constans.DriverModeEnum;
 import com.leon.datalink.resource.util.opcua.OpcUAClientConfig;
@@ -12,7 +13,7 @@ import com.leon.datalink.resource.util.opcua.OpcUATemplate;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
-import org.springframework.util.StringUtils;
+import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,14 +97,47 @@ public class OpcUADriver extends AbstractDriver {
                 resultList.add(resultItem);
             });
             String transferType = properties.getString("transferType", "single");
-            if("single".equals(transferType)){
+            if ("single".equals(transferType)) {
                 resultList.forEach(this::produceData);
-            }else {
+            } else {
                 produceData(resultList);
             }
         } catch (Exception e) {
             Loggers.DRIVER.error("opcua read error {}", e.getMessage());
         }
+    }
+
+    @Override
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
+
+        String address = properties.getString("address");
+        String dataType = properties.getString("dataType");
+        String dataValue = properties.getString("dataValue");
+        if (StringUtils.isEmpty(address)) throw new ValidateException();
+        if (StringUtils.isEmpty(dataType)) throw new ValidateException();
+        if (StringUtils.isEmpty(dataValue)) throw new ValidateException();
+
+        Map<String, Object> variable = getVariable(data);
+
+        String addressRender = this.templateAnalysis(address, variable);
+        String valueRender = this.templateAnalysis(dataValue, variable);
+        if (StringUtils.isNotEmpty(addressRender)) address = addressRender;
+        if (StringUtils.isNotEmpty(addressRender)) dataValue = valueRender;
+
+        StatusCode statusCode;
+        try {
+            NodeId nodeId = parse(address);
+            statusCode = opcUATemplate.writeValue(nodeId, convertToType(dataValue, dataType));
+        } catch (Exception e) {
+            Loggers.DRIVER.error("opcua write error {}", e.getMessage());
+            throw e;
+        }
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("address", address);
+        map.put("value", dataValue);
+        map.put("result", statusCode);
+        return map;
     }
 
     // 解析点位地址
@@ -135,6 +169,39 @@ public class OpcUADriver extends AbstractDriver {
             return new NodeId(namespaceIndex, identifierPair[1].trim());
         }
 
+    }
+
+    // 值类型转换
+    public static Object convertToType(String value, String type) {
+        switch (type) {
+            case "Int16":
+            case "UInt16": {
+                return Short.parseShort(value);
+            }
+            case "Int32":
+            case "UInt32": {
+                return Integer.parseInt(value);
+            }
+            case "Int64":
+            case "UInt64": {
+                return Long.parseLong(value);
+            }
+            case "Float": {
+                return Float.parseFloat(value);
+            }
+            case "Double": {
+                return Double.parseDouble(value);
+            }
+            case "Boolean": {
+                return Boolean.parseBoolean(value);
+            }
+            case "String": {
+                return String.valueOf(value);
+            }
+            default: {
+                return value;
+            }
+        }
     }
 
 }

@@ -57,7 +57,7 @@ const resourceConfigMap = {
       resource: { name: '地址', value: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
       rule: [
         { name: '地址', value: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
-        { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
+        { name: '读取点位', value: (resource) => resource.properties.points ? resource.properties.points.length : undefined },
         {
           name: '启动延迟',
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
@@ -413,19 +413,28 @@ const resourceConfigMap = {
   },
   OPCUA: {
     name: 'OPC UA',
-    type: 'source',
+    type: 'all',
     group: 'PROTOCOL',
     details: {
       resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
-        { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-        { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
+        { name: '地址', value: (resource) => `opc.tcp://${resource.properties.ip}:${resource.properties.port}` },
+        { name: '读取点位', value: (resource) => resource.properties.points ? resource.properties.points.length : undefined },
         {
           name: '启动延迟',
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
           name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
+        },
+        {
+          name: '点位地址', value: (resource) => resource.properties.address
+        },
+        {
+          name: '数据类型', value: (resource) => resource.properties.dataType
+        },
+        {
+          name: '数据值', value: (resource) => resource.properties.dataValue
         }
       ]
     }
@@ -438,7 +447,7 @@ const resourceConfigMap = {
       resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
         { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-        { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
+        { name: '读取点位', value: (resource) => resource.properties.points ? resource.properties.points.length : undefined },
         {
           name: '启动延迟',
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
