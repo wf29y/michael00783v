@@ -192,6 +192,7 @@ export default {
       if (info.file.status === 'done') {
         if (info.file.response.code === 200) {
           this.$message.success(`${info.file.name} 上传成功`)
+          this.loadData();
         } else {
           this.$message.error(`上传出错,${info.file.response.message}`)
         }

@@ -103,6 +103,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     @Override
     public void add(Rule rule) throws KvStorageException {
         if (StringUtils.isEmpty(rule.getRuleId())) rule.setRuleId(SnowflakeIdWorker.getId());
+        rule.setEnable(false);
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
         runtimeService.initRuntime(rule);
@@ -118,6 +119,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
 
     @Override
     public void update(Rule rule) throws KvStorageException {
+        rule.setEnable(false);
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
         runtimeService.initRuntime(rule);
@@ -192,7 +194,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
 
     @Override
     public List<Rule> createBackup() {
-        return this.list(new Rule());
+        return this.list(new Rule()).stream().map(rule -> rule.setEnable(false)).collect(Collectors.toList());
     }
 
     @Override
