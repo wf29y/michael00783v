@@ -2,18 +2,11 @@ package com.leon.datalink.web.controller;
 
 import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.core.exception.KvStorageException;
-import com.leon.datalink.core.utils.JacksonUtils;
-import com.leon.datalink.core.utils.ScriptUtil;
-import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.transform.script.Script;
 import com.leon.datalink.web.service.ScriptService;
 import com.leon.datalink.web.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.script.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @ClassName RulesController
@@ -53,35 +46,6 @@ public class ScriptController {
         script.setUpdateTime(DateUtil.now());
         scriptService.add(script);
         return script;
-    }
-
-    /**
-     * 运行调试脚本
-     *
-     * @param script
-     */
-    @PostMapping("/run")
-    public Object run(@RequestBody Script script) throws Exception {
-        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("javascript");
-        long time1 = System.currentTimeMillis();
-        // 获取并绑定自定义环境变量
-        Bindings bind = scriptEngine.createBindings();
-
-        Map<String, Object> globalVariable = GlobalVariableContent.getAllValue();
-        for (String key : globalVariable.keySet()) {
-            bind.put(key, globalVariable.get(key));
-        }
-
-        scriptEngine.setBindings(bind, ScriptContext.ENGINE_SCOPE);
-        scriptEngine.eval(script.getScriptContent());
-        Invocable jsInvoke = (Invocable) scriptEngine;
-        Object transform = jsInvoke.invokeFunction("transform", JacksonUtils.toObj(script.getParamContent(), Object.class));
-
-        long time2 = System.currentTimeMillis();
-        Map<String, Object> result = new HashMap<>();
-        result.put("result", ScriptUtil.toJavaObject(transform));
-        result.put("time", time2 - time1);
-        return result;
     }
 
     /**

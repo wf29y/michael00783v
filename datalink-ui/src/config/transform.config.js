@@ -1,22 +1,42 @@
-const transformModeMap = {
-  WITHOUT: '透传',
-  SQL: 'SQL转换',
-  SCRIPT: '脚本转换',
-  PLUGIN: '插件转换',
-}
+const transformModeList = [
+  {
+    name: '透传',
+    value: 'WITHOUT'
+  },
+  {
+    name: 'SQL转换',
+    value: 'SQL'
+  },
+  {
+    name: '脚本转换',
+    value: 'SCRIPT',
+    items: [
+      {
+        name: 'JavaScript脚本',
+        value: 'SCRIPT-JAVASCRIPT'
+      },
+      {
+        name: 'Groovy脚本',
+        value: 'SCRIPT-GROOVY'
+      }
+    ]
+  },
+  {
+    name: '插件转换',
+    value: 'PLUGIN'
+  }
+]
 
-function createModeList() {
-  let result = []
-  for (let key in transformModeMap) {
-    result.push({
-      name: transformModeMap[key],
-      value: key
-    })
+function createModeMap() {
+  let result = {}
+  for (let i = 0; i < transformModeList.length; i++) {
+    result[transformModeList[i].value] = transformModeList[i].name
   }
   return result
 }
 
-const transformModeList = createModeList()
+const transformModeMap = createModeMap()
+
 export {
   transformModeMap, transformModeList
 }

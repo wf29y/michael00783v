@@ -5,14 +5,14 @@
       <a-card :bordered='false' style='margin-bottom: 20px' :body-style='{padding:"17px 24px"}'>
         <a-row>
           <a-col :span='12' style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);padding-top: 4px'>
-            {{ modal.scriptId ? '编辑' : '新建' }}脚本
+            {{ modal.scriptId ? '编辑' : '新建' }}{{ scriptLanguageName }}脚本
           </a-col>
           <a-col :span='12' style='text-align: right'>
             <a-space size='small'>
-              <a-popconfirm title='放弃未保存的内容?' @confirm='() => {onClose()}' placement="bottom">
-                <a-button style='width:75px;'> 返回</a-button>
-              </a-popconfirm>
-              <a-button @click='changeOpenTest' style='width:95px'> {{openTest?'关闭':'开启'}}调试</a-button>
+              <!--              <a-popconfirm title='放弃未保存的内容?' @confirm='() => {onClose()}' placement='bottom'>
+                              <a-button style='width:75px;'> 返回</a-button>
+                            </a-popconfirm>-->
+              <a-button style='width:75px;' @click='onClose'> 返回</a-button>
               <a-button type='primary' @click='saveScript' style='width:75px'> 保存</a-button>
             </a-space>
           </a-col>
@@ -21,33 +21,29 @@
 
       <a-row :gutter='24'>
 
-        <a-col :span='openTest?16:24'>
+        <a-col :span='16'>
           <a-card :bordered='false' :body-style='{paddingBottom: 0}'>
             <a-row :gutter='24'>
-              <a-col :span='9'>
+              <a-col :span='12'>
                 <a-form-model-item label='名称' prop='scriptName'>
                   <a-input v-model='modal.scriptName' placeholder='请输入脚本名称'></a-input>
                 </a-form-model-item>
               </a-col>
-              <a-col :span='9'>
+              <a-col :span='12'>
                 <a-form-model-item label='说明' prop='description'>
                   <a-input v-model='modal.description' placeholder='请输入脚本说明'></a-input>
                 </a-form-model-item>
               </a-col>
-              <a-col :span='6'>
-                <a-form-model-item label='最后修改' prop='description'>
-                  <a-input v-model='modal.updateTime' placeholder='最后修改时间' :read-only='true'></a-input>
-                </a-form-model-item>
-              </a-col>
               <a-col :span='24' class='scriptModel'>
-                <a-form-model-item label='JavaScript脚本' prop='scriptContent'>
-                  <monaco-editor height='600px' :minimap='true' ref='ScriptContentEditor'></monaco-editor>
+                <a-form-model-item :label='scriptLanguageName+"脚本"' prop='scriptContent'>
+                  <monaco-editor height='600px' :minimap='true' ref='ScriptContentEditor'
+                                 :auto-init='false'></monaco-editor>
                 </a-form-model-item>
               </a-col>
             </a-row>
           </a-card>
         </a-col>
-        <a-col :span='8' v-show='openTest'>
+        <a-col :span='8'>
 
           <a-card title='调试' :body-style='{paddingBottom:0}' :bordered='false'>
             <span slot='extra'>
@@ -78,10 +74,10 @@
 <script>
 import { getAction, postAction, putAction } from '@/api/manage'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
-
+import { scriptLanguageMap } from '@/config/language.config'
 
 export default {
-  name: 'ResourceModel',
+  name: 'ScriptModel',
   components: { MonacoEditor },
   data() {
     return {
@@ -89,58 +85,62 @@ export default {
       visible: false,
       confirmLoading: false,
       modal: {
-        scriptContent: '/**\n' +
-          '* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +
-          '*/\n' +
-          'function transform(data) {\n' +
-          '    return data;\n' +
-          '}',
-        paramContent: '{}',
-        resultContent: '',
+        scriptContent: '',
+        scriptLanguage: ''
       },
       url: {
         info: '/api/script/info',
         add: '/api/script/add',
         update: '/api/script/update',
-        run: '/api/script/run'
+        testScript: '/api/rule/testScript'
       },
       rules: {
         scriptName: [{ required: true, message: '请输入脚本名称', trigger: 'blur' }],
+        scriptLanguage: [{ required: true, message: '请选择脚本语言', trigger: 'change' }],
         scriptContent: [{ required: true, message: '请输入脚本内容', trigger: 'blur' }]
       },
       time: -1,
-      openTest: false
+      scriptLanguageMap: scriptLanguageMap
+    }
+  },
+  computed: {
+    scriptLanguageName() {
+      return this.modal.scriptLanguage ? this.scriptLanguageMap[this.modal.scriptLanguage].name : ''
     }
   },
   mounted() {
     let scriptId = this.$route.params.scriptId
-    if (scriptId !== 'new') {
+    if (scriptId.startsWith('new')) {
+      let scriptIds = scriptId.split('-')
+      this.modal.scriptLanguage = scriptIds[1]
+      this.modal.scriptContent = this.scriptLanguageMap[this.modal.scriptLanguage].default
+      this.initEditorValue()
+    } else {
       this.scriptId = scriptId
       getAction(this.url.info, { scriptId: this.scriptId }).then(res => {
         this.modal = res.data
-        this.setEditorValue()
+        this.initEditorValue()
       })
-    } else {
-      this.setEditorValue()
     }
   },
   methods: {
-    setEditorValue() {
-      this.$refs.ScriptContentEditor.set(this.modal.scriptContent)
-      this.$refs.ParamContentEditor.set(this.modal.paramContent)
-      this.$refs.ResultContentEditor.set(this.modal.resultContent)
-    },
-    getEditorValue() {
-      this.modal.scriptContent = this.$refs.ScriptContentEditor.get()
-      this.modal.paramContent = this.$refs.ParamContentEditor.get()
-      this.modal.resultContent = this.$refs.ResultContentEditor.get()
+    initEditorValue() {
+      this.$nextTick(() => {
+        this.$refs.ScriptContentEditor.init(this.modal.scriptContent, this.scriptLanguageMap[this.modal.scriptLanguage].editor)
+        this.$refs.ParamContentEditor.set('{}')
+        this.$refs.ResultContentEditor.set('')
+      })
     },
     runScript() {
-      this.getEditorValue()
-      postAction(this.url.run, this.modal).then(res => {
+      let param = {
+        language: this.modal.scriptLanguage,
+        script: this.$refs.ScriptContentEditor.get(),
+        param: this.$refs.ParamContentEditor.get()
+      }
+      postAction(this.url.testScript, param).then(res => {
         if (res.code === 200) {
-          this.modal.resultContent = JSON.stringify(res.data.result)
-          this.$refs.ResultContentEditor.set(this.modal.resultContent)
+          this.$refs.ResultContentEditor.set(JSON.stringify(res.data.result))
+          this.$refs.ResultContentEditor.format()
           this.time = res.data.time
           this.$message.success('运行成功')
         } else {
@@ -149,7 +149,7 @@ export default {
       })
     },
     saveScript() {
-      this.getEditorValue()
+      this.modal.scriptContent = this.$refs.ScriptContentEditor.get()
       const that = this
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
@@ -180,9 +180,6 @@ export default {
     },
     onClose() {
       this.$router.push({ name: 'scriptList' })
-    },
-    changeOpenTest() {
-      this.openTest = !this.openTest
     }
   }
 }

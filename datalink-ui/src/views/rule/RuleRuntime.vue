@@ -106,7 +106,7 @@
                   {{ transform.properties.sql }}
                 </a-descriptions-item>
                 <a-descriptions-item label='脚本' v-if='transform.transformMode === "SCRIPT"'>
-                  {{ subScript(transform.properties.script) }}
+                  {{ extractScript(transform.properties.script) }}
                 </a-descriptions-item>
                 <a-descriptions-item label='插件' v-if='transform.transformMode === "PLUGIN"'>
                   {{ transform.properties.plugin.pluginName }}
@@ -114,7 +114,9 @@
               </a-descriptions>
             </a-col>
             <a-col :span='4' style='text-align: right;padding-right: 5px'>
-              <a @click='showScript(transform.properties.script)' v-if='transform.transformMode === "SCRIPT"'>查看脚本</a>
+              <a
+                @click='showScript(transform.properties)'
+                v-if='transform.transformMode === "SCRIPT"'>查看脚本</a>
               <a-divider type='vertical' v-if='transform.transformMode === "SCRIPT"' />
               <a @click='lastData("transform",transform.transformRuntimeId)'>最近数据</a>
             </a-col>
@@ -174,9 +176,11 @@
 </template>
 
 <script>
-import { getAction, postAction } from '@/api/manage'
+import { extractScript } from '@/utils/util'
+import { getAction } from '@/api/manage'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 import { transformModeMap } from '@/config/transform.config'
+import { scriptLanguageMap } from '@/config/language.config'
 import ScriptViewModel from './modules/ScriptViewModel'
 import DataViewModel from './modules/DataViewModel'
 import PointsConfigModel from './points/PointsConfigModel'
@@ -197,6 +201,8 @@ export default {
       runtime: {},
       transformModeMap: transformModeMap,
       resourceTypeMap: resourceTypeMap,
+      scriptLanguageMap: scriptLanguageMap,
+      extractScript: extractScript,
       varColumns: [
         {
           title: '变量名称',
@@ -219,8 +225,8 @@ export default {
     this.getInfo()
   },
   methods: {
-    showScript(script) {
-      this.$refs.ScriptViewModel.show(script)
+    showScript(properties) {
+      this.$refs.ScriptViewModel.show(properties)
     },
     refresh() {
       this.getInfo()
@@ -308,11 +314,6 @@ export default {
         dataList = this.runtime.transformRuntimeList[runtimeId].runtimeDataList
       }
       this.$refs.DataViewModel.show(dataList)
-    },
-    subScript(content) {
-      let start = content.indexOf('function')
-      let end = start + 100
-      return content.substring(start, content.length > end ? end : content.length)
     }
   }
 

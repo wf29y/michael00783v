@@ -99,6 +99,7 @@
         <reflections.version>0.9.10</reflections.version>
         <reactor-ql.version>1.0.14</reactor-ql.version>
         <protostuff.version>1.8.0</protostuff.version>
+        <groovy.version>4.0.8</groovy.version>
     </properties>
     <!-- == -->
     <!-- =========================================================Build plugins================================================ -->
@@ -472,6 +473,13 @@
                 <groupId>org.jetlinks</groupId>
                 <artifactId>reactor-ql</artifactId>
                 <version>${reactor-ql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>${groovy.version}</version>
+                <type>pom</type>
             </dependency>
 
             <dependency>

@@ -90,6 +90,9 @@ public class ScriptServiceImpl implements ScriptService {
             if (!StringUtils.isEmpty(script.getScriptName())) {
                 stream = stream.filter(s -> s.getScriptName().contains(script.getScriptName()));
             }
+            if (!StringUtils.isEmpty(script.getScriptLanguage())) {
+                stream = stream.filter(s -> s.getScriptLanguage().equals(script.getScriptLanguage()));
+            }
         }
         return CollectionUtil.reverse(stream.sorted(Comparator.comparingLong(item -> Long.parseLong(item.getScriptId()))).collect(Collectors.toList()));
     }

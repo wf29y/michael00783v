@@ -96,7 +96,7 @@
                     {{ transform.properties.sql }}
                   </a-descriptions-item>
                   <a-descriptions-item label='脚本' v-if='transform.transformMode === "SCRIPT"'>
-                    {{ subScript(transform.properties.script) }}
+                    {{ extractScript(transform.properties.script) }}
                   </a-descriptions-item>
                   <a-descriptions-item label='插件' v-if='transform.transformMode === "PLUGIN"'>
                     {{ transform.properties.plugin.pluginName }}
@@ -115,9 +115,14 @@
         </draggable>
         <a-dropdown :trigger="['click']">
           <a-menu slot='overlay' @click='addTransform'>
-            <a-menu-item v-for='transform in transformModeList' :key='transform.value'> {{ transform.name }}
-            </a-menu-item>
+            <template v-for='transform in transformModeList'>
+              <a-menu-item v-if='!transform.items' :key='transform.value'> {{ transform.name }}</a-menu-item>
+              <a-sub-menu v-else :key='transform.value' :title='transform.name'>
+                <a-menu-item v-for='item in transform.items' :key='item.value'> {{ item.name }}</a-menu-item>
+              </a-sub-menu>
+            </template>
           </a-menu>
+
           <a-button icon='plus'>添加数据转换</a-button>
         </a-dropdown>
       </a-card>
@@ -176,6 +181,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import { extractScript } from '@/utils/util'
 import { postAction, putAction, getAction } from '@/api/manage'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
 import ResourceModel from './modules/ResourceModel'
@@ -216,7 +222,8 @@ export default {
       },
       resourceTypeMap: resourceTypeMap,
       transformModeMap: transformModeMap,
-      transformModeList: transformModeList
+      transformModeList: transformModeList,
+      extractScript: extractScript
     }
   },
   mounted() {
@@ -314,8 +321,12 @@ export default {
           })
           break
         }
-        case 'SCRIPT': {
-          this.$refs.TransformScriptModel.add()
+        case 'SCRIPT-JAVASCRIPT': {
+          this.$refs.TransformScriptModel.add('javascript')
+          break
+        }
+        case 'SCRIPT-GROOVY': {
+          this.$refs.TransformScriptModel.add('groovy')
           break
         }
         case 'PLUGIN': {
@@ -410,13 +421,7 @@ export default {
     },
     onClose() {
       this.$router.push({ name: 'ruleList' })
-    },
-    subScript(content) {
-      let start = content.indexOf('function')
-      let end = start + 100
-      return content.substring(start, content.length > end ? end : content.length)
     }
-
   }
 }
 </script>

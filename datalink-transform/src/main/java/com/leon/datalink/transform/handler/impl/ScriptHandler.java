@@ -18,10 +18,13 @@ public class ScriptHandler implements TransformHandler {
 
     private ScriptEngine scriptEngine;
 
+    private String language;
+
     @Override
     public void init(Transform transform) {
         this.transform = transform;
-        this.scriptEngine = new ScriptEngineManager().getEngineByName("javascript");
+        this.language = transform.getProperties().getString("language"); // javascript  groovy
+        this.scriptEngine = new ScriptEngineManager().getEngineByName(this.language);
     }
 
     @Override
@@ -49,7 +52,11 @@ public class ScriptHandler implements TransformHandler {
             Invocable jsInvoke = (Invocable) scriptEngine;
             Object scriptResult = jsInvoke.invokeFunction("transform", runtimeData.getData());
 
-            consumer.accept(ScriptUtil.toJavaObject(scriptResult));
+            if("javascript".equals(language)){
+                scriptResult = ScriptUtil.toJavaObject(scriptResult);
+            }
+
+            consumer.accept(scriptResult);
         } catch (Exception e) {
             Loggers.RULE.error("script error {}", e.getMessage());
         }

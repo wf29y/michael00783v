@@ -8,6 +8,8 @@ public class Script implements Serializable {
 
     private String scriptName;
 
+    private String scriptLanguage;
+
     private String scriptContent;
 
     private String paramContent;
@@ -32,6 +34,15 @@ public class Script implements Serializable {
 
     public void setScriptName(String scriptName) {
         this.scriptName = scriptName;
+    }
+
+    public String getScriptLanguage() {
+        return scriptLanguage;
+    }
+
+    public Script setScriptLanguage(String scriptLanguage) {
+        this.scriptLanguage = scriptLanguage;
+        return this;
     }
 
     public String getScriptContent() {

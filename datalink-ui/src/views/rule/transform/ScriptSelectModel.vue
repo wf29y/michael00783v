@@ -2,7 +2,7 @@
   <a-modal
     :confirmLoading='confirmLoading'
     title='脚本'
-    :width='700'
+    :width='800'
     :visible='visible'
     @cancel='onClose'
     :footer='null'
@@ -36,18 +36,18 @@ export default {
       columns: [
         {
           title: '名称',
-          align:'center',
-          dataIndex: 'scriptName',
+          align: 'center',
+          dataIndex: 'scriptName'
         },
         {
           title: '最后修改',
-          align:'center',
-          dataIndex: 'updateTime',
+          align: 'center',
+          dataIndex: 'updateTime'
         },
         {
           title: '操作',
           dataIndex: 'action',
-          align:'center',
+          align: 'center',
           scopedSlots: { customRender: 'action' }
         }
       ],
@@ -55,15 +55,15 @@ export default {
     }
   },
   methods: {
-    show() {
-      this.getScriptList()
+    show(language) {
+      this.getScriptList(language)
       this.visible = true
     },
     onClose() {
       this.visible = false
     },
-    getScriptList() {
-      postAction(this.url.script, {}).then(res => {
+    getScriptList(language) {
+      postAction(this.url.script, { language: language }).then(res => {
         if (res.code === 200) {
           this.scriptList = res.data
         }

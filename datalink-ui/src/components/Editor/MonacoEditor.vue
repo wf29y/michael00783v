@@ -7,6 +7,7 @@ import { setLocaleData } from 'monaco-editor-nls'
 import zh_CN from 'monaco-editor-nls/locale/zh-hans'
 
 setLocaleData(zh_CN)
+
 const monaco = require('monaco-editor/esm/vs/editor/editor.api')
 
 export default {
@@ -18,6 +19,10 @@ export default {
     height: {
       type: String,
       default: '200px'
+    },
+    autoInit: {
+      type: Boolean,
+      default: true
     },
     language: {
       type: String,
@@ -46,14 +51,18 @@ export default {
     }
   },
   mounted() {
-    this.init()
+    if (this.autoInit) this.init('', this.language)
+  },
+  beforeDestroy() {
+    if (this.monacoEditor === null) return
+    this.monacoEditor.dispose()
   },
   methods: {
-    init() {
+    init(value, language) {
       if (this.monacoEditor !== null) return
       this.monacoEditor = monaco.editor.create(this.$refs.codeContainer, {
-        value: '', // 默认显示的值
-        language: this.language,
+        value: value, // 默认显示的值
+        language: language,
         folding: true, // 是否折叠
         foldingHighlight: true, // 折叠等高线
         foldingStrategy: 'indentation', // 折叠方式  auto | indentation
@@ -79,17 +88,16 @@ export default {
     },
     set(value) {
       if (!value) return
-      if (this.monacoEditor === null) {
-        this.$nextTick(() => {
-          this.init()
-          this.monacoEditor.setValue(value)
-        })
-      } else {
-        this.monacoEditor.setValue(value)
-      }
+      this.monacoEditor.setValue(value)
     },
     get() {
       return this.monacoEditor.getValue()
+    },
+    // setLanguage(language) {
+    //   monaco.editor.setModelLanguage(this.monacoEditor.getModel(), language)
+    // },
+    format() {
+      this.monacoEditor.trigger('anything', 'editor.action.formatDocument')
     }
   }
 }

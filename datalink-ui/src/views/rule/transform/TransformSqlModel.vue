@@ -22,6 +22,9 @@
         </a-col>
         <a-col :span='12'>
           <a-form-model-item label='输出结果'>
+            <div style='margin-top: -30px;width: 100%;text-align: right;height: 30px;color: #000000'>
+              <span v-show='time >= 0' style='display: inline-block;padding-right: 15px'>用时：{{ time }}ms</span>
+            </div>
             <monaco-editor ref='MonacoEditorResult' height='150px' language='json'></monaco-editor>
           </a-form-model-item>
         </a-col>
@@ -60,7 +63,8 @@ export default {
     return {
       visible: false,
       transformIndex: -1,
-      transform: {}
+      transform: {},
+      time: -1
     }
   },
   mounted() {
@@ -87,8 +91,6 @@ export default {
       this.transformIndex = index
       this.$nextTick(() => {
         this.$refs.MonacoEditor.set(transform.properties.sql)
-      })
-      this.$nextTick(() => {
         this.$refs.MonacoEditorData.set('{}')
       })
     },
@@ -111,9 +113,11 @@ export default {
       postAction('/api/rule/testSql', { sql: sql, data: JSON.parse(data) }).then((res) => {
         if (res.code === 200) {
           this.$nextTick(() => {
-            this.$refs.MonacoEditorResult.set(JSON.stringify(res.data))
+            this.$refs.MonacoEditorResult.set(JSON.stringify(res.data.result))
+            this.$refs.MonacoEditorResult.format()
+            this.time = res.data.time
           })
-        }else {
+        } else {
           this.$message.error(res.message)
         }
       })
