@@ -2,7 +2,7 @@
   <a-row :gutter='24'>
     <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24' class='body'>
-        <a-form-model-item label='响应体' style='margin-bottom: 0'>
+        <a-form-model-item label='响应体'>
           <monaco-editor ref='MonacoEditor' language='freemarker2'></monaco-editor>
         </a-form-model-item>
       </a-col>

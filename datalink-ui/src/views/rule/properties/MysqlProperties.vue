@@ -22,7 +22,7 @@
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='sql'>
-        <a-form-model-item label='SQL模板' style='margin-bottom: 0' prop='sql'>
+        <a-form-model-item label='SQL模板' prop='sql'>
           <monaco-editor ref='MonacoEditor' language='sql'></monaco-editor>
         </a-form-model-item>
       </a-col>

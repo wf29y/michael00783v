@@ -34,7 +34,7 @@
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='body'>
-        <a-form-model-item label='请求体' style='margin-bottom: 0'>
+        <a-form-model-item label='请求体'>
           <monaco-editor ref='MonacoEditor' language='freemarker2'></monaco-editor>
         </a-form-model-item>
       </a-col>

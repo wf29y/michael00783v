@@ -2,7 +2,7 @@
   <a-row :gutter='24'>
     <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24' class='body'>
-        <a-form-model-item label='响应(Hex)' style='margin-bottom: 0'>
+        <a-form-model-item label='响应(Hex)'>
           <monaco-editor ref='MonacoEditor' language='freemarker2'></monaco-editor>
         </a-form-model-item>
       </a-col>

@@ -2,10 +2,12 @@
   <a-modal
     :confirmLoading='confirmLoading'
     :title='resourceMode==="source"?"数据源":"目标资源"'
-    :width='550'
+    :dialog-style="{ top: '50px' }"
+    :width='600'
     :visible='visible'
     @cancel='onClose'
     :destroyOnClose='true'
+    :bodyStyle='{maxHeight:"650px",overflowY:"auto",paddingBottom:"0"}'
   >
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-form-model-item label='类型' prop='resourceType'>
