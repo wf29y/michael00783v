@@ -8,7 +8,7 @@ import com.leon.datalink.resource.Driver;
 import com.leon.datalink.resource.DriverFactory;
 import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.resource.constans.DriverModeEnum;
-import com.leon.datalink.resource.entity.ScheduleTrigger;
+import com.leon.datalink.core.schedule.ScheduleTrigger;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.runtime.entity.RuntimeStatus;

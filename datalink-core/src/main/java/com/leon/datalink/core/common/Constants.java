@@ -24,8 +24,6 @@ public class Constants {
 
     public static final String INITIAL_DELAY_UNIT = "initialDelayUnit";
 
-    public static final String INTERVAL = "interval";
-
-    public static final String INTERVAL_UNIT = "intervalUnit";
+    public static final String CRON_EXPRESSION = "cronExpression";
 
 }

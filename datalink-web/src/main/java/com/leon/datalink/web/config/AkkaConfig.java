@@ -3,7 +3,7 @@ package com.leon.datalink.web.config;
 import akka.actor.ActorSystem;
 import com.leon.datalink.cluster.ActorSystemFactory;
 import com.leon.datalink.cluster.distributed.ConsistencyManager;
-import org.springframework.beans.factory.annotation.Value;
+import com.leon.datalink.core.schedule.ScheduleManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,12 +21,16 @@ public class AkkaConfig {
 
     @Bean
     public ActorSystem actorSystem() {
-        return ActorSystemFactory.create();
+        ActorSystem actorSystem = ActorSystemFactory.create();
+        ConsistencyManager.init(actorSystem);
+        ScheduleManager.init(actorSystem);
+        return actorSystem;
     }
 
     @PreDestroy
-    public void destroy(){
+    public void destroy() {
         ConsistencyManager.onSystemDestroy();
+        ScheduleManager.onSystemDestroy();
     }
 
 }

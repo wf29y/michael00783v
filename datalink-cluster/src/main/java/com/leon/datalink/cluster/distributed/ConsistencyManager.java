@@ -15,6 +15,7 @@ public class ConsistencyManager {
     private static final Map<Class<?>, ActorRef> actors = new HashMap<>();
 
     public static void init(ActorSystem actorSystem) {
+        if (!EnvUtil.isCluster()) return;
         // Variable 同步actor
         actors.put(Variable.class, actorSystem.actorOf(Props.create(VariableConsistencyActor.class), "variableConsistencyActor"));
         //...

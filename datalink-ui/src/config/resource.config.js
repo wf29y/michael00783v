@@ -63,8 +63,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -155,8 +154,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -181,8 +179,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -207,8 +204,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -233,8 +229,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -259,8 +254,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -285,8 +279,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -311,8 +304,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -337,8 +329,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -357,8 +348,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -398,8 +388,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -436,8 +425,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -456,8 +444,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }
@@ -482,8 +469,7 @@ const resourceConfigMap = {
           value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '执行频率',
-          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+          name: 'Cron表达式', value: (resource) => resource.properties.cronExpression
         }
       ]
     }

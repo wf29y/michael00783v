@@ -13,10 +13,6 @@
           {{ text }} {{ timeUnitMap[record.initialDelayUnit] }}
         </span>
 
-        <span slot='intervalUnit' slot-scope='text, record, index'>
-          {{ text }} {{ timeUnitMap[record.intervalUnit] }}
-        </span>
-
       </a-table>
   </a-skeleton>
 </template>
@@ -42,12 +38,11 @@ export default {
           scopedSlots: { customRender: 'initialDelayUnit' }
         },
         {
-          title: '调度间隔',
-          dataIndex: 'interval',
-          scopedSlots: { customRender: 'intervalUnit' }
+          title: 'Cron表达式',
+          dataIndex: 'cronExpression'
         },
         {
-          title: '启动时间',
+          title: '创建时间',
           dataIndex: 'createTime'
         }
       ],

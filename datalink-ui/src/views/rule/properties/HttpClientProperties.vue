@@ -24,13 +24,8 @@
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if='type==="source"'>
-        <a-form-model-item label='执行间隔' prop='interval'>
-          <a-input v-model='properties.interval' placeholder='请输入执行间隔' style='width: 100%'>
-            <a-select slot='addonAfter' v-model='properties.intervalUnit' placeholder='单位' style='width: 80px'>
-              <a-select-option v-for='(item,index) in timeUnitList' :key='index' :value='item.value'>{{ item.name }}
-              </a-select-option>
-            </a-select>
-          </a-input>
+        <a-form-model-item label='Cron表达式' prop='cronExpression'>
+          <a-input v-model='properties.cronExpression' placeholder='请输入Cron表达式' />
         </a-form-model-item>
       </a-col>
       <a-col :span='24'>
@@ -60,8 +55,7 @@ export default {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         body: '',
-        initialDelayUnit: 'SECONDS',
-        intervalUnit: 'SECONDS'
+        initialDelayUnit: 'SECONDS'
       },
       methodList: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS', 'TRACE'],
       timeUnitList: timeUnitList,
@@ -70,8 +64,7 @@ export default {
         method: [{ required: true, message: '请选择请求方式', trigger: 'blur' }],
         initialDelay: [{ required: true, message: '请输入启动延迟', trigger: 'blur' }],
         initialDelayUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }],
-        interval: [{ required: true, message: '请输入执行间隔', trigger: 'blur' }],
-        intervalUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }]
+        cronExpression: [{ required: true, message: '请输入Cron表达式', trigger: 'blur' }]
       }
     }
   },
@@ -113,7 +106,7 @@ export default {
 
 <style scoped>
 
-.ant-form-item-with-help{
+.ant-form-item-with-help {
   margin-bottom: 6px;
 }
 

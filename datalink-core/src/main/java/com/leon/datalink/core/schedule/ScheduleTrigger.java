@@ -1,4 +1,4 @@
-package com.leon.datalink.resource.entity;
+package com.leon.datalink.core.schedule;
 
 import com.leon.datalink.core.serializer.ProtostuffSerializable;
 

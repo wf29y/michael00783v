@@ -3,10 +3,9 @@ package com.leon.datalink.cluster;
 import akka.actor.ActorSystem;
 import akka.event.Logging;
 import com.leon.datalink.cluster.actor.ClusterListenerActor;
-import com.leon.datalink.cluster.distributed.ConsistencyManager;
+import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.core.monitor.ListenerContent;
 import com.leon.datalink.core.monitor.ListenerTypeEnum;
-import com.leon.datalink.core.evn.EnvUtil;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
@@ -33,7 +32,6 @@ public class ActorSystemFactory {
         if (EnvUtil.isCluster()) {
             actorSystem = ActorSystem.create("datalink", getConfig());
             actorSystem.actorOf(ClusterListenerActor.props(), "datalinkClusterListener");
-            ConsistencyManager.init(actorSystem);
         } else {
             actorSystem = ActorSystem.create("datalink");
         }

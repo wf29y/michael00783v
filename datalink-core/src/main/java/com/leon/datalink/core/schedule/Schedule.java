@@ -1,11 +1,10 @@
 package com.leon.datalink.core.schedule;
 
-import akka.actor.Cancellable;
 import com.leon.datalink.core.serializer.ProtostuffSerializable;
 
 public class Schedule implements ProtostuffSerializable {
 
-    private String id;
+    private String scheduleName;
 
     private String ruleId;
 
@@ -15,92 +14,63 @@ public class Schedule implements ProtostuffSerializable {
 
     private String initialDelayUnit;
 
-    private Long interval;
-
-    private String intervalUnit;
+    private String cronExpression;
 
     private String createTime;
 
-    private Cancellable cancellable;
-
-    public String getId() {
-        return id;
+    public String getScheduleName() {
+        return scheduleName;
     }
 
-    public Schedule setId(String id) {
-        this.id = id;
-        return this;
+    public void setScheduleName(String scheduleName) {
+        this.scheduleName = scheduleName;
     }
 
     public String getRuleId() {
         return ruleId;
     }
 
-    public Schedule setRuleId(String ruleId) {
+    public void setRuleId(String ruleId) {
         this.ruleId = ruleId;
-        return this;
     }
 
     public String getResourceName() {
         return resourceName;
     }
 
-    public Schedule setResourceName(String resourceName) {
+    public void setResourceName(String resourceName) {
         this.resourceName = resourceName;
-        return this;
     }
 
     public Long getInitialDelay() {
         return initialDelay;
     }
 
-    public Schedule setInitialDelay(Long initialDelay) {
+    public void setInitialDelay(Long initialDelay) {
         this.initialDelay = initialDelay;
-        return this;
     }
 
     public String getInitialDelayUnit() {
         return initialDelayUnit;
     }
 
-    public Schedule setInitialDelayUnit(String initialDelayUnit) {
+    public void setInitialDelayUnit(String initialDelayUnit) {
         this.initialDelayUnit = initialDelayUnit;
-        return this;
     }
 
-    public Long getInterval() {
-        return interval;
+    public String getCronExpression() {
+        return cronExpression;
     }
 
-    public Schedule setInterval(Long interval) {
-        this.interval = interval;
-        return this;
-    }
-
-    public String getIntervalUnit() {
-        return intervalUnit;
-    }
-
-    public Schedule setIntervalUnit(String intervalUnit) {
-        this.intervalUnit = intervalUnit;
-        return this;
+    public void setCronExpression(String cronExpression) {
+        this.cronExpression = cronExpression;
     }
 
     public String getCreateTime() {
         return createTime;
     }
 
-    public Schedule setCreateTime(String createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
-        return this;
-    }
-
-    public Cancellable getCancellable() {
-        return cancellable;
-    }
-
-    public Schedule setCancellable(Cancellable cancellable) {
-        this.cancellable = cancellable;
-        return this;
     }
 }
