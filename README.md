@@ -85,6 +85,7 @@ server.port=9966
 
 ### 集群模式下节点列表配置,形式为 IP:端口,IP:端口,IP:端口
 ### 第一组IP端口必须为本节点的IP端口
+### 集群使用端口自定义,不可与本节点的server.port重复
 datalink.cluster.member.list=
 ```
 

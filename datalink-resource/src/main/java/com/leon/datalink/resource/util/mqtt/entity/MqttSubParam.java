@@ -12,6 +12,8 @@ public class MqttSubParam {
 
     private Integer retainHandling;
 
+    private Integer subscriptionIdentifier;
+
     public MqttSubParam() {
     }
 
@@ -20,12 +22,13 @@ public class MqttSubParam {
         this.qos = qos;
     }
 
-    public MqttSubParam(String topic, Integer qos, Boolean noLocal, Boolean retainAsPublished, Integer retainHandling) {
+    public MqttSubParam(String topic, Integer qos, Boolean noLocal, Boolean retainAsPublished, Integer retainHandling, Integer subscriptionIdentifier) {
         this.topic = topic;
         this.qos = qos;
         this.noLocal = noLocal;
         this.retainAsPublished = retainAsPublished;
         this.retainHandling = retainHandling;
+        this.subscriptionIdentifier = subscriptionIdentifier;
     }
 
     public String getTopic() {
@@ -66,5 +69,13 @@ public class MqttSubParam {
 
     public void setRetainHandling(Integer retainHandling) {
         this.retainHandling = retainHandling;
+    }
+
+    public Integer getSubscriptionIdentifier() {
+        return subscriptionIdentifier;
+    }
+
+    public void setSubscriptionIdentifier(Integer subscriptionIdentifier) {
+        this.subscriptionIdentifier = subscriptionIdentifier;
     }
 }

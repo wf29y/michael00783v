@@ -52,12 +52,12 @@ public class MqttDriver extends AbstractDriver {
                     data.put("qos", mqttMessage.getQos());
                     data.put("retained", mqttMessage.getRetain());
                     data.put("payload", new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
-                    if(version == 5){
-                       data.put("userProperties", mqttMessage.getUserProperties());
-                       data.put("contentType", mqttMessage.getContentType());
-                       data.put("responseTopic", mqttMessage.getResponseTopic());
-                       data.put("correlationData", mqttMessage.getCorrelationData());
-                       data.put("subscriptionIdentifiers", mqttMessage.getSubscriptionIdentifiers());
+                    if (version == 5) {
+                        data.put("userProperties", mqttMessage.getUserProperties());
+                        data.put("contentType", mqttMessage.getContentType());
+                        data.put("responseTopic", mqttMessage.getResponseTopic());
+                        data.put("correlationData", mqttMessage.getCorrelationData());
+                        data.put("subscriptionIdentifiers", mqttMessage.getSubscriptionIdentifiers());
                     }
                     produceData(data);
                 }
@@ -67,9 +67,10 @@ public class MqttDriver extends AbstractDriver {
             Boolean noLocal = properties.getBoolean("noLocal", false);
             Boolean retainAsPublished = properties.getBoolean("retainAsPublished", false);
             Integer retainHandling = properties.getInteger("retainHandling", 0);
+            Integer subscriptionIdentifier = properties.getInteger("subscriptionIdentifier");
             MqttSubParam[] mqttSubParams = Arrays.stream(topic.split(",")).map(subTopic -> {
                 if (version == 5) {
-                    return new MqttSubParam(subTopic, qos, noLocal, retainAsPublished, retainHandling);
+                    return new MqttSubParam(subTopic, qos, noLocal, retainAsPublished, retainHandling, subscriptionIdentifier);
                 } else {
                     return new MqttSubParam(subTopic, qos);
                 }
@@ -113,8 +114,8 @@ public class MqttDriver extends AbstractDriver {
     @Override
     public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            mqttClient.disconnect();
-            mqttClient.close();
+            mqttClient.disconnectClient();
+            mqttClient.closeClient();
         } else if (driverMode.equals(DriverModeEnum.DEST)) {
             mqttTemplate.close();
         }
@@ -128,7 +129,7 @@ public class MqttDriver extends AbstractDriver {
             MqttClientConfig mqttClientConfig = this.createMqttClientConfig(properties);
             MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);
             IMqttClient mqttClient = mqttClientFactory.create();
-            return mqttClient.isConnected();
+            return mqttClient.connected();
         } catch (Exception e) {
             Loggers.DRIVER.error("mqtt driver test {}", e.getMessage());
             return false;
@@ -175,7 +176,7 @@ public class MqttDriver extends AbstractDriver {
             mqttMessage.setUserProperties(properties.getMap("userProperties"));
             List<Integer> subscriptionIdentifiers = new ArrayList<>();
             Integer subscriptionIdentifier = properties.getInteger("subscriptionIdentifier");
-            if(subscriptionIdentifier!=null) subscriptionIdentifiers.add(subscriptionIdentifier);
+            if (subscriptionIdentifier != null) subscriptionIdentifiers.add(subscriptionIdentifier);
             mqttMessage.setSubscriptionIdentifiers(subscriptionIdentifiers);
             mqttMessage.setPayload(payload.getBytes(StandardCharsets.UTF_8));
         } else {

@@ -17,14 +17,7 @@ public class MqttClientFactory extends BasePooledObjectFactory<IMqttClient> {
 
     @Override
     public IMqttClient create() throws Exception {
-        IMqttClient mqttClient;
-        if (mqttClientConfig.getMqttVersion() == 5) {
-            mqttClient = new MqttClientV5();
-        } else {
-            mqttClient = new MqttClientV3();
-        }
-        mqttClient.connect(mqttClientConfig);
-        return mqttClient;
+        return mqttClientConfig.getMqttVersion() == 5 ? new MqttClientV5(mqttClientConfig) : new MqttClientV3(mqttClientConfig);
     }
 
     @Override
@@ -34,13 +27,13 @@ public class MqttClientFactory extends BasePooledObjectFactory<IMqttClient> {
 
     @Override
     public void destroyObject(PooledObject<IMqttClient> pooledMqttClient) throws Exception {
-        if (pooledMqttClient != null && pooledMqttClient.getObject() != null && pooledMqttClient.getObject().isConnected()) {
-            pooledMqttClient.getObject().disconnect();
+        if (pooledMqttClient != null && pooledMqttClient.getObject() != null && pooledMqttClient.getObject().connected()) {
+            pooledMqttClient.getObject().disconnectClient();
         }
     }
 
     @Override
     public boolean validateObject(PooledObject<IMqttClient> pooledMqttClient) {
-        return pooledMqttClient.getObject().isConnected();
+        return pooledMqttClient.getObject().connected();
     }
 }

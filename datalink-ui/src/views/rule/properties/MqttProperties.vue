@@ -98,9 +98,9 @@
           <a-input-number v-model='properties.topicAlias' placeholder='请输入主题别名' style='width: 100%' />
         </a-form-model-item>
       </a-col>
-      <a-col :span='12' v-if="type==='dest' && properties.version === 5">
+      <a-col :span='12' v-if="properties.version === 5">
         <a-form-model-item label='数据订阅标识符' prop='subscriptionIdentifier'>
-          <a-input-number v-model='properties.subscriptionIdentifier' placeholder='请输入数据订阅标识符' style='width: 100%;'/>
+          <a-input-number v-model='properties.subscriptionIdentifier' placeholder='请输入数据订阅标识符' style='width: 100%;' />
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if="type==='dest' && properties.version === 5">
@@ -202,6 +202,7 @@ export default {
           delete this.properties.noLocal
           delete this.properties.retainAsPublished
           delete this.properties.retainHandling
+          delete this.properties.subscriptionIdentifier
         }
       }
       let that = this

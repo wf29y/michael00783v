@@ -12,13 +12,10 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.InputStream;
 import java.util.UUID;
 
-public class MqttClientV3 implements IMqttClient {
+public class MqttClientV3 extends MqttClient implements IMqttClient {
 
-    private MqttClient mqttClient;
-
-    @Override
-    public void connect(MqttClientConfig mqttClientConfig) throws Exception {
-        mqttClient = new MqttClient(mqttClientConfig.getHostUrl(), UUID.randomUUID().toString(), new MemoryPersistence());
+    public MqttClientV3(MqttClientConfig mqttClientConfig) throws Exception {
+        super(mqttClientConfig.getHostUrl(), UUID.randomUUID().toString(), new MemoryPersistence());
         MqttConnectOptions options = new MqttConnectOptions();
         // mqtt版本
         options.setMqttVersion(mqttClientConfig.getMqttVersion());
@@ -42,12 +39,12 @@ public class MqttClientV3 implements IMqttClient {
             options.setSocketFactory(SSLUtils.getSocketFactory(resourceAsStream));
         }
         // 连接服务器
-        mqttClient.connect(options);
+        super.connect(options);
     }
 
     @Override
     public void publish(MqttMessageEntity message) throws Exception {
-        mqttClient.publish(message.getTopic(), message.getPayload(), message.getQos(), message.getRetain());
+        super.publish(message.getTopic(), message.getPayload(), message.getQos(), message.getRetain());
     }
 
     @Override
@@ -58,27 +55,27 @@ public class MqttClientV3 implements IMqttClient {
             topic[i] = subParams[i].getTopic();
             qos[i] = subParams[i].getQos();
         }
-        mqttClient.subscribe(topic, qos);
+        super.subscribe(topic, qos);
     }
 
     @Override
-    public boolean isConnected() {
-        return mqttClient.isConnected();
+    public boolean connected() {
+        return super.isConnected();
     }
 
     @Override
-    public void disconnect() throws Exception {
-        mqttClient.disconnect();
+    public void disconnectClient() throws Exception {
+        super.disconnect();
     }
 
     @Override
-    public void close() throws Exception {
-        mqttClient.close();
+    public void closeClient() throws Exception {
+        super.close();
     }
 
     @Override
     public void setCallback(IMqttCallback mqttCallback) {
-        mqttClient.setCallback(new MqttCallback() {
+        super.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
                 mqttCallback.exceptionOccurred(cause.getMessage());

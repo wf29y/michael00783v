@@ -6,8 +6,6 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-import java.util.Map;
-
 public class MqttTemplate extends GenericObjectPool<IMqttClient> {
 
     public MqttTemplate(PooledObjectFactory<IMqttClient> factory, GenericObjectPoolConfig<IMqttClient> config) {
@@ -18,7 +16,7 @@ public class MqttTemplate extends GenericObjectPool<IMqttClient> {
         IMqttClient client = null;
         try {
             client = super.borrowObject();
-            if (client.isConnected()) {
+            if (client.connected()) {
                 client.publish(mqttMessage);
             }
         } finally {

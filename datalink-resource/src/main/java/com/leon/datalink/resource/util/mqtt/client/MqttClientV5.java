@@ -18,13 +18,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class MqttClientV5 implements IMqttClient {
+public class MqttClientV5 extends MqttClient implements IMqttClient {
 
-    private MqttClient mqttClient;
-
-    @Override
-    public void connect(MqttClientConfig mqttClientConfig) throws Exception {
-        mqttClient = new MqttClient(mqttClientConfig.getHostUrl(), UUID.randomUUID().toString(), new MemoryPersistence());
+    public MqttClientV5(MqttClientConfig mqttClientConfig) throws Exception {
+        super(mqttClientConfig.getHostUrl(), UUID.randomUUID().toString(), new MemoryPersistence());
         MqttConnectionOptions options = new MqttConnectionOptions();
         // 设置连接的用户名
         options.setUserName(mqttClientConfig.getUsername());
@@ -49,7 +46,7 @@ public class MqttClientV5 implements IMqttClient {
             options.setSocketFactory(SSLUtils.getSocketFactory(resourceAsStream));
         }
         // 连接服务器
-        mqttClient.connect(options);
+        super.connect(options);
     }
 
     @Override
@@ -79,7 +76,7 @@ public class MqttClientV5 implements IMqttClient {
         mqttMessage.setRetained(message.getRetain());
         mqttMessage.setProperties(mqttProperties);
 
-        mqttClient.publish(message.getTopic(), mqttMessage);
+        super.publish(message.getTopic(), mqttMessage);
     }
 
     @Override
@@ -90,30 +87,38 @@ public class MqttClientV5 implements IMqttClient {
                     mqttSubscription.setNoLocal(subParam.getNoLocal());
                     mqttSubscription.setRetainAsPublished(subParam.getRetainAsPublished());
                     mqttSubscription.setRetainHandling(subParam.getRetainHandling());
-                    //缺少 订阅时指定订阅标识符 paho不支持
                     return mqttSubscription;
                 }).toArray(MqttSubscription[]::new);
-        mqttClient.subscribe(mqttSubscriptions);
+
+        MqttProperties mqttProperties = new MqttProperties();
+        Integer subscriptionIdentifier = subParams[0].getSubscriptionIdentifier();
+        if (null != subscriptionIdentifier) {
+            mqttProperties.setSubscriptionIdentifier(subscriptionIdentifier);
+        }
+
+        IMqttMessageListener[] listeners = null;
+        IMqttToken tok = aClient.subscribe(mqttSubscriptions, null, null, listeners, mqttProperties);
+        tok.waitForCompletion(getTimeToWait());
     }
 
     @Override
-    public boolean isConnected() {
-        return mqttClient.isConnected();
+    public boolean connected() {
+        return super.isConnected();
     }
 
     @Override
-    public void disconnect() throws Exception {
-        mqttClient.disconnect();
+    public void disconnectClient() throws Exception {
+        super.disconnect();
     }
 
     @Override
-    public void close() throws Exception {
-        mqttClient.close();
+    public void closeClient() throws Exception {
+        super.close();
     }
 
     @Override
     public void setCallback(IMqttCallback mqttCallback) {
-        mqttClient.setCallback(new MqttCallback() {
+        super.setCallback(new MqttCallback() {
             @Override
             public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {
                 mqttCallback.exceptionOccurred(mqttDisconnectResponse.getReasonString());
