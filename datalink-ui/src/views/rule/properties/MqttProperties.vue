@@ -12,7 +12,11 @@
       </a-col>
       <a-col :span='12'>
         <a-form-model-item label='Qos' prop='qos'>
-          <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%' />
+          <a-select v-model='properties.qos' placeholder='请选择Qos'>
+            <a-select-option :value='0'>0</a-select-option>
+            <a-select-option :value='1'>1</a-select-option>
+            <a-select-option :value='2'>2</a-select-option>
+          </a-select>
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if="type==='source'">
@@ -20,6 +24,31 @@
           <a-select v-model='properties.share' placeholder='请选择是否共享订阅'>
             <a-select-option :value='true'>是</a-select-option>
             <a-select-option :value='false'>否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if="type==='source' && properties.version === 5">
+        <a-form-model-item label='No Local' prop='noLocal'>
+          <a-select v-model='properties.noLocal' placeholder='No Local flag'>
+            <a-select-option :value='true'>是</a-select-option>
+            <a-select-option :value='false'>否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if="type==='source' && properties.version === 5">
+        <a-form-model-item label='Retain As Publish' prop='retainAsPublished'>
+          <a-select v-model='properties.retainAsPublished' placeholder='Retain as Published flag'>
+            <a-select-option :value='true'>是</a-select-option>
+            <a-select-option :value='false'>否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if="type==='source' && properties.version === 5">
+        <a-form-model-item label='Retain Handling' prop='retainHandling'>
+          <a-select v-model='properties.retainHandling' placeholder='Retain Handling'>
+            <a-select-option :value='0'>0</a-select-option>
+            <a-select-option :value='1'>1</a-select-option>
+            <a-select-option :value='2'>2</a-select-option>
           </a-select>
         </a-form-model-item>
       </a-col>
@@ -70,7 +99,10 @@ export default {
       properties: {},
       sourceDefaultValue: {
         qos: 0,
-        share: false
+        share: false,
+        noLocal: false,
+        retainAsPublished: false,
+        retainHandling: 0,
       },
       destDefaultValue: {
         qos: 0,
@@ -83,7 +115,7 @@ export default {
         topic: [{ required: true, message: '请输入Topic', trigger: 'blur' }],
         retained: [{ required: true, message: '请选择是否消息保留', trigger: 'change' }],
         share: [{ required: true, message: '请选择是否共享订阅', trigger: 'change' }],
-        qos: [{ required: true, message: '请输入Qos', trigger: 'blur' }],
+        qos: [{ required: true, message: '请选择Qos', trigger: 'change' }],
         maxTotal: [{ required: true, message: '请输入连接池大小', trigger: 'blur' }],
         maxIdle: [{ required: true, message: '请输入最大空闲数', trigger: 'blur' }],
         minIdle: [{ required: true, message: '请输入最小空闲数', trigger: 'blur' }]

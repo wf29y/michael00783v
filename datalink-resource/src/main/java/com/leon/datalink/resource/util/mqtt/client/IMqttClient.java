@@ -10,9 +10,7 @@ public interface IMqttClient {
 
     void publish(String topic, byte[] payload, int qosLevel, boolean isRetain, Map<String, String> userProperties) throws Exception;
 
-    void subscribe(String topicFilter, int qos) throws Exception;
-
-    void subscribe(String[] topicFilters, int[] qos) throws Exception;
+    void subscribe(MqttSubParam[] subParams) throws Exception;
 
     boolean isConnected();
 

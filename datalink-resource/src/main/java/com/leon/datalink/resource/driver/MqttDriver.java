@@ -12,6 +12,7 @@ import com.leon.datalink.resource.util.mqtt.MqttPoolConfig;
 import com.leon.datalink.resource.util.mqtt.MqttTemplate;
 import com.leon.datalink.resource.util.mqtt.client.IMqttCallback;
 import com.leon.datalink.resource.util.mqtt.client.IMqttClient;
+import com.leon.datalink.resource.util.mqtt.client.MqttSubParam;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -31,6 +32,8 @@ public class MqttDriver extends AbstractDriver {
         if (StringUtils.isEmpty(properties.getString("url"))) throw new ValidateException();
         if (StringUtils.isEmpty(properties.getString("topic"))) throw new ValidateException();
 
+        Integer version = properties.getInteger("version", 3);
+
         MqttClientConfig mqttClientConfig = new MqttClientConfig();
         mqttClientConfig.setHostUrl(properties.getString("url"));
         mqttClientConfig.setUsername(properties.getString("username"));
@@ -38,7 +41,7 @@ public class MqttDriver extends AbstractDriver {
         mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
         mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
         mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
-        mqttClientConfig.setMqttVersion(properties.getInteger("version", 3));
+        mqttClientConfig.setMqttVersion(version);
         MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
@@ -63,15 +66,18 @@ public class MqttDriver extends AbstractDriver {
             });
             Integer qos = properties.getInteger("qos", 0);
             String topic = properties.getString("topic");
-            boolean multiTopic = topic.contains(",");
-            if (multiTopic) {
-                String[] topicList = topic.split(",");
-                int[] qosList = new int[topicList.length];
-                Arrays.fill(qosList, qos);
-                mqttClient.subscribe(topicList, qosList);
-            } else {
-                mqttClient.subscribe(topic, qos);
-            }
+            Boolean noLocal = properties.getBoolean("noLocal", false);
+            Boolean retainAsPublished = properties.getBoolean("retainAsPublished", false);
+            Integer retainHandling = properties.getInteger("retainHandling", 0);
+            MqttSubParam[] mqttSubParams = Arrays.stream(topic.split(",")).map(subTopic -> {
+                if (version == 5) {
+                    return new MqttSubParam(subTopic, qos, noLocal, retainAsPublished, retainHandling);
+                } else {
+                    return new MqttSubParam(subTopic, qos);
+                }
+            }).toArray(MqttSubParam[]::new);
+            mqttClient.subscribe(mqttSubParams);
+
         } else if (driverMode.equals(DriverModeEnum.DEST)) {
             MqttPoolConfig mqttPoolConfig = new MqttPoolConfig();
             mqttPoolConfig.setMaxTotal(properties.getInteger("maxTotal", 8));

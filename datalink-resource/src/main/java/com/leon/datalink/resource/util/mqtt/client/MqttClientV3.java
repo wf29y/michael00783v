@@ -1,6 +1,5 @@
 package com.leon.datalink.resource.util.mqtt.client;
 
-import com.google.common.collect.Maps;
 import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.core.utils.SSLUtils;
 import com.leon.datalink.resource.util.mqtt.MqttClientConfig;
@@ -51,13 +50,14 @@ public class MqttClientV3 implements IMqttClient {
     }
 
     @Override
-    public void subscribe(String topicFilter, int qos) throws Exception {
-        mqttClient.subscribe(topicFilter, qos);
-    }
-
-    @Override
-    public void subscribe(String[] topicFilters, int[] qos) throws Exception {
-        mqttClient.subscribe(topicFilters, qos);
+    public void subscribe(MqttSubParam[] subParams) throws Exception {
+        String[] topic = new String[subParams.length];
+        int[] qos = new int[subParams.length];
+        for (int i = 0; i < subParams.length; i++) {
+            topic[i] = subParams[i].getTopic();
+            qos[i] = subParams[i].getQos();
+        }
+        mqttClient.subscribe(topic, qos);
     }
 
     @Override

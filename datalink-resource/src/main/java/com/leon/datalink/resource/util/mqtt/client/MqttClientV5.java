@@ -8,11 +8,13 @@ import org.eclipse.paho.mqttv5.client.*;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.MqttSubscription;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.eclipse.paho.mqttv5.common.packet.UserProperty;
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MqttClientV5 implements IMqttClient {
 
@@ -58,15 +60,17 @@ public class MqttClientV5 implements IMqttClient {
 
         mqttClient.publish(topic, mqttMessage);
     }
-
     @Override
-    public void subscribe(String topicFilter, int qos) throws Exception {
-        mqttClient.subscribe(topicFilter, qos);
-    }
-
-    @Override
-    public void subscribe(String[] topicFilters, int[] qos) throws Exception {
-        mqttClient.subscribe(topicFilters, qos);
+    public void subscribe(MqttSubParam[] subParams) throws Exception {
+        MqttSubscription[] mqttSubscriptions = Arrays.stream(subParams)
+                .map(subParam -> {
+                    MqttSubscription mqttSubscription = new MqttSubscription(subParam.getTopic(), subParam.getQos());
+                    mqttSubscription.setNoLocal(subParam.isNoLocal());
+                    mqttSubscription.setRetainAsPublished(subParam.isRetainAsPublished());
+                    mqttSubscription.setRetainHandling(subParam.getRetainHandling());
+                    return mqttSubscription;
+                }).toArray(MqttSubscription[]::new);
+        mqttClient.subscribe(mqttSubscriptions);
     }
 
     @Override
