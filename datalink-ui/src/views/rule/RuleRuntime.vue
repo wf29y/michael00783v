@@ -106,7 +106,7 @@
                   {{ transform.properties.sql }}
                 </a-descriptions-item>
                 <a-descriptions-item label='脚本' v-if='transform.transformMode === "SCRIPT"'>
-                  {{ extractScript(transform.properties.script) }}
+                  {{ extractScript(transform.properties.script, 80) }}
                 </a-descriptions-item>
                 <a-descriptions-item label='插件' v-if='transform.transformMode === "PLUGIN"'>
                   {{ transform.properties.plugin.pluginName }}

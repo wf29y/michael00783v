@@ -101,7 +101,17 @@ export function scorePassword(pass) {
  * @param script
  * @returns {*}
  */
-export function extractScript(script) {
-  const regex = /((['"])(?:(?!\2|\\).|\\(?:\r\n|[\s\S]))*(\2)?|`(?:[^`\\$]|\\[\s\S]|\$(?!\{)|\$\{(?:[^{}]|\{[^}]*\}?)*\}?)*`|\/\/.*|\/\*[\s\S]*?(?:\*\/|$))/g
-  return script.replace(regex, '')
+export function extractScript(script, length) {
+  const regex = /\/\*[\s\S]*?\*\/|\/\/.*/g
+  let result = script.replace(regex, '')
+  return length ? truncateString(result, length) : result
+}
+
+
+function truncateString(str, maxLength) {
+  if (str.length > maxLength) {
+    return str.slice(0, maxLength) + '...'
+  } else {
+    return str
+  }
 }
