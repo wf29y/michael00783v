@@ -12,13 +12,12 @@ import com.leon.datalink.resource.util.mqtt.MqttPoolConfig;
 import com.leon.datalink.resource.util.mqtt.MqttTemplate;
 import com.leon.datalink.resource.util.mqtt.client.IMqttCallback;
 import com.leon.datalink.resource.util.mqtt.client.IMqttClient;
-import com.leon.datalink.resource.util.mqtt.client.MqttSubParam;
+import com.leon.datalink.resource.util.mqtt.entity.MqttMessageEntity;
+import com.leon.datalink.resource.util.mqtt.entity.MqttSubParam;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class MqttDriver extends AbstractDriver {
@@ -34,15 +33,7 @@ public class MqttDriver extends AbstractDriver {
 
         Integer version = properties.getInteger("version", 3);
 
-        MqttClientConfig mqttClientConfig = new MqttClientConfig();
-        mqttClientConfig.setHostUrl(properties.getString("url"));
-        mqttClientConfig.setUsername(properties.getString("username"));
-        mqttClientConfig.setPassword(properties.getString("password", ""));
-        mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
-        mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
-        mqttClientConfig.setAutoReconnect(properties.getBoolean("autoReconnect", true));
-        mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
-        mqttClientConfig.setMqttVersion(version);
+        MqttClientConfig mqttClientConfig = this.createMqttClientConfig(properties);
         MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
@@ -55,13 +46,19 @@ public class MqttDriver extends AbstractDriver {
                 }
 
                 @Override
-                public void messageArrived(String topic, byte[] payload, int qos, boolean retained, Map<String, String> userProperties) {
+                public void messageArrived(MqttMessageEntity mqttMessage) {
                     Map<String, Object> data = new HashMap<>();
-                    data.put("topic", topic);
-                    data.put("qos", qos);
-                    data.put("retained", retained);
-                    data.put("payload", new String(payload, StandardCharsets.UTF_8));
-                    if (userProperties != null) data.put("userProperties", userProperties);
+                    data.put("topic", mqttMessage.getTopic());
+                    data.put("qos", mqttMessage.getQos());
+                    data.put("retained", mqttMessage.getRetain());
+                    data.put("payload", new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
+                    if(version == 5){
+                       data.put("userProperties", mqttMessage.getUserProperties());
+                       data.put("contentType", mqttMessage.getContentType());
+                       data.put("responseTopic", mqttMessage.getResponseTopic());
+                       data.put("correlationData", mqttMessage.getCorrelationData());
+                       data.put("subscriptionIdentifiers", mqttMessage.getSubscriptionIdentifiers());
+                    }
                     produceData(data);
                 }
             });
@@ -88,6 +85,31 @@ public class MqttDriver extends AbstractDriver {
         }
     }
 
+    private MqttClientConfig createMqttClientConfig(ConfigProperties properties) {
+        MqttClientConfig mqttClientConfig = new MqttClientConfig();
+        mqttClientConfig.setHostUrl(properties.getString("url"));
+        mqttClientConfig.setUsername(properties.getString("username"));
+        mqttClientConfig.setPassword(properties.getString("password", ""));
+        mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
+        mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
+        mqttClientConfig.setAutoReconnect(properties.getBoolean("autoReconnect", true));
+        mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
+        Integer version = properties.getInteger("version", 3);
+        mqttClientConfig.setMqttVersion(version);
+        if (version == 5) {
+            mqttClientConfig.setCleanStart(properties.getBoolean("cleanStart", true));
+            mqttClientConfig.setSessionExpiryInterval(properties.getLong("sessionExpiryInterval"));
+            mqttClientConfig.setMaximumPacketSize(properties.getLong("maximumPacketSize"));
+            mqttClientConfig.setReceiveMaximum(properties.getInteger("receiveMaximum", 65535));
+            mqttClientConfig.setTopicAliasMaximum(properties.getInteger("topicAliasMaximum", 0));
+            mqttClientConfig.setRequestProblemInfo(properties.getBoolean("requestProblemInfo", true));
+            mqttClientConfig.setRequestResponseInfo(properties.getBoolean("requestResponseInfo", false));
+        } else {
+            mqttClientConfig.setCleanSession(properties.getBoolean("cleanSession", true));
+        }
+        return mqttClientConfig;
+    }
+
     @Override
     public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
@@ -103,15 +125,7 @@ public class MqttDriver extends AbstractDriver {
         String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return false;
         try {
-            MqttClientConfig mqttClientConfig = new MqttClientConfig();
-            mqttClientConfig.setHostUrl(properties.getString("url"));
-            mqttClientConfig.setUsername(properties.getString("username"));
-            mqttClientConfig.setPassword(properties.getString("password", ""));
-            mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
-            mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
-            mqttClientConfig.setAutoReconnect(properties.getBoolean("autoReconnect", true));
-            mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
-            mqttClientConfig.setMqttVersion(properties.getInteger("version", 3));
+            MqttClientConfig mqttClientConfig = this.createMqttClientConfig(properties);
             MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);
             IMqttClient mqttClient = mqttClientFactory.create();
             return mqttClient.isConnected();
@@ -143,10 +157,32 @@ public class MqttDriver extends AbstractDriver {
 
         Integer qos = properties.getInteger("qos", 0);
         Boolean retained = properties.getBoolean("retained", false);
-        Map<String, String> userProperties = properties.getMap("userProperties");
+        Integer version = properties.getInteger("version", 3);
 
         // 发布消息
-        mqttTemplate.publish(topic, payload.getBytes(StandardCharsets.UTF_8), qos, retained, userProperties);
+        MqttMessageEntity mqttMessage = new MqttMessageEntity();
+        mqttMessage.setTopic(topic);
+        mqttMessage.setQos(qos);
+        mqttMessage.setRetain(retained);
+
+        if (version == 5) {
+            mqttMessage.setPayloadFormat(properties.getBoolean("payloadFormat", false));
+            mqttMessage.setContentType(properties.getString("contentType"));
+            mqttMessage.setMessageExpiryInterval(properties.getLong("messageExpiryInterval"));
+            mqttMessage.setTopicAlias(properties.getInteger("topicAlias"));
+            mqttMessage.setResponseTopic(properties.getString("responseTopic"));
+            mqttMessage.setCorrelationData(properties.getString("correlationData"));
+            mqttMessage.setUserProperties(properties.getMap("userProperties"));
+            List<Integer> subscriptionIdentifiers = new ArrayList<>();
+            Integer subscriptionIdentifier = properties.getInteger("subscriptionIdentifier");
+            if(subscriptionIdentifier!=null) subscriptionIdentifiers.add(subscriptionIdentifier);
+            mqttMessage.setSubscriptionIdentifiers(subscriptionIdentifiers);
+            mqttMessage.setPayload(payload.getBytes(StandardCharsets.UTF_8));
+        } else {
+            mqttMessage.setPayload(payload.getBytes(StandardCharsets.UTF_8));
+        }
+
+        mqttTemplate.publish(mqttMessage);
 
         return payload;
     }

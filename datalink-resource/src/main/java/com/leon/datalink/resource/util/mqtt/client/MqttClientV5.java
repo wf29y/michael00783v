@@ -4,6 +4,8 @@ import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.core.utils.SSLUtils;
 import com.leon.datalink.resource.util.mqtt.MqttClientConfig;
 import com.leon.datalink.resource.util.mqtt.MqttClientFactory;
+import com.leon.datalink.resource.util.mqtt.entity.MqttMessageEntity;
+import com.leon.datalink.resource.util.mqtt.entity.MqttSubParam;
 import org.eclipse.paho.mqttv5.client.*;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttException;
@@ -13,10 +15,10 @@ import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.eclipse.paho.mqttv5.common.packet.UserProperty;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class MqttClientV5 implements IMqttClient {
+public class MqttClientV5 implements IMqttClient{
 
     private MqttClient mqttClient;
 
@@ -34,6 +36,13 @@ public class MqttClientV5 implements IMqttClient {
         options.setConnectionTimeout(mqttClientConfig.getConnectionTimeout());
         // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
         options.setKeepAliveInterval(mqttClientConfig.getKeepAliveInterval());
+        options.setCleanStart(mqttClientConfig.getCleanStart());
+        options.setSessionExpiryInterval(mqttClientConfig.getSessionExpiryInterval());
+        options.setMaximumPacketSize(mqttClientConfig.getMaximumPacketSize());
+        options.setReceiveMaximum(mqttClientConfig.getReceiveMaximum());
+        options.setTopicAliasMaximum(mqttClientConfig.getTopicAliasMaximum());
+        options.setRequestProblemInfo(mqttClientConfig.getRequestProblemInfo());
+        options.setRequestResponseInfo(mqttClientConfig.getRequestResponseInfo());
         // 是否开启ssl
         if (mqttClientConfig.getSsl()) {
             InputStream resourceAsStream = MqttClientFactory.class.getClassLoader().getResourceAsStream(EnvUtil.getCaCrtFile());
@@ -44,30 +53,41 @@ public class MqttClientV5 implements IMqttClient {
     }
 
     @Override
-    public void publish(String topic, byte[] payload, int qosLevel, boolean isRetain, Map<String, String> userProperties) throws Exception {
-        MqttMessage mqttMessage = new MqttMessage();
-        mqttMessage.setPayload(payload);
-        mqttMessage.setQos(qosLevel);
-        mqttMessage.setRetained(isRetain);
+    public void publish(MqttMessageEntity message) throws Exception {
+        MqttProperties mqttProperties = new MqttProperties();
+        mqttProperties.setPayloadFormat(message.getPayloadFormat());
+        mqttProperties.setContentType(message.getContentType());
+        mqttProperties.setMessageExpiryInterval(message.getMessageExpiryInterval());
+        mqttProperties.setTopicAlias(message.getTopicAlias());
+        mqttProperties.setResponseTopic(message.getResponseTopic());
+        mqttProperties.setCorrelationData(message.getCorrelationData().getBytes(StandardCharsets.UTF_8));
+        mqttProperties.setSubscriptionIdentifiers(message.getSubscriptionIdentifiers());
 
+        Map<String, String> userProperties = message.getUserProperties();
         if (null != userProperties && userProperties.size() > 0) {
             List<UserProperty> userPropertieList = new ArrayList<>();
             userProperties.forEach((key, value) -> userPropertieList.add(new UserProperty(key, value)));
-            MqttProperties mqttProperties = new MqttProperties();
             mqttProperties.setUserProperties(userPropertieList);
-            mqttMessage.setProperties(mqttProperties);
         }
 
-        mqttClient.publish(topic, mqttMessage);
+        MqttMessage mqttMessage = new MqttMessage();
+        mqttMessage.setPayload(message.getPayload());
+        mqttMessage.setQos(message.getQos());
+        mqttMessage.setRetained(message.getRetain());
+        mqttMessage.setProperties(mqttProperties);
+
+        mqttClient.publish(message.getTopic(), mqttMessage);
     }
+
     @Override
     public void subscribe(MqttSubParam[] subParams) throws Exception {
         MqttSubscription[] mqttSubscriptions = Arrays.stream(subParams)
                 .map(subParam -> {
                     MqttSubscription mqttSubscription = new MqttSubscription(subParam.getTopic(), subParam.getQos());
-                    mqttSubscription.setNoLocal(subParam.isNoLocal());
-                    mqttSubscription.setRetainAsPublished(subParam.isRetainAsPublished());
+                    mqttSubscription.setNoLocal(subParam.getNoLocal());
+                    mqttSubscription.setRetainAsPublished(subParam.getRetainAsPublished());
                     mqttSubscription.setRetainHandling(subParam.getRetainHandling());
+                    //缺少 订阅时指定订阅标识符 paho不支持
                     return mqttSubscription;
                 }).toArray(MqttSubscription[]::new);
         mqttClient.subscribe(mqttSubscriptions);
@@ -103,9 +123,27 @@ public class MqttClientV5 implements IMqttClient {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
+                MqttProperties properties = message.getProperties();
+
+                MqttMessageEntity mqttMessageEntity = new MqttMessageEntity();
+                mqttMessageEntity.setTopic(topic);
+                mqttMessageEntity.setQos(message.getQos());
+                mqttMessageEntity.setPayload(message.getPayload());
+                mqttMessageEntity.setRetain(message.isRetained());
+                mqttMessageEntity.setContentType(properties.getContentType());
+                mqttMessageEntity.setSubscriptionIdentifiers(properties.getSubscriptionIdentifiers());
+                mqttMessageEntity.setResponseTopic(properties.getResponseTopic());
+
+                byte[] correlationData = properties.getCorrelationData();
+                if (null != correlationData) {
+                    mqttMessageEntity.setCorrelationData(new String(correlationData, StandardCharsets.UTF_8));
+                }
+
                 HashMap<String, String> userProperties = new HashMap<>();
-                message.getProperties().getUserProperties().forEach(userProperty -> userProperties.put(userProperty.getKey(), userProperty.getValue()));
-                mqttCallback.messageArrived(topic, message.getPayload(), message.getQos(), message.isRetained(), userProperties);
+                properties.getUserProperties().forEach(userProperty -> userProperties.put(userProperty.getKey(), userProperty.getValue()));
+                mqttMessageEntity.setUserProperties(userProperties);
+
+                mqttCallback.messageArrived(mqttMessageEntity);
             }
 
             @Override

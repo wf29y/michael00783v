@@ -17,7 +17,23 @@ public class MqttClientConfig {
 
     private Boolean autoReconnect;
 
-    private int mqttVersion;
+    private Integer mqttVersion;
+
+    private Boolean cleanSession;
+
+    private Boolean cleanStart;
+
+    private Long sessionExpiryInterval; // 会话过期时间
+
+    private Long maximumPacketSize; // 最大数据包大小
+
+    private Integer receiveMaximum; // 接收最大数值
+
+    private Integer topicAliasMaximum; // 主题别名最大值
+
+    private Boolean requestProblemInfo; // 请求失败信息
+
+    private Boolean requestResponseInfo; // 请求响应信息
 
     public MqttClientConfig() {
     }
@@ -83,11 +99,75 @@ public class MqttClientConfig {
         this.ssl = ssl;
     }
 
-    public int getMqttVersion() {
+    public Integer getMqttVersion() {
         return mqttVersion;
     }
 
-    public void setMqttVersion(int mqttVersion) {
+    public void setMqttVersion(Integer mqttVersion) {
         this.mqttVersion = mqttVersion;
+    }
+
+    public Boolean getCleanSession() {
+        return cleanSession;
+    }
+
+    public void setCleanSession(Boolean cleanSession) {
+        this.cleanSession = cleanSession;
+    }
+
+    public Boolean getCleanStart() {
+        return cleanStart;
+    }
+
+    public void setCleanStart(Boolean cleanStart) {
+        this.cleanStart = cleanStart;
+    }
+
+    public Long getSessionExpiryInterval() {
+        return sessionExpiryInterval;
+    }
+
+    public void setSessionExpiryInterval(Long sessionExpiryInterval) {
+        this.sessionExpiryInterval = sessionExpiryInterval;
+    }
+
+    public Long getMaximumPacketSize() {
+        return maximumPacketSize;
+    }
+
+    public void setMaximumPacketSize(Long maximumPacketSize) {
+        this.maximumPacketSize = maximumPacketSize;
+    }
+
+    public Integer getReceiveMaximum() {
+        return receiveMaximum;
+    }
+
+    public void setReceiveMaximum(Integer receiveMaximum) {
+        this.receiveMaximum = receiveMaximum;
+    }
+
+    public Integer getTopicAliasMaximum() {
+        return topicAliasMaximum;
+    }
+
+    public void setTopicAliasMaximum(Integer topicAliasMaximum) {
+        this.topicAliasMaximum = topicAliasMaximum;
+    }
+
+    public Boolean getRequestProblemInfo() {
+        return requestProblemInfo;
+    }
+
+    public void setRequestProblemInfo(Boolean requestProblemInfo) {
+        this.requestProblemInfo = requestProblemInfo;
+    }
+
+    public Boolean getRequestResponseInfo() {
+        return requestResponseInfo;
+    }
+
+    public void setRequestResponseInfo(Boolean requestResponseInfo) {
+        this.requestResponseInfo = requestResponseInfo;
     }
 }

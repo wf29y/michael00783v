@@ -5,7 +5,7 @@
     :width='720'
     :visible='visible'
     :destroyOnClose='true'
-    :body-style="{ paddingBottom: '80px' }"
+    :body-style="{ paddingBottom: '60px' }"
     @close='onClose'
   >
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>

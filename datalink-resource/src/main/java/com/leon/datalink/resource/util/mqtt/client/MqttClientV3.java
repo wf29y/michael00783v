@@ -4,11 +4,12 @@ import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.core.utils.SSLUtils;
 import com.leon.datalink.resource.util.mqtt.MqttClientConfig;
 import com.leon.datalink.resource.util.mqtt.MqttClientFactory;
+import com.leon.datalink.resource.util.mqtt.entity.MqttMessageEntity;
+import com.leon.datalink.resource.util.mqtt.entity.MqttSubParam;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.InputStream;
-import java.util.Map;
 import java.util.UUID;
 
 public class MqttClientV3 implements IMqttClient {
@@ -22,7 +23,7 @@ public class MqttClientV3 implements IMqttClient {
         // mqtt版本
         options.setMqttVersion(mqttClientConfig.getMqttVersion());
         // 如果想要断线这段时间的数据，要设置成false，并且重连后不用再次订阅，否则不会得到断线时间的数据
-        options.setCleanSession(true);
+        options.setCleanSession(mqttClientConfig.getCleanSession());
         // 增加 actualInFlight 的值
         options.setMaxInflight(1000);
         // 自动重连
@@ -45,8 +46,8 @@ public class MqttClientV3 implements IMqttClient {
     }
 
     @Override
-    public void publish(String topic, byte[] payload, int qosLevel, boolean isRetain, Map<String, String> userProperties) throws Exception {
-        mqttClient.publish(topic, payload, qosLevel, isRetain);
+    public void publish(MqttMessageEntity message) throws Exception {
+        mqttClient.publish(message.getTopic(), message.getPayload(), message.getQos(), message.getRetain());
     }
 
     @Override
@@ -85,7 +86,13 @@ public class MqttClientV3 implements IMqttClient {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                mqttCallback.messageArrived(topic, message.getPayload(), message.getQos(), message.isRetained(), null);
+                MqttMessageEntity mqttMessageEntity = new MqttMessageEntity();
+                mqttMessageEntity.setTopic(topic);
+                mqttMessageEntity.setQos(message.getQos());
+                mqttMessageEntity.setPayload(message.getPayload());
+                mqttMessageEntity.setRetain(message.isRetained());
+
+                mqttCallback.messageArrived(mqttMessageEntity);
             }
 
             @Override

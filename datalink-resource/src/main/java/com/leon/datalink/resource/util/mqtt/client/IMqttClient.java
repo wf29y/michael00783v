@@ -1,14 +1,14 @@
 package com.leon.datalink.resource.util.mqtt.client;
 
 import com.leon.datalink.resource.util.mqtt.MqttClientConfig;
-
-import java.util.Map;
+import com.leon.datalink.resource.util.mqtt.entity.MqttMessageEntity;
+import com.leon.datalink.resource.util.mqtt.entity.MqttSubParam;
 
 public interface IMqttClient {
 
     void connect(MqttClientConfig mqttClientConfig) throws Exception;
 
-    void publish(String topic, byte[] payload, int qosLevel, boolean isRetain, Map<String, String> userProperties) throws Exception;
+    void publish(MqttMessageEntity message) throws Exception;
 
     void subscribe(MqttSubParam[] subParams) throws Exception;
 

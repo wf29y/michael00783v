@@ -51,6 +51,58 @@
           </a-select>
         </a-form-model-item>
       </a-col>
+      <a-col :span='12' v-if='properties.version!==5'>
+        <a-form-model-item label='Clean Session'>
+          <a-select v-model='properties.cleanSession'>
+            <a-select-option :value='true'>是</a-select-option>
+            <a-select-option :value='false'>否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='properties.version===5'>
+        <a-form-model-item label='Clean Start'>
+          <a-select v-model='properties.cleanStart'>
+            <a-select-option :value='true'>是</a-select-option>
+            <a-select-option :value='false'>否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='properties.version===5'>
+        <a-form-model-item label='会话过期时间(秒)'>
+          <a-input v-model='properties.sessionExpiryInterval' placeholder='请输入会话过期时间' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='properties.version===5'>
+        <a-form-model-item label='最大数据包大小'>
+          <a-input v-model='properties.maximumPacketSize' placeholder='请输入最大数据包大小' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='properties.version===5'>
+        <a-form-model-item label='接收最大数值'>
+          <a-input v-model='properties.receiveMaximum' placeholder='请输入接收最大数值' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='properties.version===5'>
+        <a-form-model-item label='主题别名最大值'>
+          <a-input v-model='properties.topicAliasMaximum' placeholder='请输入主题别名最大值' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='properties.version===5'>
+        <a-form-model-item label='请求失败信息'>
+          <a-select v-model='properties.requestProblemInfo'>
+            <a-select-option :value='true'>是</a-select-option>
+            <a-select-option :value='false'>否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if='properties.version===5'>
+        <a-form-model-item label='请求响应信息'>
+          <a-select v-model='properties.requestResponseInfo'>
+            <a-select-option :value='true'>是</a-select-option>
+            <a-select-option :value='false'>否</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
     </a-row>
   </a-form-model>
 
@@ -68,11 +120,15 @@ export default {
         connectionTimeout: 10,
         keepAliveInterval: 30,
         autoReconnect: true,
+        cleanSession: true,
+        cleanStart: true,
+        receiveMaximum: 65535,
+        topicAliasMaximum: 0,
+        requestProblemInfo: true,
+        requestResponseInfo: false
       },
       rules: {
-        url: [{ required: true, message: '请输入URL', trigger: 'blur' }],
-        ssl: [{ required: true, message: '请选择是否启用SSL', trigger: 'change' }],
-        version: [{ required: true, message: '请选择MQTT版本', trigger: 'change' }],
+        url: [{ required: true, message: '请输入URL', trigger: 'blur' }]
       }
     }
   },
@@ -81,6 +137,17 @@ export default {
       this.properties = Object.assign({}, this.properties, properties)
     },
     get(callback) {
+      if (this.properties.version === 5) {
+        delete this.properties.cleanSession
+      } else {
+        delete this.properties.cleanStart
+        delete this.properties.sessionExpiryInterval
+        delete this.properties.maximumPacketSize
+        delete this.properties.receiveMaximum
+        delete this.properties.topicAliasMaximum
+        delete this.properties.requestProblemInfo
+        delete this.properties.requestResponseInfo
+      }
       let that = this
       this.$refs.propForm.validate(valid => {
         if (valid) {

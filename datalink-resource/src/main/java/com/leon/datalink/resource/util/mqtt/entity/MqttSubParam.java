@@ -1,26 +1,26 @@
-package com.leon.datalink.resource.util.mqtt.client;
+package com.leon.datalink.resource.util.mqtt.entity;
 
 public class MqttSubParam {
 
     private String topic;
 
-    private int qos;
+    private Integer qos;
 
-    private boolean noLocal;
+    private Boolean noLocal;
 
-    private boolean retainAsPublished;
+    private Boolean retainAsPublished;
 
-    private int retainHandling;
+    private Integer retainHandling;
 
     public MqttSubParam() {
     }
 
-    public MqttSubParam(String topic, int qos) {
+    public MqttSubParam(String topic, Integer qos) {
         this.topic = topic;
         this.qos = qos;
     }
 
-    public MqttSubParam(String topic, int qos, boolean noLocal, boolean retainAsPublished, int retainHandling) {
+    public MqttSubParam(String topic, Integer qos, Boolean noLocal, Boolean retainAsPublished, Integer retainHandling) {
         this.topic = topic;
         this.qos = qos;
         this.noLocal = noLocal;
@@ -36,36 +36,35 @@ public class MqttSubParam {
         this.topic = topic;
     }
 
-    public int getQos() {
+    public Integer getQos() {
         return qos;
     }
 
-    public void setQos(int qos) {
+    public void setQos(Integer qos) {
         this.qos = qos;
     }
 
-    public boolean isNoLocal() {
+    public Boolean getNoLocal() {
         return noLocal;
     }
 
-    public void setNoLocal(boolean noLocal) {
+    public void setNoLocal(Boolean noLocal) {
         this.noLocal = noLocal;
     }
 
-    public boolean isRetainAsPublished() {
+    public Boolean getRetainAsPublished() {
         return retainAsPublished;
     }
 
-    public void setRetainAsPublished(boolean retainAsPublished) {
+    public void setRetainAsPublished(Boolean retainAsPublished) {
         this.retainAsPublished = retainAsPublished;
     }
 
-    public int getRetainHandling() {
+    public Integer getRetainHandling() {
         return retainHandling;
     }
 
-    public void setRetainHandling(int retainHandling) {
+    public void setRetainHandling(Integer retainHandling) {
         this.retainHandling = retainHandling;
     }
-
 }
