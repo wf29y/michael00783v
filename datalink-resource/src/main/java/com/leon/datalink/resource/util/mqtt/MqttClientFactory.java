@@ -1,13 +1,15 @@
 package com.leon.datalink.resource.util.mqtt;
 
+import com.leon.datalink.core.evn.EnvUtil;
+import com.leon.datalink.core.utils.SSLUtils;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.io.InputStream;
 import java.util.UUID;
 
 public class MqttClientFactory extends BasePooledObjectFactory<MqttClient> {
@@ -19,7 +21,7 @@ public class MqttClientFactory extends BasePooledObjectFactory<MqttClient> {
     }
 
     @Override
-    public MqttClient create() throws MqttException {
+    public MqttClient create() throws Exception {
         MqttClient mqttClient = new MqttClient(mqttClientConfig.getHostUrl(), UUID.randomUUID().toString(), new MemoryPersistence());
         MqttConnectOptions options = new MqttConnectOptions();
         // 如果想要断线这段时间的数据，要设置成false，并且重连后不用再次订阅，否则不会得到断线时间的数据
@@ -36,6 +38,11 @@ public class MqttClientFactory extends BasePooledObjectFactory<MqttClient> {
         options.setConnectionTimeout(mqttClientConfig.getConnectionTimeout());
         // 设置会话心跳时间 单位为秒
         options.setKeepAliveInterval(mqttClientConfig.getKeepAliveInterval());
+        // 是否开启ssl
+        if (mqttClientConfig.getSsl()) {
+            InputStream resourceAsStream = MqttClientFactory.class.getClassLoader().getResourceAsStream(EnvUtil.getCaCrtFile());
+            options.setSocketFactory(SSLUtils.getSocketFactory(resourceAsStream));
+        }
         // 连接服务器
         mqttClient.connect(options);
         return mqttClient;

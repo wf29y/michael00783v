@@ -1,8 +1,10 @@
 package com.leon.datalink.resource.driver;
 
 import cn.hutool.core.exceptions.ValidateException;
+import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
+import com.leon.datalink.core.utils.SSLUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.resource.AbstractDriver;
 import com.leon.datalink.resource.constans.DriverModeEnum;
@@ -15,6 +17,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.util.StringUtils;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +41,7 @@ public class MqttDriver extends AbstractDriver {
         mqttClientConfig.setPassword(properties.getString("password", ""));
         mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
         mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
+        mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
         MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
@@ -104,9 +108,13 @@ public class MqttDriver extends AbstractDriver {
             options.setPassword((properties.getString("password", "")).toCharArray());
             options.setConnectionTimeout(10);
             options.setKeepAliveInterval(30);
+            if (properties.getBoolean("ssl", false)) {
+                InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(EnvUtil.getCaCrtFile());
+                options.setSocketFactory(SSLUtils.getSocketFactory(resourceAsStream));
+            }
             mqttClient.connect(options);
             return true;
-        } catch (MqttException e) {
+        } catch (Exception e) {
             Loggers.DRIVER.error("mqtt driver test {}", e.getMessage());
             return false;
         }

@@ -96,6 +96,7 @@
         <paho.version>1.2.5</paho.version>
         <beetl.version>3.6.1.RELEASE</beetl.version>
         <jedis.version>3.1.0</jedis.version>
+        <bcpkix.version>1.70</bcpkix.version>
         <reflections.version>0.9.10</reflections.version>
         <reactor-ql.version>1.0.14</reactor-ql.version>
         <protostuff.version>1.8.0</protostuff.version>
@@ -616,6 +617,11 @@
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
                 <version>${jedis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>${bcpkix.version}</version>
             </dependency>
 
         </dependencies>

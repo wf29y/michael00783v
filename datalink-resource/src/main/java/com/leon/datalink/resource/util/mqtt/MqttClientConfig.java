@@ -13,6 +13,8 @@ public class MqttClientConfig {
 
     private Integer keepAliveInterval;
 
+    private Boolean ssl;
+
     public MqttClientConfig() {
     }
 
@@ -59,5 +61,13 @@ public class MqttClientConfig {
     public MqttClientConfig setKeepAliveInterval(Integer keepAliveInterval) {
         this.keepAliveInterval = keepAliveInterval;
         return this;
+    }
+
+    public Boolean getSsl() {
+        return ssl;
+    }
+
+    public void setSsl(Boolean ssl) {
+        this.ssl = ssl;
     }
 }

@@ -29,6 +29,8 @@ public class EnvUtil {
 
     private static final String RUNTIME_RECORD_LIMIT = "datalink.rule.runtime.record.limit";
 
+    private static final String CA_CRT_FILE = "cert/datalink.crt";
+
     private static String clusterMemberList;
 
     private static Integer clusterInstancesMax;
@@ -141,6 +143,10 @@ public class EnvUtil {
             runtimeRecordLimit = environment.getProperty(RUNTIME_RECORD_LIMIT, Integer.class);
         }
         return runtimeRecordLimit;
+    }
+
+    public static String getCaCrtFile() {
+        return CA_CRT_FILE;
     }
 
 }
