@@ -1,7 +1,11 @@
 package com.leon.datalink.core.utils;
 
+import java.lang.management.ManagementFactory;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+
 public class SnowflakeIdWorker {
-	private static final SnowflakeIdWorker idWorker = new SnowflakeIdWorker(0, 0);
+
     /**
      * 开始时间截 (2017-01-01)
      */
@@ -52,15 +56,17 @@ public class SnowflakeIdWorker {
      */
     private final long sequenceMask = ~(-1L << sequenceBits);
 
-    /**
-     * 工作机器ID(0~31)
-     */
-    private long workerId;
 
     /**
      * 数据中心ID(0~31)
      */
-    private long datacenterId;
+    private static final long datacenterId = createDatacenterId();
+
+    /**
+     * 工作机器ID(0~31)
+     */
+    private static final long workerId = createWorkerId();
+
 
     /**
      * 毫秒内序列(0~4095)
@@ -73,23 +79,52 @@ public class SnowflakeIdWorker {
     private long lastTimestamp = -1L;
 
 
+    private static final SnowflakeIdWorker idWorker = new SnowflakeIdWorker();
+
     /**
-     * 构造函数
-     *
-     * @param workerId     工作ID (0~31)
-     * @param datacenterId 数据中心ID (0~31)
+     * <p>
+     * 获取 maxWorkerId
+     * </p>
      */
-    private SnowflakeIdWorker(long workerId, long datacenterId) {
-        if (workerId > maxWorkerId || workerId < 0) {
-            throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+    protected static long createWorkerId() {
+        StringBuilder mpid = new StringBuilder();
+        mpid.append(datacenterId);
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        if (!name.isEmpty()) {
+            mpid.append(name.split("@")[0]);
         }
-        if (datacenterId > maxDatacenterId || datacenterId < 0) {
-            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
-        }
-        this.workerId = workerId;
-        this.datacenterId = datacenterId;
+        return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
     }
 
+    /**
+     * <p>
+     * 数据标识id部分
+     * </p>
+     */
+    protected static long createDatacenterId() {
+        long id = 0L;
+        try {
+            InetAddress ip = InetAddress.getLocalHost();
+            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+            if (network == null) {
+                id = 1L;
+            } else {
+                byte[] mac = network.getHardwareAddress();
+                id = ((0x000000FF & (long) mac[mac.length - 1])
+                        | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+                id = id % (maxDatacenterId + 1);
+            }
+        } catch (Exception e) {
+            Loggers.CORE.error(" getDatacenterId: {}", e.getMessage());
+        }
+        return id;
+    }
+
+    /**
+     * 构造函数
+     */
+    private SnowflakeIdWorker() {
+    }
 
     /**
      * 获得下一个ID (该方法是线程安全的)
@@ -151,27 +186,16 @@ public class SnowflakeIdWorker {
     protected long timeGen() {
         return System.currentTimeMillis();
     }
-    
+
     public static String getId() {
-    	return String.valueOf(idWorker.nextId());
+        return String.valueOf(idWorker.nextId());
     }
 
-    public static void main(String[] args) {
-		System.out.println(SnowflakeIdWorker.getId());
-	}
-    /**
-     * 测试
-     */
-//    public static void main(String[] args) throws ParseException {
-//        SnowflakeIdWorker idWorker = new SnowflakeIdWorker(1, 1);
-//        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, Integer.MAX_VALUE, 5, TimeUnit.SECONDS, new SynchronousQueue<>());
-//        for (int i = 0; i < 10000; i++) {
-//            threadPoolExecutor.execute(() -> {
-//                long start = System.currentTimeMillis();
-//                long id = idWorker.nextId();
-//                System.out.println(System.currentTimeMillis() - start);
-//            });
-//        }
-//        threadPoolExecutor.shutdown();
-//    }
+    public static long getDatacenterId() {
+        return datacenterId;
+    }
+
+    public static long getWorkerId() {
+        return workerId;
+    }
 }

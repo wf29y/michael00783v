@@ -12,7 +12,7 @@ datalink是一个进行数据采集、转发、桥接的网关服务，南向支
 数据存储类：达梦DM8、KingbaseES、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis
 
 #### 支持处理方式
-JavaScript脚本、Java插件、SQL脚本、无处理透传
+JavaScript脚本、Groovy脚本、Java插件、SQL脚本、无处理透传
 
 
 ### 二、打包&安装
