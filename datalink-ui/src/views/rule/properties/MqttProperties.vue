@@ -51,6 +51,9 @@
           <monaco-editor ref='MonacoEditor' language='freemarker2'></monaco-editor>
         </a-form-model-item>
       </a-col>
+      <a-col :span='24' class='payload' v-if="type==='dest' && properties.version === 5">
+        <mqtt-user-properties-model ref='MqttUserPropertiesModel'></mqtt-user-properties-model>
+      </a-col>
     </a-form-model>
   </a-row>
 </template>
@@ -58,10 +61,10 @@
 <script>
 
 import MonacoEditor from '@/components/Editor/MonacoEditor'
-
+import MqttUserPropertiesModel from './model/MqttUserPropertiesModel'
 
 export default {
-  components: { MonacoEditor },
+  components: { MonacoEditor, MqttUserPropertiesModel },
   data() {
     return {
       properties: {},
@@ -102,12 +105,18 @@ export default {
       if (this.type === 'dest') {
         this.$nextTick(() => {
           this.$refs.MonacoEditor.set(this.properties.payload)
+          if (this.properties.version === 5) {
+            this.$refs.MqttUserPropertiesModel.set(this.properties.userProperties)
+          }
         })
       }
     },
     get(callback) {
       if (this.type === 'dest') {
         this.properties.payload = this.$refs.MonacoEditor.get()
+        if (this.properties.version === 5) {
+          this.properties.userProperties = this.$refs.MqttUserPropertiesModel.get()
+        }
       }
       let that = this
       this.$refs.propForm.validate(valid => {

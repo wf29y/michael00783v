@@ -1,5 +1,6 @@
 package com.leon.datalink.resource.util.mqtt.client;
 
+import com.google.common.collect.Maps;
 import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.core.utils.SSLUtils;
 import com.leon.datalink.resource.util.mqtt.MqttClientConfig;
@@ -8,6 +9,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.UUID;
 
 public class MqttClientV3 implements IMqttClient {
@@ -44,7 +46,7 @@ public class MqttClientV3 implements IMqttClient {
     }
 
     @Override
-    public void publish(String topic, byte[] payload, int qosLevel, boolean isRetain) throws Exception {
+    public void publish(String topic, byte[] payload, int qosLevel, boolean isRetain, Map<String, String> userProperties) throws Exception {
         mqttClient.publish(topic, payload, qosLevel, isRetain);
     }
 
@@ -83,7 +85,7 @@ public class MqttClientV3 implements IMqttClient {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                mqttCallback.messageArrived(topic, message.getPayload(), message.getQos(), message.isRetained());
+                mqttCallback.messageArrived(topic, message.getPayload(), message.getQos(), message.isRetained(), null);
             }
 
             @Override

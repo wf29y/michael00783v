@@ -51,12 +51,13 @@ public class MqttDriver extends AbstractDriver {
                 }
 
                 @Override
-                public void messageArrived(String topic, byte[] payload, int qos, boolean retained) {
+                public void messageArrived(String topic, byte[] payload, int qos, boolean retained, Map<String, String> userProperties) {
                     Map<String, Object> data = new HashMap<>();
                     data.put("topic", topic);
                     data.put("qos", qos);
                     data.put("retained", retained);
                     data.put("payload", new String(payload, StandardCharsets.UTF_8));
+                    if (userProperties != null) data.put("userProperties", userProperties);
                     produceData(data);
                 }
             });
@@ -132,12 +133,12 @@ public class MqttDriver extends AbstractDriver {
         String render = this.templateAnalysis(topic, variable);
         if (!StringUtils.isEmpty(render)) topic = render;
 
-
         Integer qos = properties.getInteger("qos", 0);
         Boolean retained = properties.getBoolean("retained", false);
+        Map<String, String> userProperties = properties.getMap("userProperties");
 
         // 发布消息
-        mqttTemplate.publish(topic, payload.getBytes(StandardCharsets.UTF_8), qos, retained);
+        mqttTemplate.publish(topic, payload.getBytes(StandardCharsets.UTF_8), qos, retained, userProperties);
 
         return payload;
     }

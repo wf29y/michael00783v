@@ -9,9 +9,10 @@ import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.eclipse.paho.mqttv5.common.packet.UserProperty;
 
 import java.io.InputStream;
-import java.util.UUID;
+import java.util.*;
 
 public class MqttClientV5 implements IMqttClient {
 
@@ -41,8 +42,21 @@ public class MqttClientV5 implements IMqttClient {
     }
 
     @Override
-    public void publish(String topic, byte[] payload, int qosLevel, boolean isRetain) throws Exception {
-        mqttClient.publish(topic, payload, qosLevel, isRetain);
+    public void publish(String topic, byte[] payload, int qosLevel, boolean isRetain, Map<String, String> userProperties) throws Exception {
+        MqttMessage mqttMessage = new MqttMessage();
+        mqttMessage.setPayload(payload);
+        mqttMessage.setQos(qosLevel);
+        mqttMessage.setRetained(isRetain);
+
+        if (null != userProperties && userProperties.size() > 0) {
+            List<UserProperty> userPropertieList = new ArrayList<>();
+            userProperties.forEach((key, value) -> userPropertieList.add(new UserProperty(key, value)));
+            MqttProperties mqttProperties = new MqttProperties();
+            mqttProperties.setUserProperties(userPropertieList);
+            mqttMessage.setProperties(mqttProperties);
+        }
+
+        mqttClient.publish(topic, mqttMessage);
     }
 
     @Override
@@ -85,7 +99,9 @@ public class MqttClientV5 implements IMqttClient {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                mqttCallback.messageArrived(topic, message.getPayload(), message.getQos(), message.isRetained());
+                HashMap<String, String> userProperties = new HashMap<>();
+                message.getProperties().getUserProperties().forEach(userProperty -> userProperties.put(userProperty.getKey(), userProperty.getValue()));
+                mqttCallback.messageArrived(topic, message.getPayload(), message.getQos(), message.isRetained(), userProperties);
             }
 
             @Override
