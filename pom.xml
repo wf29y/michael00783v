@@ -65,6 +65,7 @@
         <activemq-core.version>5.7.0</activemq-core.version>
         <pulsar-client.version>2.10.2</pulsar-client.version>
         <plc4j.version>0.10.0</plc4j.version>
+        <milo.version>0.6.10</milo.version>
         <californium.version>3.7.0</californium.version>
         <utgard-external.version>1.2.25</utgard-external.version>
         <utgard-core.version>2.1.8</utgard-core.version>
@@ -407,9 +408,9 @@
                 <version>${plc4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.plc4x</groupId>
-                <artifactId>plc4j-driver-opcua</artifactId>
-                <version>${plc4j.version}</version>
+                <groupId>org.eclipse.milo</groupId>
+                <artifactId>sdk-client</artifactId>
+                <version>${milo.version}</version>
             </dependency>
 
             <!-- Logging libs -->

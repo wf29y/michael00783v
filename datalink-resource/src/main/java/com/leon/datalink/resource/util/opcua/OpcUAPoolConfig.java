@@ -1,11 +1,11 @@
-package com.leon.datalink.resource.util.mqtt;
+package com.leon.datalink.resource.util.opcua;
 
-import com.leon.datalink.resource.util.mqtt.client.IMqttClient;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 
-public class MqttPoolConfig extends GenericObjectPoolConfig<IMqttClient> {
+public class OpcUAPoolConfig extends GenericObjectPoolConfig<OpcUaClient> {
 
-    public MqttPoolConfig() {
+    public OpcUAPoolConfig() {
         this.setMinEvictableIdleTimeMillis(60000L);
         this.setTimeBetweenEvictionRunsMillis(30000L);
         this.setNumTestsPerEvictionRun(-1);

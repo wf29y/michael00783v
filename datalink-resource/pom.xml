@@ -48,8 +48,8 @@
             <artifactId>plc4j-driver-modbus</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.plc4x</groupId>
-            <artifactId>plc4j-driver-opcua</artifactId>
+            <groupId>org.eclipse.milo</groupId>
+            <artifactId>sdk-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>

@@ -16,6 +16,14 @@
           <easy-cron v-model='properties.cronExpression'></easy-cron>
         </a-form-model-item>
       </a-col>
+      <a-col :span='24' v-if='type==="source"'>
+        <a-form-model-item label='传输方式' prop='transferType'>
+          <a-select v-model='properties.transferType' placeholder='请选择传输方式'>
+            <a-select-option value='single'>每个点位逐条传输</a-select-option>
+            <a-select-option value='pack'>所有点位打包传输</a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-col>
     </a-form-model>
   </a-row>
 </template>
@@ -31,13 +39,15 @@ export default {
       properties: {
         points: [],
         initialDelayUnit: 'SECONDS',
-        cronExpression: '0 0/1 * * * ? *'
+        cronExpression: '0 0/1 * * * ? *',
+        transferType: 'single'
       },
       timeUnitList: timeUnitList,
       rules: {
         initialDelay: [{ required: true, message: '请输入启动延迟', trigger: 'blur' }],
         initialDelayUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }],
-        cronExpression: [{ required: true, message: '请输入Cron表达式', trigger: 'blur' }]
+        cronExpression: [{ required: true, message: '请输入Cron表达式', trigger: 'blur' }],
+        transferType: [{ required: true, message: '请选择传输方式', trigger: 'change' }],
       }
     }
   },
@@ -60,7 +70,7 @@ export default {
           return callback(false)
         }
       })
-    },
+    }
   }
 }
 </script>
