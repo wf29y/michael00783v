@@ -45,7 +45,7 @@
             <a-divider type='vertical' />
             <a @click='handlePermission(record)' :disabled='record.system'>权限</a>
             <a-divider type='vertical' />
-            <a-popconfirm v-if='dataSource.length' title='删除此脚本?' @confirm='() => handleDelete(record)'>
+            <a-popconfirm v-if='dataSource.length' title='删除此用户?' @confirm='() => handleDelete(record)'>
               <a href='javascript:;' :disabled='record.system'>删除</a>
             </a-popconfirm>
           </template>

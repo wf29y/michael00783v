@@ -25,7 +25,7 @@
       </a-col>
       <a-col :span='12' v-if='type==="source"'>
         <a-form-model-item label='Cron表达式' prop='cronExpression'>
-          <a-input v-model='properties.cronExpression' placeholder='请输入Cron表达式' />
+          <easy-cron v-model='properties.cronExpression'></easy-cron>
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='body'>
@@ -49,7 +49,8 @@ export default {
       properties: {
         method: 'GET',
         payload: '',
-        initialDelayUnit: 'SECONDS'
+        initialDelayUnit: 'SECONDS',
+        cronExpression: '0 0/1 * * * ? *'
       },
       methodList: ['GET', 'POST', 'PUT', 'DELETE', 'FETCH', 'PATCH', 'IPATCH'],
       timeUnitList: timeUnitList,

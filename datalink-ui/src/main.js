@@ -21,6 +21,8 @@ import './permission' // permission control
 import './utils/filter' // global filter
 import './global.less' // global style
 import { FormModel } from 'ant-design-vue';
+import EasyCron from '@/components/EasyCron'
+
 Vue.use(FormModel);
 
 Vue.config.productionTip = false
@@ -31,6 +33,7 @@ Vue.use(VueAxios)
 Vue.component('pro-layout', ProLayout)
 Vue.component('page-container', PageHeaderWrapper)
 Vue.component('page-header-wrapper', PageHeaderWrapper)
+Vue.component("EasyCron", EasyCron)
 
 window.umi_plugin_ant_themeVar = themePluginConfig.theme
 

@@ -235,7 +235,7 @@ export default {
     resetRuntime() {
       this.$confirm({
         title: '重置运行状态?',
-        content: '此操作将会清空运行统计数据、还原变量初始值',
+        content: '此操作将会清空运行统计数据',
         onOk: () => {
           getAction(this.url.reset, { ruleId: this.ruleId }).then(res => {
             if (res.code === 200) {

@@ -13,7 +13,7 @@
       </a-col>
       <a-col :span='12' v-if='type==="source"'>
         <a-form-model-item label='Cron表达式' prop='cronExpression'>
-          <a-input v-model='properties.cronExpression' placeholder='请输入Cron表达式' />
+          <easy-cron v-model='properties.cronExpression'></easy-cron>
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='sql'>
@@ -35,7 +35,8 @@ export default {
   data() {
     return {
       properties: {
-        initialDelayUnit: 'SECONDS'
+        initialDelayUnit: 'SECONDS',
+        cronExpression: '0 0/1 * * * ? *'
       },
       timeUnitList:timeUnitList,
       rules: {
