@@ -23,41 +23,41 @@
 
     <a-card :body-style='{minHeight:"500px"}' :bordered='false'>
 
-      <a-table
-        ref='table'
-        :columns='columns'
-        :data-source='dataSource'
-        rowKey='ruleId'
-        :pagination='false'
+      <a-list
+        :grid='{ gutter: 24, lg: 4, md: 2, sm: 1, xs: 1 }'
         :loading='loading'
+        :data-source='dataSource'
       >
-        <span slot='serial' slot-scope='text, item, index'>
-          {{ index + 1 }}
-        </span>
-
-        <span slot='ruleName' slot-scope='text, item, index'>
-          <a @click='handleRuntime(item)'>{{ text }}</a>
-        </span>
-
-        <span slot='sourceResourceName' slot-scope='text, item, index'>
-        {{ getResourceNameStr(item.sourceResourceList) }}
-        </span>
-
-        <span slot='destResourceName' slot-scope='text, item, index'>
-          {{ getResourceNameStr(item.destResourceList) }}
-        </span>
-
-        <span slot='enable' slot-scope='text, item, index'>
-           <a-switch :checked='text' @change='enableChange(item)' />
-        </span>
-
-        <span slot='action' slot-scope='text, item'>
-              <a @click='handleEdit(item)' :disabled='item.enable'>编辑</a>
-             <a-divider type='vertical' />
-                <a @click='handleDelete(item)'>删除</a>
-        </span>
-
-      </a-table>
+        <a-list-item slot='renderItem' slot-scope='item'>
+          <a-card>
+            <div slot='title' style='height: 23px'>{{ item.ruleName }}</div>
+            <a-tag slot='extra' color='green' v-show='item.enable'>运行中</a-tag>
+            <a-row>
+              <a-col :span='6'>
+                <div>数据源：</div>
+              </a-col>
+              <a-col :span='18'>
+                <div>{{ truncateString(getResourceNameStr(item.sourceResourceList), 20) }}</div>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span='6'>
+                <div>目的资源：</div>
+              </a-col>
+              <a-col :span='18'>
+                <div>{{ truncateString(getResourceNameStr(item.destResourceList), 20) }}</div>
+              </a-col>
+            </a-row>
+            <a slot='actions' @click='handleRuntime(item)'>详情</a>
+            <a slot='actions' @click='handleEdit(item)' v-if='!item.enable'>配置</a>
+            <a-popconfirm slot='actions' title='确定删除此规则?' @confirm='() => handleDelete(item)'>
+              <a href='javascript:;'>删除</a>
+            </a-popconfirm>
+            <a slot='actions' v-if='item.enable' @click='enableChange(item)'>停止</a>
+            <a slot='actions' v-else @click='enableChange(item)'>启动</a>
+          </a-card>
+        </a-list-item>
+      </a-list>
 
     </a-card>
   </page-header-wrapper>
@@ -65,6 +65,7 @@
 
 <script>
 import { postAction } from '@/api/manage'
+import { truncateString } from '@/utils/util'
 
 export default {
   name: 'RuleList',
@@ -72,38 +73,6 @@ export default {
   data() {
     return {
       loading: true,
-      columns: [
-        // {
-        //   title: '#',
-        //   scopedSlots: { customRender: 'serial' }
-        // },
-        {
-          title: '规则名称',
-          dataIndex: 'ruleName',
-          scopedSlots: { customRender: 'ruleName' }
-        },
-        {
-          title: '数据源',
-          dataIndex: 'sourceResourceName',
-          scopedSlots: { customRender: 'sourceResourceName' }
-        },
-        {
-          title: '目的资源',
-          dataIndex: 'destResourceName',
-          scopedSlots: { customRender: 'destResourceName' }
-        },
-        {
-          title: '启动',
-          dataIndex: 'enable',
-          scopedSlots: { customRender: 'enable' }
-        },
-        {
-          title: '操作',
-          dataIndex: 'action',
-          width: '150px',
-          scopedSlots: { customRender: 'action' }
-        }
-      ],
       dataSource: [],
       queryParam: {},
       url: {
@@ -114,6 +83,7 @@ export default {
         stop: '/api/rule/stop',
         runtime: '/api/rule/runtime'
       },
+      truncateString: truncateString
     }
   },
   mounted() {
@@ -127,7 +97,6 @@ export default {
       this.$router.push({ path: '/rule/info/' + record.ruleId })
     },
     handleRuntime(record) {
-      //this.$router.push({ name: 'ruleRuntime', params: { ruleId: record.ruleId } })
       this.$router.push({ path: '/rule/runtime/' + record.ruleId })
     },
     loadData() {

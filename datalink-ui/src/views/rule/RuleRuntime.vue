@@ -3,8 +3,8 @@
 
     <a-card :bordered='false' style='margin-bottom: 24px' :body-style='{padding:"17px 24px"}'>
       <a-row>
-        <a-col :span='12' style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);padding-top: 4px'>
-          {{ rule.ruleName }}
+        <a-col :span='12' style='padding-top: 4px'>
+          <span  style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);'>{{ rule.ruleName }}</span>
           <a-tag color='green' v-if='rule.enable' style='margin-left: 10px'>
             运行中
           </a-tag>
