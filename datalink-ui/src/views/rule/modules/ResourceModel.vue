@@ -48,6 +48,7 @@
       <pulsar-properties v-if="modal.resourceType === 'PULSAR'" ref='PropertiesModal' :type='resourceMode'></pulsar-properties>
       <d-m8-properties v-if="modal.resourceType === 'DM8'" ref='PropertiesModal' :type='resourceMode'></d-m8-properties>
       <kingbase-properties v-if="modal.resourceType === 'KINGBASE'" ref='PropertiesModal' :type='resourceMode'></kingbase-properties>
+      <file-properties v-if="modal.resourceType === 'FILE'" ref='PropertiesModal' :type='resourceMode'></file-properties>
     </a-form-model>
     <div
       :style="{
@@ -95,6 +96,7 @@ import ActiveMQProperties from '../properties/ActiveMQProperties'
 import PulsarProperties from '../properties/PulsarProperties'
 import DM8Properties from '../properties/DM8Properties'
 import KingbaseProperties from '../properties/KingbaseProperties'
+import FileProperties from '../properties/FileProperties'
 
 export default {
   name: 'ResourceModel',
@@ -122,7 +124,8 @@ export default {
     ActiveMQProperties,
     PulsarProperties,
     DM8Properties,
-    KingbaseProperties
+    KingbaseProperties,
+    FileProperties
   },
   data() {
     return {

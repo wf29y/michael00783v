@@ -3,14 +3,14 @@
     <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24'>
         <a-form-model-item label='Topic' prop='topic'>
-          <a-input v-model='properties.topic' placeholder='请输入Topic' >
-            <a-tooltip slot="suffix" title="可订阅单个或多个主题，订阅多主题时，请使用逗号分隔（,）" v-if="type==='source'">
-              <a-icon type="info-circle" style="color: rgba(92,92,92,0.45)" />
+          <a-input v-model='properties.topic' placeholder='请输入Topic'>
+            <a-tooltip slot='suffix' title='可订阅单个或多个主题，订阅多主题时，请使用逗号分隔（,）' v-if="type==='source'">
+              <a-icon type='info-circle' style='color: rgba(92,92,92,0.45)' />
             </a-tooltip>
           </a-input>
         </a-form-model-item>
       </a-col>
-      <a-col :span="12">
+      <a-col :span='12'>
         <a-form-model-item label='Qos' prop='qos'>
           <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%' />
         </a-form-model-item>
@@ -64,13 +64,17 @@ export default {
   components: { MonacoEditor },
   data() {
     return {
-      properties: {
+      properties: {},
+      sourceDefaultValue: {
+        qos: 0,
+        share: false
+      },
+      destDefaultValue: {
         qos: 0,
         maxTotal: 8,
         maxIdle: 8,
         minIdle: 4,
-        retained: false,
-        share: false
+        retained: false
       },
       rules: {
         topic: [{ required: true, message: '请输入Topic', trigger: 'blur' }],
@@ -88,6 +92,9 @@ export default {
       type: String,
       default: undefined
     }
+  },
+  mounted() {
+    this.properties = Object.assign({}, this.type === 'source' ? this.sourceDefaultValue : this.destDefaultValue)
   },
   methods: {
     set(properties) {

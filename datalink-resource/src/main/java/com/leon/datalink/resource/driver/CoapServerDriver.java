@@ -59,7 +59,6 @@ public class CoapServerDriver extends AbstractDriver {
                     }
                 }
                 result.put("response", response);
-                result.put("driver", properties);
                 produceData(result);
             }
         });

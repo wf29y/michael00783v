@@ -9,7 +9,7 @@ datalink是一个进行数据采集、转发、桥接的网关服务，南向支
 #### 支持数据连接
 通讯协议类：TCP、UDP、HTTP、CoAP、OPC UA、SNMP、Modbus TCP \
 消息通道类：MQTT、Kafka、RabbitMQ、RocketMQ、ActiveMQ、Pulsar \
-数据存储类：达梦DM8、KingbaseES、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis
+数据存储类：达梦DM8、KingbaseES、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis、File
 
 #### 支持处理方式
 JavaScript脚本、Groovy脚本、Java插件、SQL脚本、无处理透传

@@ -59,7 +59,6 @@ public class KafkaDriver extends AbstractDriver {
                         Map<String, Object> data = new HashMap<>();
                         data.put("topic", record.topic());
                         data.put("payload", record.value());
-                        data.put("driver", properties);
                         produceData(data);
                     }
                 }

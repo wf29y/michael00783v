@@ -117,7 +117,6 @@ public class HttpClientDriver extends AbstractDriver {
         result.put("url", url);
         result.put("param", param);
         result.put("response", response);
-        result.put("driver", properties);
         return result;
     }
 

@@ -45,7 +45,6 @@ public class HttpServerDriver extends AbstractDriver {
                     }
 
                     result.put("response", response);
-                    result.put("driver", properties);
                     this.produceData(result);
                 });
 

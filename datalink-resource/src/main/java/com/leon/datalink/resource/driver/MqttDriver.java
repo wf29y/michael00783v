@@ -58,7 +58,6 @@ public class MqttDriver extends AbstractDriver {
                     Map<String, Object> data = new HashMap<>();
                     data.put("topic", s);
                     data.put("payload", mqttMessage.toString());
-                    data.put("driver", properties);
                     produceData(data);
                 }
             });

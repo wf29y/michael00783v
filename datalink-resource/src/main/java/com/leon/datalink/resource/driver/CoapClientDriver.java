@@ -111,7 +111,6 @@ public class CoapClientDriver extends AbstractDriver {
         } else {
             result.put("response", response.getResponseText());
         }
-        result.put("driver", properties);
         return result;
     }
 

@@ -51,6 +51,7 @@
       <pulsar-properties v-if="modal.resourceType === 'PULSAR'" ref='PropertiesModal'></pulsar-properties>
       <d-m8-properties v-if="modal.resourceType === 'DM8'" ref='PropertiesModal'></d-m8-properties>
       <kingbase-properties v-if="modal.resourceType === 'KINGBASE'" ref='PropertiesModal'></kingbase-properties>
+      <file-properties v-if="modal.resourceType === 'FILE'" ref='PropertiesModal'></file-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -103,6 +104,7 @@ import ActiveMQProperties from '../properties/ActiveMQProperties'
 import PulsarProperties from '../properties/PulsarProperties'
 import DM8Properties from '../properties/DM8Properties'
 import KingbaseProperties from '../properties/KingbaseProperties'
+import FileProperties from '../properties/FileProperties'
 
 export default {
   name: 'ResourceModel',
@@ -130,7 +132,8 @@ export default {
     ActiveMQProperties,
     PulsarProperties,
     DM8Properties,
-    KingbaseProperties
+    KingbaseProperties,
+    FileProperties
   },
   data() {
     return {

@@ -388,7 +388,10 @@ const resourceConfigMap = {
     details: {
       resource: { name: '地址', value: (resource) => `coap://${resource.properties.ip}:${resource.properties.port}` },
       rule: [
-        { name: '请求路径', value: (resource) => `coap://${resource.properties.ip}:${resource.properties.port}/${resource.properties.path}` },
+        {
+          name: '请求路径',
+          value: (resource) => `coap://${resource.properties.ip}:${resource.properties.port}/${resource.properties.path}`
+        },
         { name: '请求方式', value: (resource) => `${resource.properties.method}` },
         {
           name: '启动延迟',
@@ -484,6 +487,25 @@ const resourceConfigMap = {
         }
       ]
     }
+  },
+  FILE: {
+    name: 'File',
+    type: 'all',
+    group: 'DATABASE',
+    details: {
+      resource: {
+        name: '文件位置',
+        value: (resource) => `${resource.properties.path}`
+      },
+      rule: [
+        {
+          name: '文件路径',
+          value: (resource) => `${resource.properties.path}${resource.properties.file}`
+        },
+        { name: '监听延迟', value: (resource) => resource.properties.delay ? `${resource.properties.delay}ms` : undefined },
+        { name: '内容模板', value: (resource) => resource.properties.content ? resource.properties.content : undefined }
+      ]
+    }
   }
 }
 
@@ -546,7 +568,7 @@ function getResourceDetails(resource, mode) {
   if (mode === 'resource') {
     return toResultItem(detail, resource)
   } else {
-    return detail.map((item) => toResultItem(item, resource))
+    return detail.map((item) => toResultItem(item, resource)).filter((item) => item.name && item.value)
   }
 }
 

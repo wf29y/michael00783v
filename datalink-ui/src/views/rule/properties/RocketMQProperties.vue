@@ -46,10 +46,14 @@ export default {
   components: { TagSelectOption, MonacoEditor },
   data() {
     return {
-      properties: {
-        timeout: this.type === 'dest' ? 10000 : undefined,
-        tags: this.type === 'dest' ? '' : '*',
-        model: this.type === 'dest' ? undefined : 'CLUSTERING'
+      properties: {},
+      sourceDefaultValue: {
+        tags: '*',
+        model:'CLUSTERING'
+      },
+      destDefaultValue: {
+        tags: '',
+        timeout: 10000
       },
       rules: {
         topic: [{ required: true, message: '请输入Topic', trigger: 'blur' }],
@@ -63,6 +67,9 @@ export default {
       type: String,
       default: undefined
     }
+  },
+  mounted() {
+    this.properties = Object.assign({}, this.type === 'source' ? this.sourceDefaultValue : this.destDefaultValue)
   },
   methods: {
     set(properties) {

@@ -26,6 +26,7 @@ public enum ResourceTypeEnum {
     UDP(UdpDriver.class, prop -> SourceModeEnum.LISTEN),
     HTTPSERVER(HttpServerDriver.class, prop -> SourceModeEnum.LISTEN),
     COAPSERVER(CoapServerDriver.class, prop -> SourceModeEnum.LISTEN),
+    FILE(FileDriver.class, prop -> SourceModeEnum.LISTEN),
 
     /**
      * 定时调度型

@@ -18,7 +18,7 @@ export default {
     },
     height: {
       type: String,
-      default: '200px'
+      default: '140px'
     },
     autoInit: {
       type: Boolean,
