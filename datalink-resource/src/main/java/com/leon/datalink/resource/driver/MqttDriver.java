@@ -16,6 +16,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +62,17 @@ public class MqttDriver extends AbstractDriver {
                     produceData(data);
                 }
             });
-            mqttClient.subscribe(properties.getString("topic"), properties.getInteger("qos", 0));
+            Integer qos = properties.getInteger("qos", 0);
+            String topic = properties.getString("topic");
+            boolean multiTopic = topic.contains(",");
+            if (multiTopic) {
+                String[] topicList = topic.split(",");
+                int[] qosList = new int[topicList.length];
+                Arrays.fill(qosList, qos);
+                mqttClient.subscribe(topicList, qosList);
+            } else {
+                mqttClient.subscribe(topic, qos);
+            }
         } else if (driverMode.equals(DriverModeEnum.DEST)) {
             MqttPoolConfig mqttPoolConfig = new MqttPoolConfig();
             mqttPoolConfig.setMaxTotal(properties.getInteger("maxTotal", 8));

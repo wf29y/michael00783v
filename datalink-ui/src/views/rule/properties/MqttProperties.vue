@@ -3,7 +3,11 @@
     <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24'>
         <a-form-model-item label='Topic' prop='topic'>
-          <a-input v-model='properties.topic' placeholder='请输入Topic' />
+          <a-input v-model='properties.topic' placeholder='请输入Topic' >
+            <a-tooltip slot="suffix" title="可订阅单个或多个主题，订阅多主题时，请使用逗号分隔（,）" v-if="type==='source'">
+              <a-icon type="info-circle" style="color: rgba(92,92,92,0.45)" />
+            </a-tooltip>
+          </a-input>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
