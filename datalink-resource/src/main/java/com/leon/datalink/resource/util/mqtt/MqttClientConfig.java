@@ -15,6 +15,8 @@ public class MqttClientConfig {
 
     private Boolean ssl;
 
+    private int mqttVersion;
+
     public MqttClientConfig() {
     }
 
@@ -69,5 +71,13 @@ public class MqttClientConfig {
 
     public void setSsl(Boolean ssl) {
         this.ssl = ssl;
+    }
+
+    public int getMqttVersion() {
+        return mqttVersion;
+    }
+
+    public void setMqttVersion(int mqttVersion) {
+        this.mqttVersion = mqttVersion;
     }
 }

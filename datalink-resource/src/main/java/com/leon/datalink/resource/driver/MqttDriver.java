@@ -1,23 +1,19 @@
 package com.leon.datalink.resource.driver;
 
 import cn.hutool.core.exceptions.ValidateException;
-import com.leon.datalink.core.evn.EnvUtil;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
-import com.leon.datalink.core.utils.SSLUtils;
-import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.resource.AbstractDriver;
 import com.leon.datalink.resource.constans.DriverModeEnum;
-import com.leon.datalink.core.config.ConfigProperties;
-import com.leon.datalink.resource.util.mqtt.MqttClientFactory;
 import com.leon.datalink.resource.util.mqtt.MqttClientConfig;
+import com.leon.datalink.resource.util.mqtt.MqttClientFactory;
 import com.leon.datalink.resource.util.mqtt.MqttPoolConfig;
 import com.leon.datalink.resource.util.mqtt.MqttTemplate;
-import org.eclipse.paho.client.mqttv3.*;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import com.leon.datalink.resource.util.mqtt.client.IMqttCallback;
+import com.leon.datalink.resource.util.mqtt.client.IMqttClient;
 import org.springframework.util.StringUtils;
 
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,7 +22,7 @@ import java.util.Map;
 
 public class MqttDriver extends AbstractDriver {
 
-    private MqttClient mqttClient;
+    private IMqttClient mqttClient;
 
     private MqttTemplate mqttTemplate;
 
@@ -42,26 +38,25 @@ public class MqttDriver extends AbstractDriver {
         mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
         mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
         mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
+        mqttClientConfig.setMqttVersion(properties.getInteger("version", 3));
         MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             mqttClient = mqttClientFactory.create();
-            mqttClient.setCallback(new MqttCallback() {
+            mqttClient.setCallback(new IMqttCallback() {
                 @Override
-                public void connectionLost(Throwable throwable) {
-                    produceDataError(throwable.getMessage());
-                    Loggers.DRIVER.error("mqtt driver connectionLost {}", throwable.getMessage());
+                public void exceptionOccurred(String exceptionMessage) {
+                    produceDataError(exceptionMessage);
+                    Loggers.DRIVER.error("mqtt driver connectionLost {}", exceptionMessage);
                 }
 
                 @Override
-                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-                }
-
-                @Override
-                public void messageArrived(String s, MqttMessage mqttMessage) {
+                public void messageArrived(String topic, byte[] payload, int qos, boolean retained) {
                     Map<String, Object> data = new HashMap<>();
-                    data.put("topic", s);
-                    data.put("payload", new String(mqttMessage.getPayload(), StandardCharsets.UTF_8));
+                    data.put("topic", topic);
+                    data.put("qos", qos);
+                    data.put("retained", retained);
+                    data.put("payload", new String(payload, StandardCharsets.UTF_8));
                     produceData(data);
                 }
             });
@@ -100,20 +95,17 @@ public class MqttDriver extends AbstractDriver {
         String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return false;
         try {
-            MqttClient mqttClient = new MqttClient(url, SnowflakeIdWorker.getId(), new MemoryPersistence());
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setCleanSession(true);
-            options.setUserName(properties.getString("username"));
-            options.setMaxInflight(1000);
-            options.setPassword((properties.getString("password", "")).toCharArray());
-            options.setConnectionTimeout(10);
-            options.setKeepAliveInterval(30);
-            if (properties.getBoolean("ssl", false)) {
-                InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(EnvUtil.getCaCrtFile());
-                options.setSocketFactory(SSLUtils.getSocketFactory(resourceAsStream));
-            }
-            mqttClient.connect(options);
-            return true;
+            MqttClientConfig mqttClientConfig = new MqttClientConfig();
+            mqttClientConfig.setHostUrl(properties.getString("url"));
+            mqttClientConfig.setUsername(properties.getString("username"));
+            mqttClientConfig.setPassword(properties.getString("password", ""));
+            mqttClientConfig.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
+            mqttClientConfig.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
+            mqttClientConfig.setSsl(properties.getBoolean("ssl", false));
+            mqttClientConfig.setMqttVersion(properties.getInteger("version", 3));
+            MqttClientFactory mqttClientFactory = new MqttClientFactory(mqttClientConfig);
+            IMqttClient mqttClient = mqttClientFactory.create();
+            return mqttClient.isConnected();
         } catch (Exception e) {
             Loggers.DRIVER.error("mqtt driver test {}", e.getMessage());
             return false;
