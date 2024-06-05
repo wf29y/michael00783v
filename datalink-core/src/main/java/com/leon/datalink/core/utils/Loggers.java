@@ -1,0 +1,27 @@
+
+
+package com.leon.datalink.core.utils;
+
+import ch.qos.logback.classic.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Loggers for core.
+ *
+ * @author Leon
+ * @since 1.2.0
+ */
+public class Loggers {
+
+    public static final Logger CORE = LoggerFactory.getLogger("com.leon.datalink.core");
+
+    public static final Logger DRIVER = LoggerFactory.getLogger("com.leon.datalink.driver");
+
+    public static final Logger RESOURCE = LoggerFactory.getLogger("com.leon.datalink.resources");
+
+    public static final Logger RULE = LoggerFactory.getLogger("com.leon.datalink.rule");
+
+    public static final Logger WEB = LoggerFactory.getLogger("com.leon.datalink.web");
+
+}

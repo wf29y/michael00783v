@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="datalink-core" />
+        <module name="datalink-driver" />
+        <module name="datalink-resource" />
+        <module name="datalink-rule" />
+        <module name="datalink-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="datalink" target="1.8" />
+      <module name="datalink-core" target="8" />
+      <module name="datalink-driver" target="8" />
+      <module name="datalink-modbus" target="8" />
+      <module name="datalink-opcda" target="8" />
+      <module name="datalink-opcua" target="8" />
+      <module name="datalink-resource" target="8" />
+      <module name="datalink-rule" target="8" />
+      <module name="datalink-web" target="1.8" />
+      <module name="distribution" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="datalink-resource" options="" />
+    </option>
+  </component>
+</project>
