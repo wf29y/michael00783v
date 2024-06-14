@@ -6,6 +6,9 @@
  * 自定义图标加载表
  * 所有图标均从这里加载，方便管理
  */
-import bxAnaalyse from '@/assets/icons/bx-analyse.svg?inline' // path to your '*.svg?inline' file.
+import home from '@/assets/icons/home.svg?inline' // path to your '*.svg?inline' file.
+import resource from '@/assets/icons/resource.svg?inline' // path to your '*.svg?inline' file.
+import rule from '@/assets/icons/rule.svg?inline' // path to your '*.svg?inline' file.
+import script from '@/assets/icons/script.svg?inline' // path to your '*.svg?inline' file.
 
-export { bxAnaalyse }
+export { home,resource,rule,script }

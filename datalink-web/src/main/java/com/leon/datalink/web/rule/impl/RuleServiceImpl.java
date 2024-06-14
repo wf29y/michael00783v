@@ -8,7 +8,8 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.rule.IRuleEngine;
-import com.leon.datalink.rule.Rule;
+import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.rule.entity.RuleRuntime;
 import com.leon.datalink.web.rule.RuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,54 +77,57 @@ public class RuleServiceImpl implements RuleService {
 //    }
 
     @Override
-    public Rule getRule(String ruleId) {
+    public Rule get(String ruleId) {
        return ruleList.get(ruleId);
     }
 
     @Override
-    public void addRule(Rule rule) throws KvStorageException {
+    public void add(Rule rule) throws KvStorageException {
         if (StringUtils.isEmpty(rule.getRuleId())) rule.setRuleId(SnowflakeIdWorker.getId());
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
     }
 
     @Override
-    public void removeRule(Rule rule) throws KvStorageException {
-        //todo 是否正在使用
+    public void remove(Rule rule) throws KvStorageException {
         this.kvStorage.delete(rule.getRuleId().getBytes());
         ruleList.remove(rule.getRuleId());
 
     }
 
     @Override
-    public void updateRule(Rule rule) throws KvStorageException {
-        //todo 是否正在使用
+    public void update(Rule rule) throws KvStorageException {
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
     }
 
     @Override
-    public List<Rule> listRule(Rule rule) {
+    public List<Rule> list(Rule rule) {
         return new ArrayList<>(ruleList.values());
     }
 
     @Override
-    public int getRuleCount(Rule rule) {
-        return this.listRule(rule).size();
+    public int getCount(Rule rule) {
+        return this.list(rule).size();
+    }
+
+    @Override
+    public RuleRuntime getRuntime(String ruleId) {
+        return ruleEngine.getRuntime(ruleId);
     }
 
     @Override
     public void startRule(Rule rule) throws Exception {
         ruleEngine.start(rule);
         rule.setEnable(true);
-        this.updateRule(rule);
+        ruleList.put(rule.getRuleId(), rule);
     }
 
     @Override
     public void stopRule(Rule rule) throws Exception {
-        ruleEngine.stop(rule);
+        ruleEngine.stop(rule.getRuleId());
         rule.setEnable(false);
-        this.updateRule(rule);
+        ruleList.put(rule.getRuleId(), rule);
     }
 
 }

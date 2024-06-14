@@ -1,0 +1,105 @@
+2022/07/24-16:39:47.629818 3eec RocksDB version: 6.22.1
+2022/07/24-16:39:47.629919 3eec Git sha 51b540921dd7495c9cf2265eb58942dad1f2ef72
+2022/07/24-16:39:47.629949 3eec Compile date 2021-07-25 08:39:20
+2022/07/24-16:39:47.629971 3eec DB SUMMARY
+2022/07/24-16:39:47.629992 3eec DB Session ID:  1DXBXYV60IA91SHJVA7E
+2022/07/24-16:39:47.631001 3eec CURRENT file:  CURRENT
+2022/07/24-16:39:47.631026 3eec IDENTITY file:  IDENTITY
+2022/07/24-16:39:47.631080 3eec MANIFEST file:  MANIFEST-000065 size: 142 Bytes
+2022/07/24-16:39:47.631100 3eec SST files in ./data/resource dir, Total Num: 1, files: 000014.sst 
+2022/07/24-16:39:47.631119 3eec Write Ahead Log file in ./data/resource: 000066.log size: 0 ; 
+2022/07/24-16:39:47.631136 3eec                         Options.error_if_exists: 0
+2022/07/24-16:39:47.638022 3eec                       Options.create_if_missing: 1
+2022/07/24-16:39:47.638037 3eec                         Options.paranoid_checks: 1
+2022/07/24-16:39:47.638045 3eec             Options.flush_verify_memtable_count: 1
+2022/07/24-16:39:47.638052 3eec                               Options.track_and_verify_wals_in_manifest: 0
+2022/07/24-16:39:47.638060 3eec                                     Options.env: 0000025941D5D2D0
+2022/07/24-16:39:47.638067 3eec                                      Options.fs: WinFS
+2022/07/24-16:39:47.638075 3eec                                Options.info_log: 0000025943DA4010
+2022/07/24-16:39:47.638082 3eec                Options.max_file_opening_threads: 16
+2022/07/24-16:39:47.638089 3eec                              Options.statistics: 0000000000000000
+2022/07/24-16:39:47.638097 3eec                               Options.use_fsync: 0
+2022/07/24-16:39:47.638104 3eec                       Options.max_log_file_size: 0
+2022/07/24-16:39:47.638111 3eec                  Options.max_manifest_file_size: 1073741824
+2022/07/24-16:39:47.638118 3eec                   Options.log_file_time_to_roll: 0
+2022/07/24-16:39:47.638125 3eec                       Options.keep_log_file_num: 1000
+2022/07/24-16:39:47.638132 3eec                    Options.recycle_log_file_num: 0
+2022/07/24-16:39:47.638140 3eec                         Options.allow_fallocate: 1
+2022/07/24-16:39:47.638147 3eec                        Options.allow_mmap_reads: 0
+2022/07/24-16:39:47.638154 3eec                       Options.allow_mmap_writes: 0
+2022/07/24-16:39:47.638162 3eec                        Options.use_direct_reads: 0
+2022/07/24-16:39:47.638168 3eec                        Options.use_direct_io_for_flush_and_compaction: 0
+2022/07/24-16:39:47.638176 3eec          Options.create_missing_column_families: 0
+2022/07/24-16:39:47.638183 3eec                              Options.db_log_dir: 
+2022/07/24-16:39:47.638190 3eec                                 Options.wal_dir: ./data/resource
+2022/07/24-16:39:47.638198 3eec                Options.table_cache_numshardbits: 6
+2022/07/24-16:39:47.638205 3eec                         Options.WAL_ttl_seconds: 0
+2022/07/24-16:39:47.638212 3eec                       Options.WAL_size_limit_MB: 0
+2022/07/24-16:39:47.638219 3eec                        Options.max_write_batch_group_size_bytes: 1048576
+2022/07/24-16:39:47.638226 3eec             Options.manifest_preallocation_size: 4194304
+2022/07/24-16:39:47.638233 3eec                     Options.is_fd_close_on_exec: 1
+2022/07/24-16:39:47.638240 3eec                   Options.advise_random_on_open: 1
+2022/07/24-16:39:47.638248 3eec                    Options.db_write_buffer_size: 0
+2022/07/24-16:39:47.638255 3eec                    Options.write_buffer_manager: 00000259417F5570
+2022/07/24-16:39:47.638263 3eec         Options.access_hint_on_compaction_start: 1
+2022/07/24-16:39:47.638270 3eec  Options.new_table_reader_for_compaction_inputs: 0
+2022/07/24-16:39:47.638277 3eec           Options.random_access_max_buffer_size: 1048576
+2022/07/24-16:39:47.638284 3eec                      Options.use_adaptive_mutex: 0
+2022/07/24-16:39:47.638291 3eec                            Options.rate_limiter: 0000000000000000
+2022/07/24-16:39:47.638298 3eec     Options.sst_file_manager.rate_bytes_per_sec: 0
+2022/07/24-16:39:47.638334 3eec                       Options.wal_recovery_mode: 2
+2022/07/24-16:39:47.638345 3eec                  Options.enable_thread_tracking: 0
+2022/07/24-16:39:47.638352 3eec                  Options.enable_pipelined_write: 0
+2022/07/24-16:39:47.638359 3eec                  Options.unordered_write: 0
+2022/07/24-16:39:47.638366 3eec         Options.allow_concurrent_memtable_write: 1
+2022/07/24-16:39:47.638373 3eec      Options.enable_write_thread_adaptive_yield: 1
+2022/07/24-16:39:47.638380 3eec             Options.write_thread_max_yield_usec: 100
+2022/07/24-16:39:47.638387 3eec            Options.write_thread_slow_yield_usec: 3
+2022/07/24-16:39:47.638395 3eec                               Options.row_cache: None
+2022/07/24-16:39:47.638402 3eec                              Options.wal_filter: None
+2022/07/24-16:39:47.638409 3eec             Options.avoid_flush_during_recovery: 0
+2022/07/24-16:39:47.638417 3eec             Options.allow_ingest_behind: 0
+2022/07/24-16:39:47.638423 3eec             Options.preserve_deletes: 0
+2022/07/24-16:39:47.638430 3eec             Options.two_write_queues: 0
+2022/07/24-16:39:47.638437 3eec             Options.manual_wal_flush: 0
+2022/07/24-16:39:47.638444 3eec             Options.atomic_flush: 0
+2022/07/24-16:39:47.638452 3eec             Options.avoid_unnecessary_blocking_io: 0
+2022/07/24-16:39:47.638459 3eec                 Options.persist_stats_to_disk: 0
+2022/07/24-16:39:47.638467 3eec                 Options.write_dbid_to_manifest: 0
+2022/07/24-16:39:47.638474 3eec                 Options.log_readahead_size: 0
+2022/07/24-16:39:47.638481 3eec                 Options.file_checksum_gen_factory: Unknown
+2022/07/24-16:39:47.638488 3eec                 Options.best_efforts_recovery: 0
+2022/07/24-16:39:47.638495 3eec                Options.max_bgerror_resume_count: 2147483647
+2022/07/24-16:39:47.638502 3eec            Options.bgerror_resume_retry_interval: 1000000
+2022/07/24-16:39:47.638510 3eec             Options.allow_data_in_errors: 0
+2022/07/24-16:39:47.638517 3eec             Options.db_host_id: __hostname__
+2022/07/24-16:39:47.638525 3eec             Options.max_background_jobs: 2
+2022/07/24-16:39:47.638532 3eec             Options.max_background_compactions: -1
+2022/07/24-16:39:47.638539 3eec             Options.max_subcompactions: 1
+2022/07/24-16:39:47.638546 3eec             Options.avoid_flush_during_shutdown: 0
+2022/07/24-16:39:47.638553 3eec           Options.writable_file_max_buffer_size: 1048576
+2022/07/24-16:39:47.638560 3eec             Options.delayed_write_rate : 16777216
+2022/07/24-16:39:47.638567 3eec             Options.max_total_wal_size: 0
+2022/07/24-16:39:47.638575 3eec             Options.delete_obsolete_files_period_micros: 21600000000
+2022/07/24-16:39:47.638583 3eec                   Options.stats_dump_period_sec: 600
+2022/07/24-16:39:47.638590 3eec                 Options.stats_persist_period_sec: 600
+2022/07/24-16:39:47.638597 3eec                 Options.stats_history_buffer_size: 1048576
+2022/07/24-16:39:47.638604 3eec                          Options.max_open_files: -1
+2022/07/24-16:39:47.638611 3eec                          Options.bytes_per_sync: 0
+2022/07/24-16:39:47.638618 3eec                      Options.wal_bytes_per_sync: 0
+2022/07/24-16:39:47.638626 3eec                   Options.strict_bytes_per_sync: 0
+2022/07/24-16:39:47.638633 3eec       Options.compaction_readahead_size: 0
+2022/07/24-16:39:47.638640 3eec                  Options.max_background_flushes: -1
+2022/07/24-16:39:47.638647 3eec Compression algorithms supported:
+2022/07/24-16:39:47.638655 3eec 	kZSTD supported: 1
+2022/07/24-16:39:47.638662 3eec 	kSnappyCompression supported: 1
+2022/07/24-16:39:47.638669 3eec 	kBZip2Compression supported: 0
+2022/07/24-16:39:47.638676 3eec 	kZlibCompression supported: 1
+2022/07/24-16:39:47.638684 3eec 	kLZ4Compression supported: 1
+2022/07/24-16:39:47.638691 3eec 	kXpressCompression supported: 0
+2022/07/24-16:39:47.638698 3eec 	kLZ4HCCompression supported: 1
+2022/07/24-16:39:47.638706 3eec 	kZSTDNotFinalCompression supported: 1
+2022/07/24-16:39:47.638737 3eec Fast CRC32 supported: Supported on x86
+2022/07/24-16:39:47.639470 3eec [WARN] [db\db_impl\db_impl_open.cc:1846] Persisting Option File error: OK
+2022/07/24-16:39:47.639495 3eec [db\db_impl\db_impl.cc:468] Shutdown: canceling all background work
+2022/07/24-16:39:47.639519 3eec [db\db_impl\db_impl.cc:647] Shutdown complete

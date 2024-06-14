@@ -20,7 +20,7 @@ public interface Driver {
     void destroy() throws Exception;
 
 
-    void handleMessage(Object message);
+    void handleData(Object data) throws Exception;
 
 
 }

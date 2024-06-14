@@ -8,6 +8,7 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.resource.Resource;
+import com.leon.datalink.rule.script.Script;
 import com.leon.datalink.web.resource.ResourceService;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
@@ -66,40 +69,44 @@ public class ResourceServiceImpl implements ResourceService {
 
     }
 
-//    @PostConstruct
-//    public void init() {
-//
-//    }
+    @Override
+    public Resource get(String resourceId) {
+        return resourceList.get(resourceId);
+    }
 
     @Override
-    public void addResource(Resource resource) throws KvStorageException {
+    public void add(Resource resource) throws KvStorageException {
         if (StringUtils.isEmpty(resource.getResourceId())) resource.setResourceId(SnowflakeIdWorker.getId());
         this.kvStorage.put(resource.getResourceId().getBytes(), JacksonUtils.toJsonBytes(resource));
         resourceList.put(resource.getResourceId(), resource);
     }
 
     @Override
-    public void removeResource(Resource resource) throws KvStorageException {
-        //todo 是否正在使用
+    public void remove(Resource resource) throws KvStorageException {
         this.kvStorage.delete(resource.getResourceId().getBytes());
         resourceList.remove(resource.getResourceId());
     }
 
     @Override
-    public void updateResource(Resource resource) throws KvStorageException {
-        //todo 是否正在使用
+    public void update(Resource resource) throws KvStorageException {
         this.kvStorage.put(resource.getResourceId().getBytes(), JacksonUtils.toJsonBytes(resource));
         resourceList.put(resource.getResourceId(), resource);
     }
 
     @Override
-    public List<Resource> listResource(Resource resource) {
-        return new ArrayList<>(resourceList.values());
+    public List<Resource> list(Resource resource) {
+        Stream<Resource> stream = resourceList.values().stream();
+        if (null != resource) {
+            if (null != resource.getResourceType()) {
+                stream = stream.filter(r -> r.getResourceType().equals(resource.getResourceType()));
+            }
+        }
+        return stream.collect(Collectors.toList());
     }
 
     @Override
-    public int getResourceCount(Resource resource) {
-        return this.listResource(resource).size();
+    public int getCount(Resource resource) {
+        return this.list(resource).size();
     }
 
 

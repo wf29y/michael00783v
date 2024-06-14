@@ -148,7 +148,7 @@
           </div>
         </div>
         <a-divider />
-        <div :style="{ marginBottom: '24px' }">
+<!--        <div :style="{ marginBottom: '24px' }">
           <a-button
             @click="doCopy"
             icon="copy"
@@ -160,7 +160,7 @@
               <a href="https://github.com/sendya/ant-design-pro-vue/blob/master/src/config/defaultSettings.js" target="_blank">src/config/defaultSettings.js</a>
             </span>
           </a-alert>
-        </div>
+        </div>-->
       </div>
       <div class="setting-drawer-index-handle" @click="toggle" slot="handle">
         <a-icon type="setting" v-if="!visible"/>

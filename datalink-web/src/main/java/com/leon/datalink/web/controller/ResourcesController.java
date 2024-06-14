@@ -27,7 +27,7 @@ public class ResourcesController {
      */
     @PostMapping("/add")
     public void addResource(@RequestBody Resource resource) throws KvStorageException {
-        resourceService.addResource(resource);
+        resourceService.add(resource);
     }
 
     /**
@@ -36,7 +36,7 @@ public class ResourcesController {
      */
     @PostMapping("/list")
     public Object listResource(@RequestBody Resource resource) {
-       return resourceService.listResource(resource);
+       return resourceService.list(resource);
     }
 
     /**
@@ -46,7 +46,7 @@ public class ResourcesController {
      */
     @PostMapping("/remove")
     public void removeResource(@RequestBody Resource resource) throws Exception {
-        resourceService.removeResource(resource);
+        resourceService.remove(resource);
     }
 
     /**
@@ -56,7 +56,7 @@ public class ResourcesController {
      */
     @PutMapping("/update")
     public void updateResource(@RequestBody Resource resource) throws Exception {
-        resourceService.updateResource(resource);
+        resourceService.update(resource);
     }
 
 

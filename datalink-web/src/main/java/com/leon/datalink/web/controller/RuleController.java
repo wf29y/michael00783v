@@ -1,7 +1,7 @@
 package com.leon.datalink.web.controller;
 
 import com.leon.datalink.core.exception.KvStorageException;
-import com.leon.datalink.rule.Rule;
+import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.web.rule.RuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +28,21 @@ public class RuleController {
      */
     @GetMapping("/info")
     public Object getRule(@RequestParam(value = "ruleId") String ruleId)  {
-       return ruleService.getRule(ruleId);
+       return ruleService.get(ruleId);
     }
+
+
+    /**
+     * 新增规则
+     *
+     * @param ruleId
+     * @throws KvStorageException
+     */
+    @GetMapping("/runtime")
+    public Object getRuntime(@RequestParam(value = "ruleId") String ruleId)  {
+        return ruleService.getRuntime(ruleId);
+    }
+
 
 
     /**
@@ -40,7 +53,7 @@ public class RuleController {
      */
     @PostMapping("/add")
     public void addRule(@RequestBody Rule rule) throws KvStorageException {
-        ruleService.addRule(rule);
+        ruleService.add(rule);
     }
 
     /**
@@ -50,7 +63,7 @@ public class RuleController {
      */
     @PostMapping("/list")
     public Object listRule(@RequestBody Rule rule) {
-        return ruleService.listRule(rule);
+        return ruleService.list(rule);
     }
 
     /**
@@ -61,7 +74,7 @@ public class RuleController {
      */
     @PostMapping("/remove")
     public void removeRule(@RequestBody Rule rule) throws Exception {
-        ruleService.removeRule(rule);
+        ruleService.remove(rule);
     }
 
     /**
@@ -72,7 +85,7 @@ public class RuleController {
      */
     @PutMapping("/update")
     public void updateRule(@RequestBody Rule rule) throws Exception {
-        ruleService.updateRule(rule);
+        ruleService.update(rule);
     }
 
     /**

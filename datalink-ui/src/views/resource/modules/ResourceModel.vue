@@ -41,8 +41,8 @@
         zIndex: 1
       }"
     >
-      <a-button :style="{ marginRight: '8px' }" @click='onClose'> Cancel</a-button>
-      <a-button type='primary' @click='handleOk'> Submit</a-button>
+      <a-button :style="{ marginRight: '8px' }" @click='onClose'> 取消</a-button>
+      <a-button type='primary' @click='handleOk'> 保存</a-button>
     </div>
   </a-drawer>
 </template>

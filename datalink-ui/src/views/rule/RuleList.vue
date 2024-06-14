@@ -2,7 +2,7 @@
   <page-header-wrapper>
     <a-card hoverable :bordered='false'>
       <a-list
-        :grid='{ gutter: 24, lg: 2, md: 1, sm: 1, xs: 1 }'
+        :grid='{ gutter: 24, lg: 3, md: 1, sm: 1, xs: 1 }'
         :loading='loading'
         :data-source='data'
       >
@@ -41,8 +41,9 @@
                  <a v-if='!item.enable' @click='handleStart(item)'>启动</a>
                  <a v-if='item.enable' @click='handleStop(item)'>停止</a>
               </span>
-              <a slot='actions' @click='handleEdit(item)'>编辑</a>
-              <a-popconfirm slot='actions' title='确定删除此规则?' @confirm='() => handleDelete(item)'>
+              <a slot='actions' @click='handleEdit(item)' v-if='!item.enable'>编辑</a>
+              <a slot='actions' @click='handleInfo(item)' v-if='item.enable'>状态</a>
+              <a-popconfirm slot='actions' title='确定删除此规则?' @confirm='() => handleDelete(item)' v-if='!item.enable'>
                 <a href='javascript:;'>删除</a>
               </a-popconfirm>
             </a-card>
@@ -50,16 +51,17 @@
         </a-list-item>
       </a-list>
     </a-card>
+    <runtime-model ref='RuntimeModel'></runtime-model>
   </page-header-wrapper>
 </template>
 
 <script>
-import { postAction, putAction } from '@/api/manage'
-
+import { postAction, getAction } from '@/api/manage'
+import RuntimeModel from './modules/RuntimeModel'
 
 export default {
   name: 'RuleList',
-  components: {},
+  components: { RuntimeModel },
   data() {
     return {
       loading: true,
@@ -69,7 +71,8 @@ export default {
         remove: '/api/rule/remove',
         update: '/api/rule/update',
         start: '/api/rule/start',
-        stop: '/api/rule/stop'
+        stop: '/api/rule/stop',
+        runtime: '/api/rule/runtime'
       }
     }
   },
@@ -120,6 +123,9 @@ export default {
           this.$message.info(res.message)
         }
       })
+    },
+    handleInfo(item) {
+      this.$refs.RuntimeModel.show(item.ruleId)
     }
   }
 }

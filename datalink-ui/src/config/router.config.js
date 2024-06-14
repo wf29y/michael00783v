@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-import { bxAnaalyse } from '@/core/icons'
+import { home,resource,rule,script } from '@/core/icons'
 
 const RouteView = {
   name: 'RouteView',
@@ -16,60 +16,42 @@ export const asyncRouterMap = [
     redirect: '/dashboard/monitor',
     children: [
       {
-        path: '/dashboard',
-        name: 'dashboard',
-        redirect: '/dashboard/monitor',
-        component: RouteView,
-        meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
-        children: [
-          {
-            path: '/dashboard/monitor',
-            name: 'Monitor',
-            component: () => import('@/views/dashboard/Monitor'),
-            meta: { title: 'menu.dashboard.monitor', keepAlive: false }
-          },
-          {
-            path: '/dashboard/monitor/data',
-            name: 'Data',
-            component: () => import('@/views/dashboard/DataMonitor'),
-            meta: { title: 'menu.dashboard.dataMonitor', keepAlive: true, permission: ['dashboard'] }
-          }
-        ]
+        path: '/dashboard/monitor',
+        name: 'Monitor',
+        component: () => import('@/views/dashboard/Monitor'),
+        meta: { title: 'menu.dashboard', keepAlive: false, icon: home, permission: ['dashboard'] },
       },
       {
-        path: '/resource',
-        name: 'resource',
-        component: RouteView,
-        meta: { title: 'menu.resource', keepAlive: true, icon: bxAnaalyse, permission: ['resource'] },
-        children: [
-          {
-            path: '/resource/list',
-            name: 'resourceList',
-            component: () => import('@/views/resource/ResourceList'),
-            meta: { title: 'menu.resource.list', keepAlive: true, permission: ['resource'] }
-          }
-        ]
+        path: '/resource/list',
+        name: 'resourceList',
+        component: () => import('@/views/resource/ResourceList'),
+        meta: { title: 'menu.resource', keepAlive: true, icon: resource, permission: ['resource'] },
       },
       {
-        path: '/rule',
-        name: 'rule',
-        component: RouteView,
-        meta: { title: 'menu.rule', keepAlive: true, icon: bxAnaalyse, permission: ['rule'] },
-        children: [
-          {
-            path: '/rule/list',
-            name: 'ruleList',
-            component: () => import('@/views/rule/RuleList'),
-            meta: { title: 'menu.rule.list', keepAlive: true, permission: ['rule'] }
-          },
-          {
-            path: '/rule/info',
-            name: 'ruleInfo',
-            component: () => import('@/views/rule/modules/RuleModel'),
-            props: true,
-            hidden: true
-          }
-        ]
+        path: '/rule/list',
+        name: 'ruleList',
+        component: () => import('@/views/rule/RuleList'),
+        meta: { title: 'menu.rule', keepAlive: true, icon: rule, permission: ['rule'] },
+      },
+      {
+        path: '/rule/info',
+        name: 'ruleInfo',
+        component: () => import('@/views/rule/RuleModel'),
+        props: true,
+        hidden: true
+      },
+      {
+        path: '/script/list',
+        name: 'scriptList',
+        component: () => import('@/views/script/ScriptList'),
+        meta: { title: 'menu.script', keepAlive: true, icon: script, permission: ['script'] },
+      },
+      {
+        path: '/script/info',
+        name: 'scriptInfo',
+        component: () => import('@/views/script/modules/ScriptModel'),
+        props: true,
+        hidden: true
       }
     ]
   },
