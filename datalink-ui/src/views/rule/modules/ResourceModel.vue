@@ -62,7 +62,6 @@ export default {
         resourceId: [{ required: true, message: '请选择资源', trigger: 'blur' }]
       },
       resourceList: [],
-      editMode: true,
       resourceMode: null, // source or dest
       resourceIndex: -1 // source or dest
     }
@@ -72,7 +71,6 @@ export default {
   methods: {
     add(resourceMode) {
       this.edit(resourceMode, {}, -1)
-      this.editMode = false
     },
     edit(resourceMode, record, resourceIndex) {
       this.resourceMode = resourceMode
@@ -100,10 +98,10 @@ export default {
         if (valid) {
           that.confirmLoading = true
           that.modal.properties = that.$refs.PropertiesModal.get()
-          if (this.editMode) {
-            that.$emit('update', this.resourceMode, this.modal)
+          if (this.resourceIndex >= 0) {
+            that.$emit('update', this.resourceMode, this.modal, this.resourceIndex)
           } else {
-            that.$emit('add', this.resourceMode, this.modal, this.resourceIndex)
+            that.$emit('add', this.resourceMode, this.modal)
           }
           that.confirmLoading = false
           that.visible = false

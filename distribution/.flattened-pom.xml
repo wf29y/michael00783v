@@ -40,6 +40,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.0.0</version>
             <executions>
               <execution>
                 <id>make-assembly</id>
@@ -47,6 +48,12 @@
                 <goals>
                   <goal>single</goal>
                 </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>release-datalink.xml</descriptor>
+                  </descriptors>
+                  <tarLongFileMode>posix</tarLongFileMode>
+                </configuration>
               </execution>
             </executions>
             <configuration>
@@ -60,8 +67,10 @@
       </build>
       <dependencies>
         <dependency>
-          <groupId>${project.groupId}</groupId>
+          <groupId>com.leon.datalink</groupId>
           <artifactId>datalink-web</artifactId>
+          <version>1.0.0</version>
+          <scope>compile</scope>
         </dependency>
       </dependencies>
     </profile>

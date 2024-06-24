@@ -33,7 +33,8 @@
           <a-row :gutter='20' style='margin-bottom: 20px'>
             <a-col :span='12'>
               <template v-if='!modal.sourceResource || modal.sourceResource.resourceId === undefined'>
-                <a-button @click='addResource("source")' class='new-btn' type='dashed' style='height: 194px;width: 100%'>
+                <a-button @click='addResource("source")' class='new-btn' type='dashed'
+                          style='height: 194px;width: 100%'>
                   <a-icon type='plus' />
                   绑定数据源
                 </a-button>
@@ -175,7 +176,7 @@ require('codemirror/addon/selection/active-line')
 
 
 export default {
-  components: { ResourceModel,ScriptSelectModel, codemirror },
+  components: { ResourceModel, ScriptSelectModel, codemirror },
   props: {
     ruleId: {
       type: String,
@@ -268,9 +269,10 @@ export default {
     },
     handleUpdateResource(mode, resource, index) {
       if (mode === 'dest') {
-        this.modal.destResourceList[index] = resource
+        this.$set(this.modal.destResourceList, index, resource)
+        //this.modal.destResourceList[index] = resource
       } else if (mode === 'source') {
-        this.modal.sourceResource = {}
+        this.modal.sourceResource = resource
       }
     },
 
@@ -314,11 +316,11 @@ export default {
         }
       })
     },
-    selectScript(){
-      this.$refs.ScriptSelectModel.show();
+    selectScript() {
+      this.$refs.ScriptSelectModel.show()
     },
-    handleSelectedScript(script){
-      this.modal.script = script.scriptContent;
+    handleSelectedScript(script) {
+      this.modal.script = script.scriptContent
     },
     onClose() {
       this.$router.push({ name: 'ruleList' })

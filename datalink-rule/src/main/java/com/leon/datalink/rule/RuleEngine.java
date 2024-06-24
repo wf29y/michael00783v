@@ -1,7 +1,11 @@
 package com.leon.datalink.rule;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.json.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.Driver;
 import com.leon.datalink.driver.DriverDataCallback;
@@ -88,11 +92,11 @@ public class RuleEngine implements IRuleEngine {
                         for (Driver driver : destDriverList) {
                             driver.handleData(result);
                         }
+                        ruleRuntime.addSuccess();
                     } catch (Exception e) {
                         ruleRuntime.addFail();
+                        Loggers.RULE.info("error {}", e.getMessage());
                     }
-
-                    ruleRuntime.addSuccess();
                     runtimeList.put(rule.getRuleId(), ruleRuntime);
                 });
         southDriver.create();
@@ -124,7 +128,8 @@ public class RuleEngine implements IRuleEngine {
             ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("javascript");
             scriptEngine.eval(script);
             Invocable jsInvoke = (Invocable) scriptEngine;
-            return jsInvoke.invokeFunction("transform", data);
+            Object transform = jsInvoke.invokeFunction("transform", data);
+            return new ObjectMapper().convertValue(transform, Map.class);
         } catch (Exception e) {
             Loggers.RULE.error("script error {}", e.getMessage());
         }

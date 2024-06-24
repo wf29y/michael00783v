@@ -10,6 +10,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.StringUtils;
@@ -75,25 +76,23 @@ public class MqttDriver extends AbstractDriver {
 
     @Override
     public void handleData(Object data) throws Exception {
-        String template = getStrProp("template");
-        String payload = data.toString();
 
         // 消息模板解析
+        String template = getStrProp("template");
+        String payload = data.toString();
         if (!StringUtils.isEmpty(template)) {
-            EvaluationContext context = new StandardEvaluationContext();
-            context.setVariable("data", data);
-            Expression expression = parser.parseExpression(template);
-            String result = expression.getValue(context, String.class);
-            if (!StringUtils.isEmpty(result)) payload = result;
+            ExpressionParser parser = new SpelExpressionParser();
+            TemplateParserContext parserContext = new TemplateParserContext();
+            String content = parser.parseExpression(template,parserContext).getValue(data, String.class);
+            if (!StringUtils.isEmpty(content)) payload = content;
         }
 
         // topic模板解析
         String topic = getStrProp("topic");
         if (getBoolProp("dynamicTopic", false)) {
-            EvaluationContext context = new StandardEvaluationContext();
-            context.setVariable("data", data);
-            Expression expression = parser.parseExpression(topic);
-            String result = expression.getValue(context, String.class);
+            ExpressionParser parser = new SpelExpressionParser();
+            TemplateParserContext parserContext = new TemplateParserContext();
+            String result = parser.parseExpression(topic,parserContext).getValue(data, String.class);
             if (!StringUtils.isEmpty(result)) topic = result;
         }
 
