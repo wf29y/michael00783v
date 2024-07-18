@@ -1,5 +1,7 @@
 package com.leon.datalink.driver;
 
+import java.util.Map;
+
 /**
  * @ClassName Driver
  * @Description
@@ -20,7 +22,7 @@ public interface Driver {
     void destroy() throws Exception;
 
 
-    void handleData(Object data) throws Exception;
+    void handleData(Map data) throws Exception;
 
 
 }

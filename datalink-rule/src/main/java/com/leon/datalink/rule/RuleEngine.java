@@ -1,11 +1,7 @@
 package com.leon.datalink.rule;
 
 import cn.hutool.core.date.DateTime;
-import cn.hutool.json.JSON;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.Driver;
 import com.leon.datalink.driver.DriverDataCallback;
@@ -69,7 +65,7 @@ public class RuleEngine implements IRuleEngine {
                     try {
                         Loggers.RULE.info("receive {} source data: {}", sourceResource.getResourceType(), data);
 
-                        Object result = null;
+                        Map result = null;
                         RuleAnalysisModeEnum analysisMode = rule.getAnalysisMode();
                         switch (analysisMode) {
                             case WITHOUT: {
@@ -120,7 +116,7 @@ public class RuleEngine implements IRuleEngine {
     }
 
     // 脚本解析
-    private Object scriptHandler(String script, Object data) {
+    private Map scriptHandler(String script, Object data) {
         if (StringUtils.isEmpty(script) || null == data) {
             return null;
         }

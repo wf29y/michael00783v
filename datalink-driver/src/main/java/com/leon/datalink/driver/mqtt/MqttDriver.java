@@ -1,5 +1,7 @@
 package com.leon.datalink.driver.mqtt;
 
+import cn.hutool.extra.template.TemplateEngine;
+import cn.hutool.extra.template.TemplateUtil;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.driver.AbstractDriver;
@@ -15,6 +17,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,9 +36,6 @@ public class MqttDriver extends AbstractDriver {
     private volatile MqttClient mqttHandler;
 
     private static final Integer HANDLER_COUNT = 10;
-
-    //SpringEL解析器
-    private final ExpressionParser parser = new SpelExpressionParser();
 
     public MqttDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
         super(properties, driverMode);
@@ -75,28 +75,24 @@ public class MqttDriver extends AbstractDriver {
     }
 
     @Override
-    public void handleData(Object data) throws Exception {
+    public void handleData(Map data) throws Exception {
 
         // 消息模板解析
         String template = getStrProp("template");
         String payload = data.toString();
         if (!StringUtils.isEmpty(template)) {
-            ExpressionParser parser = new SpelExpressionParser();
-            TemplateParserContext parserContext = new TemplateParserContext();
-            String content = parser.parseExpression(template,parserContext).getValue(data, String.class);
-            if (!StringUtils.isEmpty(content)) payload = content;
+            String render = this.templateEngine.getTemplate(template).render(data);
+            if (!StringUtils.isEmpty(render)) payload = render;
         }
 
         // topic模板解析
         String topic = getStrProp("topic");
         if (getBoolProp("dynamicTopic", false)) {
-            ExpressionParser parser = new SpelExpressionParser();
-            TemplateParserContext parserContext = new TemplateParserContext();
-            String result = parser.parseExpression(topic,parserContext).getValue(data, String.class);
-            if (!StringUtils.isEmpty(result)) topic = result;
+            String render = this.templateEngine.getTemplate(topic).render(data);
+            if (!StringUtils.isEmpty(render)) topic = render;
         }
 
-        Integer qos = getIntProp("qos");
+        Integer qos = getIntProp("qos", 0);
         Boolean retained = getBoolProp("retained", false);
 
         // 发布消息
@@ -144,12 +140,10 @@ public class MqttDriver extends AbstractDriver {
 
                 @Override
                 public void messageArrived(String s, MqttMessage mqttMessage) {
-
-
-                    MqttData mqttData = new MqttData();
-                    mqttData.setTopic(s);
-                    mqttData.setPayload(mqttMessage.toString());
-                    callback.onData(mqttData);
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("topic", s);
+                    data.put("payload", mqttMessage.toString());
+                    callback.onData(data);
                 }
 
                 @Override

@@ -1,6 +1,9 @@
 package com.leon.datalink.driver;
 
 
+import cn.hutool.extra.template.TemplateEngine;
+import cn.hutool.extra.template.TemplateUtil;
+
 import java.util.Map;
 
 /**
@@ -18,15 +21,19 @@ public abstract class AbstractDriver implements Driver {
 
     protected DriverModeEnum driverMode;
 
+    protected TemplateEngine templateEngine;
+
     public AbstractDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
         this.properties = properties;
         this.driverMode = driverMode;
+        this.templateEngine = TemplateUtil.createEngine();
     }
 
     public AbstractDriver(Map<String, Object> properties, DriverModeEnum driverMode, DriverDataCallback callback) throws Exception {
         this.properties = properties;
         this.driverMode = driverMode;
         this.callback = callback;
+        this.templateEngine = TemplateUtil.createEngine();
     }
 
     public String getStrProp(String key) {
