@@ -50,6 +50,7 @@
 <script>
 import { postAction, putAction } from '@/api/manage'
 import ResourceModel from './modules/ResourceModel'
+import { resourceTypeMap } from '@/config/resource.config'
 
 export default {
   name: 'ResourceList',
@@ -65,7 +66,7 @@ export default {
         remove: '/api/resource/remove',
         update: '/api/resource/update'
       },
-      resourceTypeMap: { MQTT: 'MQTT Broker' }
+      resourceTypeMap: resourceTypeMap
     }
   },
   created() {

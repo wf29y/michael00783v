@@ -165,6 +165,7 @@ import { postAction, putAction, getAction } from '@/api/manage'
 import ResourceModel from './modules/ResourceModel'
 import ScriptSelectModel from './modules/ScriptSelectModel'
 import { codemirror } from 'vue-codemirror-lite'
+import { resourceTypeMap } from '@/config/resource.config'
 
 require('codemirror/mode/javascript/javascript')
 require('codemirror/mode/vue/vue')
@@ -201,7 +202,7 @@ export default {
         analysisMode: [{ required: true, message: '请选择解析方式', trigger: 'blur' }],
         ignoreNullValue: [{ required: true, message: '请选择是否忽略空值', trigger: 'blur' }]
       },
-      resourceTypeMap: { MQTT: 'MQTT Broker' },
+      resourceTypeMap: resourceTypeMap,
       options: {
         mode: { name: 'text/javascript', json: true },
         height: 150,

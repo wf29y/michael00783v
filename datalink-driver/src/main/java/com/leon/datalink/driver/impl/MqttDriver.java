@@ -1,4 +1,4 @@
-package com.leon.datalink.driver.mqtt;
+package com.leon.datalink.driver.impl;
 
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
@@ -22,13 +22,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @ClassNameMQTTClient
- * @Description
- * @Author Solley
- * @Date2022/4/8 15:52
- * @Version V1.0
- **/
+
 public class MqttDriver extends AbstractDriver {
 
     private volatile Map<Integer, MqttAsyncClient> mqttHandlerMap;

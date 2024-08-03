@@ -9,7 +9,7 @@
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-form-model-item label='类型' prop='resourceType'>
         <a-select v-model='modal.resourceType' placeholder='请选择资源类型' @change='resourceTypeChange'>
-          <a-select-option value='MQTT'>MQTT Broker</a-select-option>
+          <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>{{ item.name }}</a-select-option>
         </a-select>
       </a-form-model-item>
       <a-form-model-item label='资源' prop='resourceId' v-show='modal.resourceType'>
@@ -19,8 +19,8 @@
           </a-select-option>
         </a-select>
       </a-form-model-item>
-      <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal'
-                       :type='resourceMode'></mqtt-properties>
+      <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal' :type='resourceMode'></mqtt-properties>
+      <MysqlProperties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal' :type='resourceMode'></MysqlProperties>
     </a-form-model>
     <div
       :style="{
@@ -43,11 +43,13 @@
 
 <script>
 import { postAction } from '@/api/manage'
+import { getResourceTypeList } from '@/config/resource.config'
 import MqttProperties from '../properties/MqttProperties'
+import MysqlProperties from '../properties/MysqlProperties'
 
 export default {
   name: 'ResourceModel',
-  components: { MqttProperties },
+  components: { MqttProperties,MysqlProperties },
   data() {
     return {
       title: '操作',
@@ -62,6 +64,7 @@ export default {
         resourceId: [{ required: true, message: '请选择资源', trigger: 'blur' }]
       },
       resourceList: [],
+      resourceTypeList: [],
       resourceMode: null, // source or dest
       resourceIndex: -1 // source or dest
     }
@@ -76,6 +79,7 @@ export default {
       this.resourceMode = resourceMode
       this.resourceIndex = resourceIndex
       this.modal = JSON.parse(JSON.stringify(record))
+      this.resourceTypeList = getResourceTypeList(resourceMode)
       this.visible = true
       this.$nextTick(() => {
         if (this.modal.resourceType) {

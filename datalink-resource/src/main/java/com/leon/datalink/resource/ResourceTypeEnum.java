@@ -2,11 +2,13 @@ package com.leon.datalink.resource;
 
 
 import com.leon.datalink.driver.Driver;
-import com.leon.datalink.driver.mqtt.MqttDriver;
+import com.leon.datalink.driver.impl.MqttDriver;
+import com.leon.datalink.driver.impl.MysqlDriver;
 
 public enum ResourceTypeEnum {
 
-    MQTT(MqttDriver.class);
+    MQTT(MqttDriver.class),
+    MYSQL(MysqlDriver .class);
 
     private final Class<? extends Driver> driver;
 

@@ -53,6 +53,7 @@
         <maven-flatten-version>1.1.0</maven-flatten-version>
         <mssql-jdbc.version>6.1.0.jre8</mssql-jdbc.version>
         <!-- dependency version -->
+        <mysql-connector-java.version>8.0.21</mysql-connector-java.version>
         <spring-boot-dependencies.version>2.1.6.RELEASE</spring-boot-dependencies.version>
         <rocksdbjni.version>6.22.1.1</rocksdbjni.version>
         <snmp4j.version>2.6.2</snmp4j.version>
@@ -65,6 +66,7 @@
         <bouncycastle.version>1.61</bouncycastle.version>
         <slf4j-api.version>1.7.7</slf4j-api.version>
         <sqljdbc4.version>4.0</sqljdbc4.version>
+        <taos.version>2.0.37</taos.version>
         <logback.version>1.2.3</logback.version>
         <log4j.version>2.13.3</log4j.version>
         <guava.version>30.1-jre</guava.version>
@@ -524,6 +526,29 @@
                 <artifactId>jackson-core-asl</artifactId>
                 <version>${jackson-core-asl.version}</version>
             </dependency>
+
+            <!-- db -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>${sqljdbc4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.taosdata.jdbc</groupId>
+                <artifactId>taos-jdbcdriver</artifactId>
+                <version>${taos.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>
