@@ -3,64 +3,65 @@
     <div style='padding-bottom: 20px'>
       <a-row :gutter="20">
         <a-col :span="6">
-          <a-card>
+          <a-card hoverable>
             <a-statistic
               title="总CPU使用情况"
-              :value="Number(useCPU / totalCPU).toFixed(2) + '%'"
+              :value="' '+Number(useCPU / totalCPU).toFixed(2) + '%'"
               class="demo-class"
-              :value-style="{ color: '#3f8600', fontSize: '32px' }"
+              :value-style="{ color:'#1890ff',fontSize: '29px' }"
             >
               <template #prefix>
-                <a-icon type="smile" theme="twoTone" />
+                <a-icon type="rocket" theme="twoTone" />
               </template>
             </a-statistic>
           </a-card>
         </a-col>
         <a-col :span="6">
-          <a-card>
+          <a-card hoverable>
             <a-statistic
               title="总内存使用情况"
-              :value="Number(useMem).toFixed(2) + 'M'"
+              :value="' '+Number(useMem).toFixed(2) + 'M'"
               class="demo-class"
-              :value-style="{ color: '#3f8600', fontSize: '32px' }"
+              :value-style="{color:'#1890ff', fontSize: '29px' }"
             >
               <template #prefix>
-                <a-icon type="smile" theme="twoTone" />
+<!--                <a-icon type="smile" theme="twoTone" />-->
+                <a-icon type="thunderbolt" theme="twoTone" />
               </template>
             </a-statistic>
           </a-card>
         </a-col>
         <a-col :span="6">
-          <a-card>
+          <a-card hoverable @click='$router.push({name:"resourceList"})'>
             <a-statistic
-              title="资源数量"
-              :value="SystemInfoMateData.resourceCount"
+              title="总资源数量"
+              :value="' '+SystemInfoMateData.resourceCount"
               class="demo-class"
-              :value-style="{ color: '#52c41a', fontSize: '32px' }"
+              :value-style="{ color:'#1890ff', fontSize: '29px' }"
             >
               <template #prefix>
-                <a-icon type="smile" theme="twoTone" />
+                <a-icon type="appstore" theme="twoTone" />
               </template>
             </a-statistic>
           </a-card>
         </a-col>
         <a-col :span="6">
-          <a-card>
+          <a-card hoverable @click='$router.push({name:"ruleList"})'>
             <a-statistic
-              title="规则数量"
-              :value="SystemInfoMateData.ruleCount"
+              title="总规则数量"
+              :value="' '+SystemInfoMateData.ruleCount"
               class="demo-class"
-              :value-style="{ color: '#52c41a', fontSize: '32px' }"
+              :value-style="{ color:'#1890ff',fontSize: '29px' }"
             >
               <template #prefix>
-                <a-icon type="smile" theme="twoTone" />
+                <a-icon type="api" theme="twoTone" />
               </template>
             </a-statistic>
           </a-card>
         </a-col>
       </a-row>
     </div>
-    <a-card :bordered="false">
+    <a-card>
       <a-tabs default-active-key="1" v-model="activeKey">
         <a-tab-pane key="1" tab="基本信息"> <SystemInfo ref="systemInfo" :nodeUrl="node"></SystemInfo> </a-tab-pane>
         <a-tab-pane key="2" tab="Tomact信息"> <TomcatInfo ref="tomcatInfo" :nodeUrl="node"></TomcatInfo> </a-tab-pane>
@@ -180,5 +181,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
+.ant-tabs-bar {
+  margin: 0 !important;
+}
+
 </style>

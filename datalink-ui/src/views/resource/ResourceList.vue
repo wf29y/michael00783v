@@ -1,7 +1,6 @@
 <template>
   <page-header-wrapper>
-    <a-card hoverable :bordered='false'>
-      <div class='table-operator'></div>
+    <a-card :bordered='false'>
       <a-list
         :grid='{ gutter: 24, lg: 4, md: 2, sm: 1, xs: 1 }'
         :loading='loading'
@@ -15,7 +14,7 @@
             </a-button>
           </template>
           <template v-else>
-            <a-card>
+            <a-card hoverable>
               <div slot='title'>{{ item.resourceName }}</div>
               <a-row :gutter='16'>
                 <a-col :span='7'>
@@ -27,7 +26,7 @@
               </a-row>
               <a-row :gutter='16'>
                 <a-col :span='7'>
-                  <div>协议类型：</div>
+                  <div>资源类型：</div>
                 </a-col>
                 <a-col :span='12'>
                   <div>{{ resourceTypeMap[item.resourceType] }}</div>
@@ -35,7 +34,7 @@
               </a-row>
 
               <a slot='actions' @click='handleEdit(item)'>编辑</a>
-              <a-popconfirm slot='actions' title='Sure to delete?' @confirm='() => handleDelete(item)'>
+              <a-popconfirm slot='actions' title='确定删除此资源?' @confirm='() => handleDelete(item)'>
                 <a href='javascript:;'>删除</a>
               </a-popconfirm>
             </a-card>

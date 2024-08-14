@@ -1,6 +1,6 @@
 <template>
   <page-header-wrapper>
-    <a-card hoverable :bordered='false'>
+    <a-card :bordered='false'>
       <a-list
         :grid='{ gutter: 24, lg: 3, md: 1, sm: 1, xs: 1 }'
         :loading='loading'
@@ -14,26 +14,26 @@
             </a-button>
           </template>
           <template v-else>
-            <a-card>
+            <a-card hoverable>
               <div slot='title'>{{ item.ruleName }}</div>
               <div slot='extra'>
                 <a-badge v-if='item.enable' color='green' text='运行中' />
                 <a-badge v-if='!item.enable' color='black' text='未启动' />
               </div>
               <a-row :gutter='16'>
-                <a-col :span='7'>
+                <a-col :span='5'>
                   <div>源数据：</div>
                 </a-col>
-                <a-col :span='12'>
+                <a-col :span='19'>
                   <div>{{ item.sourceResource.resourceName }}</div>
                 </a-col>
               </a-row>
               <a-row :gutter='16'>
-                <a-col :span='7'>
-                  <div>目的：</div>
+                <a-col :span='5'>
+                  <div>目的资源：</div>
                 </a-col>
-                <a-col :span='12'>
-                  <div>{{ item.destResourceList.length }}</div>
+                <a-col :span='19'>
+                  <div>{{ getDestListNameStr(item.destResourceList) }}</div>
                 </a-col>
               </a-row>
 
@@ -126,6 +126,13 @@ export default {
     },
     handleInfo(item) {
       this.$refs.RuntimeModel.show(item.ruleId)
+    },
+    getDestListNameStr(destList) {
+      let str = []
+      for (let i = destList.length - 1; i >= 0; i--) {
+        str.push(destList[i].resourceName)
+      }
+      return str.join(',')
     }
   }
 }

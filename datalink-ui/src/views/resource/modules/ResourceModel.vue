@@ -24,6 +24,7 @@
       </a-row>
       <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal'></mqtt-properties>
       <mysql-properties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal'></mysql-properties>
+      <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'></postgresql-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -53,10 +54,11 @@ import { postAction, putAction } from '@/api/manage'
 import {getResourceTypeList} from '@/config/resource.config'
 import MqttProperties from '../properties/MqttProperties'
 import MysqlProperties from '../properties/MysqlProperties'
+import PostgresqlProperties from '../properties/PostgresqlProperties'
 
 export default {
   name:'ResourceModel',
-  components: { MqttProperties,MysqlProperties },
+  components: { MqttProperties,MysqlProperties,PostgresqlProperties },
   data() {
     return {
       title: '操作',

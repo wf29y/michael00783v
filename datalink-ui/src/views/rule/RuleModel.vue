@@ -52,7 +52,7 @@
                   </a-row>
                   <a-row :gutter='16'>
                     <a-col :span='8'>
-                      <div>协议类型：</div>
+                      <div>资源类型：</div>
                     </a-col>
                     <a-col :span='16'>
                       <div>{{ resourceTypeMap[modal.sourceResource.resourceType] }}</div>
@@ -136,7 +136,7 @@
                   </a-row>
                   <a-row :gutter='16'>
                     <a-col :span='8'>
-                      <div>协议类型：</div>
+                      <div>资源类型：</div>
                     </a-col>
                     <a-col :span='16'>
                       <div>{{ resourceTypeMap[item.resourceType] }}</div>
@@ -213,7 +213,7 @@ export default {
         autoCloseTags: true,
         lineWrapping: true,
         styleActiveLine: true,
-        extraKeys: { 'Ctrl-Space': 'autocomplete' }, //自定义快捷键
+        extraKeys: { 'tab': 'autocomplete' }, //自定义快捷键
         hintOptions: {
           tables: {}
         }

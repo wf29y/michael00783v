@@ -1,13 +1,13 @@
 <template>
   <a-skeleton active :loading="loading" :paragraph="{ rows: 17 }">
-    <a-card :bordered="false" class="card-area">
-      <a-alert type="info" :showIcon="true">
+
+<!--      <a-alert type="info" :showIcon="true">
         <div slot="message">
           共追踪到 {{ dataSource.length }} 条近期HTTP请求记录
           <a-divider type="vertical" />
           <a @click="handleClickUpdate">立即刷新</a>
         </div>
-      </a-alert>
+      </a-alert>-->
 
       <!-- 表格区域 -->
       <a-table
@@ -43,7 +43,7 @@
           <span v-else>{{ text }} ms</span>
         </template>
       </a-table>
-    </a-card>
+
   </a-skeleton>
 </template>
 

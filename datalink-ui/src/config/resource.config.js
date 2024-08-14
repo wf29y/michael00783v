@@ -4,7 +4,8 @@ const TYPE_RESOURCE = 'resource'
 
 const resourceTypeMap = {
   MQTT: 'MQTT Broker',
-  MYSQL: 'Mysql'
+  MYSQL: 'Mysql',
+  POSTGRESQL: 'Postgresql'
 }
 
 
@@ -17,6 +18,11 @@ const resourceTypeList = [
   {
     name: 'Mysql',
     code: 'MYSQL',
+    type: TYPE_DEST
+  },
+  {
+    name: 'Postgresql',
+    code: 'POSTGRESQL',
     type: TYPE_DEST
   }
 ]

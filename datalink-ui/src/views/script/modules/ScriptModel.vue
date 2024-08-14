@@ -94,7 +94,7 @@ export default {
         autoCloseTags: true,
         lineWrapping: true,
         styleActiveLine: true,
-        extraKeys: { 'Ctrl-Space': 'autocomplete' }, //自定义快捷键
+        extraKeys: { 'tab': 'autocomplete' }, //自定义快捷键
         hintOptions: {
           tables: {}
         }
