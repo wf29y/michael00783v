@@ -11,23 +11,23 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
 
-public class MysqlDriver extends AbstractDriver {
+public class PostgresqlDriver extends AbstractDriver {
 
     private DruidDataSource dataSource;
 
-    public MysqlDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
+    public PostgresqlDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
         super(properties, driverMode);
     }
 
-    public MysqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, DriverDataCallback callback) throws Exception {
+    public PostgresqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, DriverDataCallback callback) throws Exception {
         super(properties, driverMode, callback);
     }
 
     @Override
     public void create() {
         DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); // 设置连接池的数据库驱动
-        dataSource.setUrl(String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
+        dataSource.setDriverClassName("org.postgresql.Driver"); // 设置连接池的数据库驱动
+        dataSource.setUrl(String.format("jdbc:postgresql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
                 getStrProp("ip"),
                 getStrProp("port"),
                 getStrProp("databaseName"))); // 设置数据库的连接地址
