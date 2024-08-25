@@ -10,17 +10,12 @@
       <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
 
         <a-row :gutter='20'>
-          <a-col :span='8' v-show='modal.scriptId'>
-            <a-form-model-item label='ID' prop='scriptId'>
-              <a-input v-model='modal.scriptId' placeholder='请输入脚本ID' :disabled='true'></a-input>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span='modal.scriptId?8:12'>
+          <a-col :span='12'>
             <a-form-model-item label='名称' prop='scriptName'>
               <a-input v-model='modal.scriptName' placeholder='请输入脚本名称'></a-input>
             </a-form-model-item>
           </a-col>
-          <a-col :span='modal.scriptId?8:12'>
+          <a-col :span='12'>
             <a-form-model-item label='说明' prop='description'>
               <a-input v-model='modal.description' placeholder='请输入脚本说明'></a-input>
             </a-form-model-item>
@@ -68,12 +63,13 @@ export default {
       visible: false,
       confirmLoading: false,
       modal: {
-        scriptContent:'/**\n' +
-          ' * 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +
-          ' */\n' +
-          'function transform(data) {\n' +
-          '    return data;\n' +
-          '}'
+        scriptContent: `
+        /**
+         * 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据
+         */
+        function transform(data) {
+           return data;
+        }`,
       },
       url: {
         info: '/api/script/info',

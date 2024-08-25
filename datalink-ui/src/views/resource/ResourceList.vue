@@ -16,15 +16,7 @@
           <template v-else>
             <a-card hoverable>
               <div slot='title'>{{ item.resourceName }}</div>
-              <a-row :gutter='16'>
-                <a-col :span='7'>
-                  <div>资源ID：</div>
-                </a-col>
-                <a-col :span='12'>
-                  <div>{{ item.resourceId }}</div>
-                </a-col>
-              </a-row>
-              <a-row :gutter='16'>
+              <a-row>
                 <a-col :span='7'>
                   <div>资源类型：</div>
                 </a-col>
@@ -32,7 +24,14 @@
                   <div>{{ resourceTypeMap[item.resourceType] }}</div>
                 </a-col>
               </a-row>
-
+              <a-row>
+                <a-col :span='7'>
+                  <div>{{ getDetails(item).name }}：</div>
+                </a-col>
+                <a-col :span='12'>
+                  <div>{{ getDetails(item).value }}</div>
+                </a-col>
+              </a-row>
               <a slot='actions' @click='handleEdit(item)'>编辑</a>
               <a-popconfirm slot='actions' title='确定删除此资源?' @confirm='() => handleDelete(item)'>
                 <a href='javascript:;'>删除</a>
@@ -49,7 +48,7 @@
 <script>
 import { postAction, putAction } from '@/api/manage'
 import ResourceModel from './modules/ResourceModel'
-import { resourceTypeMap } from '@/config/resource.config'
+import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 
 export default {
   name: 'ResourceList',
@@ -72,6 +71,9 @@ export default {
     this.loadData()
   },
   methods: {
+    getDetails(resource) {
+      return getResourceDetails(resource, 'resource')
+    },
     handleAdd() {
       this.$refs.ResourceModel.add()
     },

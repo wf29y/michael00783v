@@ -7,17 +7,12 @@
       </div>
       <a-row :gutter='20'>
         <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
-          <a-col :span='8' v-if='modal.ruleId'>
-            <a-form-model-item label='ID' prop='ruleId'>
-              <a-input v-model='modal.ruleId' placeholder='请输入规则ID' :disabled='true' />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span='modal.ruleId?8:12'>
+          <a-col :span='12'>
             <a-form-model-item label='名称' prop='ruleName'>
               <a-input v-model='modal.ruleName' placeholder='请输入规则名称' />
             </a-form-model-item>
           </a-col>
-          <a-col :span='modal.ruleId?8:12'>
+          <a-col :span='12'>
             <a-form-model-item label='备注' prop='description'>
               <a-input v-model='modal.description' placeholder='请输入备注' />
             </a-form-model-item>
@@ -42,20 +37,20 @@
               <template v-else>
                 <a-card>
                   <div slot='title'>{{ modal.sourceResource.resourceName }}</div>
-                  <a-row :gutter='16'>
-                    <a-col :span='8'>
-                      <div>资源ID：</div>
-                    </a-col>
-                    <a-col :span='16'>
-                      <div>{{ modal.sourceResource.resourceId }}</div>
-                    </a-col>
-                  </a-row>
-                  <a-row :gutter='16'>
-                    <a-col :span='8'>
+                  <a-row>
+                    <a-col :span='7'>
                       <div>资源类型：</div>
                     </a-col>
-                    <a-col :span='16'>
+                    <a-col :span='17'>
                       <div>{{ resourceTypeMap[modal.sourceResource.resourceType] }}</div>
+                    </a-col>
+                  </a-row>
+                  <a-row>
+                    <a-col :span='7'>
+                      <div>{{ getDetails(modal.sourceResource).name }}：</div>
+                    </a-col>
+                    <a-col :span='17'>
+                      <div>{{ getDetails(modal.sourceResource).value }}</div>
                     </a-col>
                   </a-row>
                   <a slot='actions' @click='editResource("source",modal.sourceResource)'>配置</a>
@@ -65,16 +60,15 @@
                 </a-card>
               </template>
             </a-col>
-            <a-col :span='12'>
-              <a-card style='height: 194px;' title='data' size='small' :body-style='{padding:"10px 20px"}'
-                      v-show='modal.sourceResource.resourceId'>
+            <a-col :span='12' v-show='modal.sourceResource.resourceId'>
+              <a-card style='height: 194px;' title='源数据格式' :body-style='{padding:"10px 20px"}'>
                 <pre>{{ dataFormatMap[modal.sourceResource.resourceType] }}</pre>
               </a-card>
             </a-col>
           </a-row>
           <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
             <a-row :gutter='20'>
-              <a-col :span='12'>
+              <a-col :span='12' v-show='modal.sourceResource.resourceId'>
                 <a-form-model-item label='解析方式' prop='analysisMode'>
                   <a-select v-model='modal.analysisMode' placeholder='请选择解析方式' @change='analysisModeChange'>
                     <a-select-option value='WITHOUT'>无解析透传</a-select-option>
@@ -83,7 +77,7 @@
                   </a-select>
                 </a-form-model-item>
               </a-col>
-              <a-col :span='12'>
+              <a-col :span='12' v-show='modal.sourceResource.resourceId'>
                 <a-form-model-item label='忽略空值' prop='ignoreNullValue'>
                   <a-select v-model='modal.ignoreNullValue' placeholder='请选择是否忽略空值'>
                     <a-select-option :value='true'>是</a-select-option>
@@ -126,20 +120,20 @@
               <template v-else>
                 <a-card>
                   <div slot='title'>{{ item.resourceName }}</div>
-                  <a-row :gutter='16'>
-                    <a-col :span='8'>
-                      <div>资源ID：</div>
-                    </a-col>
-                    <a-col :span='16'>
-                      <div>{{ item.resourceId }}</div>
-                    </a-col>
-                  </a-row>
-                  <a-row :gutter='16'>
-                    <a-col :span='8'>
+                  <a-row>
+                    <a-col :span='7'>
                       <div>资源类型：</div>
                     </a-col>
-                    <a-col :span='16'>
+                    <a-col :span='17'>
                       <div>{{ resourceTypeMap[item.resourceType] }}</div>
+                    </a-col>
+                  </a-row>
+                  <a-row>
+                    <a-col :span='7'>
+                      <div>{{ getDetails(item).name }}：</div>
+                    </a-col>
+                    <a-col :span='17'>
+                      <div>{{ getDetails(item).value }}</div>
                     </a-col>
                   </a-row>
                   <a slot='actions' @click='editResource("dest",item,index)'>配置</a>
@@ -165,7 +159,7 @@ import { postAction, putAction, getAction } from '@/api/manage'
 import ResourceModel from './modules/ResourceModel'
 import ScriptSelectModel from './modules/ScriptSelectModel'
 import { codemirror } from 'vue-codemirror-lite'
-import { resourceTypeMap } from '@/config/resource.config'
+import { resourceTypeMap, resourceDataFormatMap,getResourceDetails } from '@/config/resource.config'
 
 require('codemirror/mode/javascript/javascript')
 require('codemirror/mode/vue/vue')
@@ -218,20 +212,14 @@ export default {
           tables: {}
         }
       },
-      defaultScript:
-        '/**\n' +
-        ' * 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +
-        ' */\n' +
-        'function transform(data) {\n' +
-        '    return data;\n' +
-        '}',
-      dataFormatMap: {
-        MQTT:
-          '{\n' +
-          '  "topic":String,\n' +
-          '  "payload":String\n' +
-          '}'
-      }
+      dataFormatMap: resourceDataFormatMap,
+      defaultScript: `
+        /**
+         * 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据
+         */
+        function transform(data) {
+           return data;
+        }`,
     }
   },
   mounted() {
@@ -246,6 +234,9 @@ export default {
     }
   },
   methods: {
+    getDetails(resource) {
+      return getResourceDetails(resource, 'rule')
+    },
     // 操作
     addResource(mode) {
       this.$refs.ResourceModel.add(mode)
