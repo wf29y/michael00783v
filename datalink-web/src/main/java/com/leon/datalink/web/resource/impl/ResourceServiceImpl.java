@@ -1,6 +1,5 @@
 package com.leon.datalink.web.resource.impl;
 
-import akka.actor.ActorSystem;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
@@ -8,13 +7,10 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.resource.Resource;
-import com.leon.datalink.rule.script.Script;
 import com.leon.datalink.web.resource.ResourceService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,10 +26,6 @@ import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
  **/
 @Service
 public class ResourceServiceImpl implements ResourceService {
-    /**
-     * actor syatem
-     */
-    ActorSystem actorSystem;
 
     /**
      * 资源列表
@@ -50,10 +42,7 @@ public class ResourceServiceImpl implements ResourceService {
      */
     private final static String RESOURCE_PATH = "/resource";
 
-    public ResourceServiceImpl(ActorSystem actorSystem) throws Exception {
-
-        // actor system
-        this.actorSystem = actorSystem;
+    public ResourceServiceImpl() throws Exception {
 
         // init storage
         this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + RESOURCE_PATH);
@@ -99,6 +88,9 @@ public class ResourceServiceImpl implements ResourceService {
         if (null != resource) {
             if (null != resource.getResourceType()) {
                 stream = stream.filter(r -> r.getResourceType().equals(resource.getResourceType()));
+            }
+            if (!StringUtils.isEmpty(resource.getResourceName())) {
+                stream = stream.filter(r -> r.getResourceName().contains(resource.getResourceName()));
             }
         }
         return stream.collect(Collectors.toList());

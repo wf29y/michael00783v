@@ -3,6 +3,7 @@
 package com.leon.datalink.web.security;
 
 
+import com.leon.datalink.web.auth.DatalinkUserServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import com.leon.datalink.web.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,9 @@ public class DatalinkAuthConfig extends WebSecurityConfigurerAdapter {
 
     public static final String SECURITY_IGNORE_URLS_SPILT_CHAR = ",";
 
-    public static final String LOGIN_ENTRY_POINT = "/v1/auth/login";
+    public static final String LOGIN_ENTRY_POINT = "/api/auth/login";
 
-    public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/v1/auth/**";
+    public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/api/auth/**";
 
     public static final String TOKEN_PREFIX = "Bearer ";
 
@@ -48,7 +49,7 @@ public class DatalinkAuthConfig extends WebSecurityConfigurerAdapter {
     private JwtTokenManager tokenProvider;
 
     @Autowired
-    private DatalinkUserDetailsServiceImpl userDetailsService;
+    private DatalinkUserServiceImpl userDetailsService;
 
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override

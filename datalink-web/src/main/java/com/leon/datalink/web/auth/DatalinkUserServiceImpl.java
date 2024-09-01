@@ -1,43 +1,61 @@
 
+
 package com.leon.datalink.web.auth;
 
-
+import com.leon.datalink.core.common.Constants;
+import com.leon.datalink.core.exception.KvStorageException;
+import com.leon.datalink.core.storage.DatalinkKvStorage;
+import com.leon.datalink.core.storage.KvStorage;
+import com.leon.datalink.core.utils.JacksonUtils;
+import com.leon.datalink.rule.script.Script;
+import com.leon.datalink.web.exception.AccessException;
 import com.leon.datalink.web.model.Page;
 import com.leon.datalink.web.model.User;
-import com.leon.datalink.web.util.RequestUtil;
+import com.leon.datalink.core.utils.Loggers;
+import com.leon.datalink.web.security.DatalinkAuthConfig;
 import com.leon.datalink.web.security.DatalinkUser;
+import com.leon.datalink.web.security.DatalinkUserDetails;
+import com.leon.datalink.web.security.JwtTokenManager;
+import com.leon.datalink.web.util.RequestUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.commons.lang3.StringUtils;
-import com.leon.datalink.core.common.Constants;
-import com.leon.datalink.web.exception.AccessException;
-import com.leon.datalink.web.security.JwtTokenManager;
-import com.leon.datalink.web.security.DatalinkAuthConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 /**
- * 嵌入用户管理
+ * datalink user service.
  *
  * @author Leon
  */
 @Service
-public class EmbeddedUserPersistServiceImpl implements UserPersistService {
+public class DatalinkUserServiceImpl implements DatalinkUserService, UserDetailsService {
 
-    private static final String TOKEN_PREFIX = "Bearer ";
+    /**
+     * 资源列表
+     */
+    private final ConcurrentHashMap<String, User> userList = new ConcurrentHashMap<>();
 
-    private static final String PARAM_USERNAME = "username";
-
-    private static final String PARAM_PASSWORD = "password";
+    /**
+     * key value storage
+     */
+    private final KvStorage kvStorage;
 
     @Autowired
     private JwtTokenManager tokenManager;
@@ -45,43 +63,62 @@ public class EmbeddedUserPersistServiceImpl implements UserPersistService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Override
-    public void createUser(String username, String password) {
+
+    private static final String TOKEN_PREFIX = "Bearer ";
+
+    private static final String PARAM_USERNAME = "username";
+
+    private static final String PARAM_PASSWORD = "password";
+
+    private final static String USER_PATH = "/user";
+
+    public DatalinkUserServiceImpl() throws Exception {
+
+        // init storage
+        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + USER_PATH);
+
+        // read user list form storage
+        if (this.kvStorage.allKeys().size() <= 0){
+            // 初始化用户
+            User user = new User();
+            user.setUsername("datalink");
+            user.setPassword("$2a$10$VxvrQ0Omo9ilSFjFwJKE5.7AVg0ug6.dMS.TVQBxbnuNkzuDDQdCS"); // aaaaaa
+            this.kvStorage.put(user.getUsername().getBytes(), JacksonUtils.toJsonBytes(user));
+            userList.put(user.getUsername(), user);
+            return;
+        }
+        for (byte[] key : this.kvStorage.allKeys()) {
+            String username = new String(key);
+            byte[] value = this.kvStorage.get(key);
+            User user = JacksonUtils.toObj(value, User.class);
+            userList.put(username, user);
+        }
 
     }
 
-    @Override
-    public void deleteUser(String username) {
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return new DatalinkUserDetails(getUserByUsername(username));
     }
 
     @Override
-    public void updateUserPassword(String username, String password) {
-
+    public User getUserByUsername(String username) {
+        User user = userList.get(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(username);
+        }
+        return user;
     }
 
     @Override
-    public User findUserByUsername(String username) {
-        return null;
+    public void updateUserPassword(String username, String password) throws KvStorageException {
+        User user = getUserByUsername(username);
+        user.setPassword(password);
+        userList.put(username, user);
+        this.kvStorage.put(username.getBytes(), JacksonUtils.toJsonBytes(user));
     }
 
-    @Override
-    public Page<User> getUsers(int pageNo, int pageSize) {
-        Page<User> userPage = new Page<>();
-        List<User> users = new ArrayList<>();
-        User user = new User();
-        user.setUsername("datalink");
-        user.setPassword("$2a$10$VxvrQ0Omo9ilSFjFwJKE5.7AVg0ug6.dMS.TVQBxbnuNkzuDDQdCS");
-        users.add(user);
-        userPage.setPageItems(users);
-        userPage.setTotalCount(1);
-        return userPage;
-    }
-
-    @Override
-    public List<String> findUserLikeUsername(String username) {
-        return null;
-    }
 
     @Override
     public User login(Object request) throws AccessException {
@@ -147,4 +184,6 @@ public class EmbeddedUserPersistServiceImpl implements UserPersistService {
 
         return tokenManager.createToken(finalName);
     }
+
+
 }

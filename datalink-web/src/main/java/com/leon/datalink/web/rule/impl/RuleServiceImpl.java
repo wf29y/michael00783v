@@ -7,6 +7,7 @@ import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
+import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.IRuleEngine;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.rule.entity.RuleRuntime;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
@@ -29,10 +32,6 @@ import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
  **/
 @Service
 public class RuleServiceImpl implements RuleService {
-    /**
-     * actor syatem
-     */
-    ActorSystem actorSystem;
 
     @Autowired
     private IRuleEngine ruleEngine;
@@ -52,10 +51,7 @@ public class RuleServiceImpl implements RuleService {
      */
     private final static String RULE_PATH = "/rule";
 
-    public RuleServiceImpl(ActorSystem actorSystem) throws Exception {
-
-        // actor system
-        this.actorSystem = actorSystem;
+    public RuleServiceImpl() throws Exception {
 
         // init storage
         this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + RULE_PATH);
@@ -92,7 +88,6 @@ public class RuleServiceImpl implements RuleService {
     public void remove(Rule rule) throws KvStorageException {
         this.kvStorage.delete(rule.getRuleId().getBytes());
         ruleList.remove(rule.getRuleId());
-
     }
 
     @Override
@@ -103,7 +98,13 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public List<Rule> list(Rule rule) {
-        return new ArrayList<>(ruleList.values());
+        Stream<Rule> stream = ruleList.values().stream();
+        if (null != rule) {
+            if (!StringUtils.isEmpty(rule.getRuleName())) {
+                stream = stream.filter(r -> r.getRuleName().contains(rule.getRuleName()));
+            }
+        }
+        return stream.collect(Collectors.toList());
     }
 
     @Override

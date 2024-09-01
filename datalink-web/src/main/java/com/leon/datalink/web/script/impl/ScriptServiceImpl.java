@@ -29,10 +29,6 @@ import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
  **/
 @Service
 public class ScriptServiceImpl implements ScriptService {
-    /**
-     * actor syatem
-     */
-    ActorSystem actorSystem;
 
     /**
      * 资源列表
@@ -49,10 +45,7 @@ public class ScriptServiceImpl implements ScriptService {
      */
     private final static String SCRIPT_PATH = "/script";
 
-    public ScriptServiceImpl(ActorSystem actorSystem) throws Exception {
-
-        // actor system
-        this.actorSystem = actorSystem;
+    public ScriptServiceImpl() throws Exception {
 
         // init storage
         this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + SCRIPT_PATH);
@@ -96,9 +89,6 @@ public class ScriptServiceImpl implements ScriptService {
     public List<Script> list(Script script) {
         Stream<Script> stream = scriptList.values().stream();
         if (null != script) {
-            if (!StringUtils.isEmpty(script.getScriptId())) {
-                stream = stream.filter(s -> s.getScriptId().equals(script.getScriptId()));
-            }
             if (!StringUtils.isEmpty(script.getScriptName())) {
                 stream = stream.filter(s -> s.getScriptName().contains(script.getScriptName()));
             }

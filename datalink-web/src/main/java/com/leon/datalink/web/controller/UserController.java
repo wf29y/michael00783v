@@ -4,17 +4,22 @@ package com.leon.datalink.web.controller;
 
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.leon.datalink.core.utils.PasswordEncoderUtil;
+import com.leon.datalink.web.model.RestResult;
+import com.leon.datalink.web.model.RestResultUtils;
+import com.leon.datalink.web.model.User;
 import com.leon.datalink.web.security.DatalinkUser;
 import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.utils.JacksonUtils;
-import com.leon.datalink.web.auth.UserPersistService;
+import com.leon.datalink.web.auth.DatalinkUserService;
 import com.leon.datalink.web.config.AuthConfig;
 import com.leon.datalink.web.exception.AccessException;
-import com.leon.datalink.web.security.JwtTokenManager;
 import com.leon.datalink.web.security.DatalinkAuthConfig;
-import com.leon.datalink.web.security.DatalinkUserDetailsServiceImpl;
+import com.leon.datalink.web.auth.DatalinkUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,23 +31,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author Leon
  */
 @RestController
-@RequestMapping({"/v1/auth", "/v1/auth/users"})
+@RequestMapping("/api/auth/user")
 public class UserController {
-
-    @Autowired
-    private JwtTokenManager jwtTokenManager;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private DatalinkUserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private AuthConfig authConfig;
 
     @Autowired
-    private UserPersistService authService;
+    private DatalinkUserService datalinkUserService;
 
     /**
      * Get user info.
@@ -55,7 +51,7 @@ public class UserController {
         return JacksonUtils.toObj("{\n" +
                 "    \"id\": \"4291d7da9005377ec9aec4a71ea837f\",\n" +
                 "    \"name\": \"datalink\",\n" +
-                "    \"username\": \"admin\",\n" +
+                "    \"username\": \"datalink\",\n" +
                 "    \"password\": \"\",\n" +
                 "    \"avatar\": \"/avatar2.jpg\",\n" +
                 "    \"status\": 1,\n" +
@@ -97,19 +93,7 @@ public class UserController {
     }
 
     /**
-     * Get paged users.
-     *
-     * @param pageNo   number index of page
-     * @param pageSize size of page
-     * @return A collection of users, empty set if no user is found
-     */
-    @GetMapping
-    public Object getUsers(@RequestParam int pageNo, @RequestParam int pageSize) {
-        return userDetailsService.getUsersFromDatabase(pageNo, pageSize);
-    }
-
-    /**
-     * Login to Leon
+     * Login to datalink
      *
      * <p>This methods uses username and password to require a new token.
      *
@@ -124,7 +108,7 @@ public class UserController {
     public Object login(@RequestParam String username, @RequestParam String password, HttpServletResponse response,
                         HttpServletRequest request) throws AccessException {
 
-        DatalinkUser user = (DatalinkUser) authService.login(request);
+        DatalinkUser user = (DatalinkUser) datalinkUserService.login(request);
 
         response.addHeader(DatalinkAuthConfig.AUTHORIZATION_HEADER, DatalinkAuthConfig.TOKEN_PREFIX + user.getToken());
 
@@ -134,6 +118,35 @@ public class UserController {
         result.put(Constants.GLOBAL_ADMIN, user.isGlobalAdmin());
         result.put(Constants.USERNAME, user.getUsername());
         return result;
+    }
+
+
+    /**
+     * Update password.
+     *
+     * @param oldPassword old password
+     * @param newPassword new password
+     * @return Code 200 if update successfully, Code 401 if old password invalid, otherwise 500
+     */
+    @PutMapping("/password")
+    @Deprecated
+    public RestResult<String> updatePassword(@RequestParam(value = "oldPassword") String oldPassword,
+                                             @RequestParam(value = "newPassword") String newPassword) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        User user = datalinkUserService.getUserByUsername(username);
+        String password = user.getPassword();
+
+        // TODO: throw out more fine grained exceptions
+        try {
+            if (PasswordEncoderUtil.matches(oldPassword, password)) {
+                datalinkUserService.updateUserPassword(username, PasswordEncoderUtil.encode(newPassword));
+                return RestResultUtils.success("Update password success");
+            }
+            return RestResultUtils.failedWithMsg(HttpStatus.UNAUTHORIZED.value(), "Old password is invalid");
+        } catch (Exception e) {
+            return RestResultUtils.failedWithMsg(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Update userpassword failed");
+        }
     }
 
 }
