@@ -29,7 +29,7 @@
             <a-col :span='12'>
               <template v-if='!modal.sourceResource || modal.sourceResource.resourceId === undefined'>
                 <a-button @click='addResource("source")' class='new-btn' type='dashed'
-                          style='height: 194px;width: 100%'>
+                          style='height: 193px;width: 100%'>
                   <a-icon type='plus' />
                   绑定数据源
                 </a-button>
@@ -61,7 +61,7 @@
               </template>
             </a-col>
             <a-col :span='12' v-show='modal.sourceResource.resourceId'>
-              <a-card style='height: 194px;' title='源数据格式' :body-style='{padding:"10px 20px"}'>
+              <a-card style='height: 193px;' title='源数据格式' :body-style='{padding:"10px 20px"}'>
                 <pre>{{ dataFormatMap[modal.sourceResource.resourceType] }}</pre>
               </a-card>
             </a-col>
@@ -112,7 +112,7 @@
           <a-list :grid='{ gutter: 24, lg: 2, md: 2, sm: 2, xs: 2 }' :data-source='modal.destResourceList'>
             <a-list-item slot='renderItem' slot-scope='item,index'>
               <template v-if='!item || item.resourceId === undefined'>
-                <a-button @click='addResource("dest")' class='new-btn' type='dashed' style='height: 194px;width: 100%'>
+                <a-button @click='addResource("dest")' class='new-btn' type='dashed' style='height: 193px;width: 100%'>
                   <a-icon type='plus' />
                   添加目标资源
                 </a-button>

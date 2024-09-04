@@ -1,30 +1,26 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered='false'>
+  <page-header-wrapper :breadcrumb='false'>
+    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}'>
       <div class='table-page-search-wrapper'>
         <a-form layout='inline'>
-          <a-row :gutter='48'>
-            <a-col :md='7' :sm='24'>
-              <a-form-item label='脚本ID'>
-                <a-input v-model='queryParam.scriptId' placeholder='请输入脚本ID' />
-              </a-form-item>
-            </a-col>
+          <a-row :gutter='20'>
             <a-col :md='7' :sm='24'>
               <a-form-item label='脚本名称'>
                 <a-input v-model='queryParam.scriptName' placeholder='请输入脚本名称' />
               </a-form-item>
             </a-col>
-            <a-col :md='7' :sm='24'>
+            <a-col :md='14' :sm='24'>
               <a-button type='primary' @click='loadData'>查询</a-button>
               <a-button style='margin-left: 8px' @click='reset'>重置</a-button>
+            </a-col>
+            <a-col :md='3' :sm='24' style='text-align: right'>
+              <a-button type='primary' @click='handleAdd()' icon='plus'>新建脚本</a-button>
             </a-col>
           </a-row>
         </a-form>
       </div>
-
-      <div class='table-operator'>
-        <a-button type='primary' @click='handleAdd()' icon='plus'>新建脚本</a-button>
-      </div>
+    </a-card>
+    <a-card>
       <a-table
         ref='table'
         :columns='columns'
@@ -63,10 +59,10 @@ export default {
           title: '#',
           scopedSlots: { customRender: 'serial' }
         },
-        {
-          title: '脚本Id',
-          dataIndex: 'scriptId'
-        },
+        /* {
+           title: '脚本Id',
+           dataIndex: 'scriptId'
+         },*/
         {
           title: '脚本名称',
           dataIndex: 'scriptName'

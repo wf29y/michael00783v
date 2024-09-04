@@ -1,19 +1,22 @@
 <template>
-  <div :class="wrpCls">
-    <avatar-dropdown :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
-<!--    <select-lang :class="prefixCls" />-->
+  <div :class='wrpCls'>
+    <avatar-dropdown :menu='showMenu' :current-user='currentUser' :class='prefixCls' @updatePassword='updatePassword' />
+    <select-lang :class='prefixCls' />
+    <password-model ref='PasswordModel'></password-model>
   </div>
 </template>
 
 <script>
 import AvatarDropdown from './AvatarDropdown'
 import SelectLang from '@/components/SelectLang'
+import PasswordModel from '../../views/user/PasswordModel'
 
 export default {
   name: 'RightContent',
   components: {
     AvatarDropdown,
-    SelectLang
+    SelectLang,
+    PasswordModel
   },
   props: {
     prefixCls: {
@@ -53,6 +56,11 @@ export default {
         name: 'admin'
       }
     }, 1500)
+  },
+  methods:{
+    updatePassword(){
+      this.$refs.PasswordModel.open()
+    }
   }
 }
 </script>

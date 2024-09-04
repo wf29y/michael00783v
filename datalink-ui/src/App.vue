@@ -26,3 +26,15 @@ export default {
   }
 }
 </script>
+
+<style>
+
+.ant-card-head{
+  font-size: 15px !important;
+}
+
+.ant-layout-footer{
+ padding: 0 !important;
+}
+
+</style>

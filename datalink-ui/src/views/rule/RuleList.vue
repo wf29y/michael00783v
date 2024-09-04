@@ -1,53 +1,68 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered='false'>
+  <page-header-wrapper :breadcrumb='false'>
+    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}'>
+      <div class='table-page-search-wrapper'>
+        <a-form layout='inline'>
+          <a-row :gutter='20'>
+            <a-col :md='7' :sm='24'>
+              <a-form-item label='规则名称'>
+                <a-input v-model='queryParam.ruleName' placeholder='请输入规则名称' />
+              </a-form-item>
+            </a-col>
+            <a-col :md='14' :sm='24'>
+              <a-button type='primary' @click='loadData'>查询</a-button>
+              <a-button style='margin-left: 8px' @click='reset'>重置</a-button>
+            </a-col>
+            <a-col :md='3' :sm='24' style='text-align: right'>
+              <a-button type='primary' @click='handleAdd()' icon='plus'>新建规则</a-button>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+    </a-card>
+
+    <a-card :body-style='{minHeight:"500px"}'>
       <a-list
-        :grid='{ gutter: 24, lg: 3, md: 1, sm: 1, xs: 1 }'
+        :grid='{ gutter: 20, lg: 3, md: 1, sm: 1, xs: 1 }'
         :loading='loading'
         :data-source='data'
       >
         <a-list-item slot='renderItem' slot-scope='item'>
-          <template v-if='!item || item.ruleId === undefined'>
-            <a-button @click='handleAdd()' class='new-btn' type='dashed' style='height: 194px'>
-              <a-icon type='plus' />
-              新增传输规则
-            </a-button>
-          </template>
-          <template v-else>
-            <a-card hoverable>
-              <div slot='title'>{{ item.ruleName }}</div>
-              <div slot='extra'>
-                <a-badge v-if='item.enable' color='green' text='运行中' />
-                <a-badge v-if='!item.enable' color='black' text='未启动' />
-              </div>
-              <a-row :gutter='16'>
-                <a-col :span='5'>
-                  <div>源数据：</div>
-                </a-col>
-                <a-col :span='19'>
-                  <div>{{ item.sourceResource.resourceName }}</div>
-                </a-col>
-              </a-row>
-              <a-row :gutter='16'>
-                <a-col :span='5'>
-                  <div>目的资源：</div>
-                </a-col>
-                <a-col :span='19'>
-                  <div>{{ getDestListNameStr(item.destResourceList) }}</div>
-                </a-col>
-              </a-row>
+          <a-card hoverable>
+            <div slot='title'>{{ item.ruleName }}</div>
+            <div slot='extra'>
+              <!--              <a-badge v-if='item.enable' color='green' text='运行中' style='color: #206bdc' />-->
+              <a-tag v-if='item.enable' color='#1890ff'>运行中</a-tag>
+              <a-tag v-if='!item.enable' color='#c2c0c0'>未启动</a-tag>
+              <!--                <a-badge v-if='!item.enable' color='black' text='未启动' />-->
+            </div>
+            <a-row>
+              <a-col :span='5'>
+                <div>源数据：</div>
+              </a-col>
+              <a-col :span='19'>
+                <div>{{ item.sourceResource.resourceName }}</div>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span='5'>
+                <div>目的资源：</div>
+              </a-col>
+              <a-col :span='19'>
+                <div>{{ getDestListNameStr(item.destResourceList) }}</div>
+              </a-col>
+            </a-row>
 
-              <span slot='actions'>
+            <span slot='actions'>
                  <a v-if='!item.enable' @click='handleStart(item)'>启动</a>
                  <a v-if='item.enable' @click='handleStop(item)'>停止</a>
               </span>
-              <a slot='actions' @click='handleEdit(item)' v-if='!item.enable'>编辑</a>
-              <a slot='actions' @click='handleInfo(item)' v-if='item.enable'>状态</a>
-              <a-popconfirm slot='actions' title='确定删除此规则?' @confirm='() => handleDelete(item)' v-if='!item.enable'>
-                <a href='javascript:;'>删除</a>
-              </a-popconfirm>
-            </a-card>
-          </template>
+            <a slot='actions' @click='handleEdit(item)' v-if='!item.enable'>编辑</a>
+            <a slot='actions' @click='handleInfo(item)' v-if='item.enable'>状态</a>
+            <a-popconfirm slot='actions' title='确定删除此规则?' @confirm='() => handleDelete(item)' v-if='!item.enable'>
+              <a href='javascript:;'>删除</a>
+            </a-popconfirm>
+          </a-card>
         </a-list-item>
       </a-list>
     </a-card>
@@ -66,6 +81,7 @@ export default {
     return {
       loading: true,
       data: [],
+      queryParam: {},
       url: {
         list: '/api/rule/list',
         remove: '/api/rule/remove',
@@ -76,7 +92,7 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
     this.loadData()
   },
   methods: {
@@ -88,9 +104,9 @@ export default {
     },
     loadData() {
       this.loading = true
-      postAction(this.url.list, {}).then(res => {
+      postAction(this.url.list, this.queryParam).then(res => {
         this.data = res.data
-        this.data.unshift({})
+        // this.data.unshift({})
         this.loading = false
       })
     },
@@ -133,81 +149,12 @@ export default {
         str.push(destList[i].resourceName)
       }
       return str.join(',')
+    },
+    reset() {
+      this.queryParam = {}
+      this.loadData()
     }
   }
 }
 </script>
 
-<style lang='less' scoped>
-@import '~@/components/index.less';
-
-.card-list {
-  /deep/ .ant-card-body:hover {
-    .ant-card-meta-title > a {
-      color: @primary-color;
-    }
-  }
-
-  /deep/ .ant-card-meta-title {
-    margin-bottom: 12px;
-
-    & > a {
-      display: inline-block;
-      max-width: 100%;
-      color: rgba(0, 0, 0, 0.85);
-    }
-  }
-
-  /deep/ .meta-content {
-    position: relative;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    height: 64px;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-
-    margin-bottom: 1em;
-  }
-}
-
-.card-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 48px;
-}
-
-.ant-card-actions {
-  background: #f7f9fa;
-
-  li {
-    float: left;
-    text-align: center;
-    margin: 12px 0;
-    color: rgba(0, 0, 0, 0.45);
-    width: 50%;
-
-    &:not(:last-child) {
-      border-right: 1px solid #e8e8e8;
-    }
-
-    a {
-      color: rgba(0, 0, 0, 0.45);
-      line-height: 22px;
-      display: inline-block;
-      width: 100%;
-
-      &:hover {
-        color: @primary-color;
-      }
-    }
-  }
-}
-
-.new-btn {
-  background-color: #fff;
-  border-radius: 2px;
-  width: 100%;
-  height: 188px;
-}
-</style>

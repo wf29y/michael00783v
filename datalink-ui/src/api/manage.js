@@ -1,15 +1,5 @@
 import { axios } from '@/utils/request'
 
-const api = {
-    user: '/api/user',
-    role: '/api/role',
-    service: '/api/service',
-    permission: '/api/permission',
-    permissionNoPager: '/api/permission/no-pager'
-}
-
-export default api
-
 // post
 export function postAction (url, parameter) {
     return axios({
@@ -55,37 +45,6 @@ export function deleteAction (url, parameter) {
     })
 }
 
-export function getUserList (parameter) {
-    return axios({
-        url: api.user,
-        method: 'get',
-        params: parameter
-    })
-}
-
-export function getRoleList (parameter) {
-    return axios({
-        url: api.role,
-        method: 'get',
-        params: parameter
-    })
-}
-
-export function getServiceList (parameter) {
-    return axios({
-        url: api.service,
-        method: 'get',
-        params: parameter
-    })
-}
-
-export function getPermissions (parameter) {
-    return axios({
-        url: api.permissionNoPager,
-        method: 'get',
-        params: parameter
-    })
-}
 
 /**
  * 下载文件 用于excel导出

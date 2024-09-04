@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+  <page-header-wrapper  :breadcrumb="false">
     <div style='padding-bottom: 20px'>
       <a-row :gutter="20">
         <a-col :span="6">

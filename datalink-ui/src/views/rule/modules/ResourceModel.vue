@@ -5,11 +5,13 @@
     :width='550'
     :visible='visible'
     @cancel='onClose'
+    :destroyOnClose='true'
   >
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-form-model-item label='类型' prop='resourceType'>
         <a-select v-model='modal.resourceType' placeholder='请选择资源类型' @change='resourceTypeChange'>
-          <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>{{ item.name }}</a-select-option>
+          <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>{{ item.name }}
+          </a-select-option>
         </a-select>
       </a-form-model-item>
       <a-form-model-item label='资源' prop='resourceId' v-show='modal.resourceType'>
@@ -19,9 +21,12 @@
           </a-select-option>
         </a-select>
       </a-form-model-item>
-      <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal' :type='resourceMode'></mqtt-properties>
-      <MysqlProperties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal' :type='resourceMode'></MysqlProperties>
-      <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal' :type='resourceMode'></postgresql-properties>
+      <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal'
+                       :type='resourceMode'></mqtt-properties>
+      <MysqlProperties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal'
+                       :type='resourceMode'></MysqlProperties>
+      <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'
+                             :type='resourceMode'></postgresql-properties>
     </a-form-model>
     <div
       :style="{
@@ -51,7 +56,7 @@ import PostgresqlProperties from '../properties/PostgresqlProperties'
 
 export default {
   name: 'ResourceModel',
-  components: { MqttProperties,MysqlProperties,PostgresqlProperties },
+  components: { MqttProperties, MysqlProperties, PostgresqlProperties },
   data() {
     return {
       title: '操作',
@@ -138,7 +143,6 @@ export default {
 </script>
 
 <style scoped>
-
 
 
 </style>

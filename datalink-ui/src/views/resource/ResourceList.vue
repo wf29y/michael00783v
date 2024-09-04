@@ -1,43 +1,56 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered='false'>
+  <page-header-wrapper :breadcrumb='false'>
+    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}'>
+      <div class='table-page-search-wrapper'>
+        <a-form layout='inline'>
+          <a-row :gutter='20'>
+            <a-col :md='7' :sm='24'>
+              <a-form-item label='资源名称'>
+                <a-input v-model='queryParam.resourceName' placeholder='请输入资源名称' />
+              </a-form-item>
+            </a-col>
+            <a-col :md='14' :sm='24'>
+              <a-button type='primary' @click='loadData'>查询</a-button>
+              <a-button style='margin-left: 8px' @click='reset'>重置</a-button>
+            </a-col>
+            <a-col :md='3' :sm='24' style='text-align: right'>
+              <a-button type='primary' @click='handleAdd()' icon='plus'>新建资源</a-button>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+    </a-card>
+
+    <a-card :body-style='{minHeight:"500px"}'>
       <a-list
-        :grid='{ gutter: 24, lg: 4, md: 2, sm: 1, xs: 1 }'
+        :grid='{ gutter: 20, lg: 4, md: 2, sm: 1, xs: 1 }'
         :loading='loading'
         :data-source='data'
       >
         <a-list-item slot='renderItem' slot-scope='item'>
-          <template v-if='!item || item.resourceId === undefined'>
-            <a-button @click='handleAdd()' class='new-btn' type='dashed' style='height: 194px'>
-              <a-icon type='plus' />
-              新增资源
-            </a-button>
-          </template>
-          <template v-else>
-            <a-card hoverable>
-              <div slot='title'>{{ item.resourceName }}</div>
-              <a-row>
-                <a-col :span='7'>
-                  <div>资源类型：</div>
-                </a-col>
-                <a-col :span='12'>
-                  <div>{{ resourceTypeMap[item.resourceType] }}</div>
-                </a-col>
-              </a-row>
-              <a-row>
-                <a-col :span='7'>
-                  <div>{{ getDetails(item).name }}：</div>
-                </a-col>
-                <a-col :span='12'>
-                  <div>{{ getDetails(item).value }}</div>
-                </a-col>
-              </a-row>
-              <a slot='actions' @click='handleEdit(item)'>编辑</a>
-              <a-popconfirm slot='actions' title='确定删除此资源?' @confirm='() => handleDelete(item)'>
-                <a href='javascript:;'>删除</a>
-              </a-popconfirm>
-            </a-card>
-          </template>
+          <a-card hoverable>
+            <div slot='title'>{{ item.resourceName }}</div>
+            <a-row>
+              <a-col :span='7'>
+                <div>资源类型：</div>
+              </a-col>
+              <a-col :span='12'>
+                <div>{{ resourceTypeMap[item.resourceType] }}</div>
+              </a-col>
+            </a-row>
+            <a-row>
+              <a-col :span='7'>
+                <div>{{ getDetails(item).name }}：</div>
+              </a-col>
+              <a-col :span='12'>
+                <div>{{ getDetails(item).value }}</div>
+              </a-col>
+            </a-row>
+            <a slot='actions' @click='handleEdit(item)'>编辑</a>
+            <a-popconfirm slot='actions' title='确定删除此资源?' @confirm='() => handleDelete(item)'>
+              <a href='javascript:;'>删除</a>
+            </a-popconfirm>
+          </a-card>
         </a-list-item>
       </a-list>
       <resource-model ref='ResourceModel' @ok='loadData'></resource-model>
@@ -59,6 +72,7 @@ export default {
     return {
       loading: true,
       data: [],
+      queryParam: {},
       url: {
         list: '/api/resource/list',
         remove: '/api/resource/remove',
@@ -67,7 +81,7 @@ export default {
       resourceTypeMap: resourceTypeMap
     }
   },
-  created() {
+  mounted() {
     this.loadData()
   },
   methods: {
@@ -82,9 +96,8 @@ export default {
     },
     loadData() {
       this.loading = true
-      postAction(this.url.list, {}).then(res => {
+      postAction(this.url.list, this.queryParam).then(res => {
         this.data = res.data
-        this.data.unshift({})
         this.loading = false
       })
     },
@@ -97,81 +110,11 @@ export default {
           this.$message.info(res.message)
         }
       })
+    },
+    reset() {
+      this.queryParam = {}
+      this.loadData()
     }
   }
 }
 </script>
-
-<style lang='less' scoped>
-@import '~@/components/index.less';
-
-.card-list {
-  /deep/ .ant-card-body:hover {
-    .ant-card-meta-title > a {
-      color: @primary-color;
-    }
-  }
-
-  /deep/ .ant-card-meta-title {
-    margin-bottom: 12px;
-
-    & > a {
-      display: inline-block;
-      max-width: 100%;
-      color: rgba(0, 0, 0, 0.85);
-    }
-  }
-
-  /deep/ .meta-content {
-    position: relative;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    height: 64px;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-
-    margin-bottom: 1em;
-  }
-}
-
-.card-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 48px;
-}
-
-.ant-card-actions {
-  background: #f7f9fa;
-
-  li {
-    float: left;
-    text-align: center;
-    margin: 12px 0;
-    color: rgba(0, 0, 0, 0.45);
-    width: 50%;
-
-    &:not(:last-child) {
-      border-right: 1px solid #e8e8e8;
-    }
-
-    a {
-      color: rgba(0, 0, 0, 0.45);
-      line-height: 22px;
-      display: inline-block;
-      width: 100%;
-
-      &:hover {
-        color: @primary-color;
-      }
-    }
-  }
-}
-
-.new-btn {
-  background-color: #fff;
-  border-radius: 2px;
-  width: 100%;
-  height: 188px;
-}
-</style>
