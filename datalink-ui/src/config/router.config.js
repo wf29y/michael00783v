@@ -12,26 +12,26 @@ export const asyncRouterMap = [
     path: '/',
     name: 'index',
     component: BasicLayout,
-    meta: { title: 'menu.home' },
+    meta: { title: '监控' },
     redirect: '/dashboard/monitor',
     children: [
       {
         path: '/dashboard/monitor',
         name: 'Monitor',
         component: () => import('@/views/dashboard/Monitor'),
-        meta: { title: 'menu.dashboard', keepAlive: false, icon: home, permission: ['dashboard'] },
+        meta: { title: '监控', keepAlive: false, icon: home, permission: ['dashboard'] },
       },
       {
         path: '/resource/list',
         name: 'resourceList',
         component: () => import('@/views/resource/ResourceList'),
-        meta: { title: 'menu.resource', keepAlive: true, icon: resource, permission: ['resource'] },
+        meta: { title: '资源', keepAlive: true, icon: resource, permission: ['resource'] },
       },
       {
         path: '/rule/list',
         name: 'ruleList',
         component: () => import('@/views/rule/RuleList'),
-        meta: { title: 'menu.rule', keepAlive: true, icon: rule, permission: ['rule'] },
+        meta: { title: '规则', keepAlive: true, icon: rule, permission: ['rule'] },
       },
       {
         path: '/rule/info',
@@ -44,7 +44,7 @@ export const asyncRouterMap = [
         path: '/script/list',
         name: 'scriptList',
         component: () => import('@/views/script/ScriptList'),
-        meta: { title: 'menu.script', keepAlive: true, icon: script, permission: ['script'] },
+        meta: { title: '脚本', keepAlive: true, icon: script, permission: ['script'] },
       },
       {
         path: '/script/info',

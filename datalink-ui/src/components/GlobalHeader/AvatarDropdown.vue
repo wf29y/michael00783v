@@ -1,8 +1,8 @@
 <template>
   <a-dropdown v-if='currentUser && currentUser.name' placement='bottomRight'>
     <span class='ant-pro-account-avatar'>
-<!--      <a-avatar size="small" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" class="antd-pro-global-header-index-avatar" />-->
-      <span>{{ currentUser.name }}</span>
+        <a-icon type='user' style='font-size: 14px;margin-right:5px;display: inline-block;vertical-align: middle' />
+        <span style='font-size: 15px;display: inline-block;vertical-align: middle'>{{ currentUser.name }}</span>
     </span>
     <template v-slot:overlay>
       <a-menu class='ant-pro-drop-down menu' :selected-keys='[]'>

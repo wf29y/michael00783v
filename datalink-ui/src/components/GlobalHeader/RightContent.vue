@@ -1,7 +1,7 @@
 <template>
   <div :class='wrpCls'>
     <avatar-dropdown :menu='showMenu' :current-user='currentUser' :class='prefixCls' @updatePassword='updatePassword' />
-    <select-lang :class='prefixCls' />
+<!--    <select-lang :class='prefixCls' />-->
     <password-model ref='PasswordModel'></password-model>
   </div>
 </template>
@@ -53,9 +53,9 @@ export default {
   mounted() {
     setTimeout(() => {
       this.currentUser = {
-        name: 'admin'
+        name: 'datalink'
       }
-    }, 1500)
+    }, 800)
   },
   methods:{
     updatePassword(){

@@ -1,60 +1,60 @@
 <template>
-  <page-header-wrapper  :breadcrumb="false">
+  <page-header-wrapper :breadcrumb='false'>
     <div style='padding-bottom: 20px'>
-      <a-row :gutter="20">
-        <a-col :span="6">
+      <a-row :gutter='20'>
+        <a-col :span='6'>
           <a-card hoverable>
             <a-statistic
-              title="总CPU使用情况"
+              title='总CPU使用情况'
               :value="' '+Number(useCPU / totalCPU).toFixed(2) + '%'"
-              class="demo-class"
+              class='demo-class'
               :value-style="{ color:'#1890ff',fontSize: '29px' }"
             >
               <template #prefix>
-                <a-icon type="rocket" theme="twoTone" />
+                <a-icon type='rocket' theme='twoTone' />
               </template>
             </a-statistic>
           </a-card>
         </a-col>
-        <a-col :span="6">
+        <a-col :span='6'>
           <a-card hoverable>
             <a-statistic
-              title="总内存使用情况"
+              title='总内存使用情况'
               :value="' '+Number(useMem).toFixed(2) + 'M'"
-              class="demo-class"
+              class='demo-class'
               :value-style="{color:'#1890ff', fontSize: '29px' }"
             >
               <template #prefix>
-<!--                <a-icon type="smile" theme="twoTone" />-->
-                <a-icon type="thunderbolt" theme="twoTone" />
+                <!--                <a-icon type="smile" theme="twoTone" />-->
+                <a-icon type='thunderbolt' theme='twoTone' />
               </template>
             </a-statistic>
           </a-card>
         </a-col>
-        <a-col :span="6">
+        <a-col :span='6'>
           <a-card hoverable @click='$router.push({name:"resourceList"})'>
             <a-statistic
-              title="总资源数量"
+              title='总资源数量'
               :value="' '+SystemInfoMateData.resourceCount"
-              class="demo-class"
+              class='demo-class'
               :value-style="{ color:'#1890ff', fontSize: '29px' }"
             >
               <template #prefix>
-                <a-icon type="appstore" theme="twoTone" />
+                <a-icon type='appstore' theme='twoTone' />
               </template>
             </a-statistic>
           </a-card>
         </a-col>
-        <a-col :span="6">
+        <a-col :span='6'>
           <a-card hoverable @click='$router.push({name:"ruleList"})'>
             <a-statistic
-              title="总规则数量"
+              title='总规则数量'
               :value="' '+SystemInfoMateData.ruleCount"
-              class="demo-class"
+              class='demo-class'
               :value-style="{ color:'#1890ff',fontSize: '29px' }"
             >
               <template #prefix>
-                <a-icon type="api" theme="twoTone" />
+                <a-icon type='api' theme='twoTone' />
               </template>
             </a-statistic>
           </a-card>
@@ -62,12 +62,18 @@
       </a-row>
     </div>
     <a-card>
-      <a-tabs default-active-key="1" v-model="activeKey">
-        <a-tab-pane key="1" tab="基本信息"> <SystemInfo ref="systemInfo" :nodeUrl="node"></SystemInfo> </a-tab-pane>
-        <a-tab-pane key="2" tab="Tomact信息"> <TomcatInfo ref="tomcatInfo" :nodeUrl="node"></TomcatInfo> </a-tab-pane>
-        <a-tab-pane key="3" tab="JVM信息"> <JvmInfo ref="jvmInfo" :nodeUrl="node"></JvmInfo> </a-tab-pane>
-        <a-tab-pane key="4" tab="HTTP追踪">
-          <HttpTrace ref="httpTrace" :nodeUrl="node"></HttpTrace>
+      <a-tabs default-active-key='1' v-model='activeKey'>
+        <a-tab-pane key='1' tab='基本信息'>
+          <SystemInfo ref='systemInfo' :nodeUrl='node'></SystemInfo>
+        </a-tab-pane>
+        <a-tab-pane key='2' tab='Tomact信息'>
+          <TomcatInfo ref='tomcatInfo' :nodeUrl='node'></TomcatInfo>
+        </a-tab-pane>
+        <a-tab-pane key='3' tab='JVM信息'>
+          <JvmInfo ref='jvmInfo' :nodeUrl='node'></JvmInfo>
+        </a-tab-pane>
+        <a-tab-pane key='4' tab='HTTP追踪'>
+          <HttpTrace ref='httpTrace' :nodeUrl='node'></HttpTrace>
         </a-tab-pane>
       </a-tabs>
     </a-card>
@@ -107,19 +113,24 @@ export default {
         version: '',
         systemName: '',
         subscribeCount: 0
-      }
+      },
+      timer: null
     }
   },
-  created() {},
+  created() {
+  },
   mounted() {
     const _this = this // 声明一个变量指向Vue实例this，保证作用域一致
     this.getTotalSystemInfo()
+    if (this.timer) {
+      clearInterval(this.timer)
+    }
     this.timer = setInterval(() => {
       getSystemInfo().then(res => {
         _this.SystemInfoMateData = res.data
       })
       _this.getTotalSystemInfo()
-    }, 5000)
+    }, 15000)
 
     getSystemInfo().then(res => {
       _this.SystemInfoMateData = res.data
@@ -160,7 +171,6 @@ export default {
         let used = value.measurements[0].value
         used = this.convertMem(used, Number)
         this.useMem = Number(this.useMem) + Number(used)
-        console.log(this.useMem + ':' + used)
       })
     },
     convert(value, type) {
