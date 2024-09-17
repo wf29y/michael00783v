@@ -23,6 +23,8 @@
       </a-form-model-item>
       <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal'
                        :type='resourceMode'></mqtt-properties>
+      <kafka-properties v-if="modal.resourceType === 'KAFKA'" ref='PropertiesModal'
+                        :type='resourceMode'></kafka-properties>
       <MysqlProperties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal'
                        :type='resourceMode'></MysqlProperties>
       <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'
@@ -51,12 +53,15 @@
 import { postAction } from '@/api/manage'
 import { getResourceTypeList } from '@/config/resource.config'
 import MqttProperties from '../properties/MqttProperties'
+import KafkaProperties from '../properties/KafkaProperties'
 import MysqlProperties from '../properties/MysqlProperties'
 import PostgresqlProperties from '../properties/PostgresqlProperties'
 
 export default {
   name: 'ResourceModel',
-  components: { MqttProperties, MysqlProperties, PostgresqlProperties },
+  components: {
+    MqttProperties, KafkaProperties, MysqlProperties, PostgresqlProperties
+  },
   data() {
     return {
       title: '操作',
@@ -75,13 +80,16 @@ export default {
       resourceMode: null, // source or dest
       resourceIndex: -1 // source or dest
     }
-  },
+  }
+  ,
   mounted() {
-  },
+  }
+  ,
   methods: {
     add(resourceMode) {
       this.edit(resourceMode, {}, -1)
-    },
+    }
+    ,
     edit(resourceMode, record, resourceIndex) {
       this.resourceMode = resourceMode
       this.resourceIndex = resourceIndex
@@ -94,15 +102,18 @@ export default {
           this.listResource(this.modal.resourceType)
         }
       })
-    },
+    }
+    ,
     listResource(type) {
       postAction(this.url.resourceList, { resourceType: type }).then(res => {
         this.resourceList = res.data
       })
-    },
+    }
+    ,
     onClose() {
       this.visible = false
-    },
+    }
+    ,
     handleOk() {
       const that = this
       this.$refs.ruleForm.validate(valid => {
@@ -118,17 +129,20 @@ export default {
           that.visible = false
         }
       })
-    },
+    }
+    ,
     filterOption(input, option) {
       if (!option.componentOptions.children[0].text) {
         return false
       }
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    },
+    }
+    ,
     resourceTypeChange(type) {
       this.modal = { resourceType: type }
       this.listResource(type)
-    },
+    }
+    ,
     resourceChange(resourceId) {
       let index = this.resourceList.findIndex(resource => resource.resourceId === resourceId)
       this.modal = this.resourceList[index]

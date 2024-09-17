@@ -16,12 +16,20 @@ const resourceConfigMap = {
   "payload":String
 }`
   },
+  KAFKA: {
+    name: 'Kafka',
+    type: TYPE_ALL,
+    details: {
+      resource: { name: '资源地址', format: (resource) => `${resource.properties.url}` },
+      rule: { name: 'Topic', format: (resource) => resource.properties.topic }
+    }
+  },
   MYSQL: {
     name: 'Mysql',
     type: TYPE_DEST,
     details: {
       resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-      rule: { name: 'SQL模板', format: (resource) => resource.properties.sql } // todo 截取 加 省略号
+      rule: { name: 'SQL模板', format: (resource) => resource.properties.sql }
     }
   },
   POSTGRESQL: {
@@ -29,7 +37,7 @@ const resourceConfigMap = {
     type: TYPE_DEST,
     details: {
       resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-      rule: { name: 'SQL模板', format: (resource) => resource.properties.sql } // todo 截取 加 省略号
+      rule: { name: 'SQL模板', format: (resource) => resource.properties.sql }
     }
   }
 }

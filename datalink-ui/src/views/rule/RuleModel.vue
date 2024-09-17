@@ -1,12 +1,12 @@
 <template>
   <div>
-    <a-card title='规则' :body-style='{paddingBottom:0}'>
-      <div slot='extra'>
-        <a-button :style="{ marginRight: '8px' }" @click='onClose' icon='close'> 取消</a-button>
-        <a-button type='primary' @click='saveRule' icon='save'> 保存</a-button>
-      </div>
-      <a-row :gutter='20'>
-        <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
+    <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
+      <a-card title='规则' :body-style='{paddingBottom:0}'>
+        <div slot='extra'>
+          <a-button :style="{ marginRight: '8px' }" @click='onClose' icon='close'> 取消</a-button>
+          <a-button type='primary' @click='saveRule' icon='save'> 保存</a-button>
+        </div>
+        <a-row :gutter='20'>
           <a-col :span='12'>
             <a-form-model-item label='名称' prop='ruleName'>
               <a-input v-model='modal.ruleName' placeholder='请输入规则名称' />
@@ -17,57 +17,51 @@
               <a-input v-model='modal.description' placeholder='请输入备注' />
             </a-form-model-item>
           </a-col>
-        </a-form-model>
-      </a-row>
-    </a-card>
-
-    <a-row :gutter='20' style='margin-top: 20px'>
-
-      <a-col :span='12'>
-        <a-card title='数据源' :body-style='{minHeight:"600px",paddingBottom:0}'>
-          <a-row :gutter='20' style='margin-bottom: 20px'>
-            <a-col :span='12'>
-              <template v-if='!modal.sourceResource || modal.sourceResource.resourceId === undefined'>
-                <a-button @click='addResource("source")' class='new-btn' type='dashed'
-                          style='height: 193px;width: 100%'>
-                  <a-icon type='plus' />
-                  绑定数据源
-                </a-button>
-              </template>
-              <template v-else>
-                <a-card>
-                  <div slot='title'>{{ modal.sourceResource.resourceName }}</div>
-                  <a-row>
-                    <a-col :span='7'>
-                      <div>资源类型：</div>
-                    </a-col>
-                    <a-col :span='17'>
-                      <div>{{ resourceTypeMap[modal.sourceResource.resourceType] }}</div>
-                    </a-col>
-                  </a-row>
-                  <a-row>
-                    <a-col :span='7'>
-                      <div>{{ getDetails(modal.sourceResource).name }}：</div>
-                    </a-col>
-                    <a-col :span='17'>
-                      <div>{{ getDetails(modal.sourceResource).value }}</div>
-                    </a-col>
-                  </a-row>
-                  <a slot='actions' @click='editResource("source",modal.sourceResource)'>配置</a>
-                  <a-popconfirm slot='actions' title='移除此资源?' @confirm='() => deleteResource("source")'>
-                    <a href='javascript:;'>移除</a>
-                  </a-popconfirm>
-                </a-card>
-              </template>
-            </a-col>
-            <a-col :span='12' v-show='modal.sourceResource.resourceId'>
-              <a-card style='height: 193px;' title='源数据格式' :body-style='{padding:"10px 20px"}'>
-                <pre>{{ dataFormatMap[modal.sourceResource.resourceType] }}</pre>
-              </a-card>
-            </a-col>
-          </a-row>
-          <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
+        </a-row>
+      </a-card>
+      <a-row :gutter='20' style='margin-top: 20px'>
+        <a-col :span='12'>
+          <a-card title='数据源' :body-style='{minHeight:"600px",paddingBottom:0}'>
             <a-row :gutter='20'>
+              <a-col :span='12' style='margin-bottom: 20px'>
+                <template v-if='!modal.sourceResource || modal.sourceResource.resourceId === undefined'>
+                  <a-button @click='addResource("source")' class='new-btn' type='dashed'
+                            style='height: 193px;width: 100%'>
+                    <a-icon type='plus' />
+                    绑定数据源
+                  </a-button>
+                </template>
+                <template v-else>
+                  <a-card>
+                    <div slot='title'>{{ modal.sourceResource.resourceName }}</div>
+                    <a-row>
+                      <a-col :span='7'>
+                        <div>资源类型：</div>
+                      </a-col>
+                      <a-col :span='17'>
+                        <div>{{ resourceTypeMap[modal.sourceResource.resourceType] }}</div>
+                      </a-col>
+                    </a-row>
+                    <a-row>
+                      <a-col :span='7'>
+                        <div>{{ getDetails(modal.sourceResource).name }}：</div>
+                      </a-col>
+                      <a-col :span='17'>
+                        <div>{{ getDetails(modal.sourceResource).value }}</div>
+                      </a-col>
+                    </a-row>
+                    <a slot='actions' @click='editResource("source",modal.sourceResource)'>配置</a>
+                    <a-popconfirm slot='actions' title='移除此资源?' @confirm='() => deleteResource("source")'>
+                      <a href='javascript:;'>移除</a>
+                    </a-popconfirm>
+                  </a-card>
+                </template>
+              </a-col>
+              <a-col :span='12' v-show='modal.sourceResource.resourceId' style='margin-bottom: 20px'>
+                <a-card style='height: 193.44px;' title='源数据格式' :body-style='{padding:"10px 20px"}'>
+                  <pre>{{ dataFormatMap[modal.sourceResource.resourceType] }}</pre>
+                </a-card>
+              </a-col>
               <a-col :span='12' v-show='modal.sourceResource.resourceId'>
                 <a-form-model-item label='解析方式' prop='analysisMode'>
                   <a-select v-model='modal.analysisMode' placeholder='请选择解析方式' @change='analysisModeChange'>
@@ -104,51 +98,51 @@
                 </a-form-model-item>
               </a-col>
             </a-row>
-          </a-form-model>
-        </a-card>
-      </a-col>
-      <a-col :span='12'>
-        <a-card title='目标' :body-style='{minHeight:"600px"}'>
-          <a-list :grid='{ gutter: 24, lg: 2, md: 2, sm: 2, xs: 2 }' :data-source='modal.destResourceList'>
-            <a-list-item slot='renderItem' slot-scope='item,index'>
-              <template v-if='!item || item.resourceId === undefined'>
-                <a-button @click='addResource("dest")' class='new-btn' type='dashed' style='height: 193px;width: 100%'>
-                  <a-icon type='plus' />
-                  添加目标资源
-                </a-button>
-              </template>
-              <template v-else>
-                <a-card>
-                  <div slot='title'>{{ item.resourceName }}</div>
-                  <a-row>
-                    <a-col :span='7'>
-                      <div>资源类型：</div>
-                    </a-col>
-                    <a-col :span='17'>
-                      <div>{{ resourceTypeMap[item.resourceType] }}</div>
-                    </a-col>
-                  </a-row>
-                  <a-row>
-                    <a-col :span='7'>
-                      <div>{{ getDetails(item).name }}：</div>
-                    </a-col>
-                    <a-col :span='17'>
-                      <div>{{ getDetails(item).value }}</div>
-                    </a-col>
-                  </a-row>
-                  <a slot='actions' @click='editResource("dest",item,index)'>配置</a>
-                  <a-popconfirm slot='actions' title='移除此资源?' @confirm='() => deleteResource("dest",index)'>
-                    <a href='javascript:;'>移除</a>
-                  </a-popconfirm>
-                </a-card>
-              </template>
-            </a-list-item>
-          </a-list>
-        </a-card>
-      </a-col>
 
-    </a-row>
-
+          </a-card>
+        </a-col>
+        <a-col :span='12'>
+          <a-card title='目标' :body-style='{minHeight:"600px"}'>
+            <a-list :grid='{ gutter: 24, lg: 2, md: 2, sm: 2, xs: 2 }' :data-source='modal.destResourceList'>
+              <a-list-item slot='renderItem' slot-scope='item,index'>
+                <template v-if='!item || item.resourceId === undefined'>
+                  <a-button @click='addResource("dest")' class='new-btn' type='dashed'
+                            style='height: 193px;width: 100%'>
+                    <a-icon type='plus' />
+                    添加目标资源
+                  </a-button>
+                </template>
+                <template v-else>
+                  <a-card>
+                    <div slot='title'>{{ item.resourceName }}</div>
+                    <a-row>
+                      <a-col :span='7'>
+                        <div>资源类型：</div>
+                      </a-col>
+                      <a-col :span='17'>
+                        <div>{{ resourceTypeMap[item.resourceType] }}</div>
+                      </a-col>
+                    </a-row>
+                    <a-row>
+                      <a-col :span='7'>
+                        <div>{{ getDetails(item).name }}：</div>
+                      </a-col>
+                      <a-col :span='17'>
+                        <div>{{ getDetails(item).value }}</div>
+                      </a-col>
+                    </a-row>
+                    <a slot='actions' @click='editResource("dest",item,index)'>配置</a>
+                    <a-popconfirm slot='actions' title='移除此资源?' @confirm='() => deleteResource("dest",index)'>
+                      <a href='javascript:;'>移除</a>
+                    </a-popconfirm>
+                  </a-card>
+                </template>
+              </a-list-item>
+            </a-list>
+          </a-card>
+        </a-col>
+      </a-row>
+    </a-form-model>
     <resource-model ref='ResourceModel' @update='handleUpdateResource' @add='handleAddResource'></resource-model>
     <script-select-model ref='ScriptSelectModel' @select='handleSelectedScript'></script-select-model>
   </div>
@@ -159,7 +153,7 @@ import { postAction, putAction, getAction } from '@/api/manage'
 import ResourceModel from './modules/ResourceModel'
 import ScriptSelectModel from './modules/ScriptSelectModel'
 import { codemirror } from 'vue-codemirror-lite'
-import { resourceTypeMap, resourceDataFormatMap,getResourceDetails } from '@/config/resource.config'
+import { resourceTypeMap, resourceDataFormatMap, getResourceDetails } from '@/config/resource.config'
 
 require('codemirror/mode/javascript/javascript')
 require('codemirror/mode/vue/vue')
@@ -219,7 +213,7 @@ export default {
          */
         function transform(data) {
            return data;
-        }`,
+        }`
     }
   },
   mounted() {

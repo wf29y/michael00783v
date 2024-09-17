@@ -61,7 +61,7 @@
         </a-col>
       </a-row>
     </div>
-    <a-card>
+    <a-card :body-style='{paddingTop:"10px"}'>
       <a-tabs default-active-key='1' v-model='activeKey'>
         <a-tab-pane key='1' tab='基本信息'>
           <SystemInfo ref='systemInfo' :nodeUrl='node'></SystemInfo>

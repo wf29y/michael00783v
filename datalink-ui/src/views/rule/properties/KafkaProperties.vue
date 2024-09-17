@@ -7,21 +7,13 @@
         </a-form-model-item>
       </a-col>
       <a-col :span='24'>
-        <a-form-model-item label='Qos'>
-          <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%'/>
+        <a-form-model-item label='消费组'  v-if="type==='source'">
+          <a-input v-model='properties.group' placeholder='请输入消费组' />
         </a-form-model-item>
       </a-col>
       <a-col :span='12'>
         <a-form-model-item label='动态Topic' prop='dynamicTopic' v-if="type==='dest'">
           <a-select v-model='properties.dynamicTopic' placeholder='请选择是否动态Topic'>
-            <a-select-option :value='true'>是</a-select-option>
-            <a-select-option :value='false'>否</a-select-option>
-          </a-select>
-        </a-form-model-item>
-      </a-col>
-      <a-col :span='12'>
-        <a-form-model-item label='消息保留' prop='retained' v-if="type==='dest'">
-          <a-select v-model='properties.retained' placeholder='请选择是否消息保留'>
             <a-select-option :value='true'>是</a-select-option>
             <a-select-option :value='false'>否</a-select-option>
           </a-select>
