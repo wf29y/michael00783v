@@ -23,10 +23,10 @@ public class ResourcesController {
     /**
      * 新增资源
      * @param resource
-     * @throws KvStorageException
+     * @throws Exception
      */
     @PostMapping("/add")
-    public void addResource(@RequestBody Resource resource) throws KvStorageException {
+    public void addResource(@RequestBody Resource resource) throws Exception {
         resourceService.add(resource);
     }
 

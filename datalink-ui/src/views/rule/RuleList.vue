@@ -116,7 +116,7 @@ export default {
           this.$message.success('启动成功')
           this.loadData()
         } else {
-          this.$message.info(res.message)
+          this.$message.error('启动失败')
         }
       })
     },
@@ -126,7 +126,7 @@ export default {
           this.$message.success('停止成功')
           this.loadData()
         } else {
-          this.$message.info(res.message)
+          this.$message.error('停止失败')
         }
       })
     },
@@ -136,7 +136,7 @@ export default {
           this.$message.success('删除成功')
           this.loadData()
         } else {
-          this.$message.info(res.message)
+          this.$message.error('删除失败')
         }
       })
     },

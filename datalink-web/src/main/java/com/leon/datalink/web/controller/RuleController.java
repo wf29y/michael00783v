@@ -24,7 +24,6 @@ public class RuleController {
      * 新增规则
      *
      * @param ruleId
-     * @throws KvStorageException
      */
     @GetMapping("/info")
     public Object getRule(@RequestParam(value = "ruleId") String ruleId)  {
@@ -36,7 +35,6 @@ public class RuleController {
      * 新增规则
      *
      * @param ruleId
-     * @throws KvStorageException
      */
     @GetMapping("/runtime")
     public Object getRuntime(@RequestParam(value = "ruleId") String ruleId)  {
@@ -49,10 +47,10 @@ public class RuleController {
      * 新增规则
      *
      * @param rule
-     * @throws KvStorageException
+     * @throws Exception
      */
     @PostMapping("/add")
-    public void addRule(@RequestBody Rule rule) throws KvStorageException {
+    public void addRule(@RequestBody Rule rule) throws Exception {
         ruleService.add(rule);
     }
 

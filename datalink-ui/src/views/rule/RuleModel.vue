@@ -207,13 +207,12 @@ export default {
         }
       },
       dataFormatMap: resourceDataFormatMap,
-      defaultScript: `
-        /**
-         * 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据
-         */
-        function transform(data) {
-           return data;
-        }`
+      defaultScript:"/**\n" +
+        "* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n" +
+        "*/\n" +
+        "function transform(data) {\n" +
+        "    return data;\n" +
+        "}",
     }
   },
   mounted() {

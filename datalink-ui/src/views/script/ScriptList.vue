@@ -31,6 +31,11 @@
         <span slot='serial' slot-scope='text, record, index'>
           {{ index + 1 }}
         </span>
+
+        <span slot='description' slot-scope='text, record, index'>
+          {{ text ? text : '-' }}
+        </span>
+
         <span slot='action' slot-scope='text, record'>
           <template>
             <a @click='handleEdit(record)'>编辑</a>
@@ -69,7 +74,12 @@ export default {
         },
         {
           title: '说明',
-          dataIndex: 'description'
+          dataIndex: 'description',
+          scopedSlots: { customRender: 'description' }
+        },
+        {
+          title: '最后更新',
+          dataIndex: 'updateTime'
         },
         {
           title: '操作',
@@ -97,10 +107,10 @@ export default {
     handleDelete(record) {
       postAction('/api/script/remove', { scriptId: record.scriptId }).then(res => {
         if (res.code === 200) {
-          this.$message.info(res.message)
+          this.$message.success('删除成功')
           this.loadData()
         } else {
-          this.$message.info(res.message)
+          this.$message.error('删除失败')
         }
       })
     },

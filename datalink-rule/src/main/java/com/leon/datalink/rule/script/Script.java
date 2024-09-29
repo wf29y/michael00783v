@@ -12,7 +12,13 @@ public class Script implements Serializable {
 
     private String scriptContent;
 
+    private String paramContent;
+
+    private String resultContent;
+
     private String description;
+
+    private String updateTime;
 
     public String getScriptId() {
         return scriptId;
@@ -44,5 +50,29 @@ public class Script implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getParamContent() {
+        return paramContent;
+    }
+
+    public void setParamContent(String paramContent) {
+        this.paramContent = paramContent;
+    }
+
+    public String getResultContent() {
+        return resultContent;
+    }
+
+    public void setResultContent(String resultContent) {
+        this.resultContent = resultContent;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 }
