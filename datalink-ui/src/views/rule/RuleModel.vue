@@ -67,7 +67,7 @@
                   <a-select v-model='modal.analysisMode' placeholder='请选择解析方式' @change='analysisModeChange'>
                     <a-select-option value='WITHOUT'>无解析透传</a-select-option>
                     <a-select-option value='SCRIPT'>JavaScript脚本</a-select-option>
-                    <a-select-option value='JAR'>Jar包</a-select-option>
+                    <a-select-option value='JAR'>Jar包（未支持）</a-select-option>
                   </a-select>
                 </a-form-model-item>
               </a-col>
@@ -285,10 +285,10 @@ export default {
           }
           obj.then(res => {
             if (res.code === 200) {
-              that.$message.success(res.message)
+              that.$message.success("保存成功")
               that.onClose()
             } else {
-              that.$message.warning(res.message)
+              that.$message.error("保存失败")
             }
           })
             .finally(() => {

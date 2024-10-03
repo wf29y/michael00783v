@@ -7,7 +7,7 @@
         </a-form-model-item>
       </a-col>
       <a-col :span='24'>
-        <a-form-model-item label='消费组'  v-if="type==='source'">
+        <a-form-model-item label='消费组' v-if="type==='source'">
           <a-input v-model='properties.group' placeholder='请输入消费组' />
         </a-form-model-item>
       </a-col>
@@ -21,7 +21,7 @@
       </a-col>
       <a-col :span='24' class='payload'>
         <a-form-model-item label='消息模板' v-if="type==='dest'" style='margin-bottom: 0'>
-          <codemirror  v-model='properties.template' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
+          <codemirror v-model='properties.template' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
         </a-form-model-item>
       </a-col>
     </a-form-model>
@@ -39,10 +39,12 @@ require('codemirror/theme/base16-light.css')
 require('codemirror/addon/selection/active-line')
 
 export default {
-  components:{codemirror},
+  components: { codemirror },
   data() {
     return {
-      properties: {},
+      properties: {
+        dynamicTopic: false
+      },
       options: {
         mode: { name: 'text/x-sql', json: true },
         height: 200,
@@ -68,11 +70,9 @@ export default {
   },
   methods: {
     set(properties) {
-      console.log(properties)
-      this.properties = properties
+      this.properties = Object.assign({}, this.properties, properties)
     },
     get() {
-      console.log(this.properties)
       return this.properties
     }
   }

@@ -111,10 +111,10 @@ export default {
           }
           obj.then(res => {
             if (res.code === 200) {
-              that.$message.success(res.message)
+              that.$message.success("保存成功")
               that.$emit('ok')
             } else {
-              that.$message.warning(res.message)
+              that.$message.error("保存失败")
             }
           })
             .finally(() => {

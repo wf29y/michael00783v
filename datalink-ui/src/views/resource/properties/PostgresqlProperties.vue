@@ -51,12 +51,17 @@
 export default {
   data() {
     return {
-      properties: {}
+      properties: {
+        port: 3306,
+        initSize: 8,
+        minIdle: 1,
+        maxActive: 20
+      }
     }
   },
   methods: {
     set(properties) {
-      this.properties = properties
+      this.properties = Object.assign({}, this.properties, properties)
     },
     get() {
       return this.properties

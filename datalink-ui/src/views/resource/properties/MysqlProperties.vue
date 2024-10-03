@@ -1,5 +1,5 @@
 <template>
-  <a-form-model layout="vertical" :model="properties">
+  <a-form-model layout='vertical' :model='properties'>
     <a-row :gutter='16'>
       <a-col :span='12'>
         <a-form-model-item label='IP'>
@@ -51,12 +51,17 @@
 export default {
   data() {
     return {
-      properties: {}
+      properties: {
+        port: 3306,
+        initSize: 8,
+        minIdle: 1,
+        maxActive: 20
+      }
     }
   },
   methods: {
     set(properties) {
-      this.properties = properties
+      this.properties = Object.assign({}, this.properties, properties)
     },
     get() {
       return this.properties

@@ -1,5 +1,5 @@
 <template>
-  <a-form-model layout="vertical" :model="properties">
+  <a-form-model layout='vertical' :model='properties'>
     <a-row :gutter='16'>
       <a-col :span='24'>
         <a-form-model-item label='URL'>
@@ -36,12 +36,15 @@
 export default {
   data() {
     return {
-      properties: {}
+      properties: {
+        connectionTimeout: 10,
+        keepAliveInterval: 30
+      }
     }
   },
   methods: {
     set(properties) {
-      this.properties = properties
+      this.properties = Object.assign({}, this.properties, properties)
     },
     get() {
       return this.properties

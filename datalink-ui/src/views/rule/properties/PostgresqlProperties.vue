@@ -52,11 +52,9 @@ export default {
   },
   methods: {
     set(properties) {
-      console.log(properties)
       this.properties = properties
     },
     get() {
-      console.log(this.properties)
       return this.properties
     }
   }

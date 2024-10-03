@@ -21,14 +21,10 @@
           </a-select-option>
         </a-select>
       </a-form-model-item>
-      <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal'
-                       :type='resourceMode'></mqtt-properties>
-      <kafka-properties v-if="modal.resourceType === 'KAFKA'" ref='PropertiesModal'
-                        :type='resourceMode'></kafka-properties>
-      <MysqlProperties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal'
-                       :type='resourceMode'></MysqlProperties>
-      <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'
-                             :type='resourceMode'></postgresql-properties>
+      <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal' :type='resourceMode'></mqtt-properties>
+      <kafka-properties v-if="modal.resourceType === 'KAFKA'" ref='PropertiesModal' :type='resourceMode'></kafka-properties>
+      <MysqlProperties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal' :type='resourceMode'></MysqlProperties>
+      <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal' :type='resourceMode'></postgresql-properties>
     </a-form-model>
     <div
       :style="{
