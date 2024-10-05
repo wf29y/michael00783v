@@ -7,6 +7,7 @@ import com.leon.datalink.driver.DriverModeEnum;
 import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
@@ -14,6 +15,10 @@ import java.util.Objects;
 public class PostgresqlDriver extends AbstractDriver {
 
     private DruidDataSource dataSource;
+
+    public PostgresqlDriver(Map<String, Object> properties) {
+        super(properties);
+    }
 
     public PostgresqlDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
         super(properties, driverMode);
@@ -47,6 +52,22 @@ public class PostgresqlDriver extends AbstractDriver {
     @Override
     public void destroy() throws Exception {
         dataSource.close();
+    }
+
+    @Override
+    public boolean test() {
+        try {
+            Class.forName("org.postgresql.Driver");
+            DriverManager.getConnection(String.format("jdbc:postgresql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
+                    getStrProp("ip"),
+                    getStrProp("port"),
+                    getStrProp("databaseName")),
+                    getStrProp("username"),
+                    getStrProp("password"));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

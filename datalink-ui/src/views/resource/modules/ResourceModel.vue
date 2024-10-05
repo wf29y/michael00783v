@@ -44,8 +44,9 @@
         zIndex: 1
       }"
     >
-      <a-button :style="{ marginRight: '8px' }" @click='onClose'> 取消</a-button>
-      <a-button type='primary' @click='handleOk'> 保存</a-button>
+      <a-button :style="{ marginRight: '10px',width: '110px' }" @click='testDriver'> 测试连接</a-button>
+      <a-button :style="{ marginRight: '10px',width: '110px' }" @click='onClose'> 取消</a-button>
+      <a-button :style="{ width: '110px' }" @click='handleOk' type='primary' > 保存</a-button>
     </div>
   </a-drawer>
 </template>
@@ -69,7 +70,8 @@ export default {
       modal: {},
       url: {
         add: '/api/resource/add',
-        update: '/api/resource/update'
+        update: '/api/resource/update',
+        test: '/api/resource/test'
       },
       rules: {
         resourceType: [{ required: true, message: '请选择资源类型', trigger: 'blur' }],
@@ -133,8 +135,14 @@ export default {
       }
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
-    handleCancel() {
-      this.onClose()
+    testDriver() {
+      postAction(this.url.test, this.modal).then((res)=>{
+          if(res.code===200 && res.data === true){
+            this.$message.success("连接成功")
+          }else {
+            this.$message.error("连接失败")
+          }
+      })
     }
   }
 }

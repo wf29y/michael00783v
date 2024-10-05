@@ -22,6 +22,7 @@ public class ResourcesController {
 
     /**
      * 新增资源
+     *
      * @param resource
      * @throws Exception
      */
@@ -32,15 +33,17 @@ public class ResourcesController {
 
     /**
      * 查询资源
+     *
      * @param resource
      */
     @PostMapping("/list")
     public Object listResource(@RequestBody Resource resource) {
-       return resourceService.list(resource);
+        return resourceService.list(resource);
     }
 
     /**
-     *  移除资源
+     * 移除资源
+     *
      * @param resource
      * @throws Exception
      */
@@ -51,6 +54,7 @@ public class ResourcesController {
 
     /**
      * 更新资源
+     *
      * @param resource
      * @throws Exception
      */
@@ -59,7 +63,16 @@ public class ResourcesController {
         resourceService.update(resource);
     }
 
-
+    /**
+     * 测试资源
+     *
+     * @param resource
+     * @throws Exception
+     */
+    @PostMapping("/test")
+    public boolean testResource(@RequestBody Resource resource) throws Exception {
+        return resourceService.testDriver(resource);
+    }
 
 }
 

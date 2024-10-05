@@ -2,7 +2,7 @@
   <a-row :gutter='20'>
     <a-form-model layout='vertical' :model='properties'>
       <a-col :span='24'>
-        <a-form-model-item label='Topic'>
+        <a-form-model-item :label='properties.dynamicTopic?"Topic模板":"Topic"'>
           <a-input v-model='properties.topic' placeholder='请输入Topic' />
         </a-form-model-item>
       </a-col>
@@ -11,7 +11,7 @@
           <a-input v-model='properties.group' placeholder='请输入消费组' />
         </a-form-model-item>
       </a-col>
-      <a-col :span='12'>
+      <a-col :span='24'>
         <a-form-model-item label='动态Topic' prop='dynamicTopic' v-if="type==='dest'">
           <a-select v-model='properties.dynamicTopic' placeholder='请选择是否动态Topic'>
             <a-select-option :value='true'>是</a-select-option>
@@ -46,7 +46,7 @@ export default {
         dynamicTopic: false
       },
       options: {
-        mode: { name: 'text/x-sql', json: true },
+        mode: { name: 'text/javascript', json: true },
         height: 200,
         lineNumbers: true,
         tabSize: 2,

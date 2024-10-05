@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.Driver;
-import com.leon.datalink.driver.DriverDataCallback;
+import com.leon.datalink.driver.DriverFactory;
 import com.leon.datalink.driver.DriverModeEnum;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.constants.RuleAnalysisModeEnum;
@@ -18,7 +18,6 @@ import javax.annotation.PreDestroy;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,13 +45,13 @@ public class RuleEngine implements IRuleEngine {
         List<Resource> destResourceList = rule.getDestResourceList();
         List<Driver> destDriverList = new ArrayList<>();
         for (Resource destResource : destResourceList) {
-            Driver destDriver = getDriver(destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.DEST);
+            Driver destDriver = DriverFactory.getDriver(destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.DEST);
             destDriver.create();
             destDriverList.add(destDriver);
         }
         // 源资源
         Resource sourceResource = rule.getSourceResource();
-        Driver southDriver = getDriver(sourceResource.getResourceType().getDriver(), sourceResource.getProperties(),
+        Driver southDriver = DriverFactory.getDriver(sourceResource.getResourceType().getDriver(), sourceResource.getProperties(),
                 DriverModeEnum.SOURCE,
                 // 源数据处理
                 data -> {
@@ -157,16 +156,5 @@ public class RuleEngine implements IRuleEngine {
         }
     }
 
-    private Driver getDriver(Class<? extends Driver> driverClass, Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
-        if (driverClass == null) return null;
-        Constructor<? extends Driver> constructor = driverClass.getDeclaredConstructor(Map.class, DriverModeEnum.class);
-        return constructor.newInstance(properties, driverMode);
-    }
-
-    private Driver getDriver(Class<? extends Driver> driverClass, Map<String, Object> properties, DriverModeEnum driverMode, DriverDataCallback callback) throws Exception {
-        if (driverClass == null) return null;
-        Constructor<? extends Driver> constructor = driverClass.getDeclaredConstructor(Map.class, DriverModeEnum.class, DriverDataCallback.class);
-        return constructor.newInstance(properties, driverMode, callback);
-    }
 
 }

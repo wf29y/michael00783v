@@ -6,6 +6,8 @@ import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
+import com.leon.datalink.driver.Driver;
+import com.leon.datalink.driver.DriverFactory;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.web.resource.ResourceService;
 import org.springframework.stereotype.Service;
@@ -101,5 +103,10 @@ public class ResourceServiceImpl implements ResourceService {
         return this.list(resource).size();
     }
 
+    @Override
+    public boolean testDriver(Resource resource) throws Exception {
+        Driver driver = DriverFactory.getDriver(resource.getResourceType().getDriver(), resource.getProperties());
+        return driver.test();
+    }
 
 }

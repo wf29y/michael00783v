@@ -21,7 +21,14 @@ public interface Driver {
      */
     void destroy() throws Exception;
 
+    /**
+     * test ok
+     */
+    boolean test();
 
+    /**
+     * handle receive data
+     */
     void handleData(Map data) throws Exception;
 
 

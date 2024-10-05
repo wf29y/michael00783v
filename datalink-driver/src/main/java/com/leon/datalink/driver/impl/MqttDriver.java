@@ -1,7 +1,5 @@
 package com.leon.datalink.driver.impl;
 
-import cn.hutool.extra.template.TemplateEngine;
-import cn.hutool.extra.template.TemplateUtil;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.driver.AbstractDriver;
@@ -9,12 +7,6 @@ import com.leon.datalink.driver.DriverDataCallback;
 import com.leon.datalink.driver.DriverModeEnum;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.common.TemplateParserContext;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -30,6 +22,10 @@ public class MqttDriver extends AbstractDriver {
     private volatile MqttClient mqttHandler;
 
     private static final Integer HANDLER_COUNT = 10;
+
+    public MqttDriver(Map<String, Object> properties) {
+        super(properties);
+    }
 
     public MqttDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
         super(properties, driverMode);
@@ -65,6 +61,24 @@ public class MqttDriver extends AbstractDriver {
                     Loggers.DRIVER.error(e.getMessage());
                 }
             });
+        }
+    }
+
+    @Override
+    public boolean test() {
+        try {
+            MqttClient mqttClient = new MqttClient(getStrProp("url"), SnowflakeIdWorker.getId(), new MemoryPersistence());
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setCleanSession(true);
+            options.setUserName(getStrProp("username"));
+            options.setMaxInflight(1000);
+            options.setPassword((getStrProp("password")).toCharArray());
+            options.setConnectionTimeout(10);
+            options.setKeepAliveInterval(30);
+            mqttClient.connect(options);
+            return true;
+        } catch (MqttException e) {
+            return false;
         }
     }
 

@@ -45,10 +45,10 @@ export default {
         script: '/api/script/list'
       },
       columns: [
-        {
+      /*  {
           title: 'ID',
           dataIndex: 'scriptId'
-        },
+        },*/
         {
           title: '名称',
           dataIndex: 'scriptName'

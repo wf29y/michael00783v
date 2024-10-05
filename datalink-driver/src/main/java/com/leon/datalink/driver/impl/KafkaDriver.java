@@ -29,6 +29,10 @@ public class KafkaDriver extends AbstractDriver {
 
     private  KafkaProducer<String, String> kafkaProducer;
 
+    public KafkaDriver(Map<String, Object> properties) throws Exception {
+        super(properties);
+    }
+
     public KafkaDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
         super(properties, driverMode);
     }
@@ -76,6 +80,20 @@ public class KafkaDriver extends AbstractDriver {
             this.kafkaConsumer.close();
         } else {
             this.kafkaProducer.close();
+        }
+    }
+
+    @Override
+    public boolean test() {
+        try {
+            Properties prop = new Properties();
+            prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getStrProp("url"));
+            prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+            prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+            new KafkaProducer<>(prop);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 

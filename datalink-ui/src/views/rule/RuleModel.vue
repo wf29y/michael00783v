@@ -2,7 +2,7 @@
   <div>
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-card title='规则' :body-style='{paddingBottom:0}'>
-        <div slot='extra'>
+        <div slot='extra' style='padding: 0'>
           <a-button :style="{ marginRight: '8px' }" @click='onClose' icon='close'> 取消</a-button>
           <a-button type='primary' @click='saveRule' icon='save'> 保存</a-button>
         </div>
