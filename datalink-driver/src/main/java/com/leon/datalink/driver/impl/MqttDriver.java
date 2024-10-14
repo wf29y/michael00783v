@@ -4,7 +4,7 @@ import akka.actor.ActorRef;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.driver.AbstractDriver;
-import com.leon.datalink.driver.DriverModeEnum;
+import com.leon.datalink.driver.constans.DriverModeEnum;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.util.StringUtils;

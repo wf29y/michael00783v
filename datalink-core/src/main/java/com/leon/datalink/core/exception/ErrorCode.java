@@ -66,23 +66,8 @@ public enum ErrorCode {
     /**
      * copy directory has error.
      */
-    IOCopyDirError(40202),
-    
-    // consistency protocol error
-    
-    /**
-     * protocol write error.
-     */
-    ProtoSubmitError(40301),
-    
-    /**
-     * protocol read error.
-     */
-    ProtoReadError(40302),
-    /**
-     * Device add channel error.
-     */
-    DeviceAddChannelError(40303);
+    IOCopyDirError(40202);
+
     
     private final int code;
     

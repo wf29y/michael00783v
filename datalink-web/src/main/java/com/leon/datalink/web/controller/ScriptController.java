@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.utils.JacksonUtils;
-import com.leon.datalink.rule.script.Script;
+import com.leon.datalink.rule.entity.Script;
 import com.leon.datalink.web.script.ScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.leon.datalink.rule.script;
+package com.leon.datalink.rule.entity;
 
 
 import java.io.Serializable;

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * @ClassName AkkaConfig
  * @Description
  * @Author Leon
- * @Date 2022/4/8 15:07
+ * @Date 2022/8/4 15:07
  * @Version V1.0
  **/
 @Configuration

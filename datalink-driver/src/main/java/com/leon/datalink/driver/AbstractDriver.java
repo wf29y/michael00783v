@@ -2,10 +2,10 @@ package com.leon.datalink.driver;
 
 
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
-import com.leon.datalink.driver.actor.RuleTransformMsg;
+import com.leon.datalink.driver.actor.DriverDataMsg;
+import com.leon.datalink.driver.constans.DriverModeEnum;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public abstract class AbstractDriver implements Driver {
     }
 
     public void sendData(Map data) {
-        ruleActorRef.tell(new RuleTransformMsg(data), ActorRef.noSender());
+        ruleActorRef.tell(new DriverDataMsg(data), ActorRef.noSender());
     }
 
     public String getStrProp(String key) {

@@ -6,7 +6,7 @@ import com.leon.datalink.rule.constants.Constants;
 
 import java.util.LinkedList;
 
-public class RuleRuntime {
+public class Runtime {
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private DateTime startTime;
@@ -92,10 +92,10 @@ public class RuleRuntime {
         this.failCount++;
     }
 
-    public void addLastData(Object data) {
+    public void addLastData(Object data,DateTime time) {
         RuleData ruleData = new RuleData();
         ruleData.setData(data);
-        ruleData.setTime(DateTime.now());
+        ruleData.setTime(time);
         this.lastData.addFirst(ruleData);
         if (lastData.size() > Constants.RULE_LAST_DATA_COUNT) {
             this.lastData.removeLast();

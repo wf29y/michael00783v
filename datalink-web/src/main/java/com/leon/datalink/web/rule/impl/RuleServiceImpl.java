@@ -9,13 +9,12 @@ import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
-import com.leon.datalink.driver.actor.DriverActor;
 import com.leon.datalink.rule.actor.RuleActor;
-import com.leon.datalink.rule.actor.RuleStartMsg;
-import com.leon.datalink.rule.actor.RuleStopMsg;
 import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.rule.entity.RuleRuntime;
+import com.leon.datalink.rule.entity.Runtime;
 import com.leon.datalink.web.rule.RuleService;
+import com.leon.datalink.rule.runtime.RuntimeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +36,9 @@ public class RuleServiceImpl implements RuleService {
 
 
     ActorSystem actorSystem;
+
+    @Autowired
+    RuntimeService runtimeService;
 
     /**
      * 资源列表
@@ -73,11 +75,6 @@ public class RuleServiceImpl implements RuleService {
         }
 
     }
-
-//    @PostConstruct
-//    public void init() {
-//
-//    }
 
     @Override
     public Rule get(String ruleId) {
@@ -120,15 +117,14 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public RuleRuntime getRuntime(String ruleId) {
-        //  return ruleEngine.getRuntime(ruleId);
-        return null;
+    public Runtime getRuntime(String ruleId) {
+        return runtimeService.get(ruleId);
     }
 
     @Override
     public void startRule(Rule rule) throws Exception {
-        ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule)), "rule-" + rule.getRuleId());
-        actorRef.tell(new RuleStartMsg(), ActorRef.noSender());
+        // 创建rule actor
+        ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule, runtimeService)), "rule-" + rule.getRuleId());
         ruleActorRefList.put(rule.getRuleId(), actorRef);
 
         rule.setEnable(true);
@@ -136,9 +132,9 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public void stopRule(Rule rule) throws Exception {
-        ActorRef actorRef = ruleActorRefList.get(rule.getRuleId());
-        actorRef.tell(new RuleStopMsg(), ActorRef.noSender());
+    public void stopRule(Rule rule) {
+        // 停止rule actor
+        actorSystem.stop(ruleActorRefList.get(rule.getRuleId()));
         ruleActorRefList.remove(rule.getRuleId());
 
         rule.setEnable(false);

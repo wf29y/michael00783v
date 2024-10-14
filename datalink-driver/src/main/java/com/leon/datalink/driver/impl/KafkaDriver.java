@@ -2,7 +2,7 @@ package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
 import com.leon.datalink.driver.AbstractDriver;
-import com.leon.datalink.driver.DriverModeEnum;
+import com.leon.datalink.driver.constans.DriverModeEnum;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
