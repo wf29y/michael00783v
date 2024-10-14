@@ -15,7 +15,6 @@ import com.leon.datalink.web.auth.DatalinkUserService;
 import com.leon.datalink.web.config.AuthConfig;
 import com.leon.datalink.web.exception.AccessException;
 import com.leon.datalink.web.security.DatalinkAuthConfig;
-import com.leon.datalink.web.auth.DatalinkUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;

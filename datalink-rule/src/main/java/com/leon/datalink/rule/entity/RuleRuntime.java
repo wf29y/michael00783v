@@ -2,11 +2,9 @@ package com.leon.datalink.rule.entity;
 
 import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.leon.datalink.driver.Driver;
 import com.leon.datalink.rule.constants.Constants;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class RuleRuntime {
 

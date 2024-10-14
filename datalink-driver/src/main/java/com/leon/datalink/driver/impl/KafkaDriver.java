@@ -1,7 +1,7 @@
 package com.leon.datalink.driver.impl;
 
+import akka.actor.ActorRef;
 import com.leon.datalink.driver.AbstractDriver;
-import com.leon.datalink.driver.DriverDataCallback;
 import com.leon.datalink.driver.DriverModeEnum;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -29,16 +29,12 @@ public class KafkaDriver extends AbstractDriver {
 
     private  KafkaProducer<String, String> kafkaProducer;
 
-    public KafkaDriver(Map<String, Object> properties) throws Exception {
+    public KafkaDriver(Map<String, Object> properties) {
         super(properties);
     }
 
-    public KafkaDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
-        super(properties, driverMode);
-    }
-
-    public KafkaDriver(Map<String, Object> properties, DriverModeEnum driverMode, DriverDataCallback callback) throws Exception {
-        super(properties, driverMode, callback);
+    public KafkaDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
+        super(properties, driverMode, ruleActorRef);
     }
 
     private static ExecutorService executor = Executors.newCachedThreadPool();
@@ -60,7 +56,7 @@ public class KafkaDriver extends AbstractDriver {
                         Map<String, Object> data = new HashMap<>();
                         data.put("topic", record.topic());
                         data.put("payload", record.value());
-                        callback.onData(data);
+                        sendData(data);
                     }
                 }
             });

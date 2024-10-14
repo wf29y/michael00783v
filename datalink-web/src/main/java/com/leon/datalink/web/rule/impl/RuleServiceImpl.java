@@ -1,21 +1,23 @@
 package com.leon.datalink.web.rule.impl;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Props;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
-import com.leon.datalink.resource.Resource;
-import com.leon.datalink.rule.IRuleEngine;
+import com.leon.datalink.driver.actor.DriverActor;
+import com.leon.datalink.rule.actor.RuleActor;
+import com.leon.datalink.rule.actor.RuleStartMsg;
+import com.leon.datalink.rule.actor.RuleStopMsg;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.rule.entity.RuleRuntime;
 import com.leon.datalink.web.rule.RuleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -24,7 +26,7 @@ import java.util.stream.Stream;
 import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 /**
- * @ClassNameResourceManager
+ * @ClassName RuleServiceImpl
  * @Description
  * @Author Leon
  * @Date2022/4/2 15:03
@@ -33,13 +35,16 @@ import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 @Service
 public class RuleServiceImpl implements RuleService {
 
-    @Autowired
-    private IRuleEngine ruleEngine;
+
+    ActorSystem actorSystem;
 
     /**
      * 资源列表
      */
     private final ConcurrentHashMap<String, Rule> ruleList = new ConcurrentHashMap<>();
+
+
+    private final ConcurrentHashMap<String, ActorRef> ruleActorRefList = new ConcurrentHashMap<>();
 
     /**
      * key value storage
@@ -51,7 +56,9 @@ public class RuleServiceImpl implements RuleService {
      */
     private final static String RULE_PATH = "/rule";
 
-    public RuleServiceImpl() throws Exception {
+    public RuleServiceImpl(ActorSystem actorSystem) throws Exception {
+
+        this.actorSystem = actorSystem;
 
         // init storage
         this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + RULE_PATH);
@@ -74,7 +81,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public Rule get(String ruleId) {
-       return ruleList.get(ruleId);
+        return ruleList.get(ruleId);
     }
 
     @Override
@@ -114,19 +121,26 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public RuleRuntime getRuntime(String ruleId) {
-        return ruleEngine.getRuntime(ruleId);
+        //  return ruleEngine.getRuntime(ruleId);
+        return null;
     }
 
     @Override
     public void startRule(Rule rule) throws Exception {
-        ruleEngine.start(rule);
+        ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule)), "rule-" + rule.getRuleId());
+        actorRef.tell(new RuleStartMsg(), ActorRef.noSender());
+        ruleActorRefList.put(rule.getRuleId(), actorRef);
+
         rule.setEnable(true);
         ruleList.put(rule.getRuleId(), rule);
     }
 
     @Override
     public void stopRule(Rule rule) throws Exception {
-        ruleEngine.stop(rule.getRuleId());
+        ActorRef actorRef = ruleActorRefList.get(rule.getRuleId());
+        actorRef.tell(new RuleStopMsg(), ActorRef.noSender());
+        ruleActorRefList.remove(rule.getRuleId());
+
         rule.setEnable(false);
         ruleList.put(rule.getRuleId(), rule);
     }

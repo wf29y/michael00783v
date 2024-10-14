@@ -1,6 +1,5 @@
 package com.leon.datalink.web.controller;
 
-import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.web.resource.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,9 @@
 package com.leon.datalink.driver.impl;
 
+import akka.actor.ActorRef;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.driver.AbstractDriver;
-import com.leon.datalink.driver.DriverDataCallback;
 import com.leon.datalink.driver.DriverModeEnum;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -27,12 +27,8 @@ public class MqttDriver extends AbstractDriver {
         super(properties);
     }
 
-    public MqttDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
-        super(properties, driverMode);
-    }
-
-    public MqttDriver(Map<String, Object> properties, DriverModeEnum driverMode, DriverDataCallback callback) throws Exception {
-        super(properties, driverMode, callback);
+    public MqttDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
+        super(properties, driverMode, ruleActorRef);
     }
 
     @Override
@@ -151,7 +147,7 @@ public class MqttDriver extends AbstractDriver {
                     Map<String, Object> data = new HashMap<>();
                     data.put("topic", s);
                     data.put("payload", mqttMessage.toString());
-                    callback.onData(data);
+                    sendData(data);
                 }
 
                 @Override

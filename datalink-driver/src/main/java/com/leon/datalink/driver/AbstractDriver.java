@@ -1,8 +1,11 @@
 package com.leon.datalink.driver;
 
 
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
+import com.leon.datalink.driver.actor.RuleTransformMsg;
 
 import java.util.Map;
 
@@ -11,30 +14,25 @@ public abstract class AbstractDriver implements Driver {
 
     protected Map<String, Object> properties;
 
-    protected DriverDataCallback callback;
+    protected ActorRef ruleActorRef;
 
     protected DriverModeEnum driverMode;
 
     protected TemplateEngine templateEngine;
 
-    public AbstractDriver(){
-    }
-
-    public AbstractDriver(Map<String, Object> properties){
+    public AbstractDriver(Map<String, Object> properties) {
         this.properties = properties;
     }
 
-    public AbstractDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
+    public AbstractDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
         this.properties = properties;
         this.driverMode = driverMode;
+        this.ruleActorRef = ruleActorRef;
         this.templateEngine = TemplateUtil.createEngine();
     }
 
-    public AbstractDriver(Map<String, Object> properties, DriverModeEnum driverMode, DriverDataCallback callback) throws Exception {
-        this.properties = properties;
-        this.driverMode = driverMode;
-        this.callback = callback;
-        this.templateEngine = TemplateUtil.createEngine();
+    public void sendData(Map data) {
+        ruleActorRef.tell(new RuleTransformMsg(data), ActorRef.noSender());
     }
 
     public String getStrProp(String key) {

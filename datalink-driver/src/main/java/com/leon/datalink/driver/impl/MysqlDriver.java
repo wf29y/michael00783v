@@ -1,8 +1,8 @@
 package com.leon.datalink.driver.impl;
 
+import akka.actor.ActorRef;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.leon.datalink.driver.AbstractDriver;
-import com.leon.datalink.driver.DriverDataCallback;
 import com.leon.datalink.driver.DriverModeEnum;
 import org.springframework.util.StringUtils;
 
@@ -20,12 +20,8 @@ public class MysqlDriver extends AbstractDriver {
         super(properties);
     }
 
-    public MysqlDriver(Map<String, Object> properties, DriverModeEnum driverMode) throws Exception {
-        super(properties, driverMode);
-    }
-
-    public MysqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, DriverDataCallback callback) throws Exception {
-        super(properties, driverMode, callback);
+    public MysqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
+        super(properties, driverMode, ruleActorRef);
     }
 
     @Override
