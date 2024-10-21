@@ -2,6 +2,7 @@ package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
 import com.alibaba.druid.pool.DruidDataSource;
+import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
 import org.springframework.util.StringUtils;
@@ -25,7 +26,7 @@ public class MysqlDriver extends AbstractDriver {
     }
 
     @Override
-    public void create() {
+    public void create() throws Exception{
         DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); // 设置连接池的数据库驱动
         dataSource.setUrl(String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
@@ -62,6 +63,7 @@ public class MysqlDriver extends AbstractDriver {
                     getStrProp("password"));
             return true;
         } catch (Exception e) {
+            Loggers.DRIVER.error("driver test {}",e.getMessage());
             return false;
         }
     }

@@ -32,7 +32,7 @@ public class MqttDriver extends AbstractDriver {
     }
 
     @Override
-    public void create() {
+    public void create() throws Exception{
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             mqttHandler = createClient();
         } else {
@@ -74,6 +74,7 @@ public class MqttDriver extends AbstractDriver {
             mqttClient.connect(options);
             return true;
         } catch (MqttException e) {
+            Loggers.DRIVER.error("driver test {}",e.getMessage());
             return false;
         }
     }

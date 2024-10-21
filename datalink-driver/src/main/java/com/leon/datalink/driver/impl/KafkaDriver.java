@@ -1,6 +1,7 @@
 package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
+import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -40,7 +41,7 @@ public class KafkaDriver extends AbstractDriver {
     private static ExecutorService executor = Executors.newCachedThreadPool();
 
     @Override
-    public void create() {
+    public void create() throws Exception{
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             Properties prop = new Properties();
             prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getStrProp("url"));
@@ -89,6 +90,7 @@ public class KafkaDriver extends AbstractDriver {
             new KafkaProducer<>(prop);
             return true;
         } catch (Exception e) {
+            Loggers.DRIVER.error("driver test {}",e.getMessage());
             return false;
         }
     }

@@ -127,26 +127,31 @@
 
     <logger name="com.leon.datalink.core" additivity="false">
         <level value="INFO"/>
+        <level value="ERROR"/>
         <appender-ref ref="datalink-core"/>
     </logger>
 
     <logger name="com.leon.datalink.web" additivity="false">
         <level value="INFO"/>
+        <level value="ERROR"/>
         <appender-ref ref="datalink-web"/>
     </logger>
 
     <logger name="com.leon.datalink.resource" additivity="false">
         <level value="INFO"/>
+        <level value="ERROR"/>
         <appender-ref ref="datalink-resource"/>
     </logger>
 
     <logger name="com.leon.datalink.driver" additivity="false">
         <level value="INFO"/>
+        <level value="ERROR"/>
         <appender-ref ref="datalink-driver"/>
     </logger>
 
     <logger name="com.leon.datalink.rule" additivity="false">
         <level value="INFO"/>
+        <level value="ERROR"/>
         <appender-ref ref="datalink-rule"/>
     </logger>
 
