@@ -21,12 +21,12 @@ public class PostgresqlDriver extends AbstractDriver {
         super(properties);
     }
 
-    public PostgresqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
-        super(properties, driverMode, ruleActorRef);
+    public PostgresqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
+        super(properties, driverMode, ruleActorRef, ruleId);
     }
 
     @Override
-    public void create() throws Exception{
+    public void create() throws Exception {
         DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
         dataSource.setDriverClassName("org.postgresql.Driver"); // 设置连接池的数据库驱动
         dataSource.setUrl(String.format("jdbc:postgresql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
@@ -63,20 +63,22 @@ public class PostgresqlDriver extends AbstractDriver {
                     getStrProp("password"));
             return true;
         } catch (Exception e) {
-            Loggers.DRIVER.error("driver test {}",e.getMessage());
+            Loggers.DRIVER.error("driver test {}", e.getMessage());
             return false;
         }
     }
 
     @Override
-    public void handleData(Map data) throws Exception {
+    public void handleData(Map<String, Object> data) throws Exception {
+        Map<String, Object> variable = getVariable(data);
+
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             if (connection != null) {
                 String sql = getStrProp("sql");
                 if (!StringUtils.isEmpty(sql)) {
-                    String render = this.templateEngine.getTemplate(sql).render(data);
+                    String render = this.templateEngine.getTemplate(sql).render(variable);
                     if (!StringUtils.isEmpty(render)) sql = render;
                 }
                 connection.createStatement().execute(sql);

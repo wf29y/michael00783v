@@ -4,8 +4,10 @@ package com.leon.datalink.driver;
 import akka.actor.ActorRef;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
+import com.leon.datalink.core.common.GlobalVariableContent;
 import com.leon.datalink.driver.actor.DriverDataMsg;
 import com.leon.datalink.driver.constans.DriverModeEnum;
+import com.leon.datalink.runtime.RuntimeManger;
 
 import java.util.Map;
 
@@ -20,18 +22,35 @@ public abstract class AbstractDriver implements Driver {
 
     protected TemplateEngine templateEngine;
 
+    protected String ruleId;
+
     public AbstractDriver(Map<String, Object> properties) {
         this.properties = properties;
     }
 
-    public AbstractDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
+    public AbstractDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
         this.properties = properties;
         this.driverMode = driverMode;
         this.ruleActorRef = ruleActorRef;
+        this.ruleId = ruleId;
         this.templateEngine = TemplateUtil.createEngine();
     }
 
-    public void sendData(Map data) {
+    // 获得全局变量
+    public Map<String, Object> getVariable(Map<String, Object> data) {
+        Map<String, Object> globalProp = GlobalVariableContent.get();
+        Map<String, Object> ruleProp = RuntimeManger.getVariables(ruleId);
+        for (String key: ruleProp.keySet()) {
+            globalProp.put(key,ruleProp.get(key));
+        }
+        for (String key: data.keySet()) {
+            globalProp.put(key,data.get(key));
+        }
+        return globalProp;
+    }
+
+    // 发送数据
+    public void sendData(Map<String, Object> data) {
         ruleActorRef.tell(new DriverDataMsg(data), ActorRef.noSender());
     }
 

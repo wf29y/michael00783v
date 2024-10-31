@@ -34,8 +34,8 @@ public class KafkaDriver extends AbstractDriver {
         super(properties);
     }
 
-    public KafkaDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
-        super(properties, driverMode, ruleActorRef);
+    public KafkaDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
+        super(properties, driverMode, ruleActorRef,ruleId);
     }
 
     private static ExecutorService executor = Executors.newCachedThreadPool();
@@ -96,20 +96,21 @@ public class KafkaDriver extends AbstractDriver {
     }
 
     @Override
-    public void handleData(Map data) throws Exception {
+    public void handleData(Map<String, Object> data) throws Exception {
+        Map<String, Object> variable = getVariable(data);
 
         // 消息模板解析
         String template = getStrProp("template");
         String payload = data.toString();
         if (!StringUtils.isEmpty(template)) {
-            String render = this.templateEngine.getTemplate(template).render(data);
+            String render = this.templateEngine.getTemplate(template).render(variable);
             if (!StringUtils.isEmpty(render)) payload = render;
         }
 
         // topic模板解析
         String topic = getStrProp("topic");
         if (getBoolProp("dynamicTopic", false)) {
-            String render = this.templateEngine.getTemplate(topic).render(data);
+            String render = this.templateEngine.getTemplate(topic).render(variable);
             if (!StringUtils.isEmpty(render)) topic = render;
         }
 

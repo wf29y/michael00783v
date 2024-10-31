@@ -10,6 +10,7 @@
         <module>datalink-resource</module>
         <module>datalink-core</module>
         <module>datalink-rule</module>
+        <module>datalink-runtime</module>
         <module>distribution</module>
     </modules>
     <groupId>com.leon.datalink</groupId>
@@ -327,6 +328,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>datalink-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>datalink-runtime</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

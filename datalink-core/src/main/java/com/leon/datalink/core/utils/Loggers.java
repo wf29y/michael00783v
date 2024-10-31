@@ -2,7 +2,6 @@
 
 package com.leon.datalink.core.utils;
 
-import ch.qos.logback.classic.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +20,8 @@ public class Loggers {
     public static final Logger RESOURCE = LoggerFactory.getLogger("com.leon.datalink.resources");
 
     public static final Logger RULE = LoggerFactory.getLogger("com.leon.datalink.rule");
+
+    public static final Logger RUNTIME = LoggerFactory.getLogger("com.leon.datalink.runtime");
 
     public static final Logger WEB = LoggerFactory.getLogger("com.leon.datalink.web");
 

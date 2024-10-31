@@ -20,7 +20,7 @@ public class RuleController {
     private RuleService ruleService;
 
     /**
-     * 新增规则
+     * 查询规则
      *
      * @param ruleId
      */
@@ -28,18 +28,6 @@ public class RuleController {
     public Object getRule(@RequestParam(value = "ruleId") String ruleId)  {
        return ruleService.get(ruleId);
     }
-
-
-    /**
-     * 新增规则
-     *
-     * @param ruleId
-     */
-    @GetMapping("/runtime")
-    public Object getRuntime(@RequestParam(value = "ruleId") String ruleId)  {
-        return ruleService.getRuntime(ruleId);
-    }
-
 
 
     /**

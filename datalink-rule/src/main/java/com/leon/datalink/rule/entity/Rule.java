@@ -5,6 +5,7 @@ import com.leon.datalink.rule.constants.RuleAnalysisModeEnum;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class Rule implements Serializable {
     private static final long serialVersionUID = 1345156087085804264L;
@@ -22,6 +23,8 @@ public class Rule implements Serializable {
     private RuleAnalysisModeEnum analysisMode;
 
     private String script;
+
+    private Map<String,Object> variables;
 
     private boolean enable = false;
 
@@ -97,5 +100,14 @@ public class Rule implements Serializable {
 
     public void setIgnoreNullValue(boolean ignoreNullValue) {
         this.ignoreNullValue = ignoreNullValue;
+    }
+
+
+    public Map<String, Object> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(Map<String, Object> variables) {
+        this.variables = variables;
     }
 }

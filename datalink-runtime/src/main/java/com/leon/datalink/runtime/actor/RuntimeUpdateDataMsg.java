@@ -1,10 +1,10 @@
-package com.leon.datalink.rule.runtime.actor;
+package com.leon.datalink.runtime.actor;
 
 import cn.hutool.core.date.DateTime;
 
 import java.util.Map;
 
-public class RuntimeUpdateMsg {
+public class RuntimeUpdateDataMsg {
 
     private Map data;
 
@@ -12,7 +12,7 @@ public class RuntimeUpdateMsg {
 
     private DateTime time;
 
-    public RuntimeUpdateMsg(Map data, boolean success, DateTime time) {
+    public RuntimeUpdateDataMsg(Map data, boolean success, DateTime time) {
         this.data = data;
         this.success = success;
         this.time = time;

@@ -2,7 +2,6 @@ package com.leon.datalink.driver.actor;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.Driver;
 import com.leon.datalink.driver.DriverFactory;
@@ -21,8 +20,8 @@ public class DriverActor extends AbstractActor {
 
     private final Driver driver;
 
-    public DriverActor(Class<? extends Driver> driverClass, Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
-        this.driver = DriverFactory.getDriver(driverClass, properties, driverMode, ruleActorRef);
+    public DriverActor(Class<? extends Driver> driverClass, Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
+        this.driver = DriverFactory.getDriver(driverClass, properties, driverMode, ruleActorRef, ruleId);
     }
 
     @Override

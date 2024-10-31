@@ -22,7 +22,10 @@
       </a-descriptions-item>
     </a-descriptions>
 
-    <a-table :columns='columns' :data-source='runtime.lastData' size='small' :pagination='false'>
+    <a-table :columns='varColumns' :data-source='variables' size='small' :pagination='false' style='margin-bottom: 20px'>
+    </a-table>
+
+    <a-table :columns='dataColumns' :data-source='runtime.lastData' size='small' :pagination='false'>
       <span slot='data' slot-scope='text'> {{ text }} </span>
     </a-table>
 
@@ -56,18 +59,31 @@ export default {
       visible: false,
       confirmLoading: false,
       runtime: {},
+      variables:[],
       url: {
-        runtime: '/api/rule/runtime'
+        runtime: '/api/runtime/info'
       },
-      columns: [
+      dataColumns: [
         {
           title: '时间',
-          dataIndex: 'time'
+          dataIndex: 'time',
+          width: '30%'
         },
         {
           title: '数据',
           dataIndex: 'data',
           scopedSlots: { customRender: 'data' }
+        }
+      ],
+      varColumns: [
+        {
+          title: '变量名称',
+          dataIndex: 'name',
+          width: '30%'
+        },
+        {
+          title: '当前值',
+          dataIndex: 'value'
         }
       ],
       ruleId: null
@@ -88,6 +104,17 @@ export default {
       getAction(this.url.runtime, { ruleId: this.ruleId }).then(res => {
         if (res.code === 200) {
           this.runtime = res.data
+
+          this.variables = []
+          if (!this.runtime.variables) return
+          let keys = Object.keys(this.runtime.variables)
+          for (let key of keys) {
+            this.variables.push({
+              name: key,
+              value: this.runtime.variables[key]
+            })
+          }
+
         }
       })
     }

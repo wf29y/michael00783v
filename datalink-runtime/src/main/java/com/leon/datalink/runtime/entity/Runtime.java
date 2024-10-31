@@ -1,10 +1,11 @@
-package com.leon.datalink.rule.entity;
+package com.leon.datalink.runtime.entity;
 
 import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.leon.datalink.rule.constants.Constants;
+import com.leon.datalink.runtime.constants.Constants;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 public class Runtime {
 
@@ -19,6 +20,8 @@ public class Runtime {
     private Long failCount;
 
     private LinkedList<RuleData> lastData;
+
+    private Map<String,Object> variables;
 
     static class RuleData {
 
@@ -82,6 +85,14 @@ public class Runtime {
 
     public void setLastData(LinkedList<RuleData> lastData) {
         this.lastData = lastData;
+    }
+
+    public Map<String, Object> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(Map<String, Object> variables) {
+        this.variables = variables;
     }
 
     public void addSuccess() {

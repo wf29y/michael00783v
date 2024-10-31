@@ -1,20 +1,22 @@
 <template>
   <a-modal
     :confirmLoading='confirmLoading'
-    title='选择脚本'
+    title='脚本'
     :width='700'
     :visible='visible'
     @cancel='onClose'
   >
+    <div style='min-height: 300px'>
 
-    <a-table :columns='columns' :data-source='scriptList' size='small' :pagination='false'>
+
+      <a-table :columns='columns' :data-source='scriptList' size='middle' :pagination='false'>
       <span slot='action' slot-scope='text,record'>
-        <a @click='select(record)'>使用</a>
+        <a @click='select(record)'>选择</a>
       </span>
-    </a-table>
+      </a-table>
 
-    <div
-      :style="{
+      <div
+        :style="{
         position: 'absolute',
         right: 0,
         bottom: 0,
@@ -25,8 +27,9 @@
         textAlign: 'right',
         zIndex: 1
       }"
-    >
-      <a-button :style="{ marginRight: '8px' }" @click='onClose'> 取消</a-button>
+      >
+        <a-button :style="{ marginRight: '8px' }" @click='onClose'> 取消</a-button>
+      </div>
     </div>
   </a-modal>
 </template>
@@ -45,13 +48,15 @@ export default {
         script: '/api/script/list'
       },
       columns: [
-      /*  {
-          title: 'ID',
-          dataIndex: 'scriptId'
-        },*/
         {
           title: '名称',
-          dataIndex: 'scriptName'
+          dataIndex: 'scriptName',
+          width: '50%'
+        },
+        {
+          title: '最后修改',
+          dataIndex: 'updateTime',
+          width: '40%'
         },
         {
           title: '操作',

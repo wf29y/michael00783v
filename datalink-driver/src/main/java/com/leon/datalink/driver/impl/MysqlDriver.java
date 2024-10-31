@@ -21,8 +21,8 @@ public class MysqlDriver extends AbstractDriver {
         super(properties);
     }
 
-    public MysqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
-        super(properties, driverMode, ruleActorRef);
+    public MysqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
+        super(properties, driverMode, ruleActorRef,ruleId);
     }
 
     @Override
@@ -69,14 +69,16 @@ public class MysqlDriver extends AbstractDriver {
     }
 
     @Override
-    public void handleData(Map data) throws Exception {
+    public void handleData(Map<String, Object> data) throws Exception {
+        Map<String, Object> variable = getVariable(data);
+
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             if (connection != null) {
                 String sql = getStrProp("sql");
                 if (!StringUtils.isEmpty(sql)) {
-                    String render = this.templateEngine.getTemplate(sql).render(data);
+                    String render = this.templateEngine.getTemplate(sql).render(variable);
                     if (!StringUtils.isEmpty(render)) sql = render;
                 }
                 connection.createStatement().execute(sql);

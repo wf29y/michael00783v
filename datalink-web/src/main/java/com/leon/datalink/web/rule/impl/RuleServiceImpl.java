@@ -11,9 +11,9 @@ import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.rule.actor.RuleActor;
 import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.rule.entity.Runtime;
+import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.web.rule.RuleService;
-import com.leon.datalink.rule.runtime.RuntimeService;
+import com.leon.datalink.web.runtime.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +54,7 @@ public class RuleServiceImpl implements RuleService {
     private final KvStorage kvStorage;
 
     /**
-     * 资源持久化路径
+     * 规则持久化路径
      */
     private final static String RULE_PATH = "/rule";
 
@@ -92,6 +92,7 @@ public class RuleServiceImpl implements RuleService {
     public void remove(Rule rule) throws KvStorageException {
         this.kvStorage.delete(rule.getRuleId().getBytes());
         ruleList.remove(rule.getRuleId());
+        runtimeService.remove(rule.getRuleId());
     }
 
     @Override
@@ -117,14 +118,9 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public Runtime getRuntime(String ruleId) {
-        return runtimeService.get(ruleId);
-    }
-
-    @Override
     public void startRule(Rule rule) throws Exception {
         // 创建rule actor
-        ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule, runtimeService)), "rule-" + rule.getRuleId());
+        ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule)), "rule-" + rule.getRuleId());
         ruleActorRefList.put(rule.getRuleId(), actorRef);
 
         rule.setEnable(true);

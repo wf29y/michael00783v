@@ -1,4 +1,4 @@
-package com.leon.datalink.rule.constants;
+package com.leon.datalink.runtime.constants;
 /**
  * @ClassNameConstants
  * @Description

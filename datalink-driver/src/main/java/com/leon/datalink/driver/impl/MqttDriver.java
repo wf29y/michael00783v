@@ -27,12 +27,12 @@ public class MqttDriver extends AbstractDriver {
         super(properties);
     }
 
-    public MqttDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef) throws Exception {
-        super(properties, driverMode, ruleActorRef);
+    public MqttDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
+        super(properties, driverMode, ruleActorRef, ruleId);
     }
 
     @Override
-    public void create() throws Exception{
+    public void create() throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             mqttHandler = createClient();
         } else {
@@ -74,26 +74,27 @@ public class MqttDriver extends AbstractDriver {
             mqttClient.connect(options);
             return true;
         } catch (MqttException e) {
-            Loggers.DRIVER.error("driver test {}",e.getMessage());
+            Loggers.DRIVER.error("driver test {}", e.getMessage());
             return false;
         }
     }
 
     @Override
-    public void handleData(Map data) throws Exception {
+    public void handleData(Map<String, Object> data) throws Exception {
+        Map<String, Object> variable = getVariable(data);
 
         // 消息模板解析
         String template = getStrProp("template");
         String payload = data.toString();
         if (!StringUtils.isEmpty(template)) {
-            String render = this.templateEngine.getTemplate(template).render(data);
+            String render = this.templateEngine.getTemplate(template).render(variable);
             if (!StringUtils.isEmpty(render)) payload = render;
         }
 
         // topic模板解析
         String topic = getStrProp("topic");
         if (getBoolProp("dynamicTopic", false)) {
-            String render = this.templateEngine.getTemplate(topic).render(data);
+            String render = this.templateEngine.getTemplate(topic).render(variable);
             if (!StringUtils.isEmpty(render)) topic = render;
         }
 
