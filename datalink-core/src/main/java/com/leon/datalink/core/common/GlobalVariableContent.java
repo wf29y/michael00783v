@@ -3,8 +3,6 @@ package com.leon.datalink.core.common;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -21,16 +19,11 @@ public class GlobalVariableContent {
     }
 
     public static Map<String, Object> get() {
-
-        globalVariable.put("timeStamp", new DateTime().getTime());
-
-        globalVariable.put("uuid", UUID.randomUUID().toString());
-
         DateTime now = DateTime.now();
+        globalVariable.put("timeStamp",now.getTime());
         globalVariable.put("date", DateUtil.format(now,"yyyy-MM-dd"));
-
         globalVariable.put("dateTime", DateUtil.format(now,"yyyy-MM-dd HH:mm:ss"));
-
+        globalVariable.put("uuid", UUID.randomUUID().toString());
         return globalVariable;
     }
 

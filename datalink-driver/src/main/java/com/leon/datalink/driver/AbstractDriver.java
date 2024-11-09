@@ -40,11 +40,11 @@ public abstract class AbstractDriver implements Driver {
     public Map<String, Object> getVariable(Map<String, Object> data) {
         Map<String, Object> globalProp = GlobalVariableContent.get();
         Map<String, Object> ruleProp = RuntimeManger.getVariables(ruleId);
-        for (String key: ruleProp.keySet()) {
-            globalProp.put(key,ruleProp.get(key));
+        if (null != ruleProp) {
+            globalProp.putAll(ruleProp);
         }
-        for (String key: data.keySet()) {
-            globalProp.put(key,data.get(key));
+        if (null != data) {
+            globalProp.putAll(data);
         }
         return globalProp;
     }
