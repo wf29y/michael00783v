@@ -20,13 +20,13 @@ public class DriverActor extends AbstractActor {
 
     private final Driver driver;
 
-    public DriverActor(Class<? extends Driver> driverClass, Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
-        this.driver = DriverFactory.getDriver(driverClass, properties, driverMode, ruleActorRef, ruleId);
+    public DriverActor(Class<? extends Driver> driverClass, Map<String, Object> properties, DriverModeEnum driverMode, String ruleId) throws Exception {
+        this.driver = DriverFactory.getDriver(driverClass, properties, driverMode, getContext().getParent(), ruleId);
     }
 
     @Override
     public void preStart() {
-        Loggers.DRIVER.info("driver actor start");
+        Loggers.DRIVER.info("start driver [{}]", getSelf().path());
         try {
             driver.create();
         } catch (Exception e) {
@@ -36,7 +36,7 @@ public class DriverActor extends AbstractActor {
 
     @Override
     public void postStop() {
-        Loggers.DRIVER.info("driver actor stop");
+        Loggers.DRIVER.info("stop  driver [{}]", getSelf().path());
         try {
             driver.destroy();
         } catch (Exception e) {

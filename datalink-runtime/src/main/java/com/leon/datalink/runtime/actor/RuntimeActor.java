@@ -20,13 +20,13 @@ public class RuntimeActor extends AbstractActor {
 
     @Override
     public void preStart() {
-        Loggers.DRIVER.info("runtime actor start");
+        Loggers.RUNTIME.info("start runtime [{}]", getSelf().path());
         RuntimeManger.init(ruleId, variables);
     }
 
     @Override
     public void postStop() {
-        Loggers.DRIVER.info("runtime actor stop");
+        Loggers.RUNTIME.info("stop  runtime [{}]", getSelf().path());
        // RuntimeManger.removeRuntime(ruleId); 停止时不删除运行状态
     }
 

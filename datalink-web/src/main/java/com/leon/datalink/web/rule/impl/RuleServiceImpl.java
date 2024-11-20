@@ -119,22 +119,24 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public void startRule(Rule rule) throws Exception {
+        String ruleId = rule.getRuleId();
         // 创建rule actor
-        ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule)), "rule-" + rule.getRuleId());
-        ruleActorRefList.put(rule.getRuleId(), actorRef);
+        ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule)), "rule-" + ruleId);
+        ruleActorRefList.put(ruleId, actorRef);
 
         rule.setEnable(true);
-        ruleList.put(rule.getRuleId(), rule);
+        ruleList.put(ruleId, rule);
     }
 
     @Override
     public void stopRule(Rule rule) {
+        String ruleId = rule.getRuleId();
         // 停止rule actor
-        actorSystem.stop(ruleActorRefList.get(rule.getRuleId()));
-        ruleActorRefList.remove(rule.getRuleId());
+        actorSystem.stop(ruleActorRefList.get(ruleId));
+        ruleActorRefList.remove(ruleId);
 
         rule.setEnable(false);
-        ruleList.put(rule.getRuleId(), rule);
+        ruleList.put(ruleId, rule);
     }
 
 }

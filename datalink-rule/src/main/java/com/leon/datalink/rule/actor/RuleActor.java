@@ -27,11 +27,7 @@ public class RuleActor extends AbstractActor {
 
     private final Rule rule;
 
-    private final ActorSystem actorSystem = getContext().getSystem();
-
     private ActorRef runtimeActorRef;
-
-    private ActorRef sourceActorRef;
 
     private List<ActorRef> destActorRefList;
 
@@ -43,27 +39,22 @@ public class RuleActor extends AbstractActor {
 
     @Override
     public void preStart() {
-        Loggers.RULE.info("rule [{}] actor start", rule.getRuleId());
-        String ruleId = rule.getRuleId();
+        Loggers.RULE.info("start rule [{}]", getSelf().path());
+        ActorContext context = getContext();
         // 创建runtime actor
-        runtimeActorRef = actorSystem.actorOf((Props.create(RuntimeActor.class, rule.getRuleId(), rule.getVariables())), "runtime-" + rule.getRuleId());
+        runtimeActorRef = context.actorOf((Props.create(RuntimeActor.class, rule.getRuleId(), rule.getVariables())), "runtime");
         // 创建目的actor
-        destActorRefList = rule.getDestResourceList().stream().map(destResource -> actorSystem.actorOf((Props.create(DriverActor.class, destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.DEST, this.getSelf(), rule.getRuleId())),
-                String.format("rule-%s-dest-%s", ruleId, SnowflakeIdWorker.getId()))).collect(Collectors.toList());
+        destActorRefList = rule.getDestResourceList().stream().map(destResource -> context.actorOf((Props.create(DriverActor.class, destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.DEST, rule.getRuleId())),
+                "dest-" + SnowflakeIdWorker.getId())).collect(Collectors.toList());
         // 创建源actor
         Resource sourceResource = rule.getSourceResource();
-        sourceActorRef = actorSystem.actorOf((Props.create(DriverActor.class, sourceResource.getResourceType().getDriver(), sourceResource.getProperties(), DriverModeEnum.SOURCE, this.getSelf(), rule.getRuleId())), String.format("rule-%s-source-%s", ruleId, SnowflakeIdWorker.getId()));
+        context.actorOf((Props.create(DriverActor.class, sourceResource.getResourceType().getDriver(), sourceResource.getProperties(), DriverModeEnum.SOURCE, rule.getRuleId())), "source");
     }
 
     @Override
     public void postStop() {
-        Loggers.RULE.info("rule [{}] actor stop", rule.getRuleId());
-        // 停止源driver
-        actorSystem.stop(sourceActorRef);
-        // 停止目的driver
-        destActorRefList.forEach(actorSystem::stop);
-        // 停止runtime
-        actorSystem.stop(runtimeActorRef);
+        Loggers.RULE.info("stop  rule [{}]", getSelf().path());
+        // 子actor自动停止
     }
 
     @Override
@@ -95,14 +86,14 @@ public class RuleActor extends AbstractActor {
             success = false;
         } finally {
             //发送到runtime
-            runtimeActorRef.tell(new RuntimeUpdateDataMsg(data, success, new DateTime()), ActorRef.noSender());
+            runtimeActorRef.tell(new RuntimeUpdateDataMsg(data, success, DateTime.now()), getSelf());
         }
         // 忽略空值
         if (null == result && rule.isIgnoreNullValue()) return;
 
         // 发送给所有目的driver
         for (ActorRef actorRef : destActorRefList) {
-            actorRef.tell(new DriverDataMsg(result), ActorRef.noSender());
+            actorRef.tell(new DriverDataMsg(result), getSelf());
         }
     }
 
@@ -134,11 +125,12 @@ public class RuleActor extends AbstractActor {
             Object transform = jsInvoke.invokeFunction("transform", data);
 
             // 更新自定义环境变量
-            if(MapUtil.isNotEmpty(properties)){
+            if (MapUtil.isNotEmpty(properties)) {
                 properties.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
-                runtimeActorRef.tell(new RuntimeUpdateVarMsg(properties), ActorRef.noSender());
+                runtimeActorRef.tell(new RuntimeUpdateVarMsg(properties), getSelf());
             }
-            return new ObjectMapper().convertValue(transform, new TypeReference<Map<String, Object>>() {});
+            return new ObjectMapper().convertValue(transform, new TypeReference<Map<String, Object>>() {
+            });
         } catch (Exception e) {
             Loggers.RULE.error("script error {}", e.getMessage());
         }
