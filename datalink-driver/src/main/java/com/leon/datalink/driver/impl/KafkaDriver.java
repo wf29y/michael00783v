@@ -1,6 +1,7 @@
 package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
+import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
@@ -98,10 +99,10 @@ public class KafkaDriver extends AbstractDriver {
     @Override
     public void handleData(Map<String, Object> data) throws Exception {
         Map<String, Object> variable = getVariable(data);
+        String payload = JacksonUtils.toJson(data);
 
         // 消息模板解析
         String template = getStrProp("template");
-        String payload = data.toString();
         if (!StringUtils.isEmpty(template)) {
             String render = this.templateEngine.getTemplate(template).render(variable);
             if (!StringUtils.isEmpty(render)) payload = render;
