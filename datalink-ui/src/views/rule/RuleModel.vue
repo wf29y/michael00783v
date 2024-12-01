@@ -90,7 +90,7 @@
           </a-card>
 
           <a-card title='目标'>
-            <a-list :grid='{ gutter: 24, lg: 2, md: 2, sm: 2, xs: 2 }' :data-source='modal.destResourceList'>
+            <a-list :grid='{ gutter: 10, lg: 2, md: 2, sm: 2, xs: 2 }' :data-source='modal.destResourceList'>
               <a-list-item slot='renderItem' slot-scope='item,index'>
                 <template v-if='!item || item.resourceId === undefined'>
                   <a-button @click='addResource("dest")' class='new-btn' type='dashed'
@@ -271,7 +271,7 @@ export default {
 
     handleAddResource(mode, resource) {
       if (mode === 'dest') {
-        this.modal.destResourceList.push(resource)
+        this.modal.destResourceList.unshift(resource)
       } else if (mode === 'source') {
         this.modal.sourceResource = resource
       }
