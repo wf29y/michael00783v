@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
@@ -21,28 +22,25 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 
 public class KafkaDriver extends AbstractDriver {
 
-    private  KafkaConsumer<String, String> kafkaConsumer;
+    private KafkaConsumer<String, String> kafkaConsumer;
 
-    private  KafkaProducer<String, String> kafkaProducer;
+    private KafkaProducer<String, String> kafkaProducer;
 
     public KafkaDriver(Map<String, Object> properties) {
         super(properties);
     }
 
     public KafkaDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
-        super(properties, driverMode, ruleActorRef,ruleId);
+        super(properties, driverMode, ruleActorRef, ruleId);
     }
 
-    private static ExecutorService executor = Executors.newCachedThreadPool();
+    private boolean isClose = false;
 
     @Override
-    public void create() throws Exception{
+    public void create() throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             Properties prop = new Properties();
             prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getStrProp("url"));
@@ -51,8 +49,12 @@ public class KafkaDriver extends AbstractDriver {
             prop.put(ConsumerConfig.GROUP_ID_CONFIG, getStrProp("group"));
             this.kafkaConsumer = new KafkaConsumer<>(prop);
             kafkaConsumer.subscribe(Collections.singletonList(getStrProp("topic")));
-            executor.submit(() -> {   //todo 异步处理后 在销毁时如何断开kafkaConsumer？
+            new Thread(() -> {
                 while (true) {
+                    if (isClose) {
+                        kafkaConsumer.close();
+                        return;
+                    }
                     final ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofSeconds(1));
                     for (ConsumerRecord<String, String> record : records) {
                         Map<String, Object> data = new HashMap<>();
@@ -61,7 +63,7 @@ public class KafkaDriver extends AbstractDriver {
                         sendData(data);
                     }
                 }
-            });
+            }).start();
         } else {
             Properties prop = new Properties();
             prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getStrProp("url"));
@@ -74,8 +76,9 @@ public class KafkaDriver extends AbstractDriver {
     @Override
     public void destroy() throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            this.kafkaConsumer.unsubscribe();
-            this.kafkaConsumer.close();
+            this.isClose = true;
+//            this.kafkaConsumer.unsubscribe();
+//            this.kafkaConsumer.close();
         } else {
             this.kafkaProducer.close();
         }
@@ -91,7 +94,7 @@ public class KafkaDriver extends AbstractDriver {
             new KafkaProducer<>(prop);
             return true;
         } catch (Exception e) {
-            Loggers.DRIVER.error("driver test {}",e.getMessage());
+            Loggers.DRIVER.error("driver test {}", e.getMessage());
             return false;
         }
     }
