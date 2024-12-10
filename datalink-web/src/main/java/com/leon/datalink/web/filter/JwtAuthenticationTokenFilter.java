@@ -49,7 +49,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             BaseContextUtil.set(BaseContextUtil.USER_NAME, user.getUsername());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
-            // TODO: 鉴权失败
+            // 鉴权失败
         }
 
         try {

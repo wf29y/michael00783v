@@ -136,7 +136,6 @@ public class UserController {
         User user = datalinkUserService.getUserByUsername(username);
         String password = user.getPassword();
 
-        // TODO: throw out more fine grained exceptions
         try {
             if (PasswordEncoderUtil.matches(oldPassword, password)) {
                 datalinkUserService.updateUserPassword(username, PasswordEncoderUtil.encode(newPassword));
