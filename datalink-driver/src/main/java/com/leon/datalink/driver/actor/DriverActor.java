@@ -46,7 +46,14 @@ public class DriverActor extends AbstractActor {
 
     @Override
     public Receive createReceive() {
-        return receiveBuilder().match(DriverDataMsg.class, msg -> driver.handleData(msg.getData())).build();
+        return receiveBuilder().match(DriverDataMsg.class, msg -> {
+                    try {
+                        driver.handleData(msg.getData());
+                    } catch (Exception e) {
+                        Loggers.DRIVER.error("driver actor handle data error: {}", e.getMessage());
+                    }
+                }
+        ).build();
     }
 
 

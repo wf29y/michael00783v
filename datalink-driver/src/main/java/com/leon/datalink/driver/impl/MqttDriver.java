@@ -103,15 +103,17 @@ public class MqttDriver extends AbstractDriver {
         Boolean retained = getBoolProp("retained", false);
 
         // 发布消息
+        this.publish(topic, payload, qos, retained);
+    }
+
+    private void publish(String topic, String payload, int qos, boolean retained) throws MqttException {
         Random random = new Random();
         MqttAsyncClient messageHandler = mqttHandlerMap.get(random.nextInt(HANDLER_COUNT));
-        if (!messageHandler.isConnected()) {
-            messageHandler.reconnect();
-            if (messageHandler.isConnected()) {
-                messageHandler.publish(topic, payload.getBytes(), qos, retained);
-            }
-        } else {
+        if (messageHandler.isConnected()) {
             messageHandler.publish(topic, payload.getBytes(), qos, retained);
+        } else {
+            messageHandler.reconnect();
+            this.publish(topic, payload, qos, retained);
         }
     }
 
@@ -132,6 +134,8 @@ public class MqttDriver extends AbstractDriver {
             options.setConnectionTimeout(getIntProp("connectionTimeout", 10));
             // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
             options.setKeepAliveInterval(getIntProp("keepAliveInterval", 30));
+            // 自动重连
+            options.setAutomaticReconnect(true);
             // 连接服务器
             mqttClient.connect(options);
 
@@ -139,9 +143,9 @@ public class MqttDriver extends AbstractDriver {
                 @Override
                 public void connectionLost(Throwable throwable) {
                     try {
-                        mqttClient.connect();
+                        mqttClient.connect(options);
                     } catch (MqttException e) {
-                        e.printStackTrace();
+                        Loggers.DRIVER.error("mqtt connection lost handle error {}", e.getMessage());
                     }
                 }
 
@@ -161,12 +165,12 @@ public class MqttDriver extends AbstractDriver {
                 String topic = getStrProp("topic");
                 mqttClient.subscribe(topic);
             } catch (MqttException e) {
-                Loggers.DRIVER.error("ReceiveMqttDriver subscribe {}", e.getMessage());
+                Loggers.DRIVER.error("ReceiveMqttDriver subscribe error {}", e.getMessage());
             }
 
             return mqttClient;
         } catch (MqttException e) {
-            Loggers.DRIVER.error("ReceiveMqttDriver {}", e.getMessage());
+            Loggers.DRIVER.error("ReceiveMqttDriver error {}", e.getMessage());
         }
         return null;
     }
@@ -187,6 +191,8 @@ public class MqttDriver extends AbstractDriver {
             options.setConnectionTimeout(getIntProp("connectionTimeout", 10));
             // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
             options.setKeepAliveInterval(getIntProp("keepAliveInterval", 30));
+            // 自动重连
+            options.setAutomaticReconnect(true);
             // 连接服务器
             mqttClient.connect(options);
             return mqttClient;
