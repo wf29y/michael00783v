@@ -34,9 +34,16 @@ export const asyncRouterMap = [
         meta: { title: '规则', keepAlive: true, icon: rule, permission: ['rule'] },
       },
       {
-        path: '/rule/info',
+        path: '/rule/info/:ruleId',
         name: 'ruleInfo',
         component: () => import('@/views/rule/RuleModel'),
+        props: true,
+        hidden: true
+      },
+      {
+        path: '/rule/runtime/:ruleId',
+        name: 'ruleRuntime',
+        component: () => import('@/views/rule/RuleRuntime'),
         props: true,
         hidden: true
       },
@@ -47,7 +54,7 @@ export const asyncRouterMap = [
         meta: { title: '脚本', keepAlive: true, icon: script, permission: ['script'] },
       },
       {
-        path: '/script/info',
+        path: '/script/info/:scriptId',
         name: 'scriptInfo',
         component: () => import('@/views/script/modules/ScriptModel'),
         props: true,

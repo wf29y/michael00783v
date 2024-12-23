@@ -3,7 +3,7 @@
     <div style='padding-bottom: 20px'>
       <a-row :gutter='20'>
         <a-col :span='6'>
-          <a-card hoverable>
+          <a-card hoverable :bordered='false'>
             <a-statistic
               title='总CPU使用情况'
               :value="' '+Number(useCPU / totalCPU).toFixed(2) + '%'"
@@ -17,7 +17,7 @@
           </a-card>
         </a-col>
         <a-col :span='6'>
-          <a-card hoverable>
+          <a-card hoverable :bordered='false'>
             <a-statistic
               title='总内存使用情况'
               :value="' '+Number(useMem).toFixed(2) + 'M'"
@@ -32,7 +32,7 @@
           </a-card>
         </a-col>
         <a-col :span='6'>
-          <a-card hoverable @click='$router.push({name:"resourceList"})'>
+          <a-card hoverable @click='$router.push({name:"resourceList"})' :bordered='false'>
             <a-statistic
               title='总资源数量'
               :value="' '+SystemInfoMateData.resourceCount"
@@ -46,7 +46,7 @@
           </a-card>
         </a-col>
         <a-col :span='6'>
-          <a-card hoverable @click='$router.push({name:"ruleList"})'>
+          <a-card hoverable @click='$router.push({name:"ruleList"})' :bordered='false'>
             <a-statistic
               title='总规则数量'
               :value="' '+SystemInfoMateData.ruleCount"
@@ -61,7 +61,7 @@
         </a-col>
       </a-row>
     </div>
-    <a-card :body-style='{paddingTop:"10px"}'>
+    <a-card :body-style='{paddingTop:"10px"}' :bordered='false'>
       <a-tabs default-active-key='1' v-model='activeKey'>
         <a-tab-pane key='1' tab='基本信息'>
           <SystemInfo ref='systemInfo' :nodeUrl='node'></SystemInfo>

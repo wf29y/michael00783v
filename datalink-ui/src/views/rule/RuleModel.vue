@@ -5,7 +5,7 @@
       <a-row :gutter='10'>
 
         <a-col :span='24' style='margin-bottom: 10px'>
-          <a-card title='规则' :body-style='{paddingBottom:0}'>
+          <a-card title='规则' :body-style='{paddingBottom:0}' :bordered='false'>
             <div slot='extra' style='padding: 0'>
               <a-button :style="{ marginRight: '8px' }" @click='onClose' icon='close'> 取消</a-button>
               <a-button type='primary' @click='saveRule' icon='save'> 保存</a-button>
@@ -24,9 +24,9 @@
               <a-col :span='6'>
                 <a-form-model-item label='解析方式' prop='analysisMode'>
                   <a-select v-model='modal.analysisMode' placeholder='请选择解析方式' @change='analysisModeChange'>
-                    <a-select-option value='WITHOUT'>无解析透传</a-select-option>
-                    <a-select-option value='SCRIPT'>JavaScript脚本</a-select-option>
-                    <a-select-option value='JAR'>Jar包（未支持）</a-select-option>
+                    <a-select-option v-for='(item,index) in analysisModeList' :value='item.value' :key='index'>
+                      {{ item.name }}
+                    </a-select-option>
                   </a-select>
                 </a-form-model-item>
               </a-col>
@@ -45,7 +45,7 @@
 
         <a-col :span='12'>
 
-          <a-card title='数据源' style='margin-bottom: 10px' :body-style='{paddingBottom:"30px"}'>
+          <a-card title='数据源' style='margin-bottom: 10px' :body-style='{paddingBottom:"30px"}' :bordered='false'>
             <a-row :gutter='10'>
               <a-col :span='12'>
                 <template v-if='!modal.sourceResource || modal.sourceResource.resourceId === undefined'>
@@ -89,7 +89,7 @@
             </a-row>
           </a-card>
 
-          <a-card title='目标'>
+          <a-card title='目标' :bordered='false'>
             <a-list :grid='{ gutter: 10, lg: 2, md: 2, sm: 2, xs: 2 }' :data-source='modal.destResourceList'>
               <a-list-item slot='renderItem' slot-scope='item,index'>
                 <template v-if='!item || item.resourceId === undefined'>
@@ -131,7 +131,7 @@
         </a-col>
 
         <a-col :span='12'>
-          <a-card title='数据解析' :body-style='{height: "246px"}' style='margin-bottom: 10px'>
+          <a-card title='数据解析' :body-style='{height: "246px"}' style='margin-bottom: 10px' :bordered='false'>
             <div slot='extra' style='padding: 0' v-if="modal.analysisMode==='SCRIPT'">
               <a @click='selectScript'>选择脚本</a>
             </div>
@@ -143,12 +143,12 @@
                 <codemirror v-model='modal.script' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
               </a-col>
               <a-col :span='24'>
-                <a-form-model-item label='Jar包地址' prop='script' v-if="modal.analysisMode==='JAR'">
+                <a-form-model-item label='Jar包地址' prop='script' v-if="modal.analysisMode==='PLUGIN'">
                   <a-input placeholder='请输入Jar包地址' />
                 </a-form-model-item>
               </a-col>
               <a-col :span='24'>
-                <a-form-model-item label='解析类名' prop='script' v-if="modal.analysisMode==='JAR'">
+                <a-form-model-item label='解析类名' prop='script' v-if="modal.analysisMode==='PLUGIN'">
                   <a-input placeholder='请输入解析类名' />
                 </a-form-model-item>
               </a-col>
@@ -175,6 +175,7 @@ import ScriptSelectModel from './modules/ScriptSelectModel'
 import VariablesModel from './modules/VariablesModel'
 import { codemirror } from 'vue-codemirror-lite'
 import { resourceTypeMap, resourceDataFormatMap, getResourceDetails } from '@/config/resource.config'
+import { analysisModeList } from '@/config/rule.config'
 
 require('codemirror/mode/javascript/javascript')
 require('codemirror/mode/vue/vue')
@@ -187,12 +188,6 @@ require('codemirror/addon/selection/active-line')
 
 export default {
   components: { ResourceModel, ScriptSelectModel, VariablesModel, codemirror },
-  props: {
-    ruleId: {
-      type: String,
-      default: undefined
-    }
-  },
   data() {
     return {
       modal: {
@@ -228,6 +223,7 @@ export default {
         }
       },
       dataFormatMap: resourceDataFormatMap,
+      analysisModeList: analysisModeList,
       defaultScript: '/**\n' +
         '* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +
         '*/\n' +
@@ -237,7 +233,9 @@ export default {
     }
   },
   mounted() {
-    if (this.ruleId) {
+    let ruleId = this.$route.params.ruleId
+    if (ruleId !== 'new') {
+      this.ruleId = ruleId
       getAction(this.url.info, { ruleId: this.ruleId }).then(res => {
         let temp = res.data
         if (temp) {

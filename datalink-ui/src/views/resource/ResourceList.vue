@@ -1,6 +1,6 @@
 <template>
   <page-header-wrapper :breadcrumb='false'>
-    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}'>
+    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}' :bordered='false'>
       <div class='table-page-search-wrapper'>
         <a-form layout='inline'>
           <a-row :gutter='20'>
@@ -21,14 +21,14 @@
       </div>
     </a-card>
 
-    <a-card :body-style='{minHeight:"500px"}'>
+    <a-card :body-style='{minHeight:"500px"}' :bordered='false'>
       <a-list
         :grid='{ gutter: 20, lg: 4, md: 2, sm: 1, xs: 1 }'
         :loading='loading'
         :data-source='data'
       >
         <a-list-item slot='renderItem' slot-scope='item'>
-          <a-card hoverable>
+          <a-card>
             <div slot='title'>{{ item.resourceName }}</div>
             <a-row>
               <a-col :span='7'>

@@ -1,6 +1,6 @@
 <template>
   <page-header-wrapper :breadcrumb='false'>
-    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}'>
+    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}' :bordered='false'>
       <div class='table-page-search-wrapper'>
         <a-form layout='inline'>
           <a-row :gutter='20'>
@@ -21,21 +21,29 @@
       </div>
     </a-card>
 
-    <a-card :body-style='{minHeight:"500px"}'>
+    <a-card :body-style='{minHeight:"500px"}' :bordered='false'>
       <a-list
         :grid='{ gutter: 20, lg: 3, md: 1, sm: 1, xs: 1 }'
         :loading='loading'
         :data-source='data'
       >
         <a-list-item slot='renderItem' slot-scope='item'>
-          <a-card hoverable>
+          <a-card>
             <div slot='title'>{{ item.ruleName }}</div>
             <div slot='extra'>
               <!--              <a-badge v-if='item.enable' color='green' text='运行中' style='color: #206bdc' />-->
-              <a-tag v-if='item.enable' color='#1890ff'>运行中</a-tag>
-              <a-tag v-if='!item.enable' color='#c2c0c0'>未启动</a-tag>
+              <a-tag v-if='item.enable' color='#1890ff' style='padding: 0 4px 2px 4px;height: 21px'>运行中</a-tag>
+<!--              <a-tag v-else-if='!item.enable' color='#c2c0c0'>未启动</a-tag>-->
               <!--                <a-badge v-if='!item.enable' color='black' text='未启动' />-->
             </div>
+            <a-row>
+              <a-col :span='5'>
+                <div>解析方式：</div>
+              </a-col>
+              <a-col :span='19'>
+                <div>{{ analysisModeMap[item.analysisMode] }}</div>
+              </a-col>
+            </a-row>
             <a-row>
               <a-col :span='5'>
                 <div>源数据：</div>
@@ -55,10 +63,12 @@
 
             <span slot='actions'>
                  <a v-if='!item.enable' @click='handleStart(item)'>启动</a>
-                 <a v-if='item.enable' @click='handleStop(item)'>停止</a>
+                <a-popconfirm slot='actions' title='确定停止此规则?' @confirm='() => handleStop(item)' v-if='item.enable'>
+                 <a href='javascript:;'>停止</a>
+                </a-popconfirm>
               </span>
             <a slot='actions' @click='handleEdit(item)' v-if='!item.enable'>编辑</a>
-            <a slot='actions' @click='handleInfo(item)' v-if='item.enable'>状态</a>
+            <a slot='actions' @click='handleRuntime(item)' v-if='item.enable'>详情</a>
             <a-popconfirm slot='actions' title='确定删除此规则?' @confirm='() => handleDelete(item)' v-if='!item.enable'>
               <a href='javascript:;'>删除</a>
             </a-popconfirm>
@@ -66,17 +76,16 @@
         </a-list-item>
       </a-list>
     </a-card>
-    <runtime-model ref='RuntimeModel'></runtime-model>
   </page-header-wrapper>
 </template>
 
 <script>
-import { postAction, getAction } from '@/api/manage'
-import RuntimeModel from './modules/RuntimeModel'
+import { postAction } from '@/api/manage'
+import { analysisModeMap } from '@/config/rule.config'
 
 export default {
   name: 'RuleList',
-  components: { RuntimeModel },
+  components: {},
   data() {
     return {
       loading: true,
@@ -89,7 +98,8 @@ export default {
         start: '/api/rule/start',
         stop: '/api/rule/stop',
         runtime: '/api/rule/runtime'
-      }
+      },
+      analysisModeMap:analysisModeMap
     }
   },
   mounted() {
@@ -97,10 +107,14 @@ export default {
   },
   methods: {
     handleAdd() {
-      this.$router.push({ name: 'ruleInfo', params: { ruleId: undefined } })
+      this.$router.push({ path: '/rule/info/new' })
     },
     handleEdit(record) {
-      this.$router.push({ name: 'ruleInfo', params: { ruleId: record.ruleId } })
+      this.$router.push({ path: '/rule/info/' + record.ruleId })
+    },
+    handleRuntime(record) {
+      //this.$router.push({ name: 'ruleRuntime', params: { ruleId: record.ruleId } })
+      this.$router.push({ path: '/rule/runtime/' + record.ruleId })
     },
     loadData() {
       this.loading = true
@@ -139,9 +153,6 @@ export default {
           this.$message.error('删除失败')
         }
       })
-    },
-    handleInfo(item) {
-      this.$refs.RuntimeModel.show(item.ruleId)
     },
     getDestListNameStr(destList) {
       let str = []

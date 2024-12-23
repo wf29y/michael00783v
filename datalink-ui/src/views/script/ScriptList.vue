@@ -1,6 +1,6 @@
 <template>
   <page-header-wrapper :breadcrumb='false'>
-    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}'>
+    <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}' :bordered='false'>
       <div class='table-page-search-wrapper'>
         <a-form layout='inline'>
           <a-row :gutter='20'>
@@ -115,10 +115,10 @@ export default {
       })
     },
     handleAdd() {
-      this.$router.push({ name: 'scriptInfo', params: { scriptId: undefined } })
+      this.$router.push({ path: '/script/info/new' })
     },
     handleEdit(record) {
-      this.$router.push({ name: 'scriptInfo', params: { scriptId: record.scriptId } })
+      this.$router.push({ path: '/script/info/' + record.scriptId })
     },
     reset() {
       this.queryParam = {}

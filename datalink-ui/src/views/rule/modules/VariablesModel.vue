@@ -1,5 +1,5 @@
 <template>
-  <a-card title='环境变量' :body-style='{minHeight:"257px",paddingTop:"10px"}'>
+  <a-card title='环境变量' :body-style='{minHeight:"257px",paddingTop:"10px"}' :bordered='false'>
 
     <div slot='extra' style='padding: 0'>
       <a @click='newItem'>添加</a>

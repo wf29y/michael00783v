@@ -2,7 +2,7 @@
   <a-row :gutter='20'>
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-col :span='15'>
-        <a-card title='脚本' :body-style='{paddingBottom:0}'>
+        <a-card title='脚本' :body-style='{paddingBottom:0}' :bordered='false'>
           <div slot='extra' style='padding: 0'>
             <a-popconfirm v-if='!disSaveBtn' title='放弃编辑的内容?' @confirm='() => {onClose()}'>
               <a-button :style="{ marginRight: '8px' }" icon='rollback'> 返回</a-button>
@@ -36,7 +36,7 @@
         </a-card>
       </a-col>
       <a-col :span='9'>
-        <a-card title='调试' :body-style='{paddingBottom:0}'>
+        <a-card title='调试' :body-style='{paddingBottom:0}' :bordered='false'>
           <div slot='extra' style='padding: 0'>
             <a-button type='primary' @click='runScript' icon='caret-right' class='runBtn'
                       :disabled='!modal.paramContent'> 运行
@@ -86,12 +86,6 @@ require('codemirror/addon/selection/active-line')
 export default {
   name: 'ResourceModel',
   components: { codemirror },
-  props: {
-    scriptId: {
-      type: String,
-      default: undefined
-    }
-  },
   data() {
     return {
       title: '操作',
@@ -137,7 +131,9 @@ export default {
     }
   },
   mounted() {
-    if (this.scriptId) {
+    let scriptId = this.$route.params.scriptId
+    if (scriptId !== 'new') {
+      this.scriptId = scriptId
       getAction(this.url.info, { scriptId: this.scriptId }).then(res => {
         this.modal = res.data
       })
