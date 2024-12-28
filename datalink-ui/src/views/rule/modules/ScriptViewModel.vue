@@ -1,14 +1,16 @@
 <template>
   <a-modal
     title='解析脚本'
-    :width='800'
+    :width='900'
     :visible='visible'
     @cancel='onClose'
+    :bodyStyle='{padding:0}'
+    :footer="null"
   >
 
     <div class='scriptView'>
 
-      <codemirror :options='options' v-model='script' style='border:  1px #e8e3e3 solid'></codemirror>
+      <codemirror :options='options' v-model='script'></codemirror>
 
     </div>
 
@@ -85,11 +87,11 @@ export default {
 }
 
 .scriptView .CodeMirror {
-  height: 470px;
+  height: 500px;
 }
 
 .scriptView .CodeMirror-scroll {
-  height: 470px;
+  height: 500px;
 }
 
 

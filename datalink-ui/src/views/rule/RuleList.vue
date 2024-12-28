@@ -22,59 +22,46 @@
     </a-card>
 
     <a-card :body-style='{minHeight:"500px"}' :bordered='false'>
-      <a-list
-        :grid='{ gutter: 20, lg: 3, md: 1, sm: 1, xs: 1 }'
-        :loading='loading'
-        :data-source='data'
-      >
-        <a-list-item slot='renderItem' slot-scope='item'>
-          <a-card>
-            <div slot='title'>{{ item.ruleName }}</div>
-            <div slot='extra'>
-              <!--              <a-badge v-if='item.enable' color='green' text='运行中' style='color: #206bdc' />-->
-              <a-tag v-if='item.enable' color='#1890ff' style='padding: 0 4px 2px 4px;height: 21px'>运行中</a-tag>
-<!--              <a-tag v-else-if='!item.enable' color='#c2c0c0'>未启动</a-tag>-->
-              <!--                <a-badge v-if='!item.enable' color='black' text='未启动' />-->
-            </div>
-            <a-row>
-              <a-col :span='5'>
-                <div>解析方式：</div>
-              </a-col>
-              <a-col :span='19'>
-                <div>{{ analysisModeMap[item.analysisMode] }}</div>
-              </a-col>
-            </a-row>
-            <a-row>
-              <a-col :span='5'>
-                <div>源数据：</div>
-              </a-col>
-              <a-col :span='19'>
-                <div>{{ item.sourceResource.resourceName }}</div>
-              </a-col>
-            </a-row>
-            <a-row>
-              <a-col :span='5'>
-                <div>目的资源：</div>
-              </a-col>
-              <a-col :span='19'>
-                <div>{{ getDestListNameStr(item.destResourceList) }}</div>
-              </a-col>
-            </a-row>
 
-            <span slot='actions'>
-                 <a v-if='!item.enable' @click='handleStart(item)'>启动</a>
-                <a-popconfirm slot='actions' title='确定停止此规则?' @confirm='() => handleStop(item)' v-if='item.enable'>
-                 <a href='javascript:;'>停止</a>
-                </a-popconfirm>
-              </span>
-            <a slot='actions' @click='handleEdit(item)' v-if='!item.enable'>编辑</a>
-            <a slot='actions' @click='handleRuntime(item)' v-if='item.enable'>详情</a>
-            <a-popconfirm slot='actions' title='确定删除此规则?' @confirm='() => handleDelete(item)' v-if='!item.enable'>
-              <a href='javascript:;'>删除</a>
-            </a-popconfirm>
-          </a-card>
-        </a-list-item>
-      </a-list>
+      <a-table
+        ref='table'
+        :columns='columns'
+        :data-source='dataSource'
+        :pagination='false'
+        :loading='loading'
+      >
+        <span slot='serial' slot-scope='text, item, index'>
+          {{ index + 1 }}
+        </span>
+
+        <span slot='ruleName' slot-scope='text, item, index'>
+          <a @click='handleRuntime(item)'>{{ text }}</a>
+        </span>
+
+        <span slot='analysisModeMap' slot-scope='text, item, index'>
+          {{ analysisModeMap[item.analysisMode] }}
+        </span>
+
+        <span slot='sourceResourceName' slot-scope='text, item, index'>
+          {{ item.sourceResource.resourceName }}
+        </span>
+
+        <span slot='destResourceName' slot-scope='text, item, index'>
+          {{ getDestListNameStr(item.destResourceList) }}
+        </span>
+
+        <span slot='enable' slot-scope='text, item, index'>
+           <a-switch :checked='text' @change='enableChange(item)' />
+        </span>
+
+        <span slot='action' slot-scope='text, item'>
+              <a @click='handleEdit(item)' :disabled='item.enable'>编辑</a>
+             <a-divider type='vertical' />
+                <a @click='handleDelete(item)'>删除</a>
+        </span>
+
+      </a-table>
+
     </a-card>
   </page-header-wrapper>
 </template>
@@ -89,7 +76,44 @@ export default {
   data() {
     return {
       loading: true,
-      data: [],
+      columns: [
+        {
+          title: '#',
+          scopedSlots: { customRender: 'serial' }
+        },
+        {
+          title: '规则名称',
+          dataIndex: 'ruleName',
+          scopedSlots: { customRender: 'ruleName' }
+        },
+        {
+          title: '解析方式',
+          dataIndex: 'analysisModeMap',
+          scopedSlots: { customRender: 'analysisModeMap' }
+        },
+        {
+          title: '源数据',
+          dataIndex: 'sourceResourceName',
+          scopedSlots: { customRender: 'sourceResourceName' }
+        },
+        {
+          title: '目的资源',
+          dataIndex: 'destResourceName',
+          scopedSlots: { customRender: 'destResourceName' }
+        },
+        {
+          title: '状态',
+          dataIndex: 'enable',
+          scopedSlots: { customRender: 'enable' }
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          width: '150px',
+          scopedSlots: { customRender: 'action' }
+        }
+      ],
+      dataSource: [],
       queryParam: {},
       url: {
         list: '/api/rule/list',
@@ -99,7 +123,7 @@ export default {
         stop: '/api/rule/stop',
         runtime: '/api/rule/runtime'
       },
-      analysisModeMap:analysisModeMap
+      analysisModeMap: analysisModeMap
     }
   },
   mounted() {
@@ -119,8 +143,7 @@ export default {
     loadData() {
       this.loading = true
       postAction(this.url.list, this.queryParam).then(res => {
-        this.data = res.data
-        // this.data.unshift({})
+        this.dataSource = res.data
         this.loading = false
       })
     },
@@ -135,24 +158,44 @@ export default {
       })
     },
     handleStop(item) {
-      postAction(this.url.stop, item).then(res => {
-        if (res.code === 200) {
-          this.$message.success('停止成功')
-          this.loadData()
-        } else {
-          this.$message.error('停止失败')
+      this.$confirm({
+        title: '停止此规则?',
+        content: item.ruleName,
+        onOk: () => {
+          postAction(this.url.stop, item).then(res => {
+            if (res.code === 200) {
+              this.$message.success('停止成功')
+              this.loadData()
+            } else {
+              this.$message.error('停止失败')
+            }
+          })
         }
       })
     },
     handleDelete(item) {
-      postAction(this.url.remove, item).then(res => {
-        if (res.code === 200) {
-          this.$message.success('删除成功')
-          this.loadData()
-        } else {
-          this.$message.error('删除失败')
+      this.$confirm({
+        title: '删除此规则?',
+        content: item.ruleName,
+        okType: 'danger',
+        onOk: () => {
+          postAction(this.url.remove, item).then(res => {
+            if (res.code === 200) {
+              this.$message.success('删除成功')
+              this.loadData()
+            } else {
+              this.$message.error('删除失败')
+            }
+          })
         }
       })
+    },
+    enableChange(item) {
+      if (item.enable) {
+          this.handleStop(item)
+      }else {
+        this.handleStart(item)
+      }
     },
     getDestListNameStr(destList) {
       let str = []

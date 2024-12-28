@@ -2,11 +2,11 @@ package com.leon.datalink.driver.actor;
 
 import java.util.Map;
 
-public class DriverDataMsg{
+public class ReceiveDataMsg {
 
     private Map<String, Object> data;
 
-    public DriverDataMsg(Map<String, Object> data) {
+    public ReceiveDataMsg(Map<String, Object> data) {
         this.data = data;
     }
 

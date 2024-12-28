@@ -81,7 +81,7 @@ public class MqttDriver extends AbstractDriver {
     }
 
     @Override
-    public void handleData(Map<String, Object> data) throws Exception {
+    public Object handleData(Map<String, Object> data) throws Exception {
         Map<String, Object> variable = getVariable(data);
         String payload = JacksonUtils.toJson(data);
 
@@ -104,6 +104,8 @@ public class MqttDriver extends AbstractDriver {
 
         // 发布消息
         this.publish(topic, payload, qos, retained);
+
+        return payload;
     }
 
     private void publish(String topic, String payload, int qos, boolean retained) throws MqttException {

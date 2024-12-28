@@ -2,6 +2,7 @@ package com.leon.datalink.runtime.entity;
 
 import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
 import com.leon.datalink.runtime.constants.Constants;
 
 import java.util.LinkedList;
@@ -15,37 +16,19 @@ public class Runtime {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private DateTime lastTime;
 
-    private Long successCount;
+    private Long total;
 
-    private Long failCount;
+    private Long analysisSuccessCount;
 
-    private LinkedList<RuleData> lastData;
+    private Long publishSuccessCount;
 
-    private Map<String,Object> variables;
+    private Long analysisFailCount;
 
-    static class RuleData {
+    private Long publishFailCount;
 
-        @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-        private DateTime time;
+    private LinkedList<RuntimeUpdateDataMsg> lastData;
 
-        private Object data;
-
-        public DateTime getTime() {
-            return time;
-        }
-
-        public void setTime(DateTime time) {
-            this.time = time;
-        }
-
-        public Object getData() {
-            return data;
-        }
-
-        public void setData(Object data) {
-            this.data = data;
-        }
-    }
+    private Map<String, Object> variables;
 
     public DateTime getStartTime() {
         return startTime;
@@ -63,27 +46,51 @@ public class Runtime {
         this.lastTime = lastTime;
     }
 
-    public Long getSuccessCount() {
-        return successCount;
+    public Long getTotal() {
+        return total;
     }
 
-    public void setSuccessCount(Long successCount) {
-        this.successCount = successCount;
+    public void setTotal(Long total) {
+        this.total = total;
     }
 
-    public Long getFailCount() {
-        return failCount;
+    public Long getAnalysisSuccessCount() {
+        return analysisSuccessCount;
     }
 
-    public void setFailCount(Long failCount) {
-        this.failCount = failCount;
+    public void setAnalysisSuccessCount(Long analysisSuccessCount) {
+        this.analysisSuccessCount = analysisSuccessCount;
     }
 
-    public LinkedList<RuleData> getLastData() {
+    public Long getPublishSuccessCount() {
+        return publishSuccessCount;
+    }
+
+    public void setPublishSuccessCount(Long publishSuccessCount) {
+        this.publishSuccessCount = publishSuccessCount;
+    }
+
+    public Long getAnalysisFailCount() {
+        return analysisFailCount;
+    }
+
+    public void setAnalysisFailCount(Long analysisFailCount) {
+        this.analysisFailCount = analysisFailCount;
+    }
+
+    public Long getPublishFailCount() {
+        return publishFailCount;
+    }
+
+    public void setPublishFailCount(Long publishFailCount) {
+        this.publishFailCount = publishFailCount;
+    }
+
+    public LinkedList<RuntimeUpdateDataMsg> getLastData() {
         return lastData;
     }
 
-    public void setLastData(LinkedList<RuleData> lastData) {
+    public void setLastData(LinkedList<RuntimeUpdateDataMsg> lastData) {
         this.lastData = lastData;
     }
 
@@ -95,21 +102,32 @@ public class Runtime {
         this.variables = variables;
     }
 
-    public void addSuccess() {
-        this.successCount++;
-    }
-
-    public void addFail() {
-        this.failCount++;
-    }
-
-    public void addLastData(Object data,DateTime time) {
-        RuleData ruleData = new RuleData();
-        ruleData.setData(data);
-        ruleData.setTime(time);
-        this.lastData.addFirst(ruleData);
+    public void addLastData(RuntimeUpdateDataMsg runtimeUpdateDataMsg) {
+        this.lastData.addFirst(runtimeUpdateDataMsg);
         if (lastData.size() > Constants.RULE_LAST_DATA_COUNT) {
             this.lastData.removeLast();
         }
     }
+
+    public void addTotalCount() {
+        this.total++;
+    }
+
+    public void addAnalysisSuccessCount() {
+        this.analysisSuccessCount++;
+    }
+
+    public void addPublishSuccessCount() {
+        this.publishSuccessCount++;
+    }
+
+    public void addAnalysisFailCount() {
+        this.analysisFailCount++;
+    }
+
+    public void addPublishFailCount() {
+        this.publishFailCount++;
+    }
+
+
 }

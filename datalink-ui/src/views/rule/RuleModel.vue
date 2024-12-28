@@ -2,169 +2,141 @@
   <div>
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
 
-      <a-row :gutter='10'>
+      <a-card :body-style='{paddingBottom:0}' style='margin-bottom: 20px' :bordered='false'>
+        <div class='title'>规则</div>
+        <a-row :gutter='10'>
+          <a-col :span='12'>
+            <a-form-model-item label='名称' prop='ruleName'>
+              <a-input v-model='modal.ruleName' placeholder='请输入规则名称' />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span='12'>
+            <a-form-model-item label='备注' prop='description'>
+              <a-input v-model='modal.description' placeholder='请输入备注' />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span='12'>
+            <a-form-model-item label='解析方式' prop='analysisMode'>
+              <a-select v-model='modal.analysisMode' placeholder='请选择解析方式' @change='analysisModeChange'>
+                <a-select-option v-for='(item,index) in analysisModeList' :value='item.value' :key='index'>
+                  {{ item.name }}
+                </a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span='12'>
+            <a-form-model-item label='忽略空值' prop='ignoreNullValue'>
+              <a-select v-model='modal.ignoreNullValue' placeholder='请选择是否忽略空值'>
+                <a-select-option :value='true'>是</a-select-option>
+                <a-select-option :value='false'>否</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+      </a-card>
 
-        <a-col :span='24' style='margin-bottom: 10px'>
-          <a-card title='规则' :body-style='{paddingBottom:0}' :bordered='false'>
-            <div slot='extra' style='padding: 0'>
-              <a-button :style="{ marginRight: '8px' }" @click='onClose' icon='close'> 取消</a-button>
-              <a-button type='primary' @click='saveRule' icon='save'> 保存</a-button>
-            </div>
-            <a-row :gutter='10'>
-              <a-col :span='6'>
-                <a-form-model-item label='名称' prop='ruleName'>
-                  <a-input v-model='modal.ruleName' placeholder='请输入规则名称' />
-                </a-form-model-item>
-              </a-col>
-              <a-col :span='6'>
-                <a-form-model-item label='备注' prop='description'>
-                  <a-input v-model='modal.description' placeholder='请输入备注' />
-                </a-form-model-item>
-              </a-col>
-              <a-col :span='6'>
-                <a-form-model-item label='解析方式' prop='analysisMode'>
-                  <a-select v-model='modal.analysisMode' placeholder='请选择解析方式' @change='analysisModeChange'>
-                    <a-select-option v-for='(item,index) in analysisModeList' :value='item.value' :key='index'>
-                      {{ item.name }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-model-item>
-              </a-col>
-              <a-col :span='6'>
-                <a-form-model-item label='忽略空值' prop='ignoreNullValue'>
-                  <a-select v-model='modal.ignoreNullValue' placeholder='请选择是否忽略空值'>
-                    <a-select-option :value='true'>是</a-select-option>
-                    <a-select-option :value='false'>否</a-select-option>
-                  </a-select>
-                </a-form-model-item>
-              </a-col>
-            </a-row>
-          </a-card>
-        </a-col>
+      <a-card style='margin-bottom: 20px' :bordered='false'>
+        <div class='title'>数据源</div>
+        <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px' v-if='modal.sourceResource'>
+          <a-col :span='18'>
+            <a-descriptions :column='2'>
+              <a-descriptions-item label='资源名称'>
+                {{ modal.sourceResource.resourceName }}
+              </a-descriptions-item>
+              <a-descriptions-item label='资源类型'>
+                {{ resourceTypeMap[modal.sourceResource.resourceType] }}
+              </a-descriptions-item>
+              <a-descriptions-item v-for='(element,index) in getDetails(modal.sourceResource)' :key='index'
+                                   :label='element.name'>
+                {{ element.value }}
+              </a-descriptions-item>
+            </a-descriptions>
+          </a-col>
+          <a-col :span='6' style='text-align: right'>
+            <a @click='editResource("source",modal.sourceResource)'>配置</a>
+            <a-divider type='vertical' />
+            <a-popconfirm title='移除此资源?' @confirm='() => deleteResource("source")'>
+              <a href='javascript:;'>移除</a>
+            </a-popconfirm>
+          </a-col>
+        </a-row>
+        <a-button @click='addResource("source")' v-if='!modal.sourceResource'> 绑定数据源</a-button>
+      </a-card>
 
 
-        <a-col :span='12'>
-
-          <a-card title='数据源' style='margin-bottom: 10px' :body-style='{paddingBottom:"30px"}' :bordered='false'>
-            <a-row :gutter='10'>
-              <a-col :span='12'>
-                <template v-if='!modal.sourceResource || modal.sourceResource.resourceId === undefined'>
-                  <a-button @click='addResource("source")' class='new-btn' type='dashed'
-                            style='height: 193px;width: 100%'>
-                    <a-icon type='plus' />
-                    绑定数据源
-                  </a-button>
-                </template>
-                <template v-else>
-                  <a-card>
-                    <div slot='title'>{{ modal.sourceResource.resourceName }}</div>
-                    <a-row>
-                      <a-col :span='7'>
-                        <div>资源类型：</div>
-                      </a-col>
-                      <a-col :span='17'>
-                        <div>{{ resourceTypeMap[modal.sourceResource.resourceType] }}</div>
-                      </a-col>
-                    </a-row>
-                    <a-row>
-                      <a-col :span='7'>
-                        <div>{{ getDetails(modal.sourceResource).name }}：</div>
-                      </a-col>
-                      <a-col :span='17'>
-                        <div>{{ getDetails(modal.sourceResource).value }}</div>
-                      </a-col>
-                    </a-row>
-                    <a slot='actions' @click='editResource("source",modal.sourceResource)'>配置</a>
-                    <a-popconfirm slot='actions' title='移除此资源?' @confirm='() => deleteResource("source")'>
-                      <a href='javascript:;'>移除</a>
-                    </a-popconfirm>
-                  </a-card>
-                </template>
+      <a-card style='margin-bottom: 20px' :bordered='false'>
+        <div class='title'>目标资源</div>
+        <a-list :grid='1' :data-source='modal.destResourceList' v-if='modal.destResourceList.length>0'>
+          <a-list-item slot='renderItem' slot-scope='resource,index'>
+            <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
+              <a-col :span='18'>
+                <a-descriptions :column='2'>
+                  <a-descriptions-item label='资源名称'>
+                    {{ resource.resourceName }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label='资源类型'>
+                    {{ resourceTypeMap[resource.resourceType] }}
+                  </a-descriptions-item>
+                  <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
+                                       :label='element.name'>
+                    {{ element.value }}
+                  </a-descriptions-item>
+                </a-descriptions>
               </a-col>
-              <a-col :span='12' v-show='modal.sourceResource.resourceId'>
-                <a-card style='height: 193.44px;' title='源数据格式' :body-style='{padding:"10px 20px"}'>
-                  <pre>{{ dataFormatMap[modal.sourceResource.resourceType] }}</pre>
-                </a-card>
-              </a-col>
-            </a-row>
-          </a-card>
-
-          <a-card title='目标' :bordered='false'>
-            <a-list :grid='{ gutter: 10, lg: 2, md: 2, sm: 2, xs: 2 }' :data-source='modal.destResourceList'>
-              <a-list-item slot='renderItem' slot-scope='item,index'>
-                <template v-if='!item || item.resourceId === undefined'>
-                  <a-button @click='addResource("dest")' class='new-btn' type='dashed'
-                            style='height: 193px;width: 100%'>
-                    <a-icon type='plus' />
-                    添加目标资源
-                  </a-button>
-                </template>
-                <template v-else>
-                  <a-card>
-                    <div slot='title'>{{ item.resourceName }}</div>
-                    <a-row>
-                      <a-col :span='7'>
-                        <div>资源类型：</div>
-                      </a-col>
-                      <a-col :span='17'>
-                        <div>{{ resourceTypeMap[item.resourceType] }}</div>
-                      </a-col>
-                    </a-row>
-                    <a-row>
-                      <a-col :span='7'>
-                        <div>{{ getDetails(item).name }}：</div>
-                      </a-col>
-                      <a-col :span='17'>
-                        <div>{{ getDetails(item).value }}</div>
-                      </a-col>
-                    </a-row>
-                    <a slot='actions' @click='editResource("dest",item,index)'>配置</a>
-                    <a-popconfirm slot='actions' title='移除此资源?' @confirm='() => deleteResource("dest",index)'>
-                      <a href='javascript:;'>移除</a>
-                    </a-popconfirm>
-                  </a-card>
-                </template>
-              </a-list-item>
-            </a-list>
-          </a-card>
-
-        </a-col>
-
-        <a-col :span='12'>
-          <a-card title='数据解析' :body-style='{height: "246px"}' style='margin-bottom: 10px' :bordered='false'>
-            <div slot='extra' style='padding: 0' v-if="modal.analysisMode==='SCRIPT'">
-              <a @click='selectScript'>选择脚本</a>
-            </div>
-            <a-row :gutter='10'>
-              <a-col :span='24' v-if="modal.analysisMode==='WITHOUT'" style='padding: 85px 0 0 0;text-align: center'>
-                无解析透传
-              </a-col>
-              <a-col :span='24' class='ruleModel' v-if="modal.analysisMode==='SCRIPT'">
-                <codemirror v-model='modal.script' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
-              </a-col>
-              <a-col :span='24'>
-                <a-form-model-item label='Jar包地址' prop='script' v-if="modal.analysisMode==='PLUGIN'">
-                  <a-input placeholder='请输入Jar包地址' />
-                </a-form-model-item>
-              </a-col>
-              <a-col :span='24'>
-                <a-form-model-item label='解析类名' prop='script' v-if="modal.analysisMode==='PLUGIN'">
-                  <a-input placeholder='请输入解析类名' />
-                </a-form-model-item>
+              <a-col :span='6' style='text-align: right'>
+                <a @click='editResource("dest",resource,index)'>配置</a>
+                <a-divider type='vertical' />
+                <a-popconfirm title='移除此资源?' @confirm='() => deleteResource("dest",index)'>
+                  <a href='javascript:;'>移除</a>
+                </a-popconfirm>
               </a-col>
             </a-row>
 
-          </a-card>
-        </a-col>
+          </a-list-item>
+        </a-list>
+        <a-button @click='addResource("dest")'> 添加目标资源</a-button>
+      </a-card>
 
-        <a-col :span='12'>
-          <variables-model ref='VariablesModel'></variables-model>
-        </a-col>
-      </a-row>
+
+      <a-card style='margin-bottom: 20px' :bordered='false' v-if="modal.analysisMode!=='WITHOUT'">
+
+        <a-row style='padding: 0'>
+          <a-col :span='12' class='title'>数据解析</a-col>
+          <a-col :span='12' style='text-align: right' v-if="modal.analysisMode==='SCRIPT'"><a
+            @click='selectScript'>选择脚本</a></a-col>
+        </a-row>
+
+        <a-row :gutter='10'>
+          <a-col :span='24' class='ruleModel' v-if="modal.analysisMode==='SCRIPT'">
+            <codemirror v-model='modal.script' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
+          </a-col>
+          <a-col :span='24'>
+            <a-form-model-item label='Jar包地址' prop='script' v-if="modal.analysisMode==='PLUGIN'">
+              <a-input placeholder='请输入Jar包地址' />
+            </a-form-model-item>
+          </a-col>
+          <a-col :span='24'>
+            <a-form-model-item label='解析类名' prop='script' v-if="modal.analysisMode==='PLUGIN'">
+              <a-input placeholder='请输入解析类名' />
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+
+      </a-card>
+
+      <variables-model ref='VariablesModel'></variables-model>
+
+
+      <a-card :body-style='{padding:"15px"}' style='margin-top: 20px;text-align: center' :bordered='false'>
+        <a-button :style="{ width:'120px', marginRight: '8px' }" @click='onClose'> 取消</a-button>
+        <a-button type='primary' :style="{ width:'120px' }" @click='saveRule'> 保存</a-button>
+      </a-card>
 
     </a-form-model>
     <resource-model ref='ResourceModel' @update='handleUpdateResource' @add='handleAddResource'></resource-model>
     <script-select-model ref='ScriptSelectModel' @select='handleSelectedScript'></script-select-model>
+
+
   </div>
 </template>
 
@@ -191,8 +163,8 @@ export default {
   data() {
     return {
       modal: {
-        sourceResource: {},
-        destResourceList: [{}],
+        sourceResource: null,
+        destResourceList: [],
         analysisMode: 'WITHOUT',
         ignoreNullValue: false
       },
@@ -240,7 +212,7 @@ export default {
         let temp = res.data
         if (temp) {
           this.modal = res.data
-          this.modal.destResourceList.push({})
+          // this.modal.destResourceList.push({})
           this.$nextTick(() => {
             this.$refs.VariablesModel.set(this.modal.variables)
           })
@@ -263,13 +235,13 @@ export default {
       if (mode === 'dest') {
         this.modal.destResourceList.splice(index, 1)
       } else if (mode === 'source') {
-        this.modal.sourceResource = {}
+        this.modal.sourceResource = null
       }
     },
 
     handleAddResource(mode, resource) {
       if (mode === 'dest') {
-        this.modal.destResourceList.unshift(resource)
+        this.modal.destResourceList.push(resource)
       } else if (mode === 'source') {
         this.modal.sourceResource = resource
       }
@@ -298,7 +270,6 @@ export default {
         if (valid) {
           that.confirmLoading = true
           let rule = JSON.parse(JSON.stringify(this.modal))
-          rule.destResourceList.pop() // 移除最后一个空
           rule.variables = this.$refs.VariablesModel.get()
           let obj
           if (this.ruleId) {
@@ -362,4 +333,15 @@ export default {
   height: 195px;
 }
 
+
+.title {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.85);
+  margin-bottom: 16px;
+}
+
 </style>
+
+
+

@@ -21,27 +21,41 @@ public class RuntimeManger {
     public static void init(String ruleId, Map<String, Object> initVariables) {
         if (null != runtimeList.get(ruleId)) return;
         Runtime runtime = new Runtime();
-        runtime.setFailCount(0L);
-        runtime.setSuccessCount(0L);
+        runtime.setTotal(0L);
+        runtime.setAnalysisSuccessCount(0L);
+        runtime.setAnalysisFailCount(0L);
+        runtime.setPublishSuccessCount(0L);
+        runtime.setPublishFailCount(0L);
         runtime.setStartTime(DateTime.now());
         runtime.setLastData(Lists.newLinkedList());
         runtime.setVariables(null == initVariables ? new HashMap<>() : initVariables);
         runtimeList.put(ruleId, runtime);
     }
 
-    public static ConcurrentHashMap<String, Runtime> getRuntimeList(){
+    public static ConcurrentHashMap<String, Runtime> getRuntimeList() {
         return runtimeList;
     }
 
-    public static void updateData(String ruleId, RuntimeUpdateDataMsg runtimeUpdateDataMsg) {
+    public static void updateData(String ruleId, RuntimeUpdateDataMsg msg) {
         Runtime runtime = runtimeList.get(ruleId);
-        runtime.addLastData(runtimeUpdateDataMsg.getData(), runtimeUpdateDataMsg.getTime());
-        runtime.setLastTime(runtimeUpdateDataMsg.getTime());
-        if (runtimeUpdateDataMsg.isSuccess()) {
-            runtime.addSuccess();
-        } else {
-            runtime.addFail();
+        runtime.addLastData(msg);
+        runtime.setLastTime(msg.getTime());
+        runtime.addTotalCount();
+        if (null != msg.getAnalysisSuccess()) {
+            if (msg.getAnalysisSuccess()) {
+                runtime.addAnalysisSuccessCount();
+                if (null != msg.getPublishSuccess()) {
+                    if (msg.getPublishSuccess()) {
+                        runtime.addPublishSuccessCount();
+                    } else if (!msg.getPublishSuccess()) {
+                        runtime.addPublishFailCount();
+                    }
+                }
+            } else if (!msg.getAnalysisSuccess()) {
+                runtime.addAnalysisFailCount();
+            }
         }
+
     }
 
     public static void updateVariable(String ruleId, RuntimeUpdateVarMsg runtimeUpdateVarMsg) {

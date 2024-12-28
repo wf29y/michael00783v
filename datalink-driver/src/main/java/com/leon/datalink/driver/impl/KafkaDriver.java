@@ -100,7 +100,7 @@ public class KafkaDriver extends AbstractDriver {
     }
 
     @Override
-    public void handleData(Map<String, Object> data) throws Exception {
+    public Object handleData(Map<String, Object> data) throws Exception {
         Map<String, Object> variable = getVariable(data);
         String payload = JacksonUtils.toJson(data);
 
@@ -120,6 +120,8 @@ public class KafkaDriver extends AbstractDriver {
 
         // 发布消息
         kafkaProducer.send(new ProducerRecord<>(topic, payload));
+
+        return payload;
     }
 
 }

@@ -5,17 +5,19 @@
     :width='700'
     :visible='visible'
     @cancel='onClose'
+    :footer='null'
+    :bodyStyle='{padding: 0}'
   >
-    <div style='min-height: 300px'>
+    <div style='min-height: 400px'>
 
 
-      <a-table :columns='columns' :data-source='scriptList' size='middle' :pagination='false'>
+      <a-table :columns='columns' :data-source='scriptList' size='small' :pagination='false'>
       <span slot='action' slot-scope='text,record'>
         <a @click='select(record)'>选择</a>
       </span>
       </a-table>
 
-      <div
+<!--      <div
         :style="{
         position: 'absolute',
         right: 0,
@@ -29,7 +31,7 @@
       }"
       >
         <a-button :style="{ marginRight: '8px' }" @click='onClose'> 取消</a-button>
-      </div>
+      </div>-->
     </div>
   </a-modal>
 </template>
@@ -50,17 +52,20 @@ export default {
       columns: [
         {
           title: '名称',
+          align:'center',
           dataIndex: 'scriptName',
-          width: '50%'
+          width: '40%'
         },
         {
           title: '最后修改',
+          align:'center',
           dataIndex: 'updateTime',
           width: '40%'
         },
         {
           title: '操作',
           dataIndex: 'action',
+          align:'center',
           scopedSlots: { customRender: 'action' }
         }
       ],

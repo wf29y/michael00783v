@@ -8,10 +8,13 @@ const resourceConfigMap = {
     type: TYPE_ALL,
     details: {
       resource: { name: '资源地址', format: (resource) => resource.properties.url },
-      rule: { name: 'Topic', format: (resource) => resource.properties.topic }
+      rule: [
+        { name: '资源地址', format: (resource) => resource.properties.url },
+        { name: 'Topic', format: (resource) => resource.properties.topic }
+      ]
     },
     dataFormat:
-`{
+      `{
   "topic":String,
   "payload":String
 }`
@@ -21,7 +24,10 @@ const resourceConfigMap = {
     type: TYPE_ALL,
     details: {
       resource: { name: '资源地址', format: (resource) => `${resource.properties.url}` },
-      rule: { name: 'Topic', format: (resource) => resource.properties.topic }
+      rule: [
+        { name: '资源地址', format: (resource) => `${resource.properties.url}` },
+        { name: 'Topic', format: (resource) => resource.properties.topic }
+      ]
     }
   },
   MYSQL: {
@@ -29,7 +35,10 @@ const resourceConfigMap = {
     type: TYPE_DEST,
     details: {
       resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-      rule: { name: 'SQL模板', format: (resource) => resource.properties.sql }
+      rule: [
+        { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: 'SQL模板', format: (resource) => resource.properties.sql }
+      ]
     }
   },
   POSTGRESQL: {
@@ -37,7 +46,10 @@ const resourceConfigMap = {
     type: TYPE_DEST,
     details: {
       resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-      rule: { name: 'SQL模板', format: (resource) => resource.properties.sql }
+      rule: [
+        { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: 'SQL模板', format: (resource) => resource.properties.sql }
+      ]
     }
   }
 }
@@ -81,13 +93,31 @@ function getResourceTypeList(type) {
 }
 
 function getResourceDetails(resource, mode) {
-  if (!resource || !mode) return { name: '', value: '' }
+  if (!resource || !resource.resourceType) {
+    if (mode === 'resource') {
+      return { name: '', value: '' }
+    } else {
+      return [{ name: '', value: '' }]
+    }
+  }
   let resourceConfigMapElement = resourceConfigMap[resource.resourceType]
   let detail = resourceConfigMapElement.details[mode]
-  return {
-    name: detail.name,
-    value: detail.format(resource)
+  if (mode === 'resource') {
+    return {
+      name: detail.name,
+      value: detail.format(resource)
+    }
+  } else {
+    let result = []
+    for (let item of detail) {
+      result.push({
+        name: item.name,
+        value: item.format(resource)
+      })
+    }
+    return result
   }
+
 }
 
 

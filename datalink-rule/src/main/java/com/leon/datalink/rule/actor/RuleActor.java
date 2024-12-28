@@ -19,6 +19,7 @@ import com.leon.datalink.runtime.actor.RuntimeUpdateVarMsg;
 import org.springframework.util.StringUtils;
 
 import javax.script.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class RuleActor extends AbstractActor {
         Loggers.RULE.info("start rule [{}]", getSelf().path());
         ActorContext context = getContext();
         // 创建runtime actor
-        runtimeActorRef = context.actorOf((Props.create(RuntimeActor.class, rule.getRuleId(), rule.getVariables())), "runtime");
+        runtimeActorRef = context.actorOf((Props.create(RuntimeActor.class, rule.getRuleId(),new HashMap<>(rule.getVariables()))), "runtime");
         // 创建目的actor
         destActorRefList = rule.getDestResourceList().stream().map(destResource -> context.actorOf((Props.create(DriverActor.class, destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.DEST, rule.getRuleId())),
                 "dest-" + SnowflakeIdWorker.getId())).collect(Collectors.toList());
@@ -59,22 +60,25 @@ public class RuleActor extends AbstractActor {
 
     @Override
     public Receive createReceive() {
-        return receiveBuilder().match(DriverDataMsg.class, this::transform).build();
+        return receiveBuilder().match(ReceiveDataMsg.class, this::transform).build();
     }
 
-    private void transform(DriverDataMsg msg) {
+    private void transform(ReceiveDataMsg msg) {
         Map<String, Object> data = msg.getData();
 
-        Map<String, Object> result = null;
-        boolean success = true;
+        RuntimeUpdateDataMsg runtimeUpdateDataMsg = new RuntimeUpdateDataMsg();
+        runtimeUpdateDataMsg.setReceiveData(data);
+        runtimeUpdateDataMsg.setTime(DateTime.now());
+
+        Map<String, Object> analysisData = null;
         try {
             switch (rule.getAnalysisMode()) {
                 case WITHOUT: {
-                    result = data;
+                    analysisData = data;
                     break;
                 }
                 case SCRIPT: {
-                    result = scriptHandler(rule, data);
+                    analysisData = scriptHandler(rule, data);
                     break;
                 }
                 case JAR: {
@@ -82,18 +86,25 @@ public class RuleActor extends AbstractActor {
                     break;
                 }
             }
+            runtimeUpdateDataMsg.setAnalysisSuccess(true);
+            runtimeUpdateDataMsg.setAnalysisData(analysisData);
         } catch (Exception e) {
-            success = false;
-        } finally {
-            //发送到runtime
-            runtimeActorRef.tell(new RuntimeUpdateDataMsg(data, success, DateTime.now()), getSelf());
+            Loggers.DRIVER.error("analysis data error: {}", e.getMessage());
+            runtimeUpdateDataMsg.setAnalysisSuccess(false);
+            runtimeUpdateDataMsg.setMessage(e.getMessage());
+            runtimeActorRef.tell(runtimeUpdateDataMsg, getSelf());
         }
+
         // 忽略空值
-        if (null == result && rule.isIgnoreNullValue()) return;
+        if (null == analysisData && rule.isIgnoreNullValue()) {
+            runtimeUpdateDataMsg.setMessage("ignore null value");
+            runtimeActorRef.tell(runtimeUpdateDataMsg, getSelf());
+            return;
+        }
 
         // 发送给所有目的driver
         for (ActorRef actorRef : destActorRefList) {
-            actorRef.tell(new DriverDataMsg(result), getSelf());
+            actorRef.tell(new PublishDataMsg(analysisData, runtimeActorRef, runtimeUpdateDataMsg), getSelf());
         }
     }
 

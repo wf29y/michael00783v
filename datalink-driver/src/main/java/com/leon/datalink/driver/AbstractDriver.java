@@ -5,7 +5,7 @@ import akka.actor.ActorRef;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import com.leon.datalink.core.common.GlobalVariableContent;
-import com.leon.datalink.driver.actor.DriverDataMsg;
+import com.leon.datalink.driver.actor.ReceiveDataMsg;
 import com.leon.datalink.driver.constans.DriverModeEnum;
 import com.leon.datalink.runtime.RuntimeManger;
 
@@ -51,7 +51,7 @@ public abstract class AbstractDriver implements Driver {
 
     // 发送数据
     public void sendData(Map<String, Object> data) {
-        ruleActorRef.tell(new DriverDataMsg(data), ActorRef.noSender());
+        ruleActorRef.tell(new ReceiveDataMsg(data), ActorRef.noSender());
     }
 
     public String getStrProp(String key) {

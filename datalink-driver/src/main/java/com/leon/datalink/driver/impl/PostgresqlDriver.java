@@ -69,14 +69,15 @@ public class PostgresqlDriver extends AbstractDriver {
     }
 
     @Override
-    public void handleData(Map<String, Object> data) throws Exception {
+    public Object handleData(Map<String, Object> data) throws Exception {
         Map<String, Object> variable = getVariable(data);
 
         Connection connection = null;
+        String sql = null;
         try {
             connection = dataSource.getConnection();
             if (connection != null) {
-                String sql = getStrProp("sql");
+                sql = getStrProp("sql");
                 if (!StringUtils.isEmpty(sql)) {
                     String render = this.templateEngine.getTemplate(sql).render(variable);
                     if (!StringUtils.isEmpty(render)) sql = render;
@@ -88,5 +89,6 @@ public class PostgresqlDriver extends AbstractDriver {
         } finally {
             Objects.requireNonNull(connection).close();
         }
+        return sql;
     }
 }

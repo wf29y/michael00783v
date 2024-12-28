@@ -1,11 +1,11 @@
 package com.leon.datalink.driver.actor;
 
 import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.Driver;
 import com.leon.datalink.driver.DriverFactory;
 import com.leon.datalink.driver.constans.DriverModeEnum;
+import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
 
 import java.util.Map;
 
@@ -46,11 +46,19 @@ public class DriverActor extends AbstractActor {
 
     @Override
     public Receive createReceive() {
-        return receiveBuilder().match(DriverDataMsg.class, msg -> {
+        return receiveBuilder().match(PublishDataMsg.class, msg -> {
+                    RuntimeUpdateDataMsg runtimeUpdateDataMsg = msg.getRuntimeUpdateDataMsg();
                     try {
-                        driver.handleData(msg.getData());
+                        Object publishData = driver.handleData(msg.getData());
+                        runtimeUpdateDataMsg.setPublishData(publishData);
+                        runtimeUpdateDataMsg.setPublishSuccess(true);
+                        runtimeUpdateDataMsg.setMessage("success");
                     } catch (Exception e) {
                         Loggers.DRIVER.error("driver actor handle data error: {}", e.getMessage());
+                        runtimeUpdateDataMsg.setPublishSuccess(false);
+                        runtimeUpdateDataMsg.setMessage(e.getMessage());
+                    } finally {
+                        msg.getRuntimeRef().tell(runtimeUpdateDataMsg, getSelf());
                     }
                 }
         ).build();

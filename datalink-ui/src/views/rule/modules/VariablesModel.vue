@@ -1,9 +1,10 @@
 <template>
-  <a-card title='环境变量' :body-style='{minHeight:"257px",paddingTop:"10px"}' :bordered='false'>
+  <a-card :body-style='{minHeight:"260px"}' :bordered='false'>
 
-    <div slot='extra' style='padding: 0'>
-      <a @click='newItem'>添加</a>
-    </div>
+    <a-row style='padding: 0'>
+      <a-col :span='12' class='title'>环境变量</a-col>
+      <a-col :span='12' style='text-align: right'>  <a @click='newItem'>添加</a></a-col>
+    </a-row>
 
     <a-table
       :columns='columns'
@@ -155,5 +156,7 @@ export default {
 
 <style>
 
-
+.ant-table-small{
+  border: 0;
+}
 </style>

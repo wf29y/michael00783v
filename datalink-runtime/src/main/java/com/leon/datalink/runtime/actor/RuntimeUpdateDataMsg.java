@@ -1,37 +1,73 @@
 package com.leon.datalink.runtime.actor;
 
 import cn.hutool.core.date.DateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Map;
 
 public class RuntimeUpdateDataMsg {
 
-    private Map data;
+    private Map<String,Object> receiveData;
 
-    private boolean success;
+    private Map<String,Object> analysisData;
 
+    private Object publishData;
+
+    private Boolean analysisSuccess;
+
+    private Boolean publishSuccess;
+
+    private String message;
+
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private DateTime time;
 
-    public RuntimeUpdateDataMsg(Map data, boolean success, DateTime time) {
-        this.data = data;
-        this.success = success;
-        this.time = time;
+    public Map<String,Object> getReceiveData() {
+        return receiveData;
     }
 
-    public Map getData() {
-        return data;
+    public void setReceiveData(Map<String,Object> receiveData) {
+        this.receiveData = receiveData;
     }
 
-    public void setData(Map data) {
-        this.data = data;
+    public Map<String, Object> getAnalysisData() {
+        return analysisData;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public void setAnalysisData(Map<String, Object> analysisData) {
+        this.analysisData = analysisData;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public Object getPublishData() {
+        return publishData;
+    }
+
+    public void setPublishData(Object publishData) {
+        this.publishData = publishData;
+    }
+
+    public Boolean getAnalysisSuccess() {
+        return analysisSuccess;
+    }
+
+    public void setAnalysisSuccess(Boolean analysisSuccess) {
+        this.analysisSuccess = analysisSuccess;
+    }
+
+    public Boolean getPublishSuccess() {
+        return publishSuccess;
+    }
+
+    public void setPublishSuccess(Boolean publishSuccess) {
+        this.publishSuccess = publishSuccess;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public DateTime getTime() {

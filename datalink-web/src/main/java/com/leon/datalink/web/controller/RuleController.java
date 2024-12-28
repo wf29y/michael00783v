@@ -25,8 +25,8 @@ public class RuleController {
      * @param ruleId
      */
     @GetMapping("/info")
-    public Object getRule(@RequestParam(value = "ruleId") String ruleId)  {
-       return ruleService.get(ruleId);
+    public Object getRule(@RequestParam(value = "ruleId") String ruleId) {
+        return ruleService.get(ruleId);
     }
 
 
@@ -59,6 +59,9 @@ public class RuleController {
      */
     @PostMapping("/remove")
     public void removeRule(@RequestBody Rule rule) throws Exception {
+        if (rule.isEnable()) {
+            ruleService.stopRule(rule);
+        }
         ruleService.remove(rule);
     }
 
