@@ -15,7 +15,6 @@ import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.actor.RuntimeActor;
 import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
-import com.leon.datalink.runtime.actor.RuntimeUpdateVarMsg;
 import org.springframework.util.StringUtils;
 
 import javax.script.*;
@@ -43,7 +42,7 @@ public class RuleActor extends AbstractActor {
         Loggers.RULE.info("start rule [{}]", getSelf().path());
         ActorContext context = getContext();
         // 创建runtime actor
-        runtimeActorRef = context.actorOf((Props.create(RuntimeActor.class, rule.getRuleId(),new HashMap<>(rule.getVariables()))), "runtime");
+        runtimeActorRef = context.actorOf((Props.create(RuntimeActor.class, rule.getRuleId(), new HashMap<>(rule.getVariables()))), "runtime");
         // 创建目的actor
         destActorRefList = rule.getDestResourceList().stream().map(destResource -> context.actorOf((Props.create(DriverActor.class, destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.DEST, rule.getRuleId())),
                 "dest-" + SnowflakeIdWorker.getId())).collect(Collectors.toList());
@@ -125,9 +124,9 @@ public class RuleActor extends AbstractActor {
                 bind.put(key, globalVariable.get(key));
             }
 
-            Map<String, Object> properties = RuntimeManger.getVariables(ruleId);
-            for (String key : properties.keySet()) {
-                bind.put(key, properties.get(key));
+            Map<String, Object> variables = RuntimeManger.getVariables(ruleId);
+            for (String key : variables.keySet()) {
+                bind.put(key, variables.get(key));
             }
 
             scriptEngine.setBindings(bind, ScriptContext.ENGINE_SCOPE);
@@ -136,9 +135,9 @@ public class RuleActor extends AbstractActor {
             Object transform = jsInvoke.invokeFunction("transform", data);
 
             // 更新自定义环境变量
-            if (MapUtil.isNotEmpty(properties)) {
-                properties.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
-                runtimeActorRef.tell(new RuntimeUpdateVarMsg(properties), getSelf());
+            if (MapUtil.isNotEmpty(variables)) {
+                variables.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
+                // runtimeActorRef.tell(new RuntimeUpdateVarMsg(properties), getSelf());
             }
             return new ObjectMapper().convertValue(transform, new TypeReference<Map<String, Object>>() {
             });

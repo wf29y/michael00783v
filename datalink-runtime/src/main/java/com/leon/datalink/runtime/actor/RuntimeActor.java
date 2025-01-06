@@ -34,7 +34,7 @@ public class RuntimeActor extends AbstractActor {
     public Receive createReceive() {
         return receiveBuilder()
                 .match(RuntimeUpdateDataMsg.class, msg -> RuntimeManger.updateData(ruleId, msg))
-                .match(RuntimeUpdateVarMsg.class, msg -> RuntimeManger.updateVariable(ruleId, msg))
+                //.match(RuntimeUpdateVarMsg.class, msg -> RuntimeManger.updateVariable(ruleId, msg))
                 .build();
     }
 }

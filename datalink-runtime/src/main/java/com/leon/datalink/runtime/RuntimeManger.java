@@ -3,7 +3,7 @@ package com.leon.datalink.runtime;
 import cn.hutool.core.date.DateTime;
 import com.google.common.collect.Lists;
 import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
-import com.leon.datalink.runtime.actor.RuntimeUpdateVarMsg;
+//import com.leon.datalink.runtime.actor.RuntimeUpdateVarMsg;
 import com.leon.datalink.runtime.entity.Runtime;
 
 import java.util.HashMap;
@@ -58,10 +58,10 @@ public class RuntimeManger {
 
     }
 
-    public static void updateVariable(String ruleId, RuntimeUpdateVarMsg runtimeUpdateVarMsg) {
-        Runtime runtime = runtimeList.get(ruleId);
-        runtime.setVariables(runtimeUpdateVarMsg.getVariables());
-    }
+//    public static void updateVariable(String ruleId, RuntimeUpdateVarMsg runtimeUpdateVarMsg) {
+//        Runtime runtime = runtimeList.get(ruleId);
+//        runtime.setVariables(runtimeUpdateVarMsg.getVariables());
+//    }
 
     public static void setRuntime(String ruleId, Runtime runtime) {
         runtimeList.put(ruleId, runtime);
