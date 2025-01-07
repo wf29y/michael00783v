@@ -1,14 +1,14 @@
 <template>
   <div>
 
-    <a-card :bordered='false' style='margin-bottom: 20px' :body-style='{padding:"15px 20px"}'>
+    <a-card :bordered='false' style='margin-bottom: 20px' :body-style='{padding:"17px 24px"}'>
       <a-row>
-        <a-col :span='12' style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);padding-top: 3px'>
+        <a-col :span='12' style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);padding-top: 4px'>
           {{ rule.ruleName }}
         </a-col>
         <a-col :span='12' style='text-align: right'>
-          <a-button @click='refresh' icon='redo' style='margin-right: 8px'> 刷新</a-button>
-          <a-button @click='onClose' icon='rollback' type='primary'> 返回</a-button>
+          <a-button @click='refresh'  style='width:90px;margin-right: 8px'> 刷新</a-button>
+          <a-button @click='onClose'  style='width:90px;' type='primary'> 返回</a-button>
         </a-col>
       </a-row>
     </a-card>

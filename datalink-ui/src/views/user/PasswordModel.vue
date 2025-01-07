@@ -7,7 +7,7 @@
   >
 
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
-      <a-row :gutter='16'>
+      <a-row :gutter='20'>
         <a-col :span='24'>
           <a-form-model-item label='原密码' prop='oldPassword'>
             <a-input-password v-model='modal.oldPassword' placeholder='请输入原密码' />

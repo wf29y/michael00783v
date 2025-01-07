@@ -77,10 +77,10 @@ export default {
     return {
       loading: true,
       columns: [
-        {
-          title: '#',
-          scopedSlots: { customRender: 'serial' }
-        },
+        // {
+        //   title: '#',
+        //   scopedSlots: { customRender: 'serial' }
+        // },
         {
           title: '规则名称',
           dataIndex: 'ruleName',

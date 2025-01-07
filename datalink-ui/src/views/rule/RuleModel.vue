@@ -2,9 +2,20 @@
   <div>
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
 
+      <a-card :bordered='false' style='margin-bottom: 20px' :body-style='{padding:"17px 24px"}'>
+        <a-row>
+          <a-col :span='12' style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);padding-top: 4px'>
+            {{ modal.ruleId ? '编辑' : '新建' }}规则
+          </a-col>
+          <a-col :span='12' style='text-align: right'>
+            <a-button @click='onClose' style='width:90px;margin-right: 8px'> 取消</a-button>
+            <a-button @click='saveRule' style='width:90px' type='primary'> 保存</a-button>
+          </a-col>
+        </a-row>
+      </a-card>
+
       <a-card :body-style='{paddingBottom:0}' style='margin-bottom: 20px' :bordered='false'>
-        <div class='title'>规则</div>
-        <a-row :gutter='10'>
+        <a-row :gutter='20'>
           <a-col :span='12'>
             <a-form-model-item label='名称' prop='ruleName'>
               <a-input v-model='modal.ruleName' placeholder='请输入规则名称' />
@@ -106,7 +117,7 @@
             @click='selectScript'>选择脚本</a></a-col>
         </a-row>
 
-        <a-row :gutter='10'>
+        <a-row :gutter='20'>
           <a-col :span='24' class='ruleModel' v-if="modal.analysisMode==='SCRIPT'">
             <codemirror v-model='modal.script' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
           </a-col>
@@ -125,12 +136,6 @@
       </a-card>
 
       <variables-model ref='VariablesModel'></variables-model>
-
-
-      <a-card :body-style='{padding:"15px"}' style='margin-top: 20px;text-align: center' :bordered='false'>
-        <a-button :style="{ width:'120px', marginRight: '8px' }" @click='onClose'> 取消</a-button>
-        <a-button type='primary' :style="{ width:'120px' }" @click='saveRule'> 保存</a-button>
-      </a-card>
 
     </a-form-model>
     <resource-model ref='ResourceModel' @update='handleUpdateResource' @add='handleAddResource'></resource-model>

@@ -1,6 +1,6 @@
 <template>
   <a-form-model layout='vertical' :model='properties'>
-    <a-row :gutter='16'>
+    <a-row :gutter='20'>
       <a-col :span='12'>
         <a-form-model-item label='IP'>
           <a-input v-model='properties.ip' placeholder='请输入IP' />

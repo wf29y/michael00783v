@@ -8,7 +8,7 @@
     @close='onClose'
   >
     <a-form-model ref='ruleForm' :model='modal' layout='vertical'  :rules="rules">
-      <a-row :gutter='16'>
+      <a-row :gutter='20'>
         <a-col :span='12'>
           <a-form-model-item label='资源类型' prop='resourceType'>
             <a-select v-model='modal.resourceType' placeholder='请选择资源类型'>

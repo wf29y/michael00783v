@@ -2,6 +2,7 @@ package com.leon.datalink.rule.entity;
 
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class Script implements Serializable {
     private static final long serialVersionUID = 1345156089995804264L;
@@ -15,6 +16,8 @@ public class Script implements Serializable {
     private String paramContent;
 
     private String resultContent;
+
+    Map<String, Object> variables;
 
     private String description;
 
@@ -66,6 +69,14 @@ public class Script implements Serializable {
 
     public void setResultContent(String resultContent) {
         this.resultContent = resultContent;
+    }
+
+    public Map<String, Object> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(Map<String, Object> variables) {
+        this.variables = variables;
     }
 
     public String getUpdateTime() {

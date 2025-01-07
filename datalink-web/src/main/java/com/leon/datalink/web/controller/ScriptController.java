@@ -1,17 +1,18 @@
 package com.leon.datalink.web.controller;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leon.datalink.core.common.GlobalVariableContent;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.rule.entity.Script;
+import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.web.script.ScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import javax.script.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,14 +64,33 @@ public class ScriptController {
     @PostMapping("/run")
     public Object run(@RequestBody Script script) throws Exception {
         ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("javascript");
+        long time1 = System.currentTimeMillis();
+        // 获取并绑定自定义环境变量
+        Bindings bind = scriptEngine.createBindings();
+
+        Map<String, Object> globalVariable = GlobalVariableContent.get();
+        for (String key : globalVariable.keySet()) {
+            bind.put(key, globalVariable.get(key));
+        }
+
+        Map<String, Object> variables = script.getVariables();
+        for (String key : variables.keySet()) {
+            bind.put(key, variables.get(key));
+        }
+
+        scriptEngine.setBindings(bind, ScriptContext.ENGINE_SCOPE);
         scriptEngine.eval(script.getScriptContent());
         Invocable jsInvoke = (Invocable) scriptEngine;
-        long time1 = System.currentTimeMillis();
         Object transform = jsInvoke.invokeFunction("transform", JacksonUtils.toObj(script.getParamContent(),Object.class));
+
+        if (MapUtil.isNotEmpty(variables)) {
+            variables.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
+        }
         long time2 = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
         result.put("result",new ObjectMapper().convertValue(transform, Map.class));
         result.put("time", time2 - time1);
+        result.put("variables",variables);
         return result;
     }
 

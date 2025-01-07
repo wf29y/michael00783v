@@ -20,7 +20,7 @@
         </a-form>
       </div>
     </a-card>
-    <a-card>
+    <a-card :body-style='{minHeight:"500px"}' :bordered='false'>
       <a-table
         ref='table'
         :columns='columns'
@@ -78,7 +78,7 @@ export default {
           scopedSlots: { customRender: 'description' }
         },
         {
-          title: '最后更新',
+          title: '最后修改',
           dataIndex: 'updateTime'
         },
         {
