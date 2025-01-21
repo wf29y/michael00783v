@@ -29,7 +29,7 @@ public interface Driver {
     /**
      * handle receive data
      */
-    Object handleData(Map<String, Object> data) throws Exception;
+    Object handleData(Object data) throws Exception;
 
 
 }

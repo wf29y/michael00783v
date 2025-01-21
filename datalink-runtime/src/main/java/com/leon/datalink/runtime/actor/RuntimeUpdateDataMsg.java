@@ -7,9 +7,9 @@ import java.util.Map;
 
 public class RuntimeUpdateDataMsg {
 
-    private Map<String,Object> receiveData;
+    private Object receiveData;
 
-    private Map<String,Object> analysisData;
+    private Object analysisData;
 
     private Object publishData;
 
@@ -22,19 +22,19 @@ public class RuntimeUpdateDataMsg {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private DateTime time;
 
-    public Map<String,Object> getReceiveData() {
+    public Object getReceiveData() {
         return receiveData;
     }
 
-    public void setReceiveData(Map<String,Object> receiveData) {
+    public void setReceiveData(Object receiveData) {
         this.receiveData = receiveData;
     }
 
-    public Map<String, Object> getAnalysisData() {
+    public Object getAnalysisData() {
         return analysisData;
     }
 
-    public void setAnalysisData(Map<String, Object> analysisData) {
+    public void setAnalysisData(Object analysisData) {
         this.analysisData = analysisData;
     }
 

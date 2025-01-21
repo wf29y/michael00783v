@@ -3,27 +3,26 @@ package com.leon.datalink.driver.actor;
 import akka.actor.ActorRef;
 import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
 
-import java.util.Map;
 
 public class PublishDataMsg {
 
-    private Map<String, Object> data;
+    private Object data;
 
     private ActorRef runtimeRef;
 
     private RuntimeUpdateDataMsg runtimeUpdateDataMsg;
 
-    public PublishDataMsg(Map<String, Object> data, ActorRef runtimeRef, RuntimeUpdateDataMsg runtimeUpdateDataMsg) {
+    public PublishDataMsg(Object data, ActorRef runtimeRef, RuntimeUpdateDataMsg runtimeUpdateDataMsg) {
         this.data = data;
         this.runtimeRef = runtimeRef;
         this.runtimeUpdateDataMsg = runtimeUpdateDataMsg;
     }
 
-    public Map<String, Object> getData() {
+    public Object getData() {
         return data;
     }
 
-    public void setData(Map<String, Object> data) {
+    public void setData(Object data) {
         this.data = data;
     }
 

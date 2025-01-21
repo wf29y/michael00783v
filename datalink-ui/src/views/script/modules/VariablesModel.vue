@@ -1,5 +1,5 @@
 <template>
-  <a-form-model-item label='环境变量' prop='paramContent'>
+  <a-form-model-item label='环境变量' prop='variables'>
     <div
       style='margin-top: -30px;width: 100%;text-align: right;height: 30px;color: #000000;padding-top: 4px'>
       <a @click='newItem'>添加</a>

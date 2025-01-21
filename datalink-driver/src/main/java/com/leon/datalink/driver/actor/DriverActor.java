@@ -30,7 +30,8 @@ public class DriverActor extends AbstractActor {
         try {
             driver.create();
         } catch (Exception e) {
-            Loggers.DRIVER.error("driver actor start error: {}", e.getMessage());
+            e.printStackTrace();
+            Loggers.DRIVER.error("driver actor start error {} : {}", driver.getClass(), e.getMessage());
         }
     }
 
@@ -40,7 +41,7 @@ public class DriverActor extends AbstractActor {
         try {
             driver.destroy();
         } catch (Exception e) {
-            Loggers.DRIVER.error("driver actor stop error: {}", e.getMessage());
+            Loggers.DRIVER.error("driver actor stop error {} : {}", driver.getClass(), e.getMessage());
         }
     }
 

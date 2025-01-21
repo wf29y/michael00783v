@@ -21,10 +21,16 @@
           </a-select-option>
         </a-select>
       </a-form-model-item>
-      <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal' :type='resourceMode'></mqtt-properties>
-      <kafka-properties v-if="modal.resourceType === 'KAFKA'" ref='PropertiesModal' :type='resourceMode'></kafka-properties>
-      <MysqlProperties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal' :type='resourceMode'></MysqlProperties>
-      <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal' :type='resourceMode'></postgresql-properties>
+      <mqtt-properties v-if="modal.resourceType === 'MQTT'" ref='PropertiesModal'
+                       :type='resourceMode'></mqtt-properties>
+      <kafka-properties v-if="modal.resourceType === 'KAFKA'" ref='PropertiesModal'
+                        :type='resourceMode'></kafka-properties>
+      <MysqlProperties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal'
+                       :type='resourceMode'></MysqlProperties>
+      <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'
+                             :type='resourceMode'></postgresql-properties>
+      <http-properties v-if="modal.resourceType === 'HTTP'" ref='PropertiesModal'
+                             :type='resourceMode'></http-properties>
     </a-form-model>
     <div
       :style="{
@@ -52,11 +58,12 @@ import MqttProperties from '../properties/MqttProperties'
 import KafkaProperties from '../properties/KafkaProperties'
 import MysqlProperties from '../properties/MysqlProperties'
 import PostgresqlProperties from '../properties/PostgresqlProperties'
+import HttpProperties from '../properties/HttpProperties'
 
 export default {
   name: 'ResourceModel',
   components: {
-    MqttProperties, KafkaProperties, MysqlProperties, PostgresqlProperties
+    MqttProperties, KafkaProperties, MysqlProperties, PostgresqlProperties, HttpProperties
   },
   data() {
     return {

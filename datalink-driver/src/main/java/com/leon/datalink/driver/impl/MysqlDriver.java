@@ -69,7 +69,7 @@ public class MysqlDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Map<String, Object> data) throws Exception {
+    public Object handleData(Object data) throws Exception {
         Map<String, Object> variable = getVariable(data);
 
         Connection connection = null;

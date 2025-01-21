@@ -88,7 +88,7 @@ public class ScriptController {
         }
         long time2 = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
-        result.put("result",new ObjectMapper().convertValue(transform, Map.class));
+        result.put("result",new ObjectMapper().convertValue(transform, Object.class));
         result.put("time", time2 - time1);
         result.put("variables",variables);
         return result;

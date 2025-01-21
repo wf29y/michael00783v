@@ -2,19 +2,11 @@
   <a-row :gutter='20'>
     <a-form-model layout='vertical' :model='properties'>
       <a-col :span='24'>
-        <a-form-model-item :label='properties.dynamicTopic?"Topic模板":"Topic"'>
+        <a-form-model-item label='Topic'>
           <a-input v-model='properties.topic' placeholder='请输入Topic' />
         </a-form-model-item>
       </a-col>
-      <a-col :span='8'>
-        <a-form-model-item label='动态Topic' prop='dynamicTopic' v-if="type==='dest'">
-          <a-select v-model='properties.dynamicTopic' placeholder='请选择是否动态Topic'>
-            <a-select-option :value='true'>是</a-select-option>
-            <a-select-option :value='false'>否</a-select-option>
-          </a-select>
-        </a-form-model-item>
-      </a-col>
-      <a-col :span='8'>
+      <a-col :span='12'>
         <a-form-model-item label='消息保留' prop='retained' v-if="type==='dest'">
           <a-select v-model='properties.retained' placeholder='请选择是否消息保留'>
             <a-select-option :value='true'>是</a-select-option>
@@ -22,14 +14,14 @@
           </a-select>
         </a-form-model-item>
       </a-col>
-      <a-col :span="type==='dest'?8:24">
+      <a-col :span="type==='dest'?12:24">
         <a-form-model-item label='Qos'>
           <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%' />
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='payload'>
         <a-form-model-item label='消息模板' v-if="type==='dest'" style='margin-bottom: 0'>
-          <codemirror v-model='properties.template' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
+          <codemirror v-model='properties.payload' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
         </a-form-model-item>
       </a-col>
     </a-form-model>
@@ -52,7 +44,6 @@ export default {
     return {
       properties: {
         qos: 0,
-        dynamicTopic: false,
         retained: false
       },
       options: {

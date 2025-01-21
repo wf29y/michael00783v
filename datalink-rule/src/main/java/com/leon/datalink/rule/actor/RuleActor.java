@@ -63,13 +63,13 @@ public class RuleActor extends AbstractActor {
     }
 
     private void transform(ReceiveDataMsg msg) {
-        Map<String, Object> data = msg.getData();
+        Object data = msg.getData();
 
         RuntimeUpdateDataMsg runtimeUpdateDataMsg = new RuntimeUpdateDataMsg();
         runtimeUpdateDataMsg.setReceiveData(data);
         runtimeUpdateDataMsg.setTime(DateTime.now());
 
-        Map<String, Object> analysisData = null;
+        Object analysisData = null;
         try {
             switch (rule.getAnalysisMode()) {
                 case WITHOUT: {
@@ -108,7 +108,7 @@ public class RuleActor extends AbstractActor {
     }
 
     // 脚本解析
-    private Map<String, Object> scriptHandler(Rule rule, Object data) {
+    private Object scriptHandler(Rule rule, Object data) {
         String script = rule.getScript();
         if (StringUtils.isEmpty(script) || null == data) {
             return null;
@@ -139,8 +139,7 @@ public class RuleActor extends AbstractActor {
                 variables.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
                 // runtimeActorRef.tell(new RuntimeUpdateVarMsg(properties), getSelf());
             }
-            return new ObjectMapper().convertValue(transform, new TypeReference<Map<String, Object>>() {
-            });
+            return new ObjectMapper().convertValue(transform,Object.class);
         } catch (Exception e) {
             Loggers.RULE.error("script error {}", e.getMessage());
         }

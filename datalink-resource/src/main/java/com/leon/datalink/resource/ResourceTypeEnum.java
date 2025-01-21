@@ -2,17 +2,15 @@ package com.leon.datalink.resource;
 
 
 import com.leon.datalink.driver.Driver;
-import com.leon.datalink.driver.impl.KafkaDriver;
-import com.leon.datalink.driver.impl.MqttDriver;
-import com.leon.datalink.driver.impl.MysqlDriver;
-import com.leon.datalink.driver.impl.PostgresqlDriver;
+import com.leon.datalink.driver.impl.*;
 
 public enum ResourceTypeEnum {
 
     MQTT(MqttDriver.class),
     KAFKA(KafkaDriver.class),
     MYSQL(MysqlDriver .class),
-    POSTGRESQL(PostgresqlDriver.class);
+    POSTGRESQL(PostgresqlDriver.class),
+    HTTP(HttpDriver.class);
 
     private final Class<? extends Driver> driver;
 

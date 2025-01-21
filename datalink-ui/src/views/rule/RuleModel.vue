@@ -151,7 +151,7 @@ import ResourceModel from './modules/ResourceModel'
 import ScriptSelectModel from './modules/ScriptSelectModel'
 import VariablesModel from './modules/VariablesModel'
 import { codemirror } from 'vue-codemirror-lite'
-import { resourceTypeMap, resourceDataFormatMap, getResourceDetails } from '@/config/resource.config'
+import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 import { analysisModeList } from '@/config/rule.config'
 
 require('codemirror/mode/javascript/javascript')
@@ -199,7 +199,6 @@ export default {
           tables: {}
         }
       },
-      dataFormatMap: resourceDataFormatMap,
       analysisModeList: analysisModeList,
       defaultScript: '/**\n' +
         '* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +

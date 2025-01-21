@@ -81,20 +81,23 @@ public class MqttDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Map<String, Object> data) throws Exception {
+    public Object handleData(Object data) throws Exception {
         Map<String, Object> variable = getVariable(data);
-        String payload = JacksonUtils.toJson(data);
 
         // 消息模板解析
-        String template = getStrProp("template");
-        if (!StringUtils.isEmpty(template)) {
-            String render = this.templateEngine.getTemplate(template).render(variable);
+        String payload = getStrProp("payload");
+        if (!StringUtils.isEmpty(payload)) {
+            String render = this.templateEngine.getTemplate(payload).render(variable);
             if (!StringUtils.isEmpty(render)) payload = render;
+        } else {
+            if (null != data) {
+                payload = JacksonUtils.toJson(data);
+            }
         }
 
         // topic模板解析
         String topic = getStrProp("topic");
-        if (getBoolProp("dynamicTopic", false)) {
+        if (!StringUtils.isEmpty(topic)) {
             String render = this.templateEngine.getTemplate(topic).render(variable);
             if (!StringUtils.isEmpty(render)) topic = render;
         }

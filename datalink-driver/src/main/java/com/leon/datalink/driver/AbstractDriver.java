@@ -4,11 +4,15 @@ package com.leon.datalink.driver;
 import akka.actor.ActorRef;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leon.datalink.core.common.GlobalVariableContent;
+import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.driver.actor.ReceiveDataMsg;
 import com.leon.datalink.driver.constans.DriverModeEnum;
 import com.leon.datalink.runtime.RuntimeManger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -37,20 +41,21 @@ public abstract class AbstractDriver implements Driver {
     }
 
     // 获得全局变量
-    public Map<String, Object> getVariable(Map<String, Object> data) {
+    public Map<String, Object> getVariable(Object data) {
         Map<String, Object> globalProp = GlobalVariableContent.get();
         Map<String, Object> ruleProp = RuntimeManger.getVariables(ruleId);
         if (null != ruleProp) {
             globalProp.putAll(ruleProp);
         }
         if (null != data) {
-            globalProp.putAll(data);
+            globalProp.putAll(new ObjectMapper().convertValue(data, new TypeReference<Map<String, Object>>() {
+            }));
         }
         return globalProp;
     }
 
     // 发送数据
-    public void sendData(Map<String, Object> data) {
+    public void sendData(Object data) {
         ruleActorRef.tell(new ReceiveDataMsg(data), ActorRef.noSender());
     }
 
@@ -82,6 +87,23 @@ public abstract class AbstractDriver implements Driver {
         else return intProp;
     }
 
+
+    public Long getLongProp(String key) {
+        Object o = properties.get(key);
+        if (null == o) return null;
+        if (o instanceof Long) {
+            return (Long) o;
+        } else {
+            return Long.parseLong(o.toString());
+        }
+    }
+
+    public Long getLongProp(String key, long defaultValue) {
+        Long longProp = this.getLongProp(key);
+        if (null == longProp) return defaultValue;
+        else return longProp;
+    }
+
     public Boolean getBoolProp(String key) {
         Object o = properties.get(key);
         if (null == o) return null;
@@ -96,6 +118,14 @@ public abstract class AbstractDriver implements Driver {
         Boolean boolProp = this.getBoolProp(key);
         if (null == boolProp) return defaultValue;
         else return boolProp;
+    }
+
+
+    public Map<String, String> getMapProp(String key) {
+        Object o = properties.get(key);
+        if (null == o) return null;
+        return new ObjectMapper().convertValue(o, new TypeReference<Map<String, String>>() {
+        });
     }
 
 }

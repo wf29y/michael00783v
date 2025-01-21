@@ -26,6 +26,7 @@
       <kafka-properties v-if="modal.resourceType === 'KAFKA'" ref='PropertiesModal'></kafka-properties>
       <mysql-properties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal'></mysql-properties>
       <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'></postgresql-properties>
+      <http-properties v-if="modal.resourceType === 'HTTP'" ref='PropertiesModal'></http-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -58,10 +59,11 @@ import MqttProperties from '../properties/MqttProperties'
 import KafkaProperties from '../properties/KafkaProperties'
 import MysqlProperties from '../properties/MysqlProperties'
 import PostgresqlProperties from '../properties/PostgresqlProperties'
+import HttpProperties from '../properties/HttpProperties'
 
 export default {
   name:'ResourceModel',
-  components: { MqttProperties,KafkaProperties,MysqlProperties,PostgresqlProperties },
+  components: { MqttProperties,KafkaProperties,MysqlProperties,PostgresqlProperties,HttpProperties },
   data() {
     return {
       title: '操作',
