@@ -7,8 +7,8 @@
           {{ rule.ruleName }}
         </a-col>
         <a-col :span='12' style='text-align: right'>
-          <a-button @click='refresh'  style='width:90px;margin-right: 8px'> 刷新</a-button>
-          <a-button @click='onClose'  style='width:90px;' type='primary'> 返回</a-button>
+          <a-button @click='refresh' style='width:90px;margin-right: 8px'> 刷新</a-button>
+          <a-button @click='onClose' style='width:90px;' type='primary'> 返回</a-button>
         </a-col>
       </a-row>
     </a-card>
@@ -16,7 +16,7 @@
     <a-card :bordered='false' style='margin-bottom: 20px'>
       <a-row>
         <a-col :span='3'>
-          <a-statistic title='数据总数' :value='runtime.total' />
+          <a-statistic title='累计总数' :value='runtime.total' />
         </a-col>
         <a-col :span='3'>
           <a-statistic title='解析成功' :value='runtime.analysisSuccessCount' />
@@ -31,11 +31,11 @@
           <a-statistic title='发送失败' :value='runtime.publishFailCount' />
         </a-col>
         <a-col :span='4'>
-          <a-statistic title='最近处理' :value="runtime.lastTime ? runtime.lastTime : '—'"
+          <a-statistic title='最近执行' :value="runtime.lastTime ? runtime.lastTime : '—'"
                        :value-style='{fontSize: "21px"}' />
         </a-col>
         <a-col :span='5'>
-          <a-statistic title='启动时间' :value="runtime.startTime ? runtime.startTime : '—'"
+          <a-statistic title='首次启动' :value="runtime.startTime ? runtime.startTime : '—'"
                        :value-style='{fontSize: "21px"}' />
         </a-col>
       </a-row>
@@ -50,12 +50,59 @@
           <span v-else>{{ analysisModeMap[rule.analysisMode] }}</span>
         </a-descriptions-item>
         <a-descriptions-item label='备注'> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
-        <a-descriptions-item label='源数据' :span='2'> {{ getDetails(rule.sourceResource) }}</a-descriptions-item>
-        <a-descriptions-item v-for='(item,index) in rule.destResourceList' label='目的地' :span='2' :key='index'>
-          {{ getDetails(item) }}
-        </a-descriptions-item>
+        <!--        <a-descriptions-item label='源数据' :span='2'> {{ getDetails(rule.sourceResource) }}</a-descriptions-item>
+                <a-descriptions-item v-for='(item,index) in rule.destResourceList' label='目的地' :span='2' :key='index'>
+                  {{ getDetails(item) }}
+                </a-descriptions-item>-->
       </a-descriptions>
 
+    </a-card>
+
+
+    <a-card style='margin-bottom: 20px' :bordered='false'>
+      <div class='title'>数据源</div>
+      <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px' v-if='rule.sourceResource'>
+        <a-col :span='18'>
+          <a-descriptions :column='2'>
+            <a-descriptions-item label='资源名称'>
+              {{ rule.sourceResource.resourceName }}
+            </a-descriptions-item>
+            <a-descriptions-item label='资源类型'>
+              {{ resourceTypeMap[rule.sourceResource.resourceType] }}
+            </a-descriptions-item>
+            <a-descriptions-item v-for='(element,index) in getDetails(rule.sourceResource)' :key='index'
+                                 :label='element.name'>
+              {{ element.value }}
+            </a-descriptions-item>
+          </a-descriptions>
+        </a-col>
+      </a-row>
+    </a-card>
+
+
+    <a-card style='margin-bottom: 20px' :bordered='false'>
+      <div class='title'>目标资源</div>
+      <a-list :grid='1' :data-source='rule.destResourceList' v-if='rule.destResourceList.length>0'>
+        <a-list-item slot='renderItem' slot-scope='resource,index'>
+          <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
+            <a-col :span='18'>
+              <a-descriptions :column='2'>
+                <a-descriptions-item label='资源名称'>
+                  {{ resource.resourceName }}
+                </a-descriptions-item>
+                <a-descriptions-item label='资源类型'>
+                  {{ resourceTypeMap[resource.resourceType] }}
+                </a-descriptions-item>
+                <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
+                                     :label='element.name'>
+                  {{ element.value }}
+                </a-descriptions-item>
+              </a-descriptions>
+            </a-col>
+          </a-row>
+
+        </a-list-item>
+      </a-list>
     </a-card>
 
     <a-card :bordered='false' style='margin-bottom: 20px' v-if='variables.length>0'>
@@ -80,7 +127,7 @@
             </template>
               <span style='cursor: pointer'>
               <a-badge v-if='text===true' color='green' text='成功' />
-              <a-badge v-if='text===false' color='green' text='失败' />
+              <a-badge v-if='text===false' color='red' text='失败' />
               </span>
           </a-popover>
         </span>
@@ -92,7 +139,7 @@
             </template>
             <span style='cursor: pointer'>
               <a-badge v-if='text===true' color='green' text='成功' />
-              <a-badge v-if='text===false' color='green' text='失败' />
+              <a-badge v-if='text===false' color='red' text='失败' />
             </span>
           </a-popover>
         </span>
@@ -125,6 +172,7 @@ export default {
       runtime: {},
       variables: [],
       analysisModeMap: analysisModeMap,
+      resourceTypeMap: resourceTypeMap,
       dataColumns: [
         {
           title: '时间',
@@ -214,13 +262,7 @@ export default {
       this.$router.push({ name: 'ruleList' })
     },
     getDetails(resource) {
-      if (!resource) return ''
-      let resourceDetails = getResourceDetails(resource, 'rule')
-      let result = '\xa0类型:\xa0' + resourceTypeMap[resource.resourceType] + '\xa0\xa0\xa0\xa0\xa0名称:\xa0' + resource.resourceName
-      resourceDetails.forEach(detail => {
-        result += '\xa0\xa0\xa0\xa0\xa0' + detail.name + ':\xa0' + detail.value
-      })
-      return result
+      return getResourceDetails(resource, 'rule')
     }
   }
 
