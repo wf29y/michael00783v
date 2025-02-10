@@ -19,17 +19,29 @@ public class RuntimeManger {
 
 
     public static void init(String ruleId, Map<String, Object> initVariables) {
-        if (null != runtimeList.get(ruleId)) return;
-        Runtime runtime = new Runtime();
-        runtime.setTotal(0L);
-        runtime.setAnalysisSuccessCount(0L);
-        runtime.setAnalysisFailCount(0L);
-        runtime.setPublishSuccessCount(0L);
-        runtime.setPublishFailCount(0L);
-        runtime.setStartTime(DateTime.now());
-        runtime.setLastData(Lists.newLinkedList());
-        runtime.setVariables(null == initVariables ? new HashMap<>() : initVariables);
-        runtimeList.put(ruleId, runtime);
+        Runtime ruleRuntime = runtimeList.get(ruleId);
+        // 重新启动
+        if (null != ruleRuntime) {
+            Map<String, Object> variables = ruleRuntime.getVariables();
+            // 同名变量保持运行值
+            for (String key : variables.keySet()) {
+                if (initVariables.containsKey(key)) {
+                    initVariables.put(key, variables.get(key));
+                }
+            }
+            ruleRuntime.setVariables(initVariables);
+        } else {
+            Runtime runtime = new Runtime();
+            runtime.setTotal(0L);
+            runtime.setAnalysisSuccessCount(0L);
+            runtime.setAnalysisFailCount(0L);
+            runtime.setPublishSuccessCount(0L);
+            runtime.setPublishFailCount(0L);
+            runtime.setStartTime(DateTime.now());
+            runtime.setLastData(Lists.newLinkedList());
+            runtime.setVariables(null == initVariables ? new HashMap<>() : initVariables);
+            runtimeList.put(ruleId, runtime);
+        }
     }
 
     public static ConcurrentHashMap<String, Runtime> getRuntimeList() {

@@ -242,8 +242,8 @@ export default {
             this.runtime = res.data
 
             this.variables = []
-            if (!this.runtime.variables) return
-            let keys = Object.keys(this.runtime.variables)
+            if (!this.rule.variables) return
+            let keys = Object.keys(this.rule.variables)
             for (let key of keys) {
               this.variables.push({
                 name: key,
