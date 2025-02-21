@@ -80,9 +80,9 @@
     </a-card>
 
 
-    <a-card style='margin-bottom: 20px' :bordered='false'>
+    <a-card style='margin-bottom: 20px' :bordered='false' :body-style='{paddingBottom:"10px"}'>
       <div class='title'>目标资源</div>
-      <a-list :grid='1' :data-source='rule.destResourceList' v-if='rule.destResourceList.length>0'>
+      <a-list :grid="{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }" :data-source='rule.destResourceList' v-if='rule.destResourceList.length>0'>
         <a-list-item slot='renderItem' slot-scope='resource,index'>
           <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
             <a-col :span='18'>

@@ -89,10 +89,14 @@ export default {
       this.data = []
       if (!variables) return
       let keys = Object.keys(variables)
+      let index = 1
       for (let key of keys) {
         this.data.push({
+          key: index++,
           name: key,
-          value: variables[key]
+          value: variables[key],
+          editable: false,
+          isNew: false
         })
       }
     },

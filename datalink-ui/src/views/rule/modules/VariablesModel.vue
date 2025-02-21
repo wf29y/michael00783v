@@ -3,7 +3,7 @@
 
     <a-row style='padding: 0'>
       <a-col :span='12' class='title'>环境变量</a-col>
-      <a-col :span='12' style='text-align: right'>  <a @click='newItem'>添加</a></a-col>
+      <a-col :span='12' style='text-align: right'><a @click='newItem'>添加</a></a-col>
     </a-row>
 
     <a-table
@@ -89,10 +89,14 @@ export default {
       this.data = []
       if (!variables) return
       let keys = Object.keys(variables)
+      let index = 1
       for (let key of keys) {
         this.data.push({
+          key: index++,
           name: key,
-          value: variables[key]
+          value: variables[key],
+          editable: false,
+          isNew: false
         })
       }
     },
@@ -156,7 +160,7 @@ export default {
 
 <style>
 
-.ant-table-small{
+.ant-table-small {
   border: 0;
 }
 </style>
