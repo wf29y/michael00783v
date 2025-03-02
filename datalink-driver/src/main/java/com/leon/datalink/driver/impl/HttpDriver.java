@@ -1,6 +1,7 @@
 package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
+import cn.hutool.core.net.NetUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
 import com.leon.datalink.core.utils.JacksonUtils;
@@ -30,6 +31,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -90,11 +92,9 @@ public class HttpDriver extends AbstractDriver {
             if (StringUtils.isEmpty(url)) {
                 return false;
             }
-            HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
-            httpURLConnection.setRequestMethod("HEAD");
-            httpURLConnection.setConnectTimeout(getIntProp("connectTimeout"));
-            httpURLConnection.setReadTimeout(getIntProp("readTimeout"));
-            return httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK;
+            URL urlObj = new URL(url);
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(urlObj.getHost(), urlObj.getPort());
+            return NetUtil.isOpen(inetSocketAddress, 6000);
         } catch (Exception e) {
             Loggers.DRIVER.error("driver test {}", e.getMessage());
             return false;
