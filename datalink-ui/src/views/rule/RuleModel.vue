@@ -119,7 +119,7 @@
 
         <a-row :gutter='20'>
           <a-col :span='24' class='ruleModel' v-if="modal.analysisMode==='SCRIPT'">
-            <codemirror v-model='modal.script' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
+            <monaco-editor ref='MonacoEditor' height='300px' :minimap='true'></monaco-editor>
           </a-col>
           <a-col :span='24'>
             <a-form-model-item label='Jar包地址' prop='script' v-if="modal.analysisMode==='PLUGIN'">
@@ -150,21 +150,12 @@ import { postAction, putAction, getAction } from '@/api/manage'
 import ResourceModel from './modules/ResourceModel'
 import ScriptSelectModel from './modules/ScriptSelectModel'
 import VariablesModel from './modules/VariablesModel'
-import { codemirror } from 'vue-codemirror-lite'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 import { analysisModeList } from '@/config/rule.config'
-
-require('codemirror/mode/javascript/javascript')
-require('codemirror/mode/vue/vue')
-require('codemirror/addon/hint/show-hint.js')
-require('codemirror/addon/hint/show-hint.css')
-require('codemirror/addon/hint/javascript-hint.js')
-require('codemirror/theme/base16-light.css')
-require('codemirror/addon/selection/active-line')
-
+import MonacoEditor from '@/components/Editor/MonacoEditor'
 
 export default {
-  components: { ResourceModel, ScriptSelectModel, VariablesModel, codemirror },
+  components: { ResourceModel, ScriptSelectModel, VariablesModel, MonacoEditor },
   data() {
     return {
       modal: {
@@ -219,6 +210,7 @@ export default {
           // this.modal.destResourceList.push({})
           this.$nextTick(() => {
             this.$refs.VariablesModel.set(this.modal.variables)
+            this.$refs.MonacoEditor.set(this.modal.script)
           })
         }
       })
@@ -265,6 +257,9 @@ export default {
       } else {
         this.modal.script = ''
       }
+      this.$nextTick(() => {
+        this.$refs.MonacoEditor.set(this.modal.script)
+      })
     },
 
     // 保存规则
@@ -275,6 +270,7 @@ export default {
           that.confirmLoading = true
           let rule = JSON.parse(JSON.stringify(this.modal))
           rule.variables = this.$refs.VariablesModel.get()
+          rule.script = this.$refs.MonacoEditor.get()
           let obj
           if (this.ruleId) {
             obj = putAction(this.url.update, rule)
@@ -304,6 +300,7 @@ export default {
     },
     handleSelectedScript(script) {
       this.modal.script = script.scriptContent
+      this.$refs.MonacoEditor.set(this.modal.script)
     },
     onClose() {
       this.$router.push({ name: 'ruleList' })
@@ -315,28 +312,6 @@ export default {
 </script>
 
 <style>
-
-.ruleModel .cm-s-base16-light.CodeMirror {
-  background: white !important;
-  color: #202020;
-}
-
-.ruleModel .cm-s-base16-light span.cm-comment {
-  font-size: 13px;
-}
-
-.ruleModel .cm-s-base16-light .CodeMirror-activeline-background {
-  background: #f3f2f2;
-}
-
-.ruleModel .CodeMirror {
-  height: 195px;
-}
-
-.ruleModel .CodeMirror-scroll {
-  height: 195px;
-}
-
 
 .title {
   font-size: 16px;

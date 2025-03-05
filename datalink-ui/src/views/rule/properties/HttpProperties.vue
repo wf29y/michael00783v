@@ -36,7 +36,7 @@
       </a-col>
       <a-col :span='24' class='body'>
         <a-form-model-item label='请求体' style='margin-bottom: 0'>
-          <codemirror v-model='properties.body' :options='options' style='border:  1px #e8e3e3 solid'></codemirror>
+          <monaco-editor ref='MonacoEditor'></monaco-editor>
         </a-form-model-item>
       </a-col>
     </a-form-model>
@@ -44,42 +44,20 @@
 </template>
 
 <script>
-import { codemirror } from 'vue-codemirror-lite'
-import HttpHeadersModel from './HttpHeadersModel'
-import TagSelectOption from '@/components/TagSelect/TagSelectOption'
 
-require('codemirror/mode/sql/sql.js')
-require('codemirror/mode/vue/vue')
-require('codemirror/addon/hint/show-hint.js')
-require('codemirror/addon/hint/show-hint.css')
-require('codemirror/theme/base16-light.css')
-require('codemirror/addon/selection/active-line')
+import HttpHeadersModel from './HttpHeadersModel'
+import MonacoEditor from '@/components/Editor/MonacoEditor'
+
+
 
 export default {
-  components: { TagSelectOption, codemirror, HttpHeadersModel },
+  components: { MonacoEditor,HttpHeadersModel },
   data() {
     return {
       properties: {
         method: 'GET',
-        // timeUnit: 'SECONDS',
-        // initialDelay: 5,
-        // period: 10,
-        headers: { 'Content-Type': 'application/json' }
-      },
-      options: {
-        mode: { name: 'text/javascript', json: true },
-        height: 200,
-        lineNumbers: true,
-        tabSize: 2,
-        theme: 'base16-light',
-        line: true,
-        autoCloseTags: true,
-        lineWrapping: true,
-        styleActiveLine: true,
-        extraKeys: { 'tab': 'autocomplete' }, //自定义快捷键
-        hintOptions: {
-          tables: {}
-        }
+        headers: { 'Content-Type': 'application/json' },
+        body:''
       },
       methodList: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS', 'TRACE'],
       timeUnitList: [
@@ -97,18 +75,20 @@ export default {
     }
   },
   mounted() {
-
     this.$nextTick(() => {
       this.$refs.HttpHeadersModel.set(this.properties.headers)
+      this.$refs.MonacoEditor.set(this.properties.body)
     })
   },
   methods: {
     set(properties) {
       this.properties = Object.assign({}, this.properties, properties)
       this.$refs.HttpHeadersModel.set(this.properties.headers)
+      this.$refs.MonacoEditor.set(this.properties.body)
     },
     get() {
       this.properties.headers = this.$refs.HttpHeadersModel.get()
+      this.properties.body = this.$refs.MonacoEditor.get()
       return this.properties
     }
   }
@@ -117,25 +97,5 @@ export default {
 
 <style>
 
-.body .cm-s-base16-light.CodeMirror {
-  background: white !important;
-  color: #202020;
-}
-
-.body .cm-s-base16-light span.cm-comment {
-  font-size: 13px;
-}
-
-.body .cm-s-base16-light .CodeMirror-activeline-background {
-  background: #f3f2f2;
-}
-
-.body .CodeMirror {
-  height: 200px;
-}
-
-.body .CodeMirror-scroll {
-  height: 200px;
-}
 
 </style>

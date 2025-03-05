@@ -36,8 +36,7 @@
               </a-col>
               <a-col :span='24' class='scriptModel'>
                 <a-form-model-item label='JavaScript脚本' prop='scriptContent'>
-                  <codemirror v-model='modal.scriptContent' :options='options'
-                              style='border:  1px #e8e3e3 solid'></codemirror>
+                  <monaco-editor height='470px' :minimap='true' ref='ScriptContentEditor'></monaco-editor>
                 </a-form-model-item>
               </a-col>
             </a-row>
@@ -47,33 +46,21 @@
 
           <a-card title='调试' :body-style='{paddingBottom:0}' :bordered='false'>
             <div slot='extra' style='padding: 0'>
-              <a-button type='primary' @click='runScript' icon='caret-right' class='runBtn'
-                        :disabled='!modal.paramContent'> 运行
+              <a-button type='primary' @click='runScript' icon='caret-right' class='runBtn'> 运行
               </a-button>
             </div>
 
             <variables-model ref='VariablesModel'></variables-model>
 
             <a-form-model-item label='输入参数（Json）' prop='paramContent' class='inputModel'>
-              <div
-                style='margin-top: -30px;width: 100%;text-align: right;height: 30px;color: #000000;padding-top: 4px'>
-                <a @click='formatParam'>
-                  <a-icon type='menu-unfold' />
-                </a>
-              </div>
-              <codemirror v-model='modal.paramContent' :options='options'
-                          style='border:  1px #e8e3e3 solid'></codemirror>
+              <monaco-editor height='150px' ref='ParamContentEditor' language='json'></monaco-editor>
             </a-form-model-item>
 
             <a-form-model-item label='运行结果' prop='resultContent' class='outputModel'>
               <div style='margin-top: -30px;width: 100%;text-align: right;height: 30px;color: #000000'>
                 <span v-show='time >= 0' style='display: inline-block;padding-right: 15px'>用时：{{ time }}ms</span>
-                <a @click='formatResult'>
-                  <a-icon type='menu-unfold' />
-                </a>
               </div>
-              <codemirror v-model='modal.resultContent' :options='options'
-                          style='border:  1px #e8e3e3 solid'></codemirror>
+              <monaco-editor height='150px' :read-only='true' ref='ResultContentEditor' language='json'></monaco-editor>
             </a-form-model-item>
 
           </a-card>
@@ -89,21 +76,13 @@
 <script>
 import { getAction, postAction, putAction } from '@/api/manage'
 import { formatJson } from '@/utils/util'
-import { codemirror } from 'vue-codemirror-lite'
 import VariablesModel from './VariablesModel'
-
-require('codemirror/mode/javascript/javascript')
-require('codemirror/mode/vue/vue')
-require('codemirror/addon/hint/show-hint.js')
-require('codemirror/addon/hint/show-hint.css')
-require('codemirror/addon/hint/javascript-hint.js')
-require('codemirror/theme/base16-light.css')
-require('codemirror/addon/selection/active-line')
+import MonacoEditor from '@/components/Editor/MonacoEditor'
 
 
 export default {
   name: 'ResourceModel',
-  components: { codemirror, VariablesModel },
+  components: { MonacoEditor, VariablesModel },
   data() {
     return {
       title: '操作',
@@ -117,7 +96,8 @@ export default {
           '    return data;\n' +
           '}',
         paramContent: '{}',
-        resultContent: ''
+        resultContent: '',
+        variables: {}
       },
       url: {
         info: '/api/script/info',
@@ -129,21 +109,6 @@ export default {
         scriptName: [{ required: true, message: '请输入脚本名称', trigger: 'blur' }],
         scriptContent: [{ required: true, message: '请输入脚本内容', trigger: 'blur' }]
       },
-      options: {
-        mode: { name: 'text/javascript', json: true },
-        height: 450,
-        lineNumbers: true,
-        tabSize: 2,
-        theme: 'base16-light',
-        line: true,
-        autoCloseTags: true,
-        lineWrapping: true,
-        styleActiveLine: true,
-        extraKeys: { 'tab': 'autocomplete' }, //自定义快捷键
-        hintOptions: {
-          tables: {}
-        }
-      },
       time: -1
     }
   },
@@ -153,25 +118,33 @@ export default {
       this.scriptId = scriptId
       getAction(this.url.info, { scriptId: this.scriptId }).then(res => {
         this.modal = res.data
-        this.$refs.VariablesModel.set(this.modal.variables)
+        this.setEditorValue()
       })
+    } else {
+      this.setEditorValue()
     }
   },
   methods: {
-    formatParam() {
-      this.modal.paramContent = formatJson(this.modal.paramContent)
+    setEditorValue() {
+      this.$refs.VariablesModel.set(this.modal.variables)
+      this.$refs.ScriptContentEditor.set(this.modal.scriptContent)
+      this.$refs.ParamContentEditor.set(this.modal.paramContent)
+      this.$refs.ResultContentEditor.set(this.modal.resultContent)
     },
-    formatResult() {
-      this.modal.resultContent = formatJson(this.modal.resultContent)
+    getEditorValue() {
+      this.modal.variables = this.$refs.VariablesModel.get()
+      this.modal.scriptContent = this.$refs.ScriptContentEditor.get()
+      this.modal.paramContent = this.$refs.ParamContentEditor.get()
+      this.modal.resultContent = this.$refs.ResultContentEditor.get()
     },
     runScript() {
-      this.modal.variables = this.$refs.VariablesModel.get()
+      this.getEditorValue()
       postAction(this.url.run, this.modal).then(res => {
         if (res.code === 200) {
           this.modal.resultContent = JSON.stringify(res.data.result)
           this.$refs.VariablesModel.set(res.data.variables)
+          this.$refs.ResultContentEditor.set(this.modal.resultContent)
           this.time = res.data.time
-          this.formatResult()
           this.$message.success('运行成功')
         } else {
           this.$message.error('运行失败: ' + res.message)
@@ -179,12 +152,12 @@ export default {
       })
     },
     saveScript() {
+      this.getEditorValue()
       const that = this
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           that.confirmLoading = true
           let script = JSON.parse(JSON.stringify(this.modal))
-          script.variables = this.$refs.VariablesModel.get()
           let obj
           if (this.scriptId) {
             obj = putAction(this.url.update, script)
@@ -216,47 +189,5 @@ export default {
 </script>
 
 <style>
-
-
-.cm-s-base16-light.CodeMirror {
-  background: white !important;
-  color: #202020;
-}
-
-.cm-s-base16-light span.cm-comment {
-  font-size: 13px;
-}
-
-.cm-s-base16-light .CodeMirror-activeline-background {
-  background: #f3f2f2;
-}
-
-.scriptModel .CodeMirror {
-  height: 693px;
-}
-
-.scriptModel .CodeMirror-scroll {
-  height: 693px;
-}
-
-.ant-card-extra {
-  padding: 0;
-}
-
-.inputModel .CodeMirror {
-  height: 200px;
-}
-
-.inputModel .CodeMirror-scroll {
-  height: 200px;
-}
-
-.outputModel .CodeMirror {
-  height: 200px;
-}
-
-.outputModel .CodeMirror-scroll {
-  height: 200px;
-}
 
 </style>
