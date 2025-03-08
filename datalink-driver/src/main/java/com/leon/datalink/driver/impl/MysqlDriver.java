@@ -1,6 +1,10 @@
 package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
+import cn.hutool.db.DbUtil;
+import cn.hutool.db.Entity;
+import cn.hutool.db.handler.EntityListHandler;
+import cn.hutool.db.sql.SqlExecutor;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
@@ -10,23 +14,29 @@ import org.springframework.util.StringUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MysqlDriver extends AbstractDriver {
 
     private DruidDataSource dataSource;
+
+    private ScheduledExecutorService executor;
 
     public MysqlDriver(Map<String, Object> properties) {
         super(properties);
     }
 
     public MysqlDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
-        super(properties, driverMode, ruleActorRef,ruleId);
+        super(properties, driverMode, ruleActorRef, ruleId);
     }
 
     @Override
-    public void create() throws Exception{
+    public void create() throws Exception {
         DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); // 设置连接池的数据库驱动
         dataSource.setUrl(String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
@@ -44,10 +54,48 @@ public class MysqlDriver extends AbstractDriver {
             return;
         }
         this.dataSource = dataSource;
+
+        if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            this.executor = Executors.newSingleThreadScheduledExecutor();
+            executor.scheduleAtFixedRate(() -> {
+                sendData(select());
+            }, getLongProp("initialDelay"), getLongProp("period"), TimeUnit.valueOf(getStrProp("timeUnit")));
+        }
     }
+
+    private Object select() {
+        Map<String, Object> variable = getVariable(null);
+        Connection connection = null;
+        String sql = null;
+        List<Entity> result = null;
+        try {
+            connection = dataSource.getConnection();
+            if (connection != null) {
+                sql = getStrProp("sql");
+                if (!StringUtils.isEmpty(sql)) {
+                    String render = this.templateEngine.getTemplate(sql).render(variable);
+                    if (!StringUtils.isEmpty(render)) sql = render;
+                }
+                result = SqlExecutor.query(connection, sql, new EntityListHandler());
+            }
+        } catch (Exception e) {
+            Loggers.DRIVER.error("mysql driver error {}", e.getMessage());
+        } finally {
+            DbUtil.close(connection);
+        }
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("sql", sql);
+        map.put("result", result);
+        return map;
+    }
+
 
     @Override
     public void destroy() throws Exception {
+        if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            executor.shutdown();
+        }
         dataSource.close();
     }
 
@@ -63,7 +111,7 @@ public class MysqlDriver extends AbstractDriver {
                     getStrProp("password"));
             return true;
         } catch (Exception e) {
-            Loggers.DRIVER.error("driver test {}",e.getMessage());
+            Loggers.DRIVER.error("driver test {}", e.getMessage());
             return false;
         }
     }
@@ -74,6 +122,7 @@ public class MysqlDriver extends AbstractDriver {
 
         Connection connection = null;
         String sql = null;
+        Boolean result = null;
         try {
             connection = dataSource.getConnection();
             if (connection != null) {
@@ -82,13 +131,15 @@ public class MysqlDriver extends AbstractDriver {
                     String render = this.templateEngine.getTemplate(sql).render(variable);
                     if (!StringUtils.isEmpty(render)) sql = render;
                 }
-                connection.createStatement().execute(sql);
+                result = connection.createStatement().execute(sql);
             }
-        } catch (Exception e) {
-            throw e;
         } finally {
-            Objects.requireNonNull(connection).close();
+            DbUtil.close(connection);
         }
-        return sql;
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("sql", sql);
+        map.put("result", result);
+        return map;
     }
 }

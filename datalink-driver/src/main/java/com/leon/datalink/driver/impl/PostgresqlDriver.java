@@ -1,6 +1,10 @@
 package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
+import cn.hutool.db.DbUtil;
+import cn.hutool.db.Entity;
+import cn.hutool.db.handler.EntityListHandler;
+import cn.hutool.db.sql.SqlExecutor;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
@@ -10,12 +14,18 @@ import org.springframework.util.StringUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class PostgresqlDriver extends AbstractDriver {
 
     private DruidDataSource dataSource;
+
+    private ScheduledExecutorService executor;
 
     public PostgresqlDriver(Map<String, Object> properties) {
         super(properties);
@@ -44,10 +54,48 @@ public class PostgresqlDriver extends AbstractDriver {
             return;
         }
         this.dataSource = dataSource;
+
+        if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            this.executor = Executors.newSingleThreadScheduledExecutor();
+            executor.scheduleAtFixedRate(() -> {
+                sendData(select());
+            }, getLongProp("initialDelay"), getLongProp("period"), TimeUnit.valueOf(getStrProp("timeUnit")));
+        }
+    }
+
+
+    private Object select() {
+        Map<String, Object> variable = getVariable(null);
+        Connection connection = null;
+        String sql = null;
+        List<Entity> result = null;
+        try {
+            connection = dataSource.getConnection();
+            if (connection != null) {
+                sql = getStrProp("sql");
+                if (!StringUtils.isEmpty(sql)) {
+                    String render = this.templateEngine.getTemplate(sql).render(variable);
+                    if (!StringUtils.isEmpty(render)) sql = render;
+                }
+                result = SqlExecutor.query(connection, sql, new EntityListHandler());
+            }
+        } catch (Exception e) {
+            Loggers.DRIVER.error("pgsql driver error {}", e.getMessage());
+        } finally {
+            DbUtil.close(connection);
+        }
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("sql", sql);
+        map.put("result", result);
+        return map;
     }
 
     @Override
     public void destroy() throws Exception {
+        if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            executor.shutdown();
+        }
         dataSource.close();
     }
 
@@ -74,6 +122,7 @@ public class PostgresqlDriver extends AbstractDriver {
 
         Connection connection = null;
         String sql = null;
+        Boolean result = null;
         try {
             connection = dataSource.getConnection();
             if (connection != null) {
@@ -82,13 +131,15 @@ public class PostgresqlDriver extends AbstractDriver {
                     String render = this.templateEngine.getTemplate(sql).render(variable);
                     if (!StringUtils.isEmpty(render)) sql = render;
                 }
-                connection.createStatement().execute(sql);
+                result = connection.createStatement().execute(sql);
             }
-        } catch (Exception e) {
-            throw e;
         } finally {
-            Objects.requireNonNull(connection).close();
+            DbUtil.close(connection);
         }
-        return sql;
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("sql", sql);
+        map.put("result", result);
+        return map;
     }
 }

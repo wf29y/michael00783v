@@ -47,25 +47,20 @@
 
 import HttpHeadersModel from './HttpHeadersModel'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
-
+import { timeUnitList } from '@/config/time.config'
 
 
 export default {
-  components: { MonacoEditor,HttpHeadersModel },
+  components: { MonacoEditor, HttpHeadersModel },
   data() {
     return {
       properties: {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        body:''
+        body: ''
       },
       methodList: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS', 'TRACE'],
-      timeUnitList: [
-        { name: '秒', value: 'SECONDS' },
-        { name: '分', value: 'MINUTES' },
-        { name: '时', value: 'HOURS' },
-        { name: '天', value: 'DAYS' }
-      ]
+      timeUnitList: timeUnitList
     }
   },
   props: {
@@ -83,8 +78,10 @@ export default {
   methods: {
     set(properties) {
       this.properties = Object.assign({}, this.properties, properties)
-      this.$refs.HttpHeadersModel.set(this.properties.headers)
-      this.$refs.MonacoEditor.set(this.properties.body)
+      this.$nextTick(() => {
+        this.$refs.HttpHeadersModel.set(this.properties.headers)
+        this.$refs.MonacoEditor.set(this.properties.body)
+      })
     },
     get() {
       this.properties.headers = this.$refs.HttpHeadersModel.get()

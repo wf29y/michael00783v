@@ -46,13 +46,14 @@ export default {
   },
   methods: {
     init() {
+      if (this.monacoEditor !== null) return
       this.monacoEditor = monaco.editor.create(this.$refs.codeContainer, {
         value: '', // 默认显示的值
         language: this.language,
         folding: true, // 是否折叠
         foldingHighlight: true, // 折叠等高线
-        foldingStrategy: "indentation", // 折叠方式  auto | indentation
-        showFoldingControls: "mouseover", // 是否一直显示折叠 always | mouseover
+        foldingStrategy: 'indentation', // 折叠方式  auto | indentation
+        showFoldingControls: 'mouseover', // 是否一直显示折叠 always | mouseover
         disableLayerHinting: true, // 等宽优化
         emptySelectionClipboard: false, // 空选择剪切板
         selectionClipboard: false, // 选择剪切板
@@ -60,19 +61,27 @@ export default {
         codeLens: false, // 代码镜头
         scrollBeyondLastLine: false, // 滚动完最后一行后再滚动一屏幕
         colorDecorators: true, // 颜色装饰器
-        accessibilitySupport: "on", // 辅助功能支持  "auto" | "off" | "on"
-        lineNumbers: "on", // 行号 取值： "on" | "off" | "relative" | "interval" | function
+        accessibilitySupport: 'on', // 辅助功能支持  "auto" | "off" | "on"
+        lineNumbers: 'on', // 行号 取值： "on" | "off" | "relative" | "interval" | function
         lineNumbersMinChars: 5, // 行号最小字符   number
         enableSplitViewResizing: false,
         readOnly: this.readOnly, //是否只读  取值 true | false
-        wordWrap: "on", // 自动换行
+        wordWrap: 'on', // 自动换行
         minimap: {
           enabled: this.minimap // 是否启用预览图
         }
       })
     },
     set(value) {
-      this.monacoEditor.setValue(value)
+      if(!value) return
+      if (this.monacoEditor === null) {
+        this.$nextTick(() => {
+          this.init()
+          this.monacoEditor.setValue(value)
+        })
+      } else {
+        this.monacoEditor.setValue(value)
+      }
     },
     get() {
       return this.monacoEditor.getValue()

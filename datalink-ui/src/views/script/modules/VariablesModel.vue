@@ -11,6 +11,7 @@
       :pagination='false'
       :loading='loading'
       size='small'
+      style='border: 1px #e8e3e3 solid'
     >
       <template v-for="(col, i) in ['name', 'value']" :slot='col' slot-scope='text, record'>
         <a-input

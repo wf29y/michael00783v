@@ -2,12 +2,7 @@ const TYPE_ALL = 'all'   // 可做任意资源
 const TYPE_DEST = 'dest' // 仅可做目的资源
 const TYPE_RESOURCE = 'resource'  // 仅可做源资源
 
-const timeUnitMap = {
-  SECONDS: '秒',
-  MINUTES: '分',
-  HOURS: '时',
-  DAYS: '天'
-}
+import { timeUnitMap } from './time.config';
 
 const resourceConfigMap = {
   MQTT: {
@@ -34,23 +29,27 @@ const resourceConfigMap = {
   },
   MYSQL: {
     name: 'Mysql',
-    type: TYPE_DEST,
+    type: TYPE_ALL,
     details: {
-      resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}` },
       rule: [
-        { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-        { name: 'SQL模板', format: (resource) => resource.properties.sql }
+        { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}` },
+        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        { name: '启动延迟', format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined },
+        { name: '查询频率', format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined }
       ]
     }
   },
   POSTGRESQL: {
     name: 'Postgresql',
-    type: TYPE_DEST,
+    type: TYPE_ALL,
     details: {
-      resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}` },
       rule: [
-        { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-        { name: 'SQL模板', format: (resource) => resource.properties.sql }
+        { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}` },
+        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        { name: '启动延迟', format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined },
+        { name: '查询频率', format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined }
       ]
     }
   },

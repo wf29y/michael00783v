@@ -8,6 +8,7 @@
         </a-col>
         <a-col :span='12' style='text-align: right'>
           <a-button @click='refresh' style='width:90px;margin-right: 8px'> 刷新</a-button>
+          <a-button @click='editRule' style='width:90px;margin-right: 8px'> 编辑</a-button>
           <a-button @click='onClose' style='width:90px;' type='primary'> 返回</a-button>
         </a-col>
       </a-row>
@@ -231,6 +232,9 @@ export default {
     refresh() {
       this.getInfo()
       this.$message.success('刷新成功')
+    },
+    editRule() {
+      this.$router.push({ path: '/rule/info/' + this.rule.ruleId })
     },
     getInfo() {
       if (this.ruleId) {

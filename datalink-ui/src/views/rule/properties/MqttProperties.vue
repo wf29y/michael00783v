@@ -6,8 +6,8 @@
           <a-input v-model='properties.topic' placeholder='请输入Topic' />
         </a-form-model-item>
       </a-col>
-      <a-col :span='12'>
-        <a-form-model-item label='消息保留' prop='retained' v-if="type==='dest'">
+      <a-col :span='12' v-if="type==='dest'">
+        <a-form-model-item label='消息保留'>
           <a-select v-model='properties.retained' placeholder='请选择是否消息保留'>
             <a-select-option :value='true'>是</a-select-option>
             <a-select-option :value='false'>否</a-select-option>
@@ -19,8 +19,8 @@
           <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%' />
         </a-form-model-item>
       </a-col>
-      <a-col :span='24' class='payload'>
-        <a-form-model-item label='消息模板' v-if="type==='dest'" style='margin-bottom: 0'>
+      <a-col :span='24' class='payload' v-if="type==='dest'">
+        <a-form-model-item label='消息模板'  style='margin-bottom: 0'>
           <monaco-editor ref='MonacoEditor'></monaco-editor>
         </a-form-model-item>
       </a-col>
@@ -40,7 +40,7 @@ export default {
       properties: {
         qos: 0,
         retained: false
-      },
+      }
     }
   },
   props: {
@@ -52,10 +52,16 @@ export default {
   methods: {
     set(properties) {
       this.properties = Object.assign({}, this.properties, properties)
-      this.$refs.MonacoEditor.set(this.properties.payload)
+      if (this.type === 'dest') {
+        this.$nextTick(() => {
+          this.$refs.MonacoEditor.set(this.properties.payload)
+        })
+      }
     },
     get() {
-      this.properties.payload = this.$refs.MonacoEditor.get()
+      if (this.type === 'dest') {
+        this.properties.payload = this.$refs.MonacoEditor.get()
+      }
       return this.properties
     }
   }

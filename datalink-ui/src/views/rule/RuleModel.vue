@@ -22,7 +22,7 @@
             </a-form-model-item>
           </a-col>
           <a-col :span='12'>
-            <a-form-model-item label='备注' prop='description'>
+            <a-form-model-item label='备注'>
               <a-input v-model='modal.description' placeholder='请输入备注' />
             </a-form-model-item>
           </a-col>
@@ -77,7 +77,8 @@
 
       <a-card style='margin-bottom: 20px' :bordered='false'>
         <div class='title'>目标资源</div>
-        <a-list :grid="{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }" :data-source='modal.destResourceList' v-if='modal.destResourceList.length>0'>
+        <a-list :grid='{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='modal.destResourceList'
+                v-if='modal.destResourceList.length>0'>
           <a-list-item slot='renderItem' slot-scope='resource,index'>
             <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
               <a-col :span='18'>
@@ -118,7 +119,7 @@
         </a-row>
 
         <a-row :gutter='20'>
-          <a-col :span='24' class='ruleModel' v-if="modal.analysisMode==='SCRIPT'">
+          <a-col :span='24' v-if="modal.analysisMode==='SCRIPT'">
             <monaco-editor ref='MonacoEditor' height='300px' :minimap='true'></monaco-editor>
           </a-col>
           <a-col :span='24'>
@@ -210,7 +211,9 @@ export default {
           // this.modal.destResourceList.push({})
           this.$nextTick(() => {
             this.$refs.VariablesModel.set(this.modal.variables)
-            this.$refs.MonacoEditor.set(this.modal.script)
+            if (this.modal.analysisMode === 'script') {
+              this.$refs.MonacoEditor.set(this.modal.script)
+            }
           })
         }
       })
@@ -270,7 +273,11 @@ export default {
           that.confirmLoading = true
           let rule = JSON.parse(JSON.stringify(this.modal))
           rule.variables = this.$refs.VariablesModel.get()
-          rule.script = this.$refs.MonacoEditor.get()
+          if (this.modal.analysisMode === 'script') {
+            rule.script = this.$refs.MonacoEditor.get()
+          } else {
+            delete rule.script
+          }
           let obj
           if (this.ruleId) {
             obj = putAction(this.url.update, rule)
