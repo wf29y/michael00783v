@@ -4,6 +4,7 @@
     title='资源'
     :width='720'
     :visible='visible'
+    :destroyOnClose='true'
     :body-style="{ paddingBottom: '80px' }"
     @close='onClose'
   >
@@ -27,6 +28,7 @@
       <mysql-properties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal'></mysql-properties>
       <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'></postgresql-properties>
       <http-properties v-if="modal.resourceType === 'HTTP'" ref='PropertiesModal'></http-properties>
+      <t-dengine-properties v-if="modal.resourceType === 'TDENGINE'" ref='PropertiesModal'></t-dengine-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -60,10 +62,11 @@ import KafkaProperties from '../properties/KafkaProperties'
 import MysqlProperties from '../properties/MysqlProperties'
 import PostgresqlProperties from '../properties/PostgresqlProperties'
 import HttpProperties from '../properties/HttpProperties'
+import TDengineProperties from '../properties/TDengineProperties'
 
 export default {
   name:'ResourceModel',
-  components: { MqttProperties,KafkaProperties,MysqlProperties,PostgresqlProperties,HttpProperties },
+  components: { MqttProperties,KafkaProperties,MysqlProperties,PostgresqlProperties,HttpProperties,TDengineProperties },
   data() {
     return {
       title: '操作',

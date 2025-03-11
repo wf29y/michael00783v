@@ -10,7 +10,8 @@ public enum ResourceTypeEnum {
     KAFKA(KafkaDriver.class),
     MYSQL(MysqlDriver .class),
     POSTGRESQL(PostgresqlDriver.class),
-    HTTP(HttpDriver.class);
+    HTTP(HttpDriver.class),
+    TDENGINE(TDengineDriver.class);
 
     private final Class<? extends Driver> driver;
 

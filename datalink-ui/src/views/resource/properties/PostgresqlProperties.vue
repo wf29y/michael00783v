@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       properties: {
-        port: 3306,
+        port: '5432',
         initSize: 8,
         minIdle: 1,
         maxActive: 20
