@@ -37,23 +37,23 @@ public class MysqlDriver extends AbstractDriver {
 
     @Override
     public void create() throws Exception {
-        DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); // 设置连接池的数据库驱动
-        dataSource.setUrl(String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
-                getStrProp("ip"),
-                getStrProp("port"),
-                getStrProp("databaseName"))); // 设置数据库的连接地址
-        dataSource.setUsername(getStrProp("username")); // 数据库的用户名
-        dataSource.setPassword(getStrProp("password")); // 数据库的密码
-        dataSource.setInitialSize(getIntProp("initSize", 8)); // 设置连接池的初始大小
-        dataSource.setMinIdle(getIntProp("minIdle", 1)); // 设置连接池大小的下限
-        dataSource.setMaxActive(getIntProp("maxActive", 20)); // 设置连接池大小的上限
         try {
-            dataSource.getConnection();
-        } catch (SQLException throwables) {
+            DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
+            dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); // 设置连接池的数据库驱动
+            dataSource.setUrl(String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
+                    getStrProp("ip"),
+                    getStrProp("port"),
+                    getStrProp("databaseName"))); // 设置数据库的连接地址
+            dataSource.setUsername(getStrProp("username")); // 数据库的用户名
+            dataSource.setPassword(getStrProp("password")); // 数据库的密码
+            dataSource.setInitialSize(getIntProp("initSize", 8)); // 设置连接池的初始大小
+            dataSource.setMinIdle(getIntProp("minIdle", 1)); // 设置连接池大小的下限
+            dataSource.setMaxActive(getIntProp("maxActive", 20)); // 设置连接池大小的上限
+            dataSource.setValidationQuery("select 1;");
+            this.dataSource = dataSource;
+        } catch (Exception throwables) {
             return;
         }
-        this.dataSource = dataSource;
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             this.executor = Executors.newSingleThreadScheduledExecutor();
@@ -111,7 +111,7 @@ public class MysqlDriver extends AbstractDriver {
                     getStrProp("password"));
             return true;
         } catch (Exception e) {
-            Loggers.DRIVER.error("driver test {}", e.getMessage());
+            Loggers.DRIVER.error("mysql driver test {}", e.getMessage());
             return false;
         }
     }

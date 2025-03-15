@@ -8,10 +8,11 @@ public enum ResourceTypeEnum {
 
     MQTT(MqttDriver.class),
     KAFKA(KafkaDriver.class),
+    HTTP(HttpDriver.class),
     MYSQL(MysqlDriver .class),
     POSTGRESQL(PostgresqlDriver.class),
-    HTTP(HttpDriver.class),
-    TDENGINE(TDengineDriver.class);
+    TDENGINE(TDengineDriver.class),
+    SQLSERVER(SqlServerDriver.class);
 
     private final Class<? extends Driver> driver;
 

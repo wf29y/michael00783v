@@ -33,6 +33,8 @@
                              :type='resourceMode'></http-properties>
       <t-dengine-properties v-if="modal.resourceType === 'TDENGINE'" ref='PropertiesModal'
                        :type='resourceMode'></t-dengine-properties>
+      <sqlserver-properties v-if="modal.resourceType === 'SQLSERVER'" ref='PropertiesModal'
+                            :type='resourceMode'></sqlserver-properties>
     </a-form-model>
     <div
       :style="{
@@ -62,11 +64,12 @@ import MysqlProperties from '../properties/MysqlProperties'
 import PostgresqlProperties from '../properties/PostgresqlProperties'
 import HttpProperties from '../properties/HttpProperties'
 import TDengineProperties from '../properties/TDengineProperties'
+import SqlserverProperties from '../properties/SqlserverProperties'
 
 export default {
   name: 'ResourceModel',
   components: {
-    MqttProperties, KafkaProperties, MysqlProperties, PostgresqlProperties, HttpProperties,TDengineProperties
+    MqttProperties, KafkaProperties, MysqlProperties, PostgresqlProperties, HttpProperties,TDengineProperties,SqlserverProperties
   },
   data() {
     return {

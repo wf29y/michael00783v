@@ -9,7 +9,6 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.taosdata.jdbc.TSDBDriver;
 import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
@@ -18,22 +17,21 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TDengineDriver extends AbstractDriver {
+public class SqlServerDriver extends AbstractDriver {
 
     private DruidDataSource dataSource;
 
     private ScheduledExecutorService executor;
 
-    public TDengineDriver(Map<String, Object> properties) {
+    public SqlServerDriver(Map<String, Object> properties) {
         super(properties);
     }
 
-    public TDengineDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
+    public SqlServerDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
         super(properties, driverMode, ruleActorRef, ruleId);
     }
 
@@ -41,8 +39,8 @@ public class TDengineDriver extends AbstractDriver {
     public void create() throws Exception {
         try {
             DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
-            dataSource.setDriverClassName("com.taosdata.jdbc.rs.RestfulDriver");
-            dataSource.setUrl(String.format("jdbc:TAOS-RS://%s:%s/%s",
+            dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // 设置连接池的数据库驱动
+            dataSource.setUrl(String.format("jdbc:sqlserver://%s:%s;DatabaseName=%s",
                     getStrProp("ip"),
                     getStrProp("port"),
                     getStrProp("databaseName"))); // 设置数据库的连接地址
@@ -51,7 +49,7 @@ public class TDengineDriver extends AbstractDriver {
             dataSource.setInitialSize(getIntProp("initSize", 8)); // 设置连接池的初始大小
             dataSource.setMinIdle(getIntProp("minIdle", 1)); // 设置连接池大小的下限
             dataSource.setMaxActive(getIntProp("maxActive", 20)); // 设置连接池大小的上限
-            dataSource.setValidationQuery("select server_status();");
+            dataSource.setValidationQuery("select 1;");
             this.dataSource = dataSource;
         } catch (Exception throwables) {
             return;
@@ -81,7 +79,7 @@ public class TDengineDriver extends AbstractDriver {
                 result = SqlExecutor.query(connection, sql, new EntityListHandler());
             }
         } catch (Exception e) {
-            Loggers.DRIVER.error("td driver error {}", e.getMessage());
+            Loggers.DRIVER.error("sqlserver driver error {}", e.getMessage());
         } finally {
             DbUtil.close(connection);
         }
@@ -104,8 +102,8 @@ public class TDengineDriver extends AbstractDriver {
     @Override
     public boolean test() {
         try {
-            Class.forName("com.taosdata.jdbc.rs.RestfulDriver");
-            DriverManager.getConnection(String.format("jdbc:TAOS-RS://%s:%s/%s",
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            DriverManager.getConnection(String.format("jdbc:sqlserver://%s:%s;DatabaseName=%s",
                     getStrProp("ip"),
                     getStrProp("port"),
                     getStrProp("databaseName")),
@@ -113,7 +111,7 @@ public class TDengineDriver extends AbstractDriver {
                     getStrProp("password"));
             return true;
         } catch (Exception e) {
-            Loggers.DRIVER.error("td driver test {}", e.getMessage());
+            Loggers.DRIVER.error("sqlserver driver test {}", e.getMessage());
             return false;
         }
     }
