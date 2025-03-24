@@ -7,12 +7,11 @@ import cn.hutool.extra.template.TemplateUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leon.datalink.core.common.GlobalVariableContent;
-import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.driver.actor.ReceiveDataMsg;
 import com.leon.datalink.driver.constans.DriverModeEnum;
 import com.leon.datalink.runtime.RuntimeManger;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -125,6 +124,14 @@ public abstract class AbstractDriver implements Driver {
         Object o = properties.get(key);
         if (null == o) return null;
         return new ObjectMapper().convertValue(o, new TypeReference<Map<String, String>>() {
+        });
+    }
+
+
+    public List<Map<String, Object>> getListProp(String key) {
+        Object o = properties.get(key);
+        if (null == o) return null;
+        return new ObjectMapper().convertValue(o, new TypeReference<List<Map<String, Object>>>() {
         });
     }
 

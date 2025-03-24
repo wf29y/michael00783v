@@ -12,7 +12,8 @@ public enum ResourceTypeEnum {
     MYSQL(MysqlDriver .class),
     POSTGRESQL(PostgresqlDriver.class),
     TDENGINE(TDengineDriver.class),
-    SQLSERVER(SqlServerDriver.class);
+    SQLSERVER(SqlServerDriver.class),
+    OPCUA(OpcUADriver.class);
 
     private final Class<? extends Driver> driver;
 

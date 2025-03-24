@@ -45,7 +45,7 @@
 
 <script>
 
-import HttpHeadersModel from './HttpHeadersModel'
+import HttpHeadersModel from './model/HttpHeadersModel'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
 import { timeUnitList } from '@/config/time.config'
 

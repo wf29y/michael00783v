@@ -30,6 +30,7 @@
       <http-properties v-if="modal.resourceType === 'HTTP'" ref='PropertiesModal'></http-properties>
       <t-dengine-properties v-if="modal.resourceType === 'TDENGINE'" ref='PropertiesModal'></t-dengine-properties>
       <sqlserver-properties v-if="modal.resourceType === 'SQLSERVER'" ref='PropertiesModal'></sqlserver-properties>
+      <opc-u-a-properties v-if="modal.resourceType === 'OPCUA'" ref='PropertiesModal'></opc-u-a-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -65,10 +66,11 @@ import PostgresqlProperties from '../properties/PostgresqlProperties'
 import HttpProperties from '../properties/HttpProperties'
 import TDengineProperties from '../properties/TDengineProperties'
 import SqlserverProperties from '../properties/SqlserverProperties'
+import OpcUAProperties from '../properties/OpcUAProperties'
 
 export default {
   name:'ResourceModel',
-  components: { MqttProperties,KafkaProperties,MysqlProperties,PostgresqlProperties,HttpProperties,TDengineProperties,SqlserverProperties },
+  components: { MqttProperties,KafkaProperties,MysqlProperties,PostgresqlProperties,HttpProperties,TDengineProperties,SqlserverProperties,OpcUAProperties },
   data() {
     return {
       title: '操作',
