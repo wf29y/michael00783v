@@ -30,13 +30,13 @@
       <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'
                              :type='resourceMode'></postgresql-properties>
       <http-properties v-if="modal.resourceType === 'HTTP'" ref='PropertiesModal'
-                             :type='resourceMode'></http-properties>
+                       :type='resourceMode'></http-properties>
       <t-dengine-properties v-if="modal.resourceType === 'TDENGINE'" ref='PropertiesModal'
-                       :type='resourceMode'></t-dengine-properties>
+                            :type='resourceMode'></t-dengine-properties>
       <sqlserver-properties v-if="modal.resourceType === 'SQLSERVER'" ref='PropertiesModal'
                             :type='resourceMode'></sqlserver-properties>
       <opc-u-a-properties v-if="modal.resourceType === 'OPCUA'" ref='PropertiesModal'
-                            :type='resourceMode'></opc-u-a-properties>
+                          :type='resourceMode'></opc-u-a-properties>
     </a-form-model>
     <div
       :style="{
@@ -72,7 +72,14 @@ import OpcUAProperties from '../properties/OpcUAProperties'
 export default {
   name: 'ResourceModel',
   components: {
-    MqttProperties, KafkaProperties, MysqlProperties, PostgresqlProperties, HttpProperties,TDengineProperties,SqlserverProperties,OpcUAProperties
+    MqttProperties,
+    KafkaProperties,
+    MysqlProperties,
+    PostgresqlProperties,
+    HttpProperties,
+    TDengineProperties,
+    SqlserverProperties,
+    OpcUAProperties
   },
   data() {
     return {
