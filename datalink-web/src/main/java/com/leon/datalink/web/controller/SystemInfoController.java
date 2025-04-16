@@ -1,7 +1,10 @@
 package com.leon.datalink.web.controller;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.web.config.NotWrap;
 import com.leon.datalink.web.model.SystemInfo;
 import com.leon.datalink.web.resource.ResourceService;
 import com.leon.datalink.web.rule.RuleService;
@@ -34,4 +37,11 @@ public class SystemInfoController {
         systemInfo.setRuleCount(ruleService.getCount(new Rule()));
         return systemInfo;
     }
+
+    @NotWrap
+    @GetMapping("/time")
+    public Object getSystemTime() {
+        return DateUtil.format(DateTime.now(),"yyyy-MM-dd HH:mm");
+    }
+
 }

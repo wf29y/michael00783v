@@ -1,7 +1,13 @@
 <template>
   <div :class='wrpCls'>
+
+    <span style='font-size: 14px;display: inline-block;vertical-align: middle;margin-right: 20px'><span
+      style='font-weight: bold'>时间：</span>{{ time }}</span>
+    <span style='font-size: 14px;display: inline-block;vertical-align: middle;margin-right: 4px'><span
+      style='font-weight: bold'>版本：</span>v1.0.0</span>
+
     <avatar-dropdown :menu='showMenu' :current-user='currentUser' :class='prefixCls' @updatePassword='updatePassword' />
-<!--    <select-lang :class='prefixCls' />-->
+    <!--    <select-lang :class='prefixCls' />-->
     <password-model ref='PasswordModel'></password-model>
   </div>
 </template>
@@ -10,6 +16,7 @@
 import AvatarDropdown from './AvatarDropdown'
 import SelectLang from '@/components/SelectLang'
 import PasswordModel from '../../views/user/PasswordModel'
+import { getAction } from '@/api/manage'
 
 export default {
   name: 'RightContent',
@@ -39,7 +46,8 @@ export default {
   data() {
     return {
       showMenu: true,
-      currentUser: {}
+      currentUser: {},
+      time: '—'
     }
   },
   computed: {
@@ -56,10 +64,19 @@ export default {
         name: 'datalink'
       }
     }, 800)
+    this.getTime()
+    setInterval(() => {
+      this.getTime()
+    }, 1000 * 60)
   },
-  methods:{
-    updatePassword(){
+  methods: {
+    updatePassword() {
       this.$refs.PasswordModel.open()
+    },
+    getTime() {
+      getAction('/api/system/time', {}).then((res) => {
+        this.time = res
+      })
     }
   }
 }
