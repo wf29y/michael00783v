@@ -71,6 +71,10 @@
             <groupId>org.eclipse.milo</groupId>
             <artifactId>sdk-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
 
     </dependencies>
 </project>

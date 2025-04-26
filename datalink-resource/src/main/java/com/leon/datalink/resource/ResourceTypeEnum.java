@@ -13,7 +13,8 @@ public enum ResourceTypeEnum {
     POSTGRESQL(PostgresqlDriver.class),
     TDENGINE(TDengineDriver.class),
     SQLSERVER(SqlServerDriver.class),
-    OPCUA(OpcUADriver.class);
+    OPCUA(OpcUADriver.class),
+    REDIS(RedisDriver.class);
 
     private final Class<? extends Driver> driver;
 

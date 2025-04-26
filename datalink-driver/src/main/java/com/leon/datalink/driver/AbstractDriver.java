@@ -76,7 +76,7 @@ public abstract class AbstractDriver implements Driver {
         if (o instanceof Integer) {
             return (Integer) o;
         } else {
-            return Integer.valueOf((String) o);
+            return new ObjectMapper().convertValue(o, Integer.class);
         }
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractDriver implements Driver {
         if (o instanceof Long) {
             return (Long) o;
         } else {
-            return Long.parseLong(o.toString());
+            return new ObjectMapper().convertValue(o, Long.class);
         }
     }
 
@@ -109,7 +109,7 @@ public abstract class AbstractDriver implements Driver {
         if (o instanceof Boolean) {
             return (Boolean) o;
         } else {
-            return Boolean.valueOf((String) o);
+            return new ObjectMapper().convertValue(o, Boolean.class);
         }
     }
 

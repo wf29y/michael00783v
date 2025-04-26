@@ -152,8 +152,30 @@ const resourceConfigMap = {
     details: {
       resource: { name: '资源地址', format: (resource) => `${resource.properties.url}` },
       rule: [
-        { name: '资源地址', format: (resource) => `${resource.properties.url}`},
+        { name: '资源地址', format: (resource) => `${resource.properties.url}` },
         { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` }
+      ]
+    }
+  },
+  REDIS: {
+    name: 'Redis',
+    type: TYPE_ALL,
+    details: {
+      resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      rule: [
+        {
+          name: '资源地址',
+          format: (resource) => resource.properties.mode === 'STANDALONE' ? `${resource.properties.ip}:${resource.properties.port}` : `${resource.properties.nodes}`
+        },
+        { name: '执行命令', format: (resource) => `${resource.properties.command}` },
+        {
+          name: '启动延迟',
+          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        },
+        {
+          name: '调用频率',
+          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        }
       ]
     }
   }

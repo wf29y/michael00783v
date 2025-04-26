@@ -37,6 +37,8 @@
                             :type='resourceMode'></sqlserver-properties>
       <opc-u-a-properties v-if="modal.resourceType === 'OPCUA'" ref='PropertiesModal'
                           :type='resourceMode'></opc-u-a-properties>
+      <redis-properties v-if="modal.resourceType === 'REDIS'" ref='PropertiesModal'
+                          :type='resourceMode'></redis-properties>
     </a-form-model>
     <div
       :style="{
@@ -68,6 +70,7 @@ import HttpProperties from '../properties/HttpProperties'
 import TDengineProperties from '../properties/TDengineProperties'
 import SqlserverProperties from '../properties/SqlserverProperties'
 import OpcUAProperties from '../properties/OpcUAProperties'
+import RedisProperties from '../properties/RedisProperties'
 
 export default {
   name: 'ResourceModel',
@@ -79,7 +82,8 @@ export default {
     HttpProperties,
     TDengineProperties,
     SqlserverProperties,
-    OpcUAProperties
+    OpcUAProperties,
+    RedisProperties
   },
   data() {
     return {

@@ -87,6 +87,7 @@
         <akka-actor.version>2.6.0-M5</akka-actor.version>
         <paho.version>1.2.5</paho.version>
         <beetl.version>3.6.1.RELEASE</beetl.version>
+        <jedis.version>3.1.0</jedis.version>
     </properties>
     <!-- == -->
     <!-- =========================================================Build plugins================================================ -->
@@ -553,6 +554,11 @@
                 <groupId>com.taosdata.jdbc</groupId>
                 <artifactId>taos-jdbcdriver</artifactId>
                 <version>${taos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
             </dependency>
 
         </dependencies>
