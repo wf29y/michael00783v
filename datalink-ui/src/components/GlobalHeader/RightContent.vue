@@ -4,7 +4,7 @@
     <span style='font-size: 14px;display: inline-block;vertical-align: middle;margin-right: 20px'><span
       style='font-weight: bold'>时间：</span>{{ time }}</span>
     <span style='font-size: 14px;display: inline-block;vertical-align: middle;margin-right: 4px'><span
-      style='font-weight: bold'>版本：</span>v1.0.0</span>
+      style='font-weight: bold'>版本：</span>{{ version }}</span>
 
     <avatar-dropdown :menu='showMenu' :current-user='currentUser' :class='prefixCls' @updatePassword='updatePassword' />
     <!--    <select-lang :class='prefixCls' />-->
@@ -47,7 +47,8 @@ export default {
     return {
       showMenu: true,
       currentUser: {},
-      time: '—'
+      time: '—',
+      version: '—'
     }
   },
   computed: {
@@ -65,6 +66,7 @@ export default {
       }
     }, 800)
     this.getTime()
+    this.getVersion()
     setInterval(() => {
       this.getTime()
     }, 1000 * 60)
@@ -76,6 +78,11 @@ export default {
     getTime() {
       getAction('/api/system/time', {}).then((res) => {
         this.time = res
+      })
+    },
+    getVersion() {
+      getAction('/api/system/version', {}).then((res) => {
+        this.version = res
       })
     }
   }

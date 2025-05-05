@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-import { home,resource,rule,script } from '@/core/icons'
+import { home,resource,rule,script,variable } from '@/core/icons'
 
 const RouteView = {
   name: 'RouteView',
@@ -59,7 +59,13 @@ export const asyncRouterMap = [
         component: () => import('@/views/script/modules/ScriptModel'),
         props: true,
         hidden: true
-      }
+      },
+      {
+        path: '/variable/list',
+        name: 'variableList',
+        component: () => import('@/views/variable/VariableList'),
+        meta: { title: '变量', keepAlive: true, icon: variable, permission: ['variable'] },
+      },
     ]
   },
   {

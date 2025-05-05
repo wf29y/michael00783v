@@ -3,9 +3,8 @@ package com.leon.datalink.rule.actor;
 import akka.actor.*;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.map.MapUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leon.datalink.core.common.GlobalVariableContent;
+import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.driver.constans.DriverModeEnum;
@@ -119,7 +118,7 @@ public class RuleActor extends AbstractActor {
             // 获取并绑定自定义环境变量
             Bindings bind = scriptEngine.createBindings();
 
-            Map<String, Object> globalVariable = GlobalVariableContent.get();
+            Map<String, Object> globalVariable = GlobalVariableContent.getAllValue();
             for (String key : globalVariable.keySet()) {
                 bind.put(key, globalVariable.get(key));
             }

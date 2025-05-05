@@ -12,7 +12,8 @@
               <span class="title">DATA LINK</span>
             </a>
           </div>
-          <div class="desc">{{ $t('layouts.userLayout.title') }}</div>
+<!--          <div class="desc">{{ $t('layouts.userLayout.title') }}</div>-->
+          <div class="desc">data gateway</div>
         </div>
 
         <router-view />

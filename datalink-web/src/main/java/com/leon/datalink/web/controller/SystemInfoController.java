@@ -2,6 +2,7 @@ package com.leon.datalink.web.controller;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.web.config.NotWrap;
@@ -41,7 +42,13 @@ public class SystemInfoController {
     @NotWrap
     @GetMapping("/time")
     public Object getSystemTime() {
-        return DateUtil.format(DateTime.now(),"yyyy-MM-dd HH:mm");
+        return DateUtil.format(DateTime.now(), "yyyy-MM-dd HH:mm");
+    }
+
+    @NotWrap
+    @GetMapping("/version")
+    public Object getSystemVersion() {
+        return GlobalVariableContent.getValue("version");
     }
 
 }

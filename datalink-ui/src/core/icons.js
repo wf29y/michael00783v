@@ -10,5 +10,6 @@ import home from '@/assets/icons/home.svg?inline' // path to your '*.svg?inline'
 import resource from '@/assets/icons/resource.svg?inline' // path to your '*.svg?inline' file.
 import rule from '@/assets/icons/rule.svg?inline' // path to your '*.svg?inline' file.
 import script from '@/assets/icons/script.svg?inline' // path to your '*.svg?inline' file.
+import variable from '@/assets/icons/variable.svg?inline' // path to your '*.svg?inline' file.
 
-export { home,resource,rule,script }
+export { home,resource,rule,script,variable }

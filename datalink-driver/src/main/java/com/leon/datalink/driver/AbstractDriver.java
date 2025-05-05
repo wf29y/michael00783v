@@ -6,7 +6,7 @@ import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leon.datalink.core.common.GlobalVariableContent;
+import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.driver.actor.ReceiveDataMsg;
 import com.leon.datalink.driver.constans.DriverModeEnum;
 import com.leon.datalink.runtime.RuntimeManger;
@@ -41,7 +41,7 @@ public abstract class AbstractDriver implements Driver {
 
     // 获得全局变量
     public Map<String, Object> getVariable(Object data) {
-        Map<String, Object> globalProp = GlobalVariableContent.get();
+        Map<String, Object> globalProp = GlobalVariableContent.getAllValue();
         Map<String, Object> ruleProp = RuntimeManger.getVariables(ruleId);
         if (null != ruleProp) {
             globalProp.putAll(ruleProp);

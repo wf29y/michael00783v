@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
 import com.leon.datalink.runtime.constants.Constants;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class Runtime {
+public class Runtime  implements Serializable {
+    private static final long serialVersionUID = 1345156087085808964L;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private DateTime startTime;

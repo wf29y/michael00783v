@@ -60,7 +60,7 @@
               <div style='margin-top: -30px;width: 100%;text-align: right;height: 30px;color: #000000'>
                 <span v-show='time >= 0' style='display: inline-block;padding-right: 15px'>用时：{{ time }}ms</span>
               </div>
-              <monaco-editor height='150px' :read-only='true' ref='ResultContentEditor' language='json'></monaco-editor>
+              <monaco-editor height='150px' ref='ResultContentEditor' language='json'></monaco-editor>
             </a-form-model-item>
 
           </a-card>
@@ -75,7 +75,7 @@
 
 <script>
 import { getAction, postAction, putAction } from '@/api/manage'
-import { formatJson } from '@/utils/util'
+//import { formatJson } from '@/utils/util'
 import VariablesModel from './VariablesModel'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
 

@@ -3,11 +3,10 @@ package com.leon.datalink.web.controller;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leon.datalink.core.common.GlobalVariableContent;
+import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.rule.entity.Script;
-import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.web.script.ScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,7 +67,7 @@ public class ScriptController {
         // 获取并绑定自定义环境变量
         Bindings bind = scriptEngine.createBindings();
 
-        Map<String, Object> globalVariable = GlobalVariableContent.get();
+        Map<String, Object> globalVariable = GlobalVariableContent.getAllValue();
         for (String key : globalVariable.keySet()) {
             bind.put(key, globalVariable.get(key));
         }
