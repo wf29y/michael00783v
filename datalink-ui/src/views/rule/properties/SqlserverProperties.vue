@@ -1,8 +1,8 @@
 <template>
   <a-row :gutter='20'>
-    <a-form-model layout='vertical' :model='properties'>
+    <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24' v-if='type==="source"'>
-        <a-form-model-item label='时间单位'>
+        <a-form-model-item label='时间单位' prop='timeUnit'>
           <a-select v-model='properties.timeUnit' placeholder='请选择时间单位' style='width: 100%'>
             <a-select-option v-for='(item,index) in timeUnitList' :key='index' :value='item.value'>{{ item.name }}
             </a-select-option>
@@ -10,17 +10,17 @@
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if='type==="source"'>
-        <a-form-model-item label='启动延迟'>
+        <a-form-model-item label='启动延迟' prop='initialDelay'>
           <a-input-number v-model='properties.initialDelay' placeholder='请输入启动延迟' style='width: 100%' />
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if='type==="source"'>
-        <a-form-model-item label='查询频率'>
+        <a-form-model-item label='查询频率' prop='period'>
           <a-input-number v-model='properties.period' placeholder='请输入查询频率' style='width: 100%' />
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='sql'>
-        <a-form-model-item label='SQL模板' style='margin-bottom: 0'>
+        <a-form-model-item label='SQL模板' style='margin-bottom: 0' prop='sql'>
           <monaco-editor ref='MonacoEditor' language='sql'></monaco-editor>
         </a-form-model-item>
       </a-col>
@@ -38,7 +38,13 @@ export default {
   data() {
     return {
       properties: {},
-      timeUnitList:timeUnitList
+      timeUnitList:timeUnitList,
+      rules: {
+        sql: [{ required: true, validator: this.checkEditor, message: '请输入SQL模板', trigger: 'blur' }],
+        timeUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }],
+        initialDelay: [{ required: true, message: '请输入启动延迟', trigger: 'blur' }],
+        period: [{ required: true, message: '请输入请求频率', trigger: 'blur' }]
+      }
     }
   },
   props: {
@@ -54,9 +60,24 @@ export default {
         this.$refs.MonacoEditor.set(this.properties.sql)
       })
     },
-    get() {
+    get(callback) {
       this.properties.sql = this.$refs.MonacoEditor.get()
-      return this.properties
+      let that = this
+      this.$refs.propForm.validate(valid => {
+        if (valid) {
+          return callback(true, that.properties)
+        } else {
+          return callback(false)
+        }
+      })
+    },
+    checkEditor(rule, value, callback) {
+      let content = this.$refs.MonacoEditor.get()
+      if (!content) {
+        return callback(new Error())
+      } else {
+        return callback()
+      }
     }
   }
 }

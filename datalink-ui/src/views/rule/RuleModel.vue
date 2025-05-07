@@ -160,7 +160,7 @@ export default {
   data() {
     return {
       modal: {
-        sourceResource: null,
+        sourceResource: undefined,
         destResourceList: [],
         analysisMode: 'WITHOUT',
         ignoreNullValue: false
@@ -172,8 +172,8 @@ export default {
       },
       rules: {
         ruleName: [{ required: true, message: '请输入规则名称', trigger: 'blur' }],
-        analysisMode: [{ required: true, message: '请选择解析方式', trigger: 'blur' }],
-        ignoreNullValue: [{ required: true, message: '请选择是否忽略空值', trigger: 'blur' }]
+        analysisMode: [{ required: true, message: '请选择解析方式', trigger: 'change' }],
+        ignoreNullValue: [{ required: true, message: '请选择是否忽略空值', trigger: 'change' }]
       },
       resourceTypeMap: resourceTypeMap,
       options: {
@@ -267,6 +267,14 @@ export default {
 
     // 保存规则
     saveRule() {
+      if(!this.modal.sourceResource || !this.modal.sourceResource.resourceId){
+        this.$message.error("请绑定数据源")
+        return;
+      }
+      if(!this.modal.destResourceList || this.modal.destResourceList.length === 0){
+        this.$message.error("请至少选择一个目标资源")
+        return;
+      }
       const that = this
       this.$refs.ruleForm.validate(valid => {
         if (valid) {

@@ -38,7 +38,7 @@
       <opc-u-a-properties v-if="modal.resourceType === 'OPCUA'" ref='PropertiesModal'
                           :type='resourceMode'></opc-u-a-properties>
       <redis-properties v-if="modal.resourceType === 'REDIS'" ref='PropertiesModal'
-                          :type='resourceMode'></redis-properties>
+                        :type='resourceMode'></redis-properties>
     </a-form-model>
     <div
       :style="{
@@ -95,8 +95,8 @@ export default {
         resourceList: '/api/resource/list'
       },
       rules: {
-        resourceType: [{ required: true, message: '请选择资源类型', trigger: 'blur' }],
-        resourceId: [{ required: true, message: '请选择资源', trigger: 'blur' }]
+        resourceType: [{ required: true, message: '请选择资源类型', trigger: 'change' }],
+        resourceId: [{ required: true, message: '请选择资源', trigger: 'change' }]
       },
       resourceList: [],
       resourceTypeList: [],
@@ -140,17 +140,19 @@ export default {
     handleOk() {
       const that = this
       this.$refs.ruleForm.validate(valid => {
-        if (valid) {
+        if (!valid) return false
+        that.$refs.PropertiesModal.get((checked, prop) => {
+          if (!checked) return false
           that.confirmLoading = true
-          that.modal.properties = that.$refs.PropertiesModal.get()
-          if (this.resourceIndex >= 0) {
+          that.modal.properties = prop
+          if (that.resourceIndex >= 0) {
             that.$emit('update', this.resourceMode, this.modal, this.resourceIndex)
           } else {
             that.$emit('add', this.resourceMode, this.modal)
           }
           that.confirmLoading = false
           that.visible = false
-        }
+        })
       })
     }
     ,

@@ -8,12 +8,14 @@
     :body-style="{ paddingBottom: '80px' }"
     @close='onClose'
   >
-    <a-form-model ref='ruleForm' :model='modal' layout='vertical'  :rules="rules">
+    <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-row :gutter='20'>
         <a-col :span='12'>
           <a-form-model-item label='资源类型' prop='resourceType'>
             <a-select v-model='modal.resourceType' placeholder='请选择资源类型'>
-              <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>{{ item.name }}</a-select-option>
+              <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>{{ item.name
+                }}
+              </a-select-option>
             </a-select>
           </a-form-model-item>
         </a-col>
@@ -52,14 +54,14 @@
     >
       <a-button :style="{ marginRight: '10px',width: '110px' }" @click='testDriver'> 测试连接</a-button>
       <a-button :style="{ marginRight: '10px',width: '110px' }" @click='onClose'> 取消</a-button>
-      <a-button :style="{ width: '110px' }" @click='handleOk' type='primary' > 保存</a-button>
+      <a-button :style="{ width: '110px' }" @click='handleOk' type='primary'> 保存</a-button>
     </div>
   </a-drawer>
 </template>
 
 <script>
 import { postAction, putAction } from '@/api/manage'
-import {getResourceTypeList} from '@/config/resource.config'
+import { getResourceTypeList } from '@/config/resource.config'
 import MqttProperties from '../properties/MqttProperties'
 import KafkaProperties from '../properties/KafkaProperties'
 import MysqlProperties from '../properties/MysqlProperties'
@@ -71,8 +73,18 @@ import OpcUAProperties from '../properties/OpcUAProperties'
 import RedisProperties from '../properties/RedisProperties'
 
 export default {
-  name:'ResourceModel',
-  components: { MqttProperties,KafkaProperties,MysqlProperties,PostgresqlProperties,HttpProperties,TDengineProperties,SqlserverProperties,OpcUAProperties,RedisProperties },
+  name: 'ResourceModel',
+  components: {
+    MqttProperties,
+    KafkaProperties,
+    MysqlProperties,
+    PostgresqlProperties,
+    HttpProperties,
+    TDengineProperties,
+    SqlserverProperties,
+    OpcUAProperties,
+    RedisProperties
+  },
   data() {
     return {
       title: '操作',
@@ -85,14 +97,14 @@ export default {
         test: '/api/resource/test'
       },
       rules: {
-        resourceType: [{ required: true, message: '请选择资源类型', trigger: 'blur' }],
+        resourceType: [{ required: true, message: '请选择资源类型', trigger: 'change' }],
         resourceName: [{ required: true, message: '请输入资源名称', trigger: 'blur' }]
       },
-      resourceTypeList:[]
+      resourceTypeList: []
     }
   },
   mounted() {
-    this.resourceTypeList = getResourceTypeList();
+    this.resourceTypeList = getResourceTypeList()
   },
   methods: {
     add() {
@@ -102,7 +114,7 @@ export default {
       this.modal = Object.assign({}, record)
       this.visible = true
       this.$nextTick(() => {
-        if(this.modal.resourceType){
+        if (this.modal.resourceType) {
           this.$refs.PropertiesModal.set(this.modal.properties)
         }
       })
@@ -113,31 +125,30 @@ export default {
     handleOk() {
       const that = this
       this.$refs.ruleForm.validate(valid => {
-        if (valid) {
+        if (!valid) return false
+        this.$refs.PropertiesModal.get((checked, prop) => {
+          if (!checked) return false
           that.confirmLoading = true
-          this.modal.properties = this.$refs.PropertiesModal.get()
+          that.modal.properties = prop
           let obj
-          if (this.modal.resourceId) {
-            obj = putAction(this.url.update, this.modal)
+          if (that.modal.resourceId) {
+            obj = putAction(that.url.update, that.modal)
           } else {
-            obj = postAction(this.url.add, this.modal)
+            obj = postAction(that.url.add, that.modal)
           }
           obj.then(res => {
             if (res.code === 200) {
-              that.$message.success("保存成功")
+              that.$message.success('保存成功')
               that.$emit('ok')
             } else {
-              that.$message.error("保存失败")
+              that.$message.error('保存失败')
             }
           })
             .finally(() => {
               that.confirmLoading = false
               that.onClose()
             })
-
-        } else {
-          return false
-        }
+        })
       })
     },
     filterOption(input, option) {
@@ -148,12 +159,12 @@ export default {
     },
     testDriver() {
       this.modal.properties = this.$refs.PropertiesModal.get()
-      postAction(this.url.test, this.modal).then((res)=>{
-          if(res.code===200 && res.data === true){
-            this.$message.success("连接成功")
-          }else {
-            this.$message.error("连接失败")
-          }
+      postAction(this.url.test, this.modal).then((res) => {
+        if (res.code === 200 && res.data === true) {
+          this.$message.success('连接成功')
+        } else {
+          this.$message.error('连接失败')
+        }
       })
     }
   }

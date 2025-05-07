@@ -1,13 +1,13 @@
 <template>
   <a-row :gutter='20'>
-    <a-form-model layout='vertical' :model='properties'>
+    <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24'>
-        <a-form-model-item label='Topic'>
+        <a-form-model-item label='Topic' prop='topic'>
           <a-input v-model='properties.topic' placeholder='请输入Topic' />
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if="type==='dest'">
-        <a-form-model-item label='消息保留'>
+        <a-form-model-item label='消息保留' prop='retained'>
           <a-select v-model='properties.retained' placeholder='请选择是否消息保留'>
             <a-select-option :value='true'>是</a-select-option>
             <a-select-option :value='false'>否</a-select-option>
@@ -15,7 +15,7 @@
         </a-form-model-item>
       </a-col>
       <a-col :span="type==='dest'?12:24">
-        <a-form-model-item label='Qos'>
+        <a-form-model-item label='Qos' prop='qos'>
           <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%' />
         </a-form-model-item>
       </a-col>
@@ -40,6 +40,11 @@ export default {
       properties: {
         qos: 0,
         retained: false
+      },
+      rules: {
+        topic: [{ required: true, message: '请输入Topic', trigger: 'blur' }],
+        retained: [{ required: true, message: '请选择是否消息保留', trigger: 'change' }],
+        qos: [{ required: true, message: '请输入Qos', trigger: 'blur' }]
       }
     }
   },
@@ -58,11 +63,18 @@ export default {
         })
       }
     },
-    get() {
+    get(callback) {
       if (this.type === 'dest') {
         this.properties.payload = this.$refs.MonacoEditor.get()
       }
-      return this.properties
+      let that = this
+      this.$refs.propForm.validate(valid => {
+        if (valid) {
+          return callback(true, that.properties)
+        } else {
+          return callback(false)
+        }
+      })
     }
   }
 }

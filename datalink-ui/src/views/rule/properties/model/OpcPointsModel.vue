@@ -1,5 +1,5 @@
 <template>
-  <a-form-model-item label='读取点位' prop='paramContent'>
+  <div>
     <div
       style='margin-top: -30px;width: 100%;text-align: right;height: 30px;color: #000000;padding-top: 4px'>
       <a @click='newItem'>添加</a>
@@ -49,7 +49,7 @@
                     </span>
       </template>
     </a-table>
-  </a-form-model-item>
+  </div>
 </template>
 
 <script>

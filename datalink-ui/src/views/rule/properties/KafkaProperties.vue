@@ -1,13 +1,13 @@
 <template>
   <a-row :gutter='20'>
-    <a-form-model layout='vertical' :model='properties'>
+    <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24'>
-        <a-form-model-item label='Topic'>
+        <a-form-model-item label='Topic' prop='topic'>
           <a-input v-model='properties.topic' placeholder='请输入Topic' />
         </a-form-model-item>
       </a-col>
       <a-col :span='24' v-if="type==='source'">
-        <a-form-model-item label='消费组' >
+        <a-form-model-item label='消费组' prop='group'>
           <a-input v-model='properties.group' placeholder='请输入消费组' />
         </a-form-model-item>
       </a-col>
@@ -28,7 +28,11 @@ export default {
   components: { MonacoEditor },
   data() {
     return {
-      properties: {}
+      properties: {},
+      rules: {
+        topic: [{ required: true, message: '请输入Topic', trigger: 'blur' }],
+        group: [{ required: true, message: '请输入消费组', trigger: 'blur' }],
+      }
     }
   },
   props: {
@@ -46,11 +50,18 @@ export default {
         })
       }
     },
-    get() {
+    get(callback) {
       if (this.type === 'dest') {
         this.properties.payload = this.$refs.MonacoEditor.get()
       }
-      return this.properties
+      let that = this
+      this.$refs.propForm.validate(valid => {
+        if (valid) {
+          return callback(true, that.properties)
+        } else {
+          return callback(false)
+        }
+      })
     }
   }
 }

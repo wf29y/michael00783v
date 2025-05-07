@@ -31,7 +31,7 @@ public class DatalinkKvStorage extends MemoryKvStorage {
 
     private final KvStorage baseDirStorage;
 
-    private final Map<String, KvStorage> mqttKvStorage;
+    private final Map<String, KvStorage> datalinkKvStorage;
 
     private boolean isSnapshotLoad = false;
 
@@ -42,7 +42,7 @@ public class DatalinkKvStorage extends MemoryKvStorage {
     public DatalinkKvStorage(final String baseDir) throws Exception {
         this.baseDir = baseDir;
         this.baseDirStorage = StorageFactory.createKvStorage(KvStorage.KvType.RocksDB, baseDir);
-        this.mqttKvStorage = new ConcurrentHashMap<>(16);
+        this.datalinkKvStorage = new ConcurrentHashMap<>(16);
     }
 
 
@@ -178,7 +178,7 @@ public class DatalinkKvStorage extends MemoryKvStorage {
     @Override
     public List<byte[]> allKeys() {
         try {
-            KvStorage storage = createActualStorageIfAbsent(org.apache.commons.lang3.StringUtils.EMPTY);
+            KvStorage storage = createActualStorageIfAbsent(StringUtils.EMPTY);
             return storage.allKeys();
         } catch (Exception e) {
             throw new DatalinkRuntimeException(DatalinkException.SERVER_ERROR, e);
@@ -188,20 +188,20 @@ public class DatalinkKvStorage extends MemoryKvStorage {
     @Override
     public void shutdown() {
         baseDirStorage.shutdown();
-        for (KvStorage each : mqttKvStorage.values()) {
+        for (KvStorage each : datalinkKvStorage.values()) {
             each.shutdown();
         }
-        mqttKvStorage.clear();
+        datalinkKvStorage.clear();
         super.shutdown();
     }
     
     private KvStorage createActualStorageIfAbsent(byte[] key) throws Exception {
         String keyString = new String(key);
-        return createActualStorageIfAbsent(org.apache.commons.lang3.StringUtils.EMPTY);
+        return createActualStorageIfAbsent(StringUtils.EMPTY);
     }
     
-    private KvStorage createActualStorageIfAbsent(String mqtt) throws Exception {
-        if (StringUtils.isBlank(mqtt)) {
+    private KvStorage createActualStorageIfAbsent(String dir) throws Exception {
+        if (StringUtils.isBlank(dir)) {
             return baseDirStorage;
         }
         
@@ -213,7 +213,7 @@ public class DatalinkKvStorage extends MemoryKvStorage {
                 throw new DatalinkRuntimeException(DatalinkException.SERVER_ERROR, e);
             }
         };
-        mqttKvStorage.computeIfAbsent(mqtt, kvStorageBuilder);
-        return mqttKvStorage.get(mqtt);
+        datalinkKvStorage.computeIfAbsent(dir, kvStorageBuilder);
+        return datalinkKvStorage.get(dir);
     }
 }

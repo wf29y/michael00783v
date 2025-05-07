@@ -60,7 +60,7 @@ const vueConfig = {
         GIT_HASH: JSON.stringify(getGitHash()),
         BUILD_DATE: buildDate
       }),
-      new MonacoWebpackPlugin({ languages: ['javascript', 'typescript', 'html', 'css', 'json', 'sql'] })
+      new MonacoWebpackPlugin({ languages: ['javascript', 'typescript', 'html', 'css', 'json', 'sql', 'redis'] })
     ],
     // if prod, add externals
     externals: isProd ? assetsCDN.externals : {}

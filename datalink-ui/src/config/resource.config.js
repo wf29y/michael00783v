@@ -161,7 +161,10 @@ const resourceConfigMap = {
     name: 'Redis',
     type: TYPE_ALL,
     details: {
-      resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: {
+        name: '资源地址',
+        format: (resource) => resource.properties.mode === 'STANDALONE' ? `${resource.properties.ip}:${resource.properties.port}` : `${resource.properties.nodes}`
+      },
       rule: [
         {
           name: '资源地址',
