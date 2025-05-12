@@ -20,13 +20,13 @@
           <a-statistic title='累计总数' :value='runtime.total' />
         </a-col>
         <a-col :span='3'>
-          <a-statistic title='解析成功' :value='runtime.analysisSuccessCount' />
+          <a-statistic title='转换成功' :value='runtime.transformSuccessCount' />
         </a-col>
         <a-col :span='3'>
           <a-statistic title='发送成功' :value='runtime.publishSuccessCount' />
         </a-col>
         <a-col :span='3'>
-          <a-statistic title='解析失败' :value='runtime.analysisFailCount' />
+          <a-statistic title='转换失败' :value='runtime.transformFailCount' />
         </a-col>
         <a-col :span='3'>
           <a-statistic title='发送失败' :value='runtime.publishFailCount' />
@@ -46,9 +46,9 @@
       <a-descriptions title='规则信息' :column='2'>
         <a-descriptions-item label='规则名称'>{{ rule.ruleName }}</a-descriptions-item>
         <a-descriptions-item label='忽略空值'>{{ rule.ignoreNullValue === true ? '是' : '否' }}</a-descriptions-item>
-        <a-descriptions-item label='解析方式'>
-          <span v-if='rule.analysisMode==="SCRIPT"'><a @click='showScript'>{{ analysisModeMap[rule.analysisMode] }}</a></span>
-          <span v-else>{{ analysisModeMap[rule.analysisMode] }}</span>
+        <a-descriptions-item label='转换方式'>
+          <span v-if='rule.transformMode==="SCRIPT"'><a @click='showScript'>{{ transformModeMap[rule.transformMode] }}</a></span>
+          <span v-else>{{ transformModeMap[rule.transformMode] }}</span>
         </a-descriptions-item>
         <a-descriptions-item label='备注'> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
         <!--        <a-descriptions-item label='源数据' :span='2'> {{ getDetails(rule.sourceResource) }}</a-descriptions-item>
@@ -83,7 +83,7 @@
 
     <a-card style='margin-bottom: 20px' :bordered='false' :body-style='{paddingBottom:"10px"}'>
       <div class='title'>目标资源</div>
-      <a-list :grid="{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }" :data-source='rule.destResourceList' v-if='rule.destResourceList.length>0'>
+      <a-list :grid="{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }" :data-source='rule.destResourceList' v-if='rule.destResourceList && rule.destResourceList.length>0'>
         <a-list-item slot='renderItem' slot-scope='resource,index'>
           <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
             <a-col :span='18'>
@@ -121,10 +121,10 @@
       <a-table :columns='dataColumns' :data-source='runtime.lastData' size='middle' :pagination='false'>
         <span slot='receiveData' slot-scope='text'> {{ text ? text : '—' }} </span>
 
-        <span slot='analysisSuccess' slot-scope='text,record'>
-          <a-popover title='解析结果'>
+        <span slot='transformSuccess' slot-scope='text,record'>
+          <a-popover title='转换结果'>
             <template slot='content'>
-              {{ record.analysisData ? record.analysisData : '—' }}
+              {{ record.transformData ? record.transformData : '—' }}
             </template>
               <span style='cursor: pointer'>
               <a-badge v-if='text===true' color='green' text='成功' />
@@ -156,7 +156,7 @@
 <script>
 import { getAction } from '@/api/manage'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
-import { analysisModeMap } from '@/config/rule.config'
+import { transformModeMap } from '@/config/rule.config'
 import ScriptViewModel from './modules/ScriptViewModel'
 
 export default {
@@ -172,7 +172,7 @@ export default {
       rule: {},
       runtime: {},
       variables: [],
-      analysisModeMap: analysisModeMap,
+      transformModeMap: transformModeMap,
       resourceTypeMap: resourceTypeMap,
       dataColumns: [
         {
@@ -185,9 +185,9 @@ export default {
           scopedSlots: { customRender: 'receiveData' }
         },
         {
-          title: '解析',
-          dataIndex: 'analysisSuccess',
-          scopedSlots: { customRender: 'analysisSuccess' }
+          title: '转换',
+          dataIndex: 'transformSuccess',
+          scopedSlots: { customRender: 'transformSuccess' }
         },
         {
           title: '发送',

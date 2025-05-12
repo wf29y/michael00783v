@@ -27,17 +27,17 @@
             </a-form-model-item>
           </a-col>
           <a-col :span='12'>
-            <a-form-model-item label='解析方式' prop='analysisMode'>
-              <a-select v-model='modal.analysisMode' placeholder='请选择解析方式' @change='analysisModeChange'>
-                <a-select-option v-for='(item,index) in analysisModeList' :value='item.value' :key='index'>
+            <a-form-model-item label='数据转换方式' prop='transformMode'>
+              <a-select v-model='modal.transformMode' placeholder='请选择数据转换方式' @change='transformModeChange'>
+                <a-select-option v-for='(item,index) in transformModeList' :value='item.value' :key='index'>
                   {{ item.name }}
                 </a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
           <a-col :span='12'>
-            <a-form-model-item label='忽略空值' prop='ignoreNullValue'>
-              <a-select v-model='modal.ignoreNullValue' placeholder='请选择是否忽略空值'>
+            <a-form-model-item label='忽略空数据' prop='ignoreNullValue'>
+              <a-select v-model='modal.ignoreNullValue' placeholder='请选择是否忽略空数据'>
                 <a-select-option :value='true'>是</a-select-option>
                 <a-select-option :value='false'>否</a-select-option>
               </a-select>
@@ -110,26 +110,25 @@
       </a-card>
 
 
-      <a-card style='margin-bottom: 20px' :bordered='false' v-if="modal.analysisMode!=='WITHOUT'">
+      <a-card style='margin-bottom: 20px' :bordered='false' v-if="modal.transformMode!=='WITHOUT'">
 
         <a-row style='padding: 0'>
-          <a-col :span='12' class='title'>数据解析</a-col>
-          <a-col :span='12' style='text-align: right' v-if="modal.analysisMode==='SCRIPT'"><a
+          <a-col :span='12' class='title'>数据转换</a-col>
+          <a-col :span='12' style='text-align: right' v-if="modal.transformMode==='SCRIPT'"><a
             @click='selectScript'>选择脚本</a></a-col>
         </a-row>
 
         <a-row :gutter='20'>
-          <a-col :span='24' v-if="modal.analysisMode==='SCRIPT'">
+          <a-col :span='24' v-if="modal.transformMode==='SCRIPT'">
             <monaco-editor ref='MonacoEditor' height='300px' :minimap='true'></monaco-editor>
           </a-col>
-          <a-col :span='24'>
-            <a-form-model-item label='Jar包地址' prop='script' v-if="modal.analysisMode==='PLUGIN'">
-              <a-input placeholder='请输入Jar包地址' />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span='24'>
-            <a-form-model-item label='解析类名' prop='script' v-if="modal.analysisMode==='PLUGIN'">
-              <a-input placeholder='请输入解析类名' />
+          <a-col :span='24' v-if="modal.transformMode==='PLUGIN'">
+            <a-form-model-item label='插件' prop='script'>
+              <a-select v-model='modal.pluginId' placeholder='请选择插件' style='width: 50%'>
+                <a-select-option v-for='(item,index) in pluginList' :value='item.pluginId' :key='index'>
+                  {{ item.pluginName }}
+                </a-select-option>
+              </a-select>
             </a-form-model-item>
           </a-col>
         </a-row>
@@ -152,7 +151,7 @@ import ResourceModel from './modules/ResourceModel'
 import ScriptSelectModel from './modules/ScriptSelectModel'
 import VariablesModel from './modules/VariablesModel'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
-import { analysisModeList } from '@/config/rule.config'
+import { transformModeList } from '@/config/rule.config'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
 
 export default {
@@ -162,17 +161,18 @@ export default {
       modal: {
         sourceResource: undefined,
         destResourceList: [],
-        analysisMode: 'WITHOUT',
+        transformMode: 'WITHOUT',
         ignoreNullValue: false
       },
       url: {
         add: '/api/rule/add',
         update: '/api/rule/update',
-        info: '/api/rule/info'
+        info: '/api/rule/info',
+        plugin: '/api/plugin/list'
       },
       rules: {
         ruleName: [{ required: true, message: '请输入规则名称', trigger: 'blur' }],
-        analysisMode: [{ required: true, message: '请选择解析方式', trigger: 'change' }],
+        transformMode: [{ required: true, message: '请选择转换方式', trigger: 'change' }],
         ignoreNullValue: [{ required: true, message: '请选择是否忽略空值', trigger: 'change' }]
       },
       resourceTypeMap: resourceTypeMap,
@@ -191,7 +191,8 @@ export default {
           tables: {}
         }
       },
-      analysisModeList: analysisModeList,
+      pluginList: [],
+      transformModeList: transformModeList,
       defaultScript: '/**\n' +
         '* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +
         '*/\n' +
@@ -211,13 +212,14 @@ export default {
           // this.modal.destResourceList.push({})
           this.$nextTick(() => {
             this.$refs.VariablesModel.set(this.modal.variables)
-            if (this.modal.analysisMode === 'script') {
+            if (this.modal.transformMode === 'SCRIPT') {
               this.$refs.MonacoEditor.set(this.modal.script)
             }
           })
         }
       })
     }
+    this.getPluginList()
   },
   methods: {
     getDetails(resource) {
@@ -254,7 +256,7 @@ export default {
       }
     },
 
-    analysisModeChange(mode) {
+    transformModeChange(mode) {
       if (mode === 'SCRIPT' && !this.modal.script) {
         this.modal.script = this.defaultScript
       } else {
@@ -267,13 +269,13 @@ export default {
 
     // 保存规则
     saveRule() {
-      if(!this.modal.sourceResource || !this.modal.sourceResource.resourceId){
-        this.$message.error("请绑定数据源")
-        return;
+      if (!this.modal.sourceResource || !this.modal.sourceResource.resourceId) {
+        this.$message.error('请绑定数据源')
+        return
       }
-      if(!this.modal.destResourceList || this.modal.destResourceList.length === 0){
-        this.$message.error("请至少选择一个目标资源")
-        return;
+      if (!this.modal.destResourceList || this.modal.destResourceList.length === 0) {
+        this.$message.error('请至少选择一个目标资源')
+        return
       }
       const that = this
       this.$refs.ruleForm.validate(valid => {
@@ -281,10 +283,13 @@ export default {
           that.confirmLoading = true
           let rule = JSON.parse(JSON.stringify(this.modal))
           rule.variables = this.$refs.VariablesModel.get()
-          if (this.modal.analysisMode === 'script') {
+          if (this.modal.transformMode === 'SCRIPT') {
             rule.script = this.$refs.MonacoEditor.get()
           } else {
             delete rule.script
+          }
+          if (this.modal.transformMode !== 'PLUGIN') {
+            delete rule.pluginId
           }
           let obj
           if (this.ruleId) {
@@ -317,6 +322,14 @@ export default {
       this.modal.script = script.scriptContent
       this.$refs.MonacoEditor.set(this.modal.script)
     },
+    getPluginList() {
+      postAction(this.url.plugin, {}).then(res => {
+        if (res.code === 200) {
+          this.pluginList = res.data
+        }
+      })
+    },
+
     onClose() {
       this.$router.push({ name: 'ruleList' })
     }

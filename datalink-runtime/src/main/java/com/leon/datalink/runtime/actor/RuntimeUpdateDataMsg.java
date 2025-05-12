@@ -9,11 +9,11 @@ public class RuntimeUpdateDataMsg {
 
     private Object receiveData;
 
-    private Object analysisData;
+    private Object transformData;
 
     private Object publishData;
 
-    private Boolean analysisSuccess;
+    private Boolean transformSuccess;
 
     private Boolean publishSuccess;
 
@@ -30,12 +30,20 @@ public class RuntimeUpdateDataMsg {
         this.receiveData = receiveData;
     }
 
-    public Object getAnalysisData() {
-        return analysisData;
+    public Object getTransformData() {
+        return transformData;
     }
 
-    public void setAnalysisData(Object analysisData) {
-        this.analysisData = analysisData;
+    public void setTransformData(Object transformData) {
+        this.transformData = transformData;
+    }
+
+    public Boolean getTransformSuccess() {
+        return transformSuccess;
+    }
+
+    public void setTransformSuccess(Boolean transformSuccess) {
+        this.transformSuccess = transformSuccess;
     }
 
     public Object getPublishData() {
@@ -44,14 +52,6 @@ public class RuntimeUpdateDataMsg {
 
     public void setPublishData(Object publishData) {
         this.publishData = publishData;
-    }
-
-    public Boolean getAnalysisSuccess() {
-        return analysisSuccess;
-    }
-
-    public void setAnalysisSuccess(Boolean analysisSuccess) {
-        this.analysisSuccess = analysisSuccess;
     }
 
     public Boolean getPublishSuccess() {

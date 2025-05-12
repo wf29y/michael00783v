@@ -1,7 +1,7 @@
 package com.leon.datalink.rule.entity;
 
 import com.leon.datalink.resource.Resource;
-import com.leon.datalink.rule.constants.RuleAnalysisModeEnum;
+import com.leon.datalink.rule.constants.TransformModeEnum;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,9 +20,13 @@ public class Rule implements Serializable {
 
     private List<Resource> destResourceList;
 
-    private RuleAnalysisModeEnum analysisMode;
+    private TransformModeEnum transformMode;
 
     private String script;
+
+    private String pluginId;
+
+    private Plugin plugin;
 
     private Map<String,Object> variables;
 
@@ -78,12 +82,12 @@ public class Rule implements Serializable {
         this.script = script;
     }
 
-    public RuleAnalysisModeEnum getAnalysisMode() {
-        return analysisMode;
+    public TransformModeEnum getTransformMode() {
+        return transformMode;
     }
 
-    public void setAnalysisMode(RuleAnalysisModeEnum analysisMode) {
-        this.analysisMode = analysisMode;
+    public void setTransformMode(TransformModeEnum transformMode) {
+        this.transformMode = transformMode;
     }
 
     public boolean isEnable() {
@@ -102,6 +106,21 @@ public class Rule implements Serializable {
         this.ignoreNullValue = ignoreNullValue;
     }
 
+    public String getPluginId() {
+        return pluginId;
+    }
+
+    public void setPluginId(String pluginId) {
+        this.pluginId = pluginId;
+    }
+
+    public Plugin getPlugin() {
+        return plugin;
+    }
+
+    public void setPlugin(Plugin plugin) {
+        this.plugin = plugin;
+    }
 
     public Map<String, Object> getVariables() {
         return variables;

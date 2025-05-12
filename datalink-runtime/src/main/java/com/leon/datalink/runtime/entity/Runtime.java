@@ -20,11 +20,11 @@ public class Runtime  implements Serializable {
 
     private Long total;
 
-    private Long analysisSuccessCount;
+    private Long transformSuccessCount;
 
     private Long publishSuccessCount;
 
-    private Long analysisFailCount;
+    private Long transformFailCount;
 
     private Long publishFailCount;
 
@@ -56,12 +56,20 @@ public class Runtime  implements Serializable {
         this.total = total;
     }
 
-    public Long getAnalysisSuccessCount() {
-        return analysisSuccessCount;
+    public Long getTransformSuccessCount() {
+        return transformSuccessCount;
     }
 
-    public void setAnalysisSuccessCount(Long analysisSuccessCount) {
-        this.analysisSuccessCount = analysisSuccessCount;
+    public void setTransformSuccessCount(Long transformSuccessCount) {
+        this.transformSuccessCount = transformSuccessCount;
+    }
+
+    public Long getTransformFailCount() {
+        return transformFailCount;
+    }
+
+    public void setTransformFailCount(Long transformFailCount) {
+        this.transformFailCount = transformFailCount;
     }
 
     public Long getPublishSuccessCount() {
@@ -70,14 +78,6 @@ public class Runtime  implements Serializable {
 
     public void setPublishSuccessCount(Long publishSuccessCount) {
         this.publishSuccessCount = publishSuccessCount;
-    }
-
-    public Long getAnalysisFailCount() {
-        return analysisFailCount;
-    }
-
-    public void setAnalysisFailCount(Long analysisFailCount) {
-        this.analysisFailCount = analysisFailCount;
     }
 
     public Long getPublishFailCount() {
@@ -115,16 +115,16 @@ public class Runtime  implements Serializable {
         this.total++;
     }
 
-    public void addAnalysisSuccessCount() {
-        this.analysisSuccessCount++;
+    public void addTransformSuccessCount() {
+        this.transformSuccessCount++;
     }
 
     public void addPublishSuccessCount() {
         this.publishSuccessCount++;
     }
 
-    public void addAnalysisFailCount() {
-        this.analysisFailCount++;
+    public void addTransformFailCount() {
+        this.transformFailCount++;
     }
 
     public void addPublishFailCount() {

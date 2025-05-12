@@ -38,8 +38,8 @@
           <a @click='handleRuntime(item)'>{{ text }}</a>
         </span>
 
-        <span slot='analysisModeMap' slot-scope='text, item, index'>
-          {{ analysisModeMap[item.analysisMode] }}
+        <span slot='transformModeMap' slot-scope='text, item, index'>
+          {{ transformModeMap[item.transformMode] }}
         </span>
 
         <span slot='sourceResourceName' slot-scope='text, item, index'>
@@ -68,7 +68,7 @@
 
 <script>
 import { postAction } from '@/api/manage'
-import { analysisModeMap } from '@/config/rule.config'
+import { transformModeMap } from '@/config/rule.config'
 
 export default {
   name: 'RuleList',
@@ -87,9 +87,9 @@ export default {
           scopedSlots: { customRender: 'ruleName' }
         },
         {
-          title: '解析方式',
-          dataIndex: 'analysisModeMap',
-          scopedSlots: { customRender: 'analysisModeMap' }
+          title: '转换方式',
+          dataIndex: 'transformModeMap',
+          scopedSlots: { customRender: 'transformModeMap' }
         },
         {
           title: '源数据',
@@ -123,7 +123,7 @@ export default {
         stop: '/api/rule/stop',
         runtime: '/api/rule/runtime'
       },
-      analysisModeMap: analysisModeMap
+      transformModeMap: transformModeMap
     }
   },
   mounted() {

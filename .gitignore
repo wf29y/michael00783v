@@ -34,3 +34,6 @@ out
 *.log
 
 /data
+/plugin
+
+.flattened-pom.xml

@@ -1,21 +1,21 @@
-const analysisModeMap = {
-  WITHOUT: '无解析透传',
-  SCRIPT: 'JavaScript脚本',
-  PLUGIN: 'Java插件(暂不支持)'
+const transformModeMap = {
+  WITHOUT: '无转换透传',
+  SCRIPT: 'JS脚本转换',
+  PLUGIN: '插件转换'
 }
 
 function createModeList() {
   let result = []
-  for (let key in analysisModeMap) {
+  for (let key in transformModeMap) {
     result.push({
-      name: analysisModeMap[key],
+      name: transformModeMap[key],
       value: key
     })
   }
   return result
 }
 
-const analysisModeList = createModeList()
+const transformModeList = createModeList()
 export {
-  analysisModeMap, analysisModeList
+  transformModeMap, transformModeList
 }

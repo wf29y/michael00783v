@@ -10,8 +10,10 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.rule.actor.RuleActor;
+import com.leon.datalink.rule.constants.TransformModeEnum;
+import com.leon.datalink.rule.entity.Plugin;
 import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.runtime.RuntimeManger;
+import com.leon.datalink.web.plugin.PluginService;
 import com.leon.datalink.web.rule.RuleService;
 import com.leon.datalink.web.runtime.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,9 @@ public class RuleServiceImpl implements RuleService {
 
     @Autowired
     RuntimeService runtimeService;
+
+    @Autowired
+    PluginService pluginService;
 
     /**
      * 资源列表
@@ -120,12 +125,21 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public void startRule(Rule rule) throws Exception {
         String ruleId = rule.getRuleId();
+
+        // 修改为启动状态
+        rule.setEnable(true);
+        ruleList.put(ruleId, rule);
+
+        // 查询插件
+        if(TransformModeEnum.PLUGIN.equals(rule.getTransformMode())){
+            Plugin plugin = pluginService.get(rule.getPluginId());
+            rule.setPlugin(plugin);
+        }
+
         // 创建rule actor
         ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule)), "rule-" + ruleId);
         ruleActorRefList.put(ruleId, actorRef);
 
-        rule.setEnable(true);
-        ruleList.put(ruleId, rule);
     }
 
     @Override

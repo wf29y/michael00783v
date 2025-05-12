@@ -33,8 +33,8 @@ public class RuntimeManger {
         } else {
             Runtime runtime = new Runtime();
             runtime.setTotal(0L);
-            runtime.setAnalysisSuccessCount(0L);
-            runtime.setAnalysisFailCount(0L);
+            runtime.setTransformSuccessCount(0L);
+            runtime.setTransformFailCount(0L);
             runtime.setPublishSuccessCount(0L);
             runtime.setPublishFailCount(0L);
             runtime.setStartTime(DateTime.now());
@@ -53,9 +53,9 @@ public class RuntimeManger {
         runtime.addLastData(msg);
         runtime.setLastTime(msg.getTime());
         runtime.addTotalCount();
-        if (null != msg.getAnalysisSuccess()) {
-            if (msg.getAnalysisSuccess()) {
-                runtime.addAnalysisSuccessCount();
+        if (null != msg.getTransformSuccess()) {
+            if (msg.getTransformSuccess()) {
+                runtime.addTransformSuccessCount();
                 if (null != msg.getPublishSuccess()) {
                     if (msg.getPublishSuccess()) {
                         runtime.addPublishSuccessCount();
@@ -63,8 +63,8 @@ public class RuntimeManger {
                         runtime.addPublishFailCount();
                     }
                 }
-            } else if (!msg.getAnalysisSuccess()) {
-                runtime.addAnalysisFailCount();
+            } else if (!msg.getTransformSuccess()) {
+                runtime.addTransformFailCount();
             }
         }
 

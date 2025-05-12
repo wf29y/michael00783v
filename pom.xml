@@ -11,6 +11,7 @@
         <module>datalink-core</module>
         <module>datalink-rule</module>
         <module>datalink-runtime</module>
+        <module>datalink-plugin</module>
         <module>distribution</module>
     </modules>
     <groupId>com.leon.datalink</groupId>
@@ -88,6 +89,7 @@
         <paho.version>1.2.5</paho.version>
         <beetl.version>3.6.1.RELEASE</beetl.version>
         <jedis.version>3.1.0</jedis.version>
+        <reflections.version>0.9.10</reflections.version>
     </properties>
     <!-- == -->
     <!-- =========================================================Build plugins================================================ -->
@@ -337,6 +339,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>datalink-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.rocksdb</groupId>
                 <artifactId>rocksdbjni</artifactId>
                 <version>${rocksdbjni.version}</version>
@@ -430,6 +437,12 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j-impl</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
             </dependency>
 
             <dependency>
