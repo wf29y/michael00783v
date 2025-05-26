@@ -2,7 +2,7 @@ package com.leon.datalink.web.controller;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.leon.datalink.core.variable.GlobalVariableContent;
+import com.leon.datalink.core.utils.VersionUtils;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.web.config.NotWrap;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @ClassNameSystemInfoController
+ * @ClassName SystemInfoController
  * @Description
  * @Author Leon
  * @Date 2022/4/11 10:34
@@ -48,7 +48,7 @@ public class SystemInfoController {
     @NotWrap
     @GetMapping("/version")
     public Object getSystemVersion() {
-        return GlobalVariableContent.getValue("version");
+        return VersionUtils.version;
     }
 
 }

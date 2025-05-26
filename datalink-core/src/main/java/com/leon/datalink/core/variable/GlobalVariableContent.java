@@ -2,6 +2,7 @@ package com.leon.datalink.core.variable;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.leon.datalink.core.utils.VersionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class GlobalVariableContent {
     private static final Map<String, Variable> globalVariable = new HashMap<>();
 
     static {
-        globalVariable.put("version", new Variable("version", "v1.0.0", "系统版本", VariableTypeEnum.SYSTEM));
+        globalVariable.put("version", new Variable("version", VersionUtils.version, "系统版本", VariableTypeEnum.SYSTEM));
         globalVariable.put("timeStamp", new Variable("timeStamp", null, "时间戳", VariableTypeEnum.SYSTEM));
         globalVariable.put("date", new Variable("date", null, "日期", VariableTypeEnum.SYSTEM));
         globalVariable.put("dateTime", new Variable("dateTime", null, "日期时间", VariableTypeEnum.SYSTEM));
