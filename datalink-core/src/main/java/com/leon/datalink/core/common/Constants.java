@@ -24,6 +24,7 @@ public class Constants {
     public static final String STORAGE_PATH = "./data";
 
     public static final String PLUGIN_FILE_PATH = "./plugin/";
+    //public static final String PLUGIN_FILE_PATH = "C:\\Users\\54711\\Desktop\\plugin\\";
 
     public static final String LOCAL_IP_PROPERTY_KEY = "datalink.local.ip";
 }

@@ -63,10 +63,6 @@ export default {
     return {
       columns: [
         {
-          title: '#',
-          scopedSlots: { customRender: 'serial' }
-        },
-        {
           title: '插件名称',
           dataIndex: 'pluginName'
         },

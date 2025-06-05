@@ -27,6 +27,7 @@
           :beforeUpload='checkFile'
           name='file'
           @change='handlerUpload'
+          :customRequest='customRequest'
         >
           <a-button>
             <a-icon type='upload' />
@@ -56,7 +57,7 @@
 </template>
 
 <script>
-import { postAction, putAction } from '@/api/manage'
+import { postAction, putAction, uploadAction } from '@/api/manage'
 
 export default {
   name: 'PluginModel',
@@ -73,7 +74,7 @@ export default {
         update: '/api/plugin/update'
       },
       rules: {
-        pluginName: [{ required: true, message: '请输入插件名称', trigger: 'blur' }],
+        pluginName: [{ required: true, message: '请输入插件名称', trigger: 'change' }],
         packagePath: [{ required: true, message: '请输入包路径', trigger: 'blur' }]
       },
       isEdit: false
@@ -141,7 +142,7 @@ export default {
         return false
       }
       //检查格式
-      let allowUpload = ['jar','txt']
+      let allowUpload = ['jar']
       let fileExtension = file.name.split('.').pop()
       if (fileExtension) fileExtension = fileExtension.toLowerCase()
       if (allowUpload.indexOf(fileExtension) === -1) {
@@ -163,6 +164,13 @@ export default {
       } else if (info.file.status === 'error') {
         this.$message.error(`上传出错`)
       }
+    },
+    customRequest(options) {
+      let params = new FormData()
+      params.append('file', options.file)
+      uploadAction('/api/plugin/upload', params).then((res) => {
+        options.onSuccess(res, options.file)
+      })
     }
 
   }
