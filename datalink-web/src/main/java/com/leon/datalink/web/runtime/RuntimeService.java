@@ -11,4 +11,6 @@ public interface RuntimeService {
 
    void remove(String ruleId) throws KvStorageException;
 
+    void resetRuntime(String ruleId) throws KvStorageException;
+
 }

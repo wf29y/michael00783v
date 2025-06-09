@@ -31,17 +31,25 @@ public class RuntimeManger {
             }
             ruleRuntime.setVariables(initVariables);
         } else {
-            Runtime runtime = new Runtime();
-            runtime.setTotal(0L);
-            runtime.setTransformSuccessCount(0L);
-            runtime.setTransformFailCount(0L);
-            runtime.setPublishSuccessCount(0L);
-            runtime.setPublishFailCount(0L);
-            runtime.setStartTime(DateTime.now());
-            runtime.setLastData(Lists.newLinkedList());
-            runtime.setVariables(null == initVariables ? new HashMap<>() : initVariables);
-            runtimeList.put(ruleId, runtime);
+            runtimeList.put(ruleId, newRuntime(initVariables));
         }
+    }
+
+    private static Runtime newRuntime(Map<String, Object> initVariables) {
+        Runtime runtime = new Runtime();
+        runtime.setTotal(0L);
+        runtime.setTransformSuccessCount(0L);
+        runtime.setTransformFailCount(0L);
+        runtime.setPublishSuccessCount(0L);
+        runtime.setPublishFailCount(0L);
+        runtime.setStartTime(DateTime.now());
+        runtime.setLastData(Lists.newLinkedList());
+        runtime.setVariables(null == initVariables ? new HashMap<>() : initVariables);
+        return runtime;
+    }
+
+    public static void resetRuntime(String ruleId, Map<String, Object> initVariables) {
+        runtimeList.put(ruleId, newRuntime(initVariables));
     }
 
     public static ConcurrentHashMap<String, Runtime> getRuntimeList() {

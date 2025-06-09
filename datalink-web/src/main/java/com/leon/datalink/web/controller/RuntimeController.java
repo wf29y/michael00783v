@@ -1,5 +1,6 @@
 package com.leon.datalink.web.controller;
 
+import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.web.runtime.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,17 @@ public class RuntimeController {
     @GetMapping("/info")
     public Object getRuntime(@RequestParam(value = "ruleId") String ruleId) {
         return runtimeService.getRuntime(ruleId);
+    }
+
+
+    /**
+     * 重置运行状态
+     *
+     * @param ruleId
+     */
+    @GetMapping("/reset")
+    public void resetRuntime(@RequestParam(value = "ruleId") String ruleId) throws KvStorageException {
+        runtimeService.resetRuntime(ruleId);
     }
 
 

@@ -17,6 +17,7 @@ import com.leon.datalink.web.plugin.PluginService;
 import com.leon.datalink.web.rule.RuleService;
 import com.leon.datalink.web.runtime.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,9 +41,11 @@ public class RuleServiceImpl implements RuleService {
     ActorSystem actorSystem;
 
     @Autowired
+    @Lazy
     RuntimeService runtimeService;
 
     @Autowired
+    @Lazy
     PluginService pluginService;
 
     /**
@@ -131,7 +134,7 @@ public class RuleServiceImpl implements RuleService {
         ruleList.put(ruleId, rule);
 
         // 查询插件
-        if(TransformModeEnum.PLUGIN.equals(rule.getTransformMode())){
+        if (TransformModeEnum.PLUGIN.equals(rule.getTransformMode())) {
             Plugin plugin = pluginService.get(rule.getPluginId());
             rule.setPlugin(plugin);
         }

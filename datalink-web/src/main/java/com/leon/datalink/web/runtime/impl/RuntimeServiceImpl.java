@@ -5,14 +5,19 @@ import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
+import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.entity.Runtime;
+import com.leon.datalink.web.rule.RuleService;
 import com.leon.datalink.web.runtime.RuntimeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
@@ -20,6 +25,9 @@ import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 @Service
 public class RuntimeServiceImpl implements RuntimeService {
 
+    @Autowired
+    @Lazy
+    RuleService ruleService;
 
     /**
      * key value storage
@@ -71,6 +79,14 @@ public class RuntimeServiceImpl implements RuntimeService {
     @Override
     public void remove(String ruleId) throws KvStorageException {
         RuntimeManger.removeRuntime(ruleId);
+        this.kvStorage.delete(ruleId.getBytes());
+    }
+
+
+    @Override
+    public void resetRuntime(String ruleId) throws KvStorageException {
+        Rule rule = ruleService.get(ruleId);
+        RuntimeManger.resetRuntime(ruleId, new HashMap<>(rule.getVariables()));
         this.kvStorage.delete(ruleId.getBytes());
     }
 }
