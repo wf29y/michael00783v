@@ -1,6 +1,6 @@
 <template>
   <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
-    <a-row :gutter='20'>
+    <a-row :gutter='24'>
       <a-col :span="properties.mode==='SENTINEL'?12:24">
         <a-form-model-item label='模式' prop='mode'>
           <a-select v-model='properties.mode' placeholder='请选择模式'>

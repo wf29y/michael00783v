@@ -1,7 +1,7 @@
 <template>
   <page-header-wrapper :breadcrumb='false'>
     <div style='padding-bottom: 20px'>
-      <a-row :gutter='20'>
+      <a-row :gutter='24'>
         <a-col :span='6'>
           <a-card hoverable :bordered='false'>
             <a-statistic

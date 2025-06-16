@@ -3,7 +3,7 @@
     <a-card style='margin-bottom: 15px' :body-style='{paddingBottom:0}' :bordered='false'>
       <div class='table-page-search-wrapper'>
         <a-form layout='inline'>
-          <a-row :gutter='20'>
+          <a-row :gutter='24'>
             <a-col :md='7' :sm='24'>
               <a-form-item label='资源名称'>
                 <a-input v-model='queryParam.resourceName' placeholder='请输入资源名称' />
@@ -23,7 +23,7 @@
 
     <a-card :body-style='{minHeight:"500px"}' :bordered='false'>
       <a-list
-        :grid='{ gutter: 20, lg: 4, md: 2, sm: 1, xs: 1 }'
+        :grid='{ gutter: 24, lg: 4, md: 2, sm: 1, xs: 1 }'
         :loading='loading'
         :data-source='data'
       >

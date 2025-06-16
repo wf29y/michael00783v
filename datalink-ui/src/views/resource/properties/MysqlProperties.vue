@@ -1,6 +1,6 @@
 <template>
   <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
-    <a-row :gutter='20'>
+    <a-row :gutter='24'>
       <a-col :span='12'>
         <a-form-model-item label='IP' prop='ip'>
           <a-input v-model='properties.ip' placeholder='请输入IP' />

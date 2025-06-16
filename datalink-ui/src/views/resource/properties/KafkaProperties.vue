@@ -1,6 +1,6 @@
 <template>
   <a-form-model layout="vertical" :model="properties" ref='propForm' :rules='rules'>
-    <a-row :gutter='20'>
+    <a-row :gutter='24'>
       <a-col :span='24'>
         <a-form-model-item label='URL' prop='url'>
           <a-input v-model='properties.url' placeholder='请输入URL' />

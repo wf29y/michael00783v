@@ -2,7 +2,7 @@
   <div id="userLayout" :class="['user-layout-wrapper', isMobile && 'mobile']">
     <div class="container">
       <div class="user-layout-lang">
-       <select-lang class="select-lang-trigger" />
+<!--       <select-lang class="select-lang-trigger" />-->
       </div>
       <div class="user-layout-content">
         <div class="top">

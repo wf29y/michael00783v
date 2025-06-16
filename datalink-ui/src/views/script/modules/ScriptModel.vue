@@ -9,21 +9,23 @@
             {{ modal.scriptId ? '编辑' : '新建' }}脚本
           </a-col>
           <a-col :span='12' style='text-align: right'>
+            <a-space size='small'>
             <span style='display: inline-block;margin-right: 30px;color: #b8b4b4'
                   v-if='modal.updateTime'>最后修改：{{ modal.updateTime }}</span>
             <a-popconfirm title='放弃编辑的内容?' @confirm='() => {onClose()}'>
-              <a-button style='width:90px;margin-right: 8px'> 返回</a-button>
+              <a-button style='width:75px;'> 返回</a-button>
             </a-popconfirm>
-            <a-button type='primary' @click='saveScript' style='width:90px'> 保存</a-button>
+            <a-button type='primary' @click='saveScript' style='width:75px'> 保存</a-button>
+            </a-space>
           </a-col>
         </a-row>
       </a-card>
 
-      <a-row :gutter='20'>
+      <a-row :gutter='24'>
 
         <a-col :span='15'>
           <a-card :bordered='false' :body-style='{paddingBottom: 0}'>
-            <a-row :gutter='20'>
+            <a-row :gutter='24'>
               <a-col :span='12'>
                 <a-form-model-item label='名称' prop='scriptName'>
                   <a-input v-model='modal.scriptName' placeholder='请输入脚本名称'></a-input>

@@ -1,5 +1,5 @@
 <template>
-  <a-row :gutter='20'>
+  <a-row :gutter='24'>
     <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24'>
         <a-form-model-item label='路径' prop='path'>

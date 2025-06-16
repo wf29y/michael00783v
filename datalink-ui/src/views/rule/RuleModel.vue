@@ -2,20 +2,22 @@
   <div>
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
 
-      <a-card :bordered='false' style='margin-bottom: 20px' :body-style='{padding:"17px 24px"}'>
+      <a-card :bordered='false' style='margin-bottom: 24px' :body-style='{padding:"17px 24px"}'>
         <a-row>
           <a-col :span='12' style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);padding-top: 4px'>
             {{ modal.ruleId ? '编辑' : '新建' }}规则
           </a-col>
           <a-col :span='12' style='text-align: right'>
-            <a-button @click='onClose' style='width:90px;margin-right: 8px'> 取消</a-button>
-            <a-button @click='saveRule' style='width:90px' type='primary'> 保存</a-button>
+            <a-space size='small'>
+              <a-button @click='onClose' style='width:75px'> 取消</a-button>
+              <a-button @click='saveRule' style='width:75px' type='primary'> 保存</a-button>
+            </a-space>
           </a-col>
         </a-row>
       </a-card>
 
-      <a-card :body-style='{paddingBottom:0}' style='margin-bottom: 20px' :bordered='false'>
-        <a-row :gutter='20'>
+      <a-card :body-style='{paddingBottom:0}' style='margin-bottom: 24px' :bordered='false'>
+        <a-row :gutter='24'>
           <a-col :span='12'>
             <a-form-model-item label='名称' prop='ruleName'>
               <a-input v-model='modal.ruleName' placeholder='请输入规则名称' />
@@ -46,7 +48,7 @@
         </a-row>
       </a-card>
 
-      <a-card style='margin-bottom: 20px' :bordered='false'>
+      <a-card style='margin-bottom: 24px' :bordered='false'>
         <div class='title'>数据源</div>
         <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px' v-if='modal.sourceResource'>
           <a-col :span='18'>
@@ -75,7 +77,7 @@
       </a-card>
 
 
-      <a-card style='margin-bottom: 20px' :bordered='false'>
+      <a-card style='margin-bottom: 24px' :bordered='false'>
         <div class='title'>目标资源</div>
         <a-list :grid='{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='modal.destResourceList'
                 v-if='modal.destResourceList.length>0'>
@@ -110,7 +112,7 @@
       </a-card>
 
 
-      <a-card style='margin-bottom: 20px' :bordered='false' v-if="modal.transformMode!=='WITHOUT'">
+      <a-card style='margin-bottom: 24px' :bordered='false' v-if="modal.transformMode!=='WITHOUT'">
 
         <a-row style='padding: 0'>
           <a-col :span='12' class='title'>数据转换</a-col>
@@ -118,7 +120,7 @@
             @click='selectScript'>选择脚本</a></a-col>
         </a-row>
 
-        <a-row :gutter='20'>
+        <a-row :gutter='24'>
           <a-col :span='24' v-if="modal.transformMode==='SCRIPT'">
             <monaco-editor ref='MonacoEditor' height='300px' :minimap='true'></monaco-editor>
           </a-col>

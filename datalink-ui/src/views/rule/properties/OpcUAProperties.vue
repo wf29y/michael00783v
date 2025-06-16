@@ -1,5 +1,5 @@
 <template>
-  <a-row :gutter='20'>
+  <a-row :gutter='24'>
     <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
       <a-col :span='24' v-if='type==="source"'>
         <a-form-model-item label='时间单位' prop='timeUnit'>
