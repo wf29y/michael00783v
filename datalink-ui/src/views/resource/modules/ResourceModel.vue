@@ -158,13 +158,17 @@ export default {
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
     testDriver() {
-      this.modal.properties = this.$refs.PropertiesModal.get()
-      postAction(this.url.test, this.modal).then((res) => {
-        if (res.code === 200 && res.data === true) {
-          this.$message.success('连接成功')
-        } else {
-          this.$message.error('连接失败')
-        }
+      let that = this;
+      this.$refs.PropertiesModal.get((checked, prop) => {
+        if (!checked) return false;
+        that.modal.properties = prop;
+        postAction(that.url.test, that.modal).then((res) => {
+          if (res.code === 200 && res.data === true) {
+            that.$message.success('连接成功')
+          } else {
+            that.$message.error('连接失败')
+          }
+        })
       })
     }
   }
