@@ -9,7 +9,7 @@
   >
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-form-model-item label='名称' prop='pluginName'>
-        <a-input v-model='modal.pluginName' placeholder='请输入插件名称'></a-input>
+        <a-input v-model='modal.pluginName' placeholder='请上传插件文件' :read-only='true'></a-input>
       </a-form-model-item>
       <a-form-model-item label='包路径' prop='packagePath'>
         <a-input v-model='modal.packagePath' placeholder='请输入包路径'></a-input>

@@ -69,7 +69,7 @@ public class RuleActor extends AbstractActor {
 
     @Override
     public Receive createReceive() {
-        return receiveBuilder().match(ReceiveDataMsg.class, (msg)->{
+        return receiveBuilder().match(ReceiveDataMsg.class, (msg) -> {
             Object data = msg.getData();
 
             RuntimeUpdateDataMsg runtimeMsg = new RuntimeUpdateDataMsg();
@@ -101,7 +101,6 @@ public class RuleActor extends AbstractActor {
             }
         }).build();
     }
-
 
 
 }

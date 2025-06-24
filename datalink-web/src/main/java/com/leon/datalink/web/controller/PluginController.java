@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.script.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,13 +46,12 @@ public class PluginController {
      * @throws IOException
      */
     @PostMapping(value = "/upload", consumes = "multipart/*", headers = "Content-Type=multipart/form-data")
-    public Object uploadJar(@RequestParam("file") MultipartFile jarFile) throws IOException {
+    public Object uploadJar(@RequestParam("file") MultipartFile jarFile) throws IOException, KvStorageException {
         if (jarFile == null || jarFile.getOriginalFilename() == null) {
             return null;
         }
         String filename = jarFile.getOriginalFilename();
-        DiskUtils.forceMkdir(Constants.PLUGIN_FILE_PATH);
-        jarFile.transferTo(new File(Constants.PLUGIN_FILE_PATH + filename));
+        pluginService.upload(filename, jarFile.getBytes());
 
         HashMap<String, String> result = new HashMap<>();
         result.put("name", filename);

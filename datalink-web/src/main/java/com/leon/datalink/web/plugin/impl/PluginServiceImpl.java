@@ -1,8 +1,10 @@
 package com.leon.datalink.web.plugin.impl;
 
+import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
+import com.leon.datalink.core.storage.kv.FileKvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
@@ -11,6 +13,7 @@ import com.leon.datalink.rule.entity.Script;
 import com.leon.datalink.web.plugin.PluginService;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -39,6 +42,11 @@ public class PluginServiceImpl implements PluginService {
     private final KvStorage kvStorage;
 
     /**
+     * file storage
+     */
+    private final KvStorage fileStorage;
+
+    /**
      * 插件持久化路径
      */
     private final static String PLUGIN_PATH = "/plugin";
@@ -47,6 +55,9 @@ public class PluginServiceImpl implements PluginService {
 
         // init storage
         this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + PLUGIN_PATH);
+
+        // init file storage
+        this.fileStorage = new FileKvStorage(Constants.PLUGIN_FILE_PATH);
 
         // read plugin list form storage
         if (this.kvStorage.allKeys().size() <= 0) return;
@@ -57,6 +68,11 @@ public class PluginServiceImpl implements PluginService {
             pluginList.put(pluginId, plugin);
         }
 
+    }
+
+    @Override
+    public void upload(String fileName, byte[] file) throws KvStorageException {
+         fileStorage.put(fileName.getBytes(),file);
     }
 
     @Override
@@ -98,6 +114,7 @@ public class PluginServiceImpl implements PluginService {
     public int getCount(Plugin plugin) {
         return this.list(plugin).size();
     }
+
 
 
 }

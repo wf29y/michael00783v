@@ -5,7 +5,7 @@
       <a-row>
         <a-col :span='12' style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);padding-top: 4px'>
           {{ rule.ruleName }}
-          <a-tag color="green" v-if='rule.enable' style='margin-left: 10px'>
+          <a-tag color='green' v-if='rule.enable' style='margin-left: 10px'>
             运行中
           </a-tag>
         </a-col>
@@ -57,6 +57,9 @@
           <span v-else>{{ transformModeMap[rule.transformMode] }}</span>
         </a-descriptions-item>
         <a-descriptions-item label='备注'> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
+        <a-descriptions-item label='转换插件' v-if='rule.transformMode==="PLUGIN"'>
+          {{plugin.pluginName}}
+        </a-descriptions-item>
       </a-descriptions>
 
     </a-card>
@@ -171,11 +174,13 @@ export default {
       url: {
         runtime: '/api/runtime/info',
         rule: '/api/rule/info',
-        reset: '/api/runtime/reset'
+        reset: '/api/runtime/reset',
+        plugin: '/api/plugin/info'
       },
       rule: {},
       runtime: {},
       variables: [],
+      plugin: {},
       transformModeMap: transformModeMap,
       resourceTypeMap: resourceTypeMap,
       dataColumns: [
@@ -225,9 +230,9 @@ export default {
     this.getInfo()
   },
   computed: {
-    title() {
-      return this.$route.meta.title
-    }
+    // title() {
+    //   return this.$route.meta.title
+    // }
   },
   methods: {
     showScript() {
@@ -258,26 +263,33 @@ export default {
         getAction(this.url.rule, { ruleId: this.ruleId }).then(res => {
           this.rule = res.data
           if (!this.rule) return
-
-          getAction(this.url.runtime, { ruleId: this.ruleId }).then(res => {
-            this.runtime = res.data
-
-            this.variables = []
-            if (!this.rule.variables) return
-            let keys = Object.keys(this.rule.variables)
-            for (let key of keys) {
-              this.variables.push({
-                name: key,
-                value: this.runtime.variables[key],
-                initValue: this.rule.variables[key]
-              })
-            }
-
-          })
-
-
+          this.getRuntime()
+          if (this.rule.transformMode === 'PLUGIN') {
+            this.getPlugin()
+          }
         })
       }
+    },
+    getRuntime() {
+      getAction(this.url.runtime, { ruleId: this.ruleId }).then(res => {
+        this.runtime = res.data
+
+        this.variables = []
+        if (!this.rule.variables) return
+        let keys = Object.keys(this.rule.variables)
+        for (let key of keys) {
+          this.variables.push({
+            name: key,
+            value: this.runtime.variables[key],
+            initValue: this.rule.variables[key]
+          })
+        }
+      })
+    },
+    getPlugin() {
+      getAction(this.url.plugin, { pluginId: this.rule.pluginId }).then(res => {
+        this.plugin = res.data
+      })
     },
     onClose() {
       this.$router.push({ name: 'ruleList' })

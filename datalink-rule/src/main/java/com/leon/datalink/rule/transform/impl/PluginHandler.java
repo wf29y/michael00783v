@@ -12,6 +12,7 @@ import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.rule.transform.TransformHandler;
 import com.leon.datalink.runtime.RuntimeManger;
 
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class PluginHandler implements TransformHandler {
@@ -26,7 +27,7 @@ public class PluginHandler implements TransformHandler {
         // 创建插件
         Plugin plugin = rule.getPlugin();
         try {
-            this.transformPlugin = PluginFactory.createTransformPlugin(Constants.PLUGIN_FILE_PATH + plugin.getPluginName(), plugin.getPackagePath());
+            this.transformPlugin = PluginFactory.createTransformPlugin(Paths.get(Constants.PLUGIN_FILE_PATH, plugin.getPluginName()).toString(), plugin.getPackagePath());
             if (null != transformPlugin) {
                 transformPlugin.create();
             }
