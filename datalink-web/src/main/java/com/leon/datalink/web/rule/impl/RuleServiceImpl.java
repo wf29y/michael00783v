@@ -7,12 +7,15 @@ import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
+import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
+import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.actor.RuleActor;
 import com.leon.datalink.rule.constants.TransformModeEnum;
 import com.leon.datalink.rule.entity.Plugin;
 import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.plugin.PluginService;
 import com.leon.datalink.web.rule.RuleService;
 import com.leon.datalink.web.runtime.RuntimeService;
@@ -20,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -35,7 +39,7 @@ import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
  * @Version V1.0
  **/
 @Service
-public class RuleServiceImpl implements RuleService {
+public class RuleServiceImpl implements RuleService, BackupData<Rule> {
 
 
     ActorSystem actorSystem;
@@ -98,6 +102,7 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public void remove(Rule rule) throws KvStorageException {
+        this.stopRule(rule);
         this.kvStorage.delete(rule.getRuleId().getBytes());
         ruleList.remove(rule.getRuleId());
         runtimeService.remove(rule.getRuleId());
@@ -148,6 +153,9 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public void stopRule(Rule rule) {
         String ruleId = rule.getRuleId();
+
+        if (!this.get(ruleId).isEnable()) return;
+
         // 停止rule actor
         actorSystem.stop(ruleActorRefList.get(ruleId));
         ruleActorRefList.remove(ruleId);
@@ -156,4 +164,28 @@ public class RuleServiceImpl implements RuleService {
         ruleList.put(ruleId, rule);
     }
 
+    @Override
+    public String dataKey() {
+        return "rules";
+    }
+
+    @Override
+    public List<Rule> createBackup() {
+        return this.list(new Rule());
+    }
+
+    @Override
+    public void recoverBackup(List<Rule> dataList) {
+        try {
+            List<Rule> list = this.list(new Rule());
+            for (Rule rule : list) {
+                this.remove(rule);
+            }
+            for (Rule rule : dataList) {
+                this.add(rule);
+            }
+        } catch (KvStorageException e) {
+            Loggers.WEB.error("recover rule backup error {}", e.getMessage());
+        }
+    }
 }

@@ -26,7 +26,7 @@ public class VariableController {
      * @throws Exception
      */
     @PostMapping("/add")
-    public void addResource(@RequestBody Variable variable) throws Exception {
+    public void addVariable(@RequestBody Variable variable) throws Exception {
         variableService.add(variable);
     }
 
@@ -36,7 +36,7 @@ public class VariableController {
      * @param variable
      */
     @PostMapping("/list")
-    public Object listResource(@RequestBody Variable variable) {
+    public Object listVariable(@RequestBody Variable variable) {
         return variableService.list(variable);
     }
 
@@ -47,7 +47,7 @@ public class VariableController {
      * @throws Exception
      */
     @PostMapping("/remove")
-    public void removeResource(@RequestBody Variable variable) throws Exception {
+    public void removeVariable(@RequestBody Variable variable) throws Exception {
         variableService.remove(variable);
     }
 
@@ -58,7 +58,7 @@ public class VariableController {
      * @throws Exception
      */
     @PutMapping("/update")
-    public void updateResource(@RequestBody Variable variable) throws Exception {
+    public void updateVariable(@RequestBody Variable variable) throws Exception {
         variableService.update(variable);
     }
 

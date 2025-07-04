@@ -36,7 +36,7 @@ public class ScriptController {
      * @throws KvStorageException
      */
     @GetMapping("/info")
-    public Object getRule(@RequestParam(value = "scriptId") String scriptId) {
+    public Object getScript(@RequestParam(value = "scriptId") String scriptId) {
         return scriptService.get(scriptId);
     }
 
@@ -48,7 +48,7 @@ public class ScriptController {
      * @throws KvStorageException
      */
     @PostMapping("/add")
-    public Object addRule(@RequestBody Script script) throws Exception {
+    public Object addScript(@RequestBody Script script) throws Exception {
         String now = DateUtil.now();
         script.setUpdateTime(now);
         scriptService.add(script);
@@ -99,7 +99,7 @@ public class ScriptController {
      * @param script
      */
     @PostMapping("/list")
-    public Object listRule(@RequestBody Script script) {
+    public Object listScript(@RequestBody Script script) {
         return scriptService.list(script);
     }
 
@@ -110,7 +110,7 @@ public class ScriptController {
      * @throws Exception
      */
     @PostMapping("/remove")
-    public void removeRule(@RequestBody Script script) throws Exception {
+    public void removeScript(@RequestBody Script script) throws Exception {
         scriptService.remove(script);
     }
 
@@ -121,7 +121,7 @@ public class ScriptController {
      * @throws Exception
      */
     @PutMapping("/update")
-    public Object updateRule(@RequestBody Script script) throws Exception {
+    public Object updateScript(@RequestBody Script script) throws Exception {
         String now = DateUtil.now();
         script.setUpdateTime(now);
         scriptService.update(script);

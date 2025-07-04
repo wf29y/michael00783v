@@ -4,11 +4,13 @@ import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
+import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.driver.Driver;
 import com.leon.datalink.driver.DriverFactory;
 import com.leon.datalink.resource.Resource;
+import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.resource.ResourceService;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
  * @Version V1.0
  **/
 @Service
-public class ResourceServiceImpl implements ResourceService {
+public class ResourceServiceImpl implements ResourceService, BackupData<Resource> {
 
     /**
      * 资源列表
@@ -109,4 +111,28 @@ public class ResourceServiceImpl implements ResourceService {
         return driver.test();
     }
 
+    @Override
+    public String dataKey() {
+        return "resources";
+    }
+
+    @Override
+    public List<Resource> createBackup() {
+        return list(new Resource());
+    }
+
+    @Override
+    public void recoverBackup(List<Resource> dataList) {
+        try {
+            List<Resource> list = this.list(new Resource());
+            for (Resource resource : list) {
+                this.remove(resource);
+            }
+            for (Resource resource : dataList) {
+                this.add(resource);
+            }
+        } catch (KvStorageException e) {
+            Loggers.WEB.error("recover resource backup error {}",e.getMessage());
+        }
+    }
 }

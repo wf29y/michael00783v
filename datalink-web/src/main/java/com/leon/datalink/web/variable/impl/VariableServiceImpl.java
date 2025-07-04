@@ -5,10 +5,13 @@ import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
+import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.core.variable.Variable;
 import com.leon.datalink.core.variable.VariableTypeEnum;
+import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.variable.VariableService;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +24,7 @@ import java.util.stream.Stream;
 import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 @Service
-public class VariableServiceImpl implements VariableService {
+public class VariableServiceImpl implements VariableService, BackupData<Variable> {
 
     /**
      * key value storage
@@ -87,6 +90,9 @@ public class VariableServiceImpl implements VariableService {
             if (!StringUtils.isEmpty(variable.getKey())) {
                 stream = stream.filter(r -> r.getKey().contains(variable.getKey()));
             }
+            if (null != variable.getType()) {
+                stream = stream.filter(r -> r.getType().equals(variable.getType()));
+            }
         }
         return stream.sorted(Comparator.comparing(Variable::getType)).collect(Collectors.toList());
     }
@@ -94,5 +100,34 @@ public class VariableServiceImpl implements VariableService {
     @Override
     public int getCount(Variable variable) {
         return GlobalVariableContent.getAll().size();
+    }
+
+    @Override
+    public String dataKey() {
+        return "variables";
+    }
+
+    @Override
+    public List<Variable> createBackup() {
+        Variable variable = new Variable();
+        variable.setType(VariableTypeEnum.CUSTOM);
+        return this.list(variable);
+    }
+
+    @Override
+    public void recoverBackup(List<Variable> dataList) {
+        try {
+            Variable variable = new Variable();
+            variable.setType(VariableTypeEnum.CUSTOM);
+            List<Variable> list = this.list(variable);
+            for (Variable var : list) {
+                this.remove(var);
+            }
+            for (Variable var : dataList) {
+                this.add(var);
+            }
+        } catch (KvStorageException e) {
+            Loggers.WEB.error("recover variable backup error {}", e.getMessage());
+        }
     }
 }

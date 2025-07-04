@@ -17,7 +17,7 @@ public class GlobalVariableContent {
 
     static {
         globalVariable.put("version", new Variable("version", VersionUtils.version, "系统版本", VariableTypeEnum.SYSTEM));
-        globalVariable.put("timeStamp", new Variable("timeStamp", null, "时间戳", VariableTypeEnum.SYSTEM));
+        globalVariable.put("timestamp", new Variable("timestamp", null, "时间戳", VariableTypeEnum.SYSTEM));
         globalVariable.put("date", new Variable("date", null, "日期", VariableTypeEnum.SYSTEM));
         globalVariable.put("dateTime", new Variable("dateTime", null, "日期时间", VariableTypeEnum.SYSTEM));
         globalVariable.put("uuid", new Variable("uuid", null, "UUID", VariableTypeEnum.SYSTEM));
@@ -25,7 +25,7 @@ public class GlobalVariableContent {
 
     private static void freshSystemVariable() {
         DateTime now = DateTime.now();
-        setValue("timeStamp", now.getTime());
+        setValue("timestamp", now.getTime());
         setValue("date", DateUtil.format(now, "yyyy-MM-dd"));
         setValue("dateTime", DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
         setValue("uuid", UUID.randomUUID().toString());

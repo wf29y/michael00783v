@@ -40,6 +40,8 @@
           <template>
             <a @click='handleEdit(record)'>编辑</a>
             <a-divider type='vertical' />
+              <a @click='download(record)'>下载</a>
+            <a-divider type='vertical' />
             <a-popconfirm v-if='dataSource.length' title='删除此插件?' @confirm='() => handleDelete(record)'>
               <a href='javascript:;'>删除</a>
             </a-popconfirm>
@@ -53,7 +55,7 @@
 
 <script>
 
-import { postAction } from '@/api/manage'
+import { downFile, postAction } from '@/api/manage'
 import PluginModel from './modules/PluginModel'
 
 export default {
@@ -103,7 +105,7 @@ export default {
       })
     },
     handleDelete(record) {
-      postAction('/api/plugin/remove', { pluginId: record.pluginId }).then(res => {
+      postAction('/api/plugin/remove', record).then(res => {
         if (res.code === 200) {
           this.$message.success('删除成功')
           this.loadData()
@@ -121,7 +123,20 @@ export default {
     reset() {
       this.queryParam = {}
       this.loadData()
-    }
+    },
+    download(record) {
+      downFile('/api/plugin/download', { pluginName: record.pluginName }).then(res => {
+        const blob = new Blob([res])
+        let downloadElement = document.createElement('a')
+        let href = window.URL.createObjectURL(blob)
+        downloadElement.href = href
+        downloadElement.download = decodeURIComponent(record.pluginName)
+        document.body.appendChild(downloadElement)
+        downloadElement.click()
+        document.body.removeChild(downloadElement)
+        window.URL.revokeObjectURL(href)
+      })
+    },
   }
 }
 </script>

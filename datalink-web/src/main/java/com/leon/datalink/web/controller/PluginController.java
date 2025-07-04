@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.script.*;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -46,16 +48,30 @@ public class PluginController {
      * @throws IOException
      */
     @PostMapping(value = "/upload", consumes = "multipart/*", headers = "Content-Type=multipart/form-data")
-    public Object uploadJar(@RequestParam("file") MultipartFile jarFile) throws IOException, KvStorageException {
+    public Object upload(@RequestParam("file") MultipartFile jarFile) throws IOException, KvStorageException {
         if (jarFile == null || jarFile.getOriginalFilename() == null) {
             return null;
         }
-        String filename = jarFile.getOriginalFilename();
-        pluginService.upload(filename, jarFile.getBytes());
+        String pluginName = jarFile.getOriginalFilename();
+        pluginService.upload(pluginName, jarFile.getBytes());
 
         HashMap<String, String> result = new HashMap<>();
-        result.put("name", filename);
+        result.put("name", pluginName);
         return result;
+    }
+
+
+
+    /**
+     * 下载插件文件
+     */
+    @GetMapping(value = "/download")
+    public void download(@RequestParam("pluginName") String pluginName, HttpServletResponse response) throws IOException, KvStorageException {
+        response.setHeader("Content-Disposition", "attachment;filename=" + pluginName);
+        response.setContentType("application/octet-stream");
+        OutputStream out = response.getOutputStream();
+        out.write(pluginService.download(pluginName));
+        out.flush();
     }
 
     /**
@@ -65,7 +81,7 @@ public class PluginController {
      * @throws KvStorageException
      */
     @GetMapping("/info")
-    public Object getRule(@RequestParam(value = "pluginId") String pluginId) {
+    public Object getPlugin(@RequestParam(value = "pluginId") String pluginId) {
         return pluginService.get(pluginId);
     }
 
@@ -77,11 +93,9 @@ public class PluginController {
      * @throws KvStorageException
      */
     @PostMapping("/add")
-    public Object addRule(@RequestBody Plugin plugin) throws Exception {
-        String now = DateUtil.now();
-        plugin.setUpdateTime(now);
+    public void addPlugin(@RequestBody Plugin plugin) throws Exception {
+        plugin.setUpdateTime(DateUtil.now());
         pluginService.add(plugin);
-        return plugin;
     }
 
     /**
@@ -90,7 +104,7 @@ public class PluginController {
      * @param plugin
      */
     @PostMapping("/list")
-    public Object listRule(@RequestBody Plugin plugin) {
+    public Object listPlugin(@RequestBody Plugin plugin) {
         return pluginService.list(plugin);
     }
 
@@ -101,7 +115,7 @@ public class PluginController {
      * @throws Exception
      */
     @PostMapping("/remove")
-    public void removeRule(@RequestBody Plugin plugin) throws Exception {
+    public void removePlugin(@RequestBody Plugin plugin) throws Exception {
         pluginService.remove(plugin);
     }
 
@@ -112,11 +126,9 @@ public class PluginController {
      * @throws Exception
      */
     @PutMapping("/update")
-    public Object updateRule(@RequestBody Plugin plugin) throws Exception {
-        String now = DateUtil.now();
-        plugin.setUpdateTime(now);
+    public void updatePlugin(@RequestBody Plugin plugin) throws Exception {
+        plugin.setUpdateTime(DateUtil.now());
         pluginService.update(plugin);
-        return plugin;
     }
 
 }

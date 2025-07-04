@@ -71,8 +71,13 @@ public class PluginServiceImpl implements PluginService {
     }
 
     @Override
-    public void upload(String fileName, byte[] file) throws KvStorageException {
-         fileStorage.put(fileName.getBytes(),file);
+    public void upload(String pluginName, byte[] file) throws KvStorageException {
+         fileStorage.put(pluginName.getBytes(),file);
+    }
+
+    @Override
+    public byte[] download(String fileName) throws KvStorageException {
+        return this.fileStorage.get(fileName.getBytes());
     }
 
     @Override
@@ -90,6 +95,7 @@ public class PluginServiceImpl implements PluginService {
     @Override
     public void remove(Plugin plugin) throws KvStorageException {
         this.kvStorage.delete(plugin.getPluginId().getBytes());
+        this.fileStorage.delete(plugin.getPluginName().getBytes());
         pluginList.remove(plugin.getPluginId());
     }
 

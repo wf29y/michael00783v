@@ -21,11 +21,8 @@
     <a-form-item label='文件上传'>
       <div :key='Math.random()'>
         <a-upload
-          :action='uploadUrl'
           :showUploadList='false'
-          method='post'
           :beforeUpload='checkFile'
-          name='file'
           @change='handlerUpload'
           :customRequest='customRequest'
         >
@@ -78,11 +75,6 @@ export default {
         packagePath: [{ required: true, message: '请输入包路径', trigger: 'blur' }]
       },
       isEdit: false
-    }
-  },
-  computed: {
-    uploadUrl: function() {
-      return `${process.env.VUE_APP_API_BASE_URL}/api/plugin/upload`
     }
   },
   methods: {

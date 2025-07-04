@@ -7,6 +7,8 @@ import com.leon.datalink.rule.entity.Script;
 
 public interface PluginService extends BaseService<Plugin> {
 
-    void upload(String fileName,byte[] file) throws KvStorageException;
+    void upload(String pluginName,byte[] file) throws KvStorageException;
+
+    byte[] download(String pluginName) throws KvStorageException;
 
 }

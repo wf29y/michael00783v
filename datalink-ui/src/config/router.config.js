@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-import { home,resource,rule,script,variable,plugin } from '@/core/icons'
+import { home, resource, rule, script, variable, plugin, backup } from '@/core/icons'
 
 const RouteView = {
   name: 'RouteView',
@@ -19,19 +19,19 @@ export const asyncRouterMap = [
         path: '/dashboard/monitor',
         name: 'Monitor',
         component: () => import('@/views/dashboard/Monitor'),
-        meta: { title: '监控', keepAlive: false, icon: home, permission: ['dashboard'] },
+        meta: { title: '监控', keepAlive: false, icon: home, permission: ['dashboard'] }
       },
       {
         path: '/resource/list',
         name: 'resourceList',
         component: () => import('@/views/resource/ResourceList'),
-        meta: { title: '资源', keepAlive: true, icon: resource, permission: ['resource'] },
+        meta: { title: '资源管理', keepAlive: true, icon: resource, permission: ['resource'] }
       },
       {
         path: '/rule/list',
         name: 'ruleList',
         component: () => import('@/views/rule/RuleList'),
-        meta: { title: '规则', keepAlive: true, icon: rule, permission: ['rule'] },
+        meta: { title: '连接规则', keepAlive: true, icon: rule, permission: ['rule'] }
       },
       {
         path: '/rule/info/:ruleId',
@@ -51,7 +51,7 @@ export const asyncRouterMap = [
         path: '/script/list',
         name: 'scriptList',
         component: () => import('@/views/script/ScriptList'),
-        meta: { title: '脚本', keepAlive: true, icon: script, permission: ['script'] },
+        meta: { title: '脚本管理', keepAlive: true, icon: script, permission: ['script'] }
       },
       {
         path: '/script/info/:scriptId',
@@ -64,14 +64,20 @@ export const asyncRouterMap = [
         path: '/plugin/list',
         name: 'pluginList',
         component: () => import('@/views/plugin/PluginList'),
-        meta: { title: '插件', keepAlive: true, icon: plugin, permission: ['plugin'] },
+        meta: { title: '插件管理', keepAlive: true, icon: plugin, permission: ['plugin'] }
       },
       {
         path: '/variable/list',
         name: 'variableList',
         component: () => import('@/views/variable/VariableList'),
-        meta: { title: '变量', keepAlive: true, icon: variable, permission: ['variable'] },
+        meta: { title: '全局变量', keepAlive: true, icon: variable, permission: ['variable'] }
       },
+      {
+        path: '/backup/list',
+        name: 'backupList',
+        component: () => import('@/views/backup/BackupList'),
+        meta: { title: '数据备份', keepAlive: true, icon: backup, permission: ['backup'] }
+      }
     ]
   },
   {
@@ -97,16 +103,16 @@ export const constantRouterMap = [
         name: 'login',
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login')
       },
-    /*  {
-        path: 'register',
-        name: 'register',
-        component: () => import(/!* webpackChunkName: "user" *!/ '@/views/user/Register')
-      },*/
-     /* {
-        path: 'register-result',
-        name: 'registerResult',
-        component: () => import(/!* webpackChunkName: "user" *!/ '@/views/user/RegisterResult')
-      },*/
+      /*  {
+          path: 'register',
+          name: 'register',
+          component: () => import(/!* webpackChunkName: "user" *!/ '@/views/user/Register')
+        },*/
+      /* {
+         path: 'register-result',
+         name: 'registerResult',
+         component: () => import(/!* webpackChunkName: "user" *!/ '@/views/user/RegisterResult')
+       },*/
       {
         path: 'recover',
         name: 'recover',

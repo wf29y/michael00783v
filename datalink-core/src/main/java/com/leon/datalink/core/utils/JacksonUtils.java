@@ -2,6 +2,7 @@
 
 package com.leon.datalink.core.utils;
 
+import cn.hutool.core.util.ClassUtil;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,12 +13,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.leon.datalink.core.exception.runtime.DatalinkDeserializationException;
 import com.leon.datalink.core.exception.runtime.DatalinkSerializationException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Json utils implement by Jackson.
@@ -25,14 +31,14 @@ import java.lang.reflect.Type;
  * @author Leon
  */
 public final class JacksonUtils {
-    
+
     static ObjectMapper mapper = new ObjectMapper();
-    
+
     static {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         mapper.setSerializationInclusion(Include.NON_NULL);
     }
-    
+
     /**
      * Object to json string.
      *
@@ -47,7 +53,7 @@ public final class JacksonUtils {
             throw new DatalinkSerializationException(obj.getClass(), e);
         }
     }
-    
+
     /**
      * Object to json string byte array.
      *
@@ -62,7 +68,7 @@ public final class JacksonUtils {
             throw new DatalinkSerializationException(obj.getClass(), e);
         }
     }
-    
+
     /**
      * Json string deserialize to Object.
      *
@@ -79,7 +85,7 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(cls, e);
         }
     }
-    
+
     /**
      * Json string deserialize to Object.
      *
@@ -96,7 +102,7 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(e);
         }
     }
-    
+
     /**
      * Json string deserialize to Object.
      *
@@ -113,7 +119,7 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(e);
         }
     }
-    
+
     /**
      * Json string deserialize to Object.
      *
@@ -130,7 +136,7 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(e);
         }
     }
-    
+
     /**
      * Json string deserialize to Object.
      *
@@ -147,7 +153,7 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(cls, e);
         }
     }
-    
+
     /**
      * Json string deserialize to Object.
      *
@@ -164,7 +170,7 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(e);
         }
     }
-    
+
     /**
      * Json string deserialize to Object.
      *
@@ -181,7 +187,7 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(typeReference.getClass(), e);
         }
     }
-    
+
     /**
      * Json string deserialize to Object.
      *
@@ -198,7 +204,7 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(type, e);
         }
     }
-    
+
     /**
      * Json string deserialize to Jackson {@link JsonNode}.
      *
@@ -213,7 +219,18 @@ public final class JacksonUtils {
             throw new DatalinkDeserializationException(e);
         }
     }
-    
+
+    public static <T> T toMapObj(byte[] json, Class<?> keyClass, Class<?> valueClass) {
+        MapType mapType = TypeFactory.defaultInstance().constructMapType(Map.class, keyClass, valueClass);
+        return toObj(json, mapType);
+    }
+
+    public static <T> T toListObj(Object obj, Class<?> typeClass) {
+        CollectionType collectionType = TypeFactory.defaultInstance().constructCollectionType(List.class, typeClass);
+        return mapper.convertValue(obj, collectionType);
+    }
+
+
     /**
      * Register sub type for child class.
      *
@@ -223,7 +240,7 @@ public final class JacksonUtils {
     public static void registerSubtype(Class<?> clz, String type) {
         mapper.registerSubtypes(new NamedType(clz, type));
     }
-    
+
     /**
      * Create a new empty Jackson {@link ObjectNode}.
      *
@@ -232,7 +249,7 @@ public final class JacksonUtils {
     public static ObjectNode createEmptyJsonNode() {
         return new ObjectNode(mapper.getNodeFactory());
     }
-    
+
     /**
      * Create a new empty Jackson {@link ArrayNode}.
      *
@@ -241,7 +258,7 @@ public final class JacksonUtils {
     public static ArrayNode createEmptyArrayNode() {
         return new ArrayNode(mapper.getNodeFactory());
     }
-    
+
     /**
      * Parse object to Jackson {@link JsonNode}.
      *
@@ -251,7 +268,7 @@ public final class JacksonUtils {
     public static JsonNode transferToJsonNode(Object obj) {
         return mapper.valueToTree(obj);
     }
-    
+
     /**
      * construct java type -> Jackson Java Type.
      *
