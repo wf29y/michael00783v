@@ -66,6 +66,8 @@
             </a-descriptions>
           </a-col>
           <a-col :span='6' style='text-align: right'>
+            <a @click='freshResource("source",modal.sourceResource)'>刷新</a>
+            <a-divider type='vertical' />
             <a @click='editResource("source",modal.sourceResource)'>配置</a>
             <a-divider type='vertical' />
             <a-popconfirm title='移除此资源?' @confirm='() => deleteResource("source")'>
@@ -98,6 +100,8 @@
                 </a-descriptions>
               </a-col>
               <a-col :span='6' style='text-align: right'>
+                <a @click='freshResource("dest",resource,index)'>刷新</a>
+                <a-divider type='vertical' />
                 <a @click='editResource("dest",resource,index)'>配置</a>
                 <a-divider type='vertical' />
                 <a-popconfirm title='移除此资源?' @confirm='() => deleteResource("dest",index)'>
@@ -170,7 +174,8 @@ export default {
         add: '/api/rule/add',
         update: '/api/rule/update',
         info: '/api/rule/info',
-        plugin: '/api/plugin/list'
+        plugin: '/api/plugin/list',
+        resource: '/api/resource/info'
       },
       rules: {
         ruleName: [{ required: true, message: '请输入规则名称', trigger: 'blur' }],
@@ -241,7 +246,19 @@ export default {
         this.modal.sourceResource = null
       }
     },
-
+    freshResource(mode, resource, index) {
+      getAction(this.url.resource, { resourceId: resource.resourceId }).then((res) => {
+        if(res.code === 200){
+          let tempProperties = Object.assign({}, resource.properties, res.data.properties)
+          let result = Object.assign({}, resource, res.data)
+          result.properties = tempProperties;
+          this.handleUpdateResource(mode, result, index)
+          this.$message.success("刷新成功")
+        }else {
+          this.$message.error("刷新失败")
+        }
+      })
+    },
     handleAddResource(mode, resource) {
       if (mode === 'dest') {
         this.modal.destResourceList.push(resource)

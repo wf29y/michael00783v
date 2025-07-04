@@ -20,6 +20,17 @@ public class ResourcesController {
     private ResourceService resourceService;
 
     /**
+     * 查询资源
+     *
+     * @param resourceId
+     */
+    @GetMapping("/info")
+    public Object getResource(@RequestParam(value = "resourceId") String resourceId) {
+        return resourceService.get(resourceId);
+    }
+
+
+    /**
      * 新增资源
      *
      * @param resource
