@@ -9,11 +9,9 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.rule.entity.Plugin;
-import com.leon.datalink.rule.entity.Script;
 import com.leon.datalink.web.plugin.PluginService;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -72,7 +70,7 @@ public class PluginServiceImpl implements PluginService {
 
     @Override
     public void upload(String pluginName, byte[] file) throws KvStorageException {
-         fileStorage.put(pluginName.getBytes(),file);
+        fileStorage.put(pluginName.getBytes(), file);
     }
 
     @Override
@@ -81,8 +79,8 @@ public class PluginServiceImpl implements PluginService {
     }
 
     @Override
-    public Plugin get(String scriptId) {
-        return pluginList.get(scriptId);
+    public Plugin get(String pluginId) {
+        return pluginList.get(pluginId);
     }
 
     @Override
@@ -93,8 +91,9 @@ public class PluginServiceImpl implements PluginService {
     }
 
     @Override
-    public void remove(Plugin plugin) throws KvStorageException {
-        this.kvStorage.delete(plugin.getPluginId().getBytes());
+    public void remove(String pluginId) throws KvStorageException {
+        Plugin plugin = this.get(pluginId);
+        this.kvStorage.delete(pluginId.getBytes());
         this.fileStorage.delete(plugin.getPluginName().getBytes());
         pluginList.remove(plugin.getPluginId());
     }
@@ -120,7 +119,6 @@ public class PluginServiceImpl implements PluginService {
     public int getCount(Plugin plugin) {
         return this.list(plugin).size();
     }
-
 
 
 }

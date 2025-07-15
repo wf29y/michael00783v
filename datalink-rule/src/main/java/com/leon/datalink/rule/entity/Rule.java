@@ -28,105 +28,128 @@ public class Rule implements Serializable {
 
     private Plugin plugin;
 
-    private Map<String,Object> variables;
+    private Map<String, Object> variables;
 
     private boolean enable = false;
 
     private boolean ignoreNullValue;
 
+    private String searchResourceId;
+
     public String getRuleId() {
         return ruleId;
     }
 
-    public void setRuleId(String ruleId) {
+    public Rule setRuleId(String ruleId) {
         this.ruleId = ruleId;
+        return this;
     }
 
     public Resource getSourceResource() {
         return sourceResource;
     }
 
-    public void setSourceResource(Resource sourceResource) {
+    public Rule setSourceResource(Resource sourceResource) {
         this.sourceResource = sourceResource;
+        return this;
     }
 
     public List<Resource> getDestResourceList() {
         return destResourceList;
     }
 
-    public void setDestResourceList(List<Resource> destResourceList) {
+    public Rule setDestResourceList(List<Resource> destResourceList) {
         this.destResourceList = destResourceList;
+        return this;
     }
 
     public String getRuleName() {
         return ruleName;
     }
 
-    public void setRuleName(String ruleName) {
+    public Rule setRuleName(String ruleName) {
         this.ruleName = ruleName;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public Rule setDescription(String description) {
         this.description = description;
+        return this;
     }
 
     public String getScript() {
         return script;
     }
 
-    public void setScript(String script) {
+    public Rule setScript(String script) {
         this.script = script;
+        return this;
     }
 
     public TransformModeEnum getTransformMode() {
         return transformMode;
     }
 
-    public void setTransformMode(TransformModeEnum transformMode) {
+    public Rule setTransformMode(TransformModeEnum transformMode) {
         this.transformMode = transformMode;
+        return this;
     }
 
     public boolean isEnable() {
         return enable;
     }
 
-    public void setEnable(boolean enable) {
+    public Rule setEnable(boolean enable) {
         this.enable = enable;
+        return this;
     }
 
     public boolean isIgnoreNullValue() {
         return ignoreNullValue;
     }
 
-    public void setIgnoreNullValue(boolean ignoreNullValue) {
+    public Rule setIgnoreNullValue(boolean ignoreNullValue) {
         this.ignoreNullValue = ignoreNullValue;
+        return this;
     }
 
     public String getPluginId() {
         return pluginId;
     }
 
-    public void setPluginId(String pluginId) {
+    public Rule setPluginId(String pluginId) {
         this.pluginId = pluginId;
+        return this;
     }
 
     public Plugin getPlugin() {
         return plugin;
     }
 
-    public void setPlugin(Plugin plugin) {
+    public Rule setPlugin(Plugin plugin) {
         this.plugin = plugin;
+        return this;
     }
 
     public Map<String, Object> getVariables() {
         return variables;
     }
 
-    public void setVariables(Map<String, Object> variables) {
+    public Rule setVariables(Map<String, Object> variables) {
         this.variables = variables;
+        return this;
+    }
+
+    public String getSearchResourceId() {
+        return searchResourceId;
+    }
+
+    public Rule setSearchResourceId(String searchResourceId) {
+        this.searchResourceId = searchResourceId;
+        return this;
     }
 }

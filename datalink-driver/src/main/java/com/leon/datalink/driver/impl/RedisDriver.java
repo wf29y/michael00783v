@@ -49,20 +49,27 @@ public class RedisDriver extends AbstractDriver {
 
         if ("STANDALONE".equals(mode)) {
             String ip = getStrProp("ip");
-            int port = getIntProp("port");
-            int database = getIntProp("database", 0);
-            jedisPool = new JedisPool(config, ip, port, timeout, password, database);
+            if (StringUtils.isEmpty(ip)) return;
+            Integer port = getIntProp("port");
+            if (null == port) return;
+            jedisPool = new JedisPool(config, ip, port, timeout, password,  getIntProp("database", 0));
         } else if ("CLUSTER".equals(mode)) {
-            Set<HostAndPort> hostAndPortSet = nodesToHostAndPortSet(getStrProp("nodes"));
-            jedisCluster = new JedisCluster(hostAndPortSet, timeout, timeout, 3, password, config);
+            String nodes = getStrProp("nodes");
+            if (StringUtils.isEmpty(nodes)) return;
+            jedisCluster = new JedisCluster(nodesToHostAndPortSet(nodes), timeout, timeout, 3, password, config);
         } else {
-            Set<String> nodeSet = nodesToNodeSet(getStrProp("nodes"));
+            String nodes = getStrProp("nodes");
+            if (StringUtils.isEmpty(nodes)) return;
             String masterName = getStrProp("masterName");
-            int database = getIntProp("database", 0);
-            jedisPool = new JedisSentinelPool(masterName, nodeSet, config, timeout, password, database);
+            if (StringUtils.isEmpty(masterName)) return;
+            jedisPool = new JedisSentinelPool(masterName, nodesToNodeSet(nodes), config, timeout, password, getIntProp("database", 0));
         }
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            if (null == getLongProp("initialDelay")) return;
+            if (null == getLongProp("period")) return;
+            if (StringUtils.isEmpty(getStrProp("timeUnit"))) return;
+
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> sendData(execute(null)),
                     getLongProp("initialDelay"), getLongProp("period"), TimeUnit.valueOf(getStrProp("timeUnit")));
@@ -119,17 +126,20 @@ public class RedisDriver extends AbstractDriver {
 
             if ("STANDALONE".equals(mode)) {
                 String ip = getStrProp("ip");
-                int port = getIntProp("port");
-                int database = getIntProp("database", 0);
-                new JedisPool(config, ip, port, timeout, password, database).getResource();
+                if (StringUtils.isEmpty(ip)) return false;
+                Integer port = getIntProp("port");
+                if (null == port) return false;
+                new JedisPool(config, ip, port, timeout, password, getIntProp("database", 0)).getResource();
             } else if ("CLUSTER".equals(mode)) {
-                Set<HostAndPort> hostAndPortSet = nodesToHostAndPortSet(getStrProp("nodes"));
-                new JedisCluster(hostAndPortSet, timeout, timeout, 3, password, config);
+                String nodes = getStrProp("nodes");
+                if (StringUtils.isEmpty(nodes)) return false;
+                new JedisCluster(nodesToHostAndPortSet(nodes), timeout, timeout, 3, password, config);
             } else {
-                Set<String> nodeSet = nodesToNodeSet(getStrProp("nodes"));
+                String nodes = getStrProp("nodes");
+                if (StringUtils.isEmpty(nodes)) return false;
                 String masterName = getStrProp("masterName");
-                int database = getIntProp("database", 0);
-                new JedisSentinelPool(masterName, nodeSet, config, timeout, password, database).getResource();
+                if (StringUtils.isEmpty(masterName)) return false;
+                new JedisSentinelPool(masterName, nodesToNodeSet(nodes), config, timeout, password, getIntProp("database", 0)).getResource();
             }
             return true;
         } catch (Exception e) {
@@ -144,14 +154,14 @@ public class RedisDriver extends AbstractDriver {
     }
 
     private Object execute(Object data) {
-        Map<String, Object> variable = getVariable(data);
+
+        String command = getStrProp("command");
+        if (StringUtils.isEmpty(command)) return null;
 
         // 命令模板解析
-        String command = getStrProp("command");
-        if (!StringUtils.isEmpty(command)) {
-            String render = this.templateEngine.getTemplate(command).render(variable);
-            if (!StringUtils.isEmpty(render)) command = render;
-        }
+        Map<String, Object> variable = getVariable(data);
+        String render = this.templateEngine.getTemplate(command).render(variable);
+        if (!StringUtils.isEmpty(render)) command = render;
 
         // 执行命令
         String mode = getStrProp("mode", "STANDALONE");

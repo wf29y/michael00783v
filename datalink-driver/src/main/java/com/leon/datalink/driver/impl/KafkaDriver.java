@@ -41,14 +41,20 @@ public class KafkaDriver extends AbstractDriver {
 
     @Override
     public void create() throws Exception {
+        String url = getStrProp("url");
+        if(StringUtils.isEmpty(url)) return;
+
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            String topic = getStrProp("topic");
+            if(StringUtils.isEmpty(topic)) return;
+
             Properties prop = new Properties();
-            prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getStrProp("url"));
+            prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
             prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
             prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
             prop.put(ConsumerConfig.GROUP_ID_CONFIG, getStrProp("group"));
             this.kafkaConsumer = new KafkaConsumer<>(prop);
-            kafkaConsumer.subscribe(Collections.singletonList(getStrProp("topic")));
+            kafkaConsumer.subscribe(Collections.singletonList(topic));
             new Thread(() -> {
                 while (true) {
                     if (isClose) {
@@ -66,7 +72,7 @@ public class KafkaDriver extends AbstractDriver {
             }).start();
         } else {
             Properties prop = new Properties();
-            prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getStrProp("url"));
+            prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
             prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
             prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
             this.kafkaProducer = new KafkaProducer<>(prop);
@@ -77,8 +83,6 @@ public class KafkaDriver extends AbstractDriver {
     public void destroy() throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             this.isClose = true;
-//            this.kafkaConsumer.unsubscribe();
-//            this.kafkaConsumer.close();
         } else {
             this.kafkaProducer.close();
         }
@@ -86,9 +90,11 @@ public class KafkaDriver extends AbstractDriver {
 
     @Override
     public boolean test() {
+        String url = getStrProp("url");
+        if(StringUtils.isEmpty(url)) return false;
         try {
             Properties prop = new Properties();
-            prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getStrProp("url"));
+            prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
             prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
             prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
             new KafkaProducer<>(prop);
@@ -101,6 +107,9 @@ public class KafkaDriver extends AbstractDriver {
 
     @Override
     public Object handleData(Object data) throws Exception {
+        String topic = getStrProp("topic");
+        if(StringUtils.isEmpty(topic)) return null;
+
         Map<String, Object> variable = getVariable(data);
 
         // 消息模板解析
@@ -115,11 +124,9 @@ public class KafkaDriver extends AbstractDriver {
         }
 
         // topic模板解析
-        String topic = getStrProp("topic");
-        if (!StringUtils.isEmpty(topic)) {
-            String render = this.templateEngine.getTemplate(topic).render(variable);
-            if (!StringUtils.isEmpty(render)) topic = render;
-        }
+        String render = this.templateEngine.getTemplate(topic).render(variable);
+        if (!StringUtils.isEmpty(render)) topic = render;
+
 
         // 发布消息
         kafkaProducer.send(new ProducerRecord<>(topic, payload));

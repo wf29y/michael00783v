@@ -2,11 +2,6 @@ package com.leon.datalink.web.backup.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ClassUtil;
-import cn.hutool.core.util.TypeUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.MapType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.leon.datalink.core.backup.Backup;
 import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.exception.KvStorageException;
@@ -14,10 +9,8 @@ import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.storage.kv.FileKvStorage;
 import com.leon.datalink.core.utils.*;
-import com.leon.datalink.resource.Resource;
 import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.backup.BackupService;
-import jdk.internal.org.objectweb.asm.TypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -161,8 +154,9 @@ public class BackupServiceImpl implements BackupService {
     }
 
     @Override
-    public void remove(Backup backup) throws KvStorageException {
-        this.kvStorage.delete(backup.getBackupId().getBytes());
+    public void remove(String backupId) throws KvStorageException {
+        Backup backup = this.get(backupId);
+        this.kvStorage.delete(backupId.getBytes());
         this.fileStorage.delete(backup.getBackupName().getBytes());
         backupList.remove(backup.getBackupId());
     }

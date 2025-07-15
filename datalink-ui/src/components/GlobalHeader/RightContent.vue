@@ -57,12 +57,13 @@ export default {
     return {
       showMenu: true,
       currentUser: {
-        name: 'datalink'
+        name: '-'
       },
       systemInfo: {
         ip: '-',
         time: '-',
-        version: '-'
+        version: '-',
+        username: '-'
       },
       timer: {}
     }
@@ -76,11 +77,6 @@ export default {
     }
   },
   mounted() {
-    // setTimeout(() => {
-    //   this.currentUser = {
-    //     name: 'datalink'
-    //   }
-    // }, 800)
     this.getInfo()
     if (this.timer) {
       clearInterval(this.timer)
@@ -96,6 +92,7 @@ export default {
     getInfo() {
       getSystemInfo().then((res) => {
         this.systemInfo = res.data
+        this.currentUser.name = res.data.username
       })
     }
   }
@@ -111,7 +108,7 @@ export default {
   padding-right: 24px;
 }
 
-.system-info-item span{
+.system-info-item span {
   font-weight: bold
 }
 

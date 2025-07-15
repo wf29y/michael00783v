@@ -1,17 +1,19 @@
 package com.leon.datalink.web.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.leon.datalink.core.backup.Backup;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.web.backup.BackupService;
-import org.apache.commons.io.IOUtils;
+import com.leon.datalink.web.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.ValidationException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * @ClassName RulesController
@@ -30,15 +32,20 @@ public class BackupController {
     /**
      * 上传备份文件
      *
-     * @param jarFile
+     * @param jsonFile
      * @throws IOException
      */
     @PostMapping(value = "/upload", consumes = "multipart/*", headers = "Content-Type=multipart/form-data")
-    public void uploadJar(@RequestParam("file") MultipartFile jarFile) throws IOException, KvStorageException {
-        if (jarFile == null || jarFile.getOriginalFilename() == null) {
-            return;
+    public void uploadJar(@RequestParam("file") MultipartFile jsonFile) throws Exception {
+        ValidatorUtil.isNotNull(jsonFile, jsonFile.getOriginalFilename());
+
+        String filename = jsonFile.getOriginalFilename();
+        List<Backup> list = backupService.list(new Backup().setBackupName(filename));
+        if (CollectionUtil.isNotEmpty(list)) {
+            throw new ValidationException("备份已存在");
         }
-        backupService.upload(jarFile.getOriginalFilename(), jarFile.getBytes());
+
+        backupService.upload(filename, jsonFile.getBytes());
     }
 
     /**
@@ -90,7 +97,9 @@ public class BackupController {
      */
     @PostMapping("/remove")
     public void removeBackup(@RequestBody Backup backup) throws Exception {
-        backupService.remove(backup);
+        String backupId = backup.getBackupId();
+        ValidatorUtil.isNotEmpty(backupId);
+        backupService.remove(backupId);
     }
 
 

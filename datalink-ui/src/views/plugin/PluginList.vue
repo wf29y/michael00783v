@@ -110,7 +110,7 @@ export default {
           this.$message.success('删除成功')
           this.loadData()
         } else {
-          this.$message.error('删除失败')
+          this.$message.error(res.message)
         }
       })
     },

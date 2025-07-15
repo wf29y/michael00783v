@@ -17,6 +17,8 @@ public class SystemInfo {
 
     private String time;
 
+    private String username;
+
     public String getVersion() {
         return version;
     }
@@ -39,5 +41,13 @@ public class SystemInfo {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

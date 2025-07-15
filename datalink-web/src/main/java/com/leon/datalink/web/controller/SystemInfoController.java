@@ -9,6 +9,7 @@ import com.leon.datalink.web.model.SystemInfo;
 import com.leon.datalink.web.model.SystemStatistics;
 import com.leon.datalink.web.resource.ResourceService;
 import com.leon.datalink.web.rule.RuleService;
+import com.leon.datalink.web.util.BaseContextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,7 @@ public class SystemInfoController {
         info.setIp(System.getProperty(LOCAL_IP_PROPERTY_KEY));
         info.setVersion(VersionUtils.version);
         info.setTime(DateUtil.format(DateTime.now(), "yyyy-MM-dd HH:mm"));
+        info.setUsername((String) BaseContextUtil.get(BaseContextUtil.USER_NAME));
         return info;
     }
 

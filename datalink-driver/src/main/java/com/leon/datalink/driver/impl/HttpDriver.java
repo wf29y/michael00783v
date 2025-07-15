@@ -63,12 +63,16 @@ public class HttpDriver extends AbstractDriver {
     @Override
     public void create() throws Exception {
         this.requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(getIntProp("connectTimeout"));
-        requestFactory.setReadTimeout(getIntProp("readTimeout"));
+        requestFactory.setConnectTimeout(getIntProp("connectTimeout",6000));
+        requestFactory.setReadTimeout(getIntProp("readTimeout",6000));
 
         this.restTemplate = new RestTemplate(this.requestFactory);
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            if(null== getLongProp("initialDelay")) return;
+            if(null== getLongProp("period")) return;
+            if(StringUtils.isEmpty(getStrProp("timeUnit"))) return;
+
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {
                 Map<String, Object> result = doRequest(null);
@@ -87,11 +91,9 @@ public class HttpDriver extends AbstractDriver {
 
     @Override
     public boolean test() {
+        String url = getStrProp("url");
+        if (StringUtils.isEmpty(url)) return false;
         try {
-            String url = getStrProp("url");
-            if (StringUtils.isEmpty(url)) {
-                return false;
-            }
             URL urlObj = new URL(url);
             InetSocketAddress inetSocketAddress = new InetSocketAddress(urlObj.getHost(), urlObj.getPort());
             return NetUtil.isOpen(inetSocketAddress, 6000);
@@ -108,9 +110,13 @@ public class HttpDriver extends AbstractDriver {
 
 
     private Map<String, Object> doRequest(Object data) {
-        Map<String, Object> variable = getVariable(data);
 
         String url = getStrProp("url");
+        String method = getStrProp("method");
+        if(StringUtils.isEmpty(url)) return null;
+        if(StringUtils.isEmpty(method)) return null;
+
+        Map<String, Object> variable = getVariable(data);
 
         // 路径模板解析
         String path = getStrProp("path");
@@ -140,7 +146,7 @@ public class HttpDriver extends AbstractDriver {
             if (!StringUtils.isEmpty(param)) request.getBody().write(param.getBytes(StandardCharsets.UTF_8));
         };
 
-        String response = restTemplate.execute(url, HttpMethod.valueOf(getStrProp("method")), requestCallback, clientHttpResponse -> {
+        String response = restTemplate.execute(url, HttpMethod.valueOf(method), requestCallback, clientHttpResponse -> {
             InputStream in = clientHttpResponse.getBody();
             StringBuilder out = new StringBuilder();
             byte[] b = new byte[4096];

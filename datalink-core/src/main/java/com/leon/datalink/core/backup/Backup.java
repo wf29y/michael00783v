@@ -15,23 +15,26 @@ public class Backup implements Serializable {
         return backupId;
     }
 
-    public void setBackupId(String backupId) {
+    public Backup setBackupId(String backupId) {
         this.backupId = backupId;
+        return this;
     }
 
     public String getBackupName() {
         return backupName;
     }
 
-    public void setBackupName(String backupName) {
+    public Backup setBackupName(String backupName) {
         this.backupName = backupName;
+        return this;
     }
 
     public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String time) {
+    public Backup setCreateTime(String time) {
         this.createTime = time;
+        return this;
     }
 }

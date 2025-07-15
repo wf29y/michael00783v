@@ -75,9 +75,9 @@ public class ResourceServiceImpl implements ResourceService, BackupData<Resource
     }
 
     @Override
-    public void remove(Resource resource) throws KvStorageException {
-        this.kvStorage.delete(resource.getResourceId().getBytes());
-        resourceList.remove(resource.getResourceId());
+    public void remove(String resourceId) throws KvStorageException {
+        this.kvStorage.delete(resourceId.getBytes());
+        resourceList.remove(resourceId);
     }
 
     @Override
@@ -126,13 +126,13 @@ public class ResourceServiceImpl implements ResourceService, BackupData<Resource
         try {
             List<Resource> list = this.list(new Resource());
             for (Resource resource : list) {
-                this.remove(resource);
+                this.remove(resource.getResourceId());
             }
             for (Resource resource : dataList) {
                 this.add(resource);
             }
         } catch (KvStorageException e) {
-            Loggers.WEB.error("recover resource backup error {}",e.getMessage());
+            Loggers.WEB.error("recover resource backup error {}", e.getMessage());
         }
     }
 }

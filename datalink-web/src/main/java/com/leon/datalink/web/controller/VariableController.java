@@ -1,9 +1,12 @@
 package com.leon.datalink.web.controller;
 
 import com.leon.datalink.core.variable.Variable;
+import com.leon.datalink.web.util.ValidatorUtil;
 import com.leon.datalink.web.variable.VariableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.xml.bind.ValidationException;
 
 /**
  * @ClassName VariableController
@@ -27,6 +30,9 @@ public class VariableController {
      */
     @PostMapping("/add")
     public void addVariable(@RequestBody Variable variable) throws Exception {
+        ValidatorUtil.isNotEmpty(variable.getKey(), variable.getValue());
+        Variable var = variableService.get(variable.getKey());
+        if (null != var) throw new ValidationException("变量已存在");
         variableService.add(variable);
     }
 
@@ -48,7 +54,9 @@ public class VariableController {
      */
     @PostMapping("/remove")
     public void removeVariable(@RequestBody Variable variable) throws Exception {
-        variableService.remove(variable);
+        String key = variable.getKey();
+        ValidatorUtil.isNotEmpty(key);
+        variableService.remove(key);
     }
 
     /**
@@ -59,9 +67,9 @@ public class VariableController {
      */
     @PutMapping("/update")
     public void updateVariable(@RequestBody Variable variable) throws Exception {
+        ValidatorUtil.isNotEmpty(variable.getKey(), variable.getValue());
         variableService.update(variable);
     }
-
 
 
 }

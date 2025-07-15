@@ -10,7 +10,6 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
-import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.actor.RuleActor;
 import com.leon.datalink.rule.constants.TransformModeEnum;
 import com.leon.datalink.rule.entity.Plugin;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -101,11 +99,11 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     }
 
     @Override
-    public void remove(Rule rule) throws KvStorageException {
-        this.stopRule(rule);
-        this.kvStorage.delete(rule.getRuleId().getBytes());
-        ruleList.remove(rule.getRuleId());
-        runtimeService.remove(rule.getRuleId());
+    public void remove(String ruleId) throws KvStorageException {
+        if (this.get(ruleId).isEnable()) this.stopRule(ruleId);
+        this.kvStorage.delete(ruleId.getBytes());
+        ruleList.remove(ruleId);
+        runtimeService.remove(ruleId);
     }
 
     @Override
@@ -121,6 +119,16 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
             if (!StringUtils.isEmpty(rule.getRuleName())) {
                 stream = stream.filter(r -> r.getRuleName().contains(rule.getRuleName()));
             }
+            if (!StringUtils.isEmpty(rule.getPluginId())) {
+                stream = stream.filter(r -> r.getPluginId().contains(rule.getPluginId()));
+            }
+            if (!StringUtils.isEmpty(rule.getSearchResourceId())) {
+                stream = stream.filter(r -> {
+                    String searchResourceId = rule.getSearchResourceId();
+                    if (searchResourceId.equals(r.getSourceResource().getResourceId())) return true;
+                    return r.getDestResourceList().stream().anyMatch(resource -> searchResourceId.equals(resource.getResourceId()));
+                });
+            }
         }
         return stream.collect(Collectors.toList());
     }
@@ -131,8 +139,10 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     }
 
     @Override
-    public void startRule(Rule rule) throws Exception {
-        String ruleId = rule.getRuleId();
+    public void startRule(String ruleId) throws Exception {
+        Rule rule = this.get(ruleId);
+
+        if (rule.isEnable()) return;
 
         // 修改为启动状态
         rule.setEnable(true);
@@ -151,10 +161,10 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     }
 
     @Override
-    public void stopRule(Rule rule) {
-        String ruleId = rule.getRuleId();
+    public void stopRule(String ruleId) {
+        Rule rule = this.get(ruleId);
 
-        if (!this.get(ruleId).isEnable()) return;
+        if (!rule.isEnable()) return;
 
         // 停止rule actor
         actorSystem.stop(ruleActorRefList.get(ruleId));
@@ -179,7 +189,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
         try {
             List<Rule> list = this.list(new Rule());
             for (Rule rule : list) {
-                this.remove(rule);
+                this.remove(rule.getRuleId());
             }
             for (Rule rule : dataList) {
                 this.add(rule);

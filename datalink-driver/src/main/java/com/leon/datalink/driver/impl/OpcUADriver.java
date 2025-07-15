@@ -8,6 +8,7 @@ import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +33,11 @@ public class OpcUADriver extends AbstractDriver {
 
     @Override
     public void create() throws Exception {
+        String url = getStrProp("url");
+        if (StringUtils.isEmpty(url)) return;
+
         opcUaClient = OpcUaClient.create(
-                getStrProp("url"),
+                url,
                 endpoints -> endpoints.stream().findFirst(),
                 configBuilder -> configBuilder.setIdentityProvider(new AnonymousProvider())
                         .setRequestTimeout(uint(5000))
@@ -41,14 +45,19 @@ public class OpcUADriver extends AbstractDriver {
         );
         opcUaClient.connect();
 
-        List<Map<String, Object>> points = getListProp("points");
-
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            if (null == getLongProp("initialDelay")) return;
+            if (null == getLongProp("period")) return;
+            if (StringUtils.isEmpty(getStrProp("timeUnit"))) return;
+
+            List<Map<String, Object>> points = getListProp("points");
+            if (null == points) return;
+
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {
                 try {
                     for (Map<String, Object> point : points) {
-                        Loggers.DRIVER.info("points read {}", point);
+                        //Loggers.DRIVER.info("points read {}", point);
                         HashMap<String, Object> result = new HashMap<>();
                         result.put("point", point);
                         result.put("value", read(point));
@@ -91,9 +100,12 @@ public class OpcUADriver extends AbstractDriver {
 
     @Override
     public boolean test() {
+        String url = getStrProp("url");
+        if (StringUtils.isEmpty(url)) return false;
+
         try {
             OpcUaClient opcUaClient = OpcUaClient.create(
-                    getStrProp("url"),
+                    url,
                     endpoints -> endpoints.stream().findFirst(),
                     configBuilder -> configBuilder.setIdentityProvider(new AnonymousProvider())
                             .setRequestTimeout(uint(5000))

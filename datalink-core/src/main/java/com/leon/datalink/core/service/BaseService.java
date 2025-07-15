@@ -12,7 +12,7 @@ public interface BaseService<T> {
 
     void update(T t) throws KvStorageException;
 
-    void remove(T t) throws KvStorageException;
+    void remove(String id) throws KvStorageException;
 
     List<T> list(T t);
 

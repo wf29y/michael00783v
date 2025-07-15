@@ -61,8 +61,8 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
 
     @Override
     public void add(Variable variable) throws KvStorageException {
-        Variable var = GlobalVariableContent.get(variable.getKey());
-        if (null != var) return;
+//        Variable var = GlobalVariableContent.get(variable.getKey());
+//        if (null != var) return;
         variable.setType(VariableTypeEnum.CUSTOM);
         GlobalVariableContent.set(variable.getKey(), variable);
         this.kvStorage.put(variable.getKey().getBytes(), JacksonUtils.toJsonBytes(variable));
@@ -76,10 +76,11 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
     }
 
     @Override
-    public void remove(Variable variable) throws KvStorageException {
+    public void remove(String key) throws KvStorageException {
+        Variable variable = this.get(key);
         if (!VariableTypeEnum.CUSTOM.equals(variable.getType())) return;
-        GlobalVariableContent.remove(variable.getKey());
-        this.kvStorage.delete(variable.getKey().getBytes());
+        GlobalVariableContent.remove(key);
+        this.kvStorage.delete(key.getBytes());
     }
 
     @Override
@@ -121,7 +122,7 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
             variable.setType(VariableTypeEnum.CUSTOM);
             List<Variable> list = this.list(variable);
             for (Variable var : list) {
-                this.remove(var);
+                this.remove(var.getKey());
             }
             for (Variable var : dataList) {
                 this.add(var);

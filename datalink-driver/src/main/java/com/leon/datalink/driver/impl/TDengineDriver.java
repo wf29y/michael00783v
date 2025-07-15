@@ -39,6 +39,12 @@ public class TDengineDriver extends AbstractDriver {
 
     @Override
     public void create() throws Exception {
+        if (StringUtils.isEmpty(getStrProp("ip"))) return;
+        if (StringUtils.isEmpty(getStrProp("port"))) return;
+        if (StringUtils.isEmpty(getStrProp("databaseName"))) return;
+        if (StringUtils.isEmpty(getStrProp("username"))) return;
+        if (StringUtils.isEmpty(getStrProp("password"))) return;
+
         try {
             DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
             dataSource.setDriverClassName("com.taosdata.jdbc.rs.RestfulDriver");
@@ -58,6 +64,10 @@ public class TDengineDriver extends AbstractDriver {
         }
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
+            if (null == getLongProp("initialDelay")) return;
+            if (null == getLongProp("period")) return;
+            if (StringUtils.isEmpty(getStrProp("timeUnit"))) return;
+
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {
                 sendData(select());
@@ -66,24 +76,18 @@ public class TDengineDriver extends AbstractDriver {
     }
 
     private Object select() {
-        Map<String, Object> variable = getVariable(null);
-        Connection connection = null;
-        String sql = null;
+        String sql = getStrProp("sql");
+        if (StringUtils.isEmpty(sql)) return null;
+
         List<Entity> result = null;
-        try {
-            connection = dataSource.getConnection();
+        try (Connection connection = dataSource.getConnection()) {
             if (connection != null) {
-                sql = getStrProp("sql");
-                if (!StringUtils.isEmpty(sql)) {
-                    String render = this.templateEngine.getTemplate(sql).render(variable);
-                    if (!StringUtils.isEmpty(render)) sql = render;
-                }
+                String render = this.templateEngine.getTemplate(sql).render(getVariable(null));
+                if (!StringUtils.isEmpty(render)) sql = render;
                 result = SqlExecutor.query(connection, sql, new EntityListHandler());
             }
         } catch (Exception e) {
             Loggers.DRIVER.error("td driver error {}", e.getMessage());
-        } finally {
-            DbUtil.close(connection);
         }
 
         HashMap<String, Object> map = new HashMap<>();
@@ -103,6 +107,12 @@ public class TDengineDriver extends AbstractDriver {
 
     @Override
     public boolean test() {
+        if (StringUtils.isEmpty(getStrProp("ip"))) return false;
+        if (StringUtils.isEmpty(getStrProp("port"))) return false;
+        if (StringUtils.isEmpty(getStrProp("databaseName"))) return false;
+        if (StringUtils.isEmpty(getStrProp("username"))) return false;
+        if (StringUtils.isEmpty(getStrProp("password"))) return false;
+
         try {
             Class.forName("com.taosdata.jdbc.rs.RestfulDriver");
             DriverManager.getConnection(String.format("jdbc:TAOS-RS://%s:%s/%s",
@@ -120,25 +130,18 @@ public class TDengineDriver extends AbstractDriver {
 
     @Override
     public Object handleData(Object data) throws Exception {
-        Map<String, Object> variable = getVariable(data);
-
-        Connection connection = null;
-        String sql = null;
+        String sql = getStrProp("sql");
+        if (StringUtils.isEmpty(sql)) return null;
         Boolean result = null;
-        try {
-            connection = dataSource.getConnection();
+        try (Connection connection = dataSource.getConnection()) {
             if (connection != null) {
-                sql = getStrProp("sql");
-                if (!StringUtils.isEmpty(sql)) {
-                    String render = this.templateEngine.getTemplate(sql).render(variable);
-                    if (!StringUtils.isEmpty(render)) sql = render;
-                }
+                String render = this.templateEngine.getTemplate(sql).render(getVariable(data));
+                if (!StringUtils.isEmpty(render)) sql = render;
                 result = connection.createStatement().execute(sql);
             }
-        } finally {
-            DbUtil.close(connection);
+        } catch (Exception e) {
+            Loggers.DRIVER.error("td driver error {}", e.getMessage());
         }
-
         HashMap<String, Object> map = new HashMap<>();
         map.put("sql", sql);
         map.put("result", result);

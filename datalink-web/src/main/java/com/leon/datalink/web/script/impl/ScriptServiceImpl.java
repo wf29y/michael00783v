@@ -71,9 +71,9 @@ public class ScriptServiceImpl implements ScriptService {
     }
 
     @Override
-    public void remove(Script script) throws KvStorageException {
-        this.kvStorage.delete(script.getScriptId().getBytes());
-        scriptList.remove(script.getScriptId());
+    public void remove(String scriptId) throws KvStorageException {
+        this.kvStorage.delete(scriptId.getBytes());
+        scriptList.remove(scriptId);
     }
 
     @Override

@@ -3,11 +3,12 @@ package com.leon.datalink.web.controller;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.utils.JacksonUtils;
+import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.rule.entity.Script;
 import com.leon.datalink.web.script.ScriptService;
+import com.leon.datalink.web.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,8 +50,8 @@ public class ScriptController {
      */
     @PostMapping("/add")
     public Object addScript(@RequestBody Script script) throws Exception {
-        String now = DateUtil.now();
-        script.setUpdateTime(now);
+        ValidatorUtil.isNotEmpty(script.getScriptName(), script.getScriptContent());
+        script.setUpdateTime(DateUtil.now());
         scriptService.add(script);
         return script;
     }
@@ -80,16 +81,16 @@ public class ScriptController {
         scriptEngine.setBindings(bind, ScriptContext.ENGINE_SCOPE);
         scriptEngine.eval(script.getScriptContent());
         Invocable jsInvoke = (Invocable) scriptEngine;
-        Object transform = jsInvoke.invokeFunction("transform", JacksonUtils.toObj(script.getParamContent(),Object.class));
+        Object transform = jsInvoke.invokeFunction("transform", JacksonUtils.toObj(script.getParamContent(), Object.class));
 
         if (MapUtil.isNotEmpty(variables)) {
             variables.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
         }
         long time2 = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
-        result.put("result",new ObjectMapper().convertValue(transform, Object.class));
+        result.put("result", new ObjectMapper().convertValue(transform, Object.class));
         result.put("time", time2 - time1);
-        result.put("variables",variables);
+        result.put("variables", variables);
         return result;
     }
 
@@ -111,7 +112,8 @@ public class ScriptController {
      */
     @PostMapping("/remove")
     public void removeScript(@RequestBody Script script) throws Exception {
-        scriptService.remove(script);
+        ValidatorUtil.isNotEmpty(script.getScriptId());
+        scriptService.remove(script.getScriptId());
     }
 
     /**
@@ -122,8 +124,8 @@ public class ScriptController {
      */
     @PutMapping("/update")
     public Object updateScript(@RequestBody Script script) throws Exception {
-        String now = DateUtil.now();
-        script.setUpdateTime(now);
+        ValidatorUtil.isNotEmpty(script.getScriptId(), script.getScriptName(), script.getScriptContent());
+        script.setUpdateTime(DateUtil.now());
         scriptService.update(script);
         return script;
     }

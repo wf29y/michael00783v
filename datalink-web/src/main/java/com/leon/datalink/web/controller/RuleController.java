@@ -2,6 +2,7 @@ package com.leon.datalink.web.controller;
 
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.web.rule.RuleService;
+import com.leon.datalink.web.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class RuleController {
      */
     @PostMapping("/add")
     public void addRule(@RequestBody Rule rule) throws Exception {
+        ValidatorUtil.isNotEmpty(rule.getRuleName(), rule.getTransformMode(), rule.getSourceResource(), rule.getDestResourceList());
         ruleService.add(rule);
     }
 
@@ -59,10 +61,9 @@ public class RuleController {
      */
     @PostMapping("/remove")
     public void removeRule(@RequestBody Rule rule) throws Exception {
-        if (rule.isEnable()) {
-            ruleService.stopRule(rule);
-        }
-        ruleService.remove(rule);
+        String ruleId = rule.getRuleId();
+        ValidatorUtil.isNotEmpty(ruleId);
+        ruleService.remove(ruleId);
     }
 
     /**
@@ -73,6 +74,7 @@ public class RuleController {
      */
     @PutMapping("/update")
     public void updateRule(@RequestBody Rule rule) throws Exception {
+        ValidatorUtil.isNotEmpty(rule.getRuleId(),rule.getRuleName(), rule.getTransformMode(), rule.getSourceResource(), rule.getDestResourceList());
         ruleService.update(rule);
     }
 
@@ -81,7 +83,9 @@ public class RuleController {
      */
     @PostMapping("/start")
     public void startRule(@RequestBody Rule rule) throws Exception {
-        ruleService.startRule(rule);
+        String ruleId = rule.getRuleId();
+        ValidatorUtil.isNotEmpty(ruleId);
+        ruleService.startRule(ruleId);
     }
 
     /**
@@ -89,7 +93,9 @@ public class RuleController {
      */
     @PostMapping("/stop")
     public void stopRule(@RequestBody Rule rule) throws Exception {
-        ruleService.stopRule(rule);
+        String ruleId = rule.getRuleId();
+        ValidatorUtil.isNotEmpty(ruleId);
+        ruleService.stopRule(ruleId);
     }
 
 }

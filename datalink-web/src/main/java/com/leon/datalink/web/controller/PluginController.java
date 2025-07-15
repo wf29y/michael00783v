@@ -1,31 +1,23 @@
 package com.leon.datalink.web.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.map.MapUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.exception.KvStorageException;
-import com.leon.datalink.core.utils.DiskUtils;
-import com.leon.datalink.core.utils.JacksonUtils;
-import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.rule.entity.Plugin;
-import com.leon.datalink.rule.entity.Script;
-import com.leon.datalink.web.config.NotWrap;
+import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.web.plugin.PluginService;
-import com.leon.datalink.web.script.ScriptService;
+import com.leon.datalink.web.rule.RuleService;
+import com.leon.datalink.web.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.script.*;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import javax.xml.bind.ValidationException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * @ClassName RulesController
@@ -41,6 +33,9 @@ public class PluginController {
     @Autowired
     private PluginService pluginService;
 
+    @Autowired
+    private RuleService ruleService;
+
     /**
      * 上传jar文件
      *
@@ -48,18 +43,21 @@ public class PluginController {
      * @throws IOException
      */
     @PostMapping(value = "/upload", consumes = "multipart/*", headers = "Content-Type=multipart/form-data")
-    public Object upload(@RequestParam("file") MultipartFile jarFile) throws IOException, KvStorageException {
-        if (jarFile == null || jarFile.getOriginalFilename() == null) {
-            return null;
-        }
+    public Object upload(@RequestParam("file") MultipartFile jarFile) throws Exception {
+        ValidatorUtil.isNotNull(jarFile, jarFile.getOriginalFilename());
         String pluginName = jarFile.getOriginalFilename();
+
+        List<Plugin> list = pluginService.list(new Plugin().setPluginName(pluginName));
+        if (CollectionUtil.isNotEmpty(list)) {
+            throw new ValidationException("插件已存在");
+        }
+
         pluginService.upload(pluginName, jarFile.getBytes());
 
         HashMap<String, String> result = new HashMap<>();
         result.put("name", pluginName);
         return result;
     }
-
 
 
     /**
@@ -94,6 +92,7 @@ public class PluginController {
      */
     @PostMapping("/add")
     public void addPlugin(@RequestBody Plugin plugin) throws Exception {
+        ValidatorUtil.isNotEmpty(plugin.getPluginName(), plugin.getPackagePath());
         plugin.setUpdateTime(DateUtil.now());
         pluginService.add(plugin);
     }
@@ -116,7 +115,17 @@ public class PluginController {
      */
     @PostMapping("/remove")
     public void removePlugin(@RequestBody Plugin plugin) throws Exception {
-        pluginService.remove(plugin);
+        String pluginId = plugin.getPluginId();
+        ValidatorUtil.isNotEmpty(pluginId);
+
+        Rule rule = new Rule();
+        rule.setPluginId(pluginId);
+        List<Rule> list = ruleService.list(rule);
+        if (CollectionUtil.isNotEmpty(list)) {
+            throw new ValidationException("该插件已被规则绑定,无法删除");
+        }
+
+        pluginService.remove(pluginId);
     }
 
     /**
@@ -127,6 +136,7 @@ public class PluginController {
      */
     @PutMapping("/update")
     public void updatePlugin(@RequestBody Plugin plugin) throws Exception {
+        ValidatorUtil.isNotEmpty(plugin.getPluginId(), plugin.getPluginName(), plugin.getPackagePath());
         plugin.setUpdateTime(DateUtil.now());
         pluginService.update(plugin);
     }

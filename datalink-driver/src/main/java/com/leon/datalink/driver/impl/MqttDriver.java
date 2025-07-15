@@ -34,6 +34,8 @@ public class MqttDriver extends AbstractDriver {
 
     @Override
     public void create() throws Exception {
+        if(StringUtils.isEmpty(getStrProp("url"))) return;
+
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             mqttHandler = createClient();
         } else {
@@ -63,13 +65,15 @@ public class MqttDriver extends AbstractDriver {
 
     @Override
     public boolean test() {
+        String url = getStrProp("url");
+        if(StringUtils.isEmpty(url)) return false;
         try {
-            MqttClient mqttClient = new MqttClient(getStrProp("url"), SnowflakeIdWorker.getId(), new MemoryPersistence());
+            MqttClient mqttClient = new MqttClient(url, SnowflakeIdWorker.getId(), new MemoryPersistence());
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
             options.setUserName(getStrProp("username"));
             options.setMaxInflight(1000);
-            options.setPassword((getStrProp("password")).toCharArray());
+            options.setPassword((getStrProp("password","")).toCharArray());
             options.setConnectionTimeout(10);
             options.setKeepAliveInterval(30);
             mqttClient.connect(options);
@@ -82,6 +86,9 @@ public class MqttDriver extends AbstractDriver {
 
     @Override
     public Object handleData(Object data) throws Exception {
+        String topic = getStrProp("topic");
+        if(StringUtils.isEmpty(topic)) return null;
+
         Map<String, Object> variable = getVariable(data);
 
         // 消息模板解析
@@ -96,11 +103,9 @@ public class MqttDriver extends AbstractDriver {
         }
 
         // topic模板解析
-        String topic = getStrProp("topic");
-        if (!StringUtils.isEmpty(topic)) {
-            String render = this.templateEngine.getTemplate(topic).render(variable);
-            if (!StringUtils.isEmpty(render)) topic = render;
-        }
+        String render = this.templateEngine.getTemplate(topic).render(variable);
+        if (!StringUtils.isEmpty(render)) topic = render;
+
 
         Integer qos = getIntProp("qos", 0);
         Boolean retained = getBoolProp("retained", false);

@@ -5,8 +5,8 @@ import com.leon.datalink.rule.entity.Rule;
 
 public interface RuleService extends BaseService<Rule> {
 
-    void startRule(Rule rule) throws Exception;
+    void startRule(String ruleId) throws Exception;
 
-    void stopRule(Rule rule) throws Exception;
+    void stopRule(String ruleId) throws Exception;
 
 }
