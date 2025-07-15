@@ -35,7 +35,7 @@
           <a-card hoverable @click='$router.push({name:"resourceList"})' :bordered='false'>
             <a-statistic
               title='总资源数量'
-              :value="' '+SystemInfoMateData.resourceCount"
+              :value="' '+systemStatistics.resourceCount"
               class='demo-class'
               :value-style="{ color:'#1890ff', fontSize: '29px' }"
             >
@@ -49,7 +49,7 @@
           <a-card hoverable @click='$router.push({name:"ruleList"})' :bordered='false'>
             <a-statistic
               title='总规则数量'
-              :value="' '+SystemInfoMateData.ruleCount"
+              :value="' '+systemStatistics.ruleCount"
               class='demo-class'
               :value-style="{ color:'#1890ff',fontSize: '29px' }"
             >
@@ -82,7 +82,7 @@
 
 <script>
 import moment from 'moment'
-import { getSystemInfo } from '@/api/system'
+import { getSystemStatistics } from '@/api/system'
 import { getAction } from '@/api/manage'
 import HttpTrace from './module/HttpTrace'
 import JvmInfo from './module/JvmInfo'
@@ -107,12 +107,9 @@ export default {
       totalJVMMem: 1,
       useMem: 1,
       activeKey: '1',
-      SystemInfoMateData: {
-        clientCount: 0,
-        systemRunTime: 0,
-        version: '',
-        systemName: '',
-        subscribeCount: 0
+      systemStatistics: {
+        resourceCount: 0,
+        ruleCount: 0
       },
       timer: null
     }
@@ -126,15 +123,8 @@ export default {
       clearInterval(this.timer)
     }
     this.timer = setInterval(() => {
-      getSystemInfo().then(res => {
-        _this.SystemInfoMateData = res.data
-      })
       _this.getTotalSystemInfo()
-    }, 15000)
-
-    getSystemInfo().then(res => {
-      _this.SystemInfoMateData = res.data
-    })
+    }, 10000)
   },
   methods: {
     nodeSelectChange(node) {
@@ -171,6 +161,9 @@ export default {
         let used = value.measurements[0].value
         used = this.convertMem(used, Number)
         this.useMem = Number(this.useMem) + Number(used)
+      })
+      getSystemStatistics().then(res => {
+        this.systemStatistics = res.data
       })
     },
     convert(value, type) {

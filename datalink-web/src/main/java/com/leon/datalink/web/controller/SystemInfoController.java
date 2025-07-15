@@ -5,14 +5,16 @@ import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.core.utils.VersionUtils;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.web.config.NotWrap;
 import com.leon.datalink.web.model.SystemInfo;
+import com.leon.datalink.web.model.SystemStatistics;
 import com.leon.datalink.web.resource.ResourceService;
 import com.leon.datalink.web.rule.RuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.leon.datalink.core.common.Constants.LOCAL_IP_PROPERTY_KEY;
 
 /**
  * @ClassName SystemInfoController
@@ -26,29 +28,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class SystemInfoController {
 
     @Autowired
-    private ResourceService northResourceService;
+    private ResourceService resourceService;
 
     @Autowired
     private RuleService ruleService;
 
     @GetMapping("/info")
     public Object getSystemInfo() {
-        SystemInfo systemInfo = new SystemInfo();
-        systemInfo.setResourceCount(northResourceService.getCount(new Resource()));
-        systemInfo.setRuleCount(ruleService.getCount(new Rule()));
-        return systemInfo;
+        SystemInfo info = new SystemInfo();
+        info.setIp(System.getProperty(LOCAL_IP_PROPERTY_KEY));
+        info.setVersion(VersionUtils.version);
+        info.setTime(DateUtil.format(DateTime.now(), "yyyy-MM-dd HH:mm"));
+        return info;
     }
 
-    @NotWrap
-    @GetMapping("/time")
-    public Object getSystemTime() {
-        return DateUtil.format(DateTime.now(), "yyyy-MM-dd HH:mm");
-    }
-
-    @NotWrap
-    @GetMapping("/version")
-    public Object getSystemVersion() {
-        return VersionUtils.version;
+    @GetMapping("/statistics")
+    public Object getSystemStatistics() {
+        SystemStatistics statistics = new SystemStatistics();
+        statistics.setResourceCount(resourceService.getCount(new Resource()));
+        statistics.setRuleCount(ruleService.getCount(new Rule()));
+        return statistics;
     }
 
 }

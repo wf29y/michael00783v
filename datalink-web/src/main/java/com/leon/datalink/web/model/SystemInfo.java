@@ -1,7 +1,9 @@
 package com.leon.datalink.web.model;
 
+import java.lang.ref.PhantomReference;
+
 /**
- * @ClassNameSystemInfo
+ * @ClassName SystemInfo
  * @Description
  * @Author Leon
  * @Date2022/4/11 10:35
@@ -9,29 +11,33 @@ package com.leon.datalink.web.model;
  **/
 public class SystemInfo {
 
-    /**
-     * 资源数量
-     */
-    private int resourceCount;
+    private String version;
 
-    /**
-     * 规则数量
-     */
-    private int ruleCount;
+    private String ip;
 
-    public int getResourceCount() {
-        return resourceCount;
+    private String time;
+
+    public String getVersion() {
+        return version;
     }
 
-    public void setResourceCount(int resourceCount) {
-        this.resourceCount = resourceCount;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    public int getRuleCount() {
-        return ruleCount;
+    public String getIp() {
+        return ip;
     }
 
-    public void setRuleCount(int ruleCount) {
-        this.ruleCount = ruleCount;
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

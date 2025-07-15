@@ -1,71 +1,72 @@
 <template>
-  <div class="main">
+  <div class='main'>
     <a-form
-      id="formLogin"
-      class="user-layout-login"
-      ref="formLogin"
-      :form="form"
-      @submit="handleSubmit"
+      id='formLogin'
+      class='user-layout-login'
+      ref='formLogin'
+      :form='form'
+      @submit='handleSubmit'
     >
       <a-tabs
-        :activeKey="customActiveKey"
+        :activeKey='customActiveKey'
         :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
-        @change="handleTabClick"
+        @change='handleTabClick'
       >
-        <a-tab-pane key="tab1" tab="登录">
+        <a-tab-pane key='tab1' tab='登录'>
           <a-alert
-            v-if="isLoginError"
-            type="error"
+            v-if='isLoginError'
+            type='error'
             showIcon
-            style="margin-bottom: 24px;"
-            message="账号或密码错误"
+            style='margin-bottom: 24px;'
+            message='账号或密码错误'
           />
           <a-form-item>
             <a-input
-              size="large"
-              type="text"
-              placeholder="请输入账号"
+              size='large'
+              type='text'
+              placeholder='请输入账号'
               v-decorator="[
                 'username',
                 {rules: [{ required: true, message: '请输入账号' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
               ]"
             >
-              <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
+              <a-icon slot='prefix' type='user' :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
 
           <a-form-item>
             <a-input-password
-              size="large"
-              placeholder="请输入密码"
+              size='large'
+              placeholder='请输入密码'
               v-decorator="[
                 'password',
                 {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
               ]"
             >
-              <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
+              <a-icon slot='prefix' type='lock' :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input-password>
           </a-form-item>
         </a-tab-pane>
       </a-tabs>
 
-<!--
-      <a-form-item>
-        <a-checkbox
-          v-decorator="['rememberMe', { valuePropName: 'checked' }]"
-        >{{ $t('user.login.remember-me') }}</a-checkbox>
-      </a-form-item>
--->
+      <!--
+            <a-form-item>
+              <a-checkbox
+                v-decorator="['rememberMe', { valuePropName: 'checked' }]"
+              >{{ $t('user.login.remember-me') }}</a-checkbox>
+            </a-form-item>
+      -->
 
-      <a-form-item style="margin-top:24px">
+      <a-form-item style='margin-top:24px'>
         <a-button
-          size="large"
-          type="primary"
-          htmlType="submit"
-          class="login-button"
-          :loading="state.loginBtn"
-          :disabled="state.loginBtn"
-        >登录</a-button>
+          size='large'
+          type='primary'
+          htmlType='submit'
+          class='login-button'
+          :loading='state.loginBtn'
+          :disabled='state.loginBtn'
+        >登录
+        </a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -78,7 +79,7 @@ import { timeFix } from '@/utils/util'
 import bcrypt from 'bcryptjs'
 
 export default {
-  data () {
+  data() {
     return {
       customActiveKey: 'tab1',
       loginBtn: false,
@@ -97,12 +98,12 @@ export default {
       }
     }
   },
-  created () {
+  created() {
   },
   methods: {
     ...mapActions(['Login', 'Logout']),
     // handler
-    handleUsernameOrEmail (rule, value, callback) {
+    handleUsernameOrEmail(rule, value, callback) {
       const { state } = this
       const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
       if (regex.test(value)) {
@@ -112,11 +113,11 @@ export default {
       }
       callback()
     },
-    handleTabClick (key) {
+    handleTabClick(key) {
       this.customActiveKey = key
       // this.form.resetFields()
     },
-    handleSubmit (e) {
+    handleSubmit(e) {
       e.preventDefault()
       const {
         form: { validateFields },
@@ -149,33 +150,34 @@ export default {
         }
       })
     },
-    getPassword (password) {
+    getPassword(password) {
       return bcrypt.hashSync(password, bcrypt.genSaltSync(-1))
     },
-    loginSuccess (res) {
+    loginSuccess(res) {
       this.$router.push({ path: '/' })
       // 延迟 1 秒显示欢迎信息
-      setTimeout(() => {
+     // setTimeout(() => {
         this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
+          message: '登录成功',
+          description: `${timeFix()}，欢迎回来`,
+          duration: 1.5
         })
-      }, 1000)
+    //  }, 1000)
       this.isLoginError = false
     },
-    requestFailed (err) {
+    requestFailed(err) {
       this.isLoginError = true
       this.$notification['error']({
         message: '错误',
         description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
-        duration: 4
+        duration: 2
       })
     }
   }
 }
 </script>
 
-<style lang="less" scoped>
+<style lang='less' scoped>
 .user-layout-login {
   label {
     font-size: 14px;

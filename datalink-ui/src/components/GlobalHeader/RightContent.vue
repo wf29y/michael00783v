@@ -1,10 +1,20 @@
 <template>
   <div :class='wrpCls'>
 
-    <span style='font-size: 14px;display: inline-block;vertical-align: middle;margin-right: 20px'><span
-      style='font-weight: bold'>时间：</span>{{ time }}</span>
-    <span style='font-size: 14px;display: inline-block;vertical-align: middle;margin-right: 4px'><span
-      style='font-weight: bold'>版本：</span>{{ version }}</span>
+    <a-tooltip placement='left'>
+      <template slot='title'>服务本地时间</template>
+      <span class='system-info-item'><span>时间：</span> {{ systemInfo.time }}</span>
+    </a-tooltip>
+
+    <a-tooltip placement='left'>
+      <template slot='title'>服务IP地址</template>
+      <span class='system-info-item'><span>IP：</span> {{ systemInfo.ip }}</span>
+    </a-tooltip>
+
+    <a-tooltip placement='left'>
+      <template slot='title'>服务版本</template>
+      <span class='system-info-item' style='padding-right: 12px'><span>版本：</span> {{ systemInfo.version }}</span>
+    </a-tooltip>
 
     <avatar-dropdown :menu='showMenu' :current-user='currentUser' :class='prefixCls' @updatePassword='updatePassword' />
     <!--    <select-lang :class='prefixCls' />-->
@@ -16,7 +26,7 @@
 import AvatarDropdown from './AvatarDropdown'
 import SelectLang from '@/components/SelectLang'
 import PasswordModel from '../../views/user/PasswordModel'
-import { getAction } from '@/api/manage'
+import { getSystemInfo } from '@/api/system'
 
 export default {
   name: 'RightContent',
@@ -46,9 +56,15 @@ export default {
   data() {
     return {
       showMenu: true,
-      currentUser: {},
-      time: '—',
-      version: '—'
+      currentUser: {
+        name: 'datalink'
+      },
+      systemInfo: {
+        ip: '-',
+        time: '-',
+        version: '-'
+      },
+      timer: {}
     }
   },
   computed: {
@@ -60,31 +76,43 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.currentUser = {
-        name: 'datalink'
-      }
-    }, 800)
-    this.getTime()
-    this.getVersion()
-    setInterval(() => {
-      this.getTime()
-    }, 1000 * 60)
+    // setTimeout(() => {
+    //   this.currentUser = {
+    //     name: 'datalink'
+    //   }
+    // }, 800)
+    this.getInfo()
+    if (this.timer) {
+      clearInterval(this.timer)
+    }
+    this.timer = setInterval(() => {
+      this.getInfo()
+    }, 1000 * 30)
   },
   methods: {
     updatePassword() {
       this.$refs.PasswordModel.open()
     },
-    getTime() {
-      getAction('/api/system/time', {}).then((res) => {
-        this.time = res
-      })
-    },
-    getVersion() {
-      getAction('/api/system/version', {}).then((res) => {
-        this.version = res
+    getInfo() {
+      getSystemInfo().then((res) => {
+        this.systemInfo = res.data
       })
     }
   }
 }
 </script>
+
+<style>
+
+.system-info-item {
+  font-size: 14px;
+  display: inline-block;
+  vertical-align: middle;
+  padding-right: 24px;
+}
+
+.system-info-item span{
+  font-weight: bold
+}
+
+</style>
