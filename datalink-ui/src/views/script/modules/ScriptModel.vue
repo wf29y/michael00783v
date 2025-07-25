@@ -10,12 +10,13 @@
           </a-col>
           <a-col :span='12' style='text-align: right'>
             <a-space size='small'>
-            <span style='display: inline-block;margin-right: 30px;color: #b8b4b4'
-                  v-if='modal.updateTime'>最后修改：{{ modal.updateTime }}</span>
-            <a-popconfirm title='放弃编辑的内容?' @confirm='() => {onClose()}'>
-              <a-button style='width:75px;'> 返回</a-button>
-            </a-popconfirm>
-            <a-button type='primary' @click='saveScript' style='width:75px'> 保存</a-button>
+<!--            <span style='display: inline-block;margin-right: 30px;color: #b8b4b4'
+                  v-if='modal.updateTime'>最后修改：{{ modal.updateTime }}</span>-->
+              <a-popconfirm title='放弃未保存的内容?' @confirm='() => {onClose()}' placement="bottom">
+                <a-button style='width:75px;'> 返回</a-button>
+              </a-popconfirm>
+              <a-button @click='changeOpenTest' style='width:95px'> {{openTest?'关闭':'开启'}}调试</a-button>
+              <a-button type='primary' @click='saveScript' style='width:75px'> 保存</a-button>
             </a-space>
           </a-col>
         </a-row>
@@ -23,36 +24,39 @@
 
       <a-row :gutter='24'>
 
-        <a-col :span='15'>
+        <a-col :span='openTest?16:24'>
           <a-card :bordered='false' :body-style='{paddingBottom: 0}'>
             <a-row :gutter='24'>
-              <a-col :span='12'>
+              <a-col :span='9'>
                 <a-form-model-item label='名称' prop='scriptName'>
                   <a-input v-model='modal.scriptName' placeholder='请输入脚本名称'></a-input>
                 </a-form-model-item>
               </a-col>
-              <a-col :span='12'>
+              <a-col :span='9'>
                 <a-form-model-item label='说明' prop='description'>
                   <a-input v-model='modal.description' placeholder='请输入脚本说明'></a-input>
                 </a-form-model-item>
               </a-col>
+              <a-col :span='6'>
+                <a-form-model-item label='最后修改' prop='description'>
+                  <a-input v-model='modal.updateTime' placeholder='最后修改时间' :read-only='true'></a-input>
+                </a-form-model-item>
+              </a-col>
               <a-col :span='24' class='scriptModel'>
                 <a-form-model-item label='JavaScript脚本' prop='scriptContent'>
-                  <monaco-editor height='470px' :minimap='true' ref='ScriptContentEditor'></monaco-editor>
+                  <monaco-editor height='600px' :minimap='true' ref='ScriptContentEditor'></monaco-editor>
                 </a-form-model-item>
               </a-col>
             </a-row>
           </a-card>
         </a-col>
-        <a-col :span='9'>
+        <a-col :span='8' v-show='openTest'>
 
           <a-card title='调试' :body-style='{paddingBottom:0}' :bordered='false'>
-            <div slot='extra' style='padding: 0'>
+            <span slot='extra'>
               <a-button type='primary' @click='runScript' icon='caret-right' class='runBtn'> 运行
               </a-button>
-            </div>
-
-            <variables-model ref='VariablesModel'></variables-model>
+            </span>
 
             <a-form-model-item label='输入参数（Json）' prop='paramContent' class='inputModel'>
               <monaco-editor height='150px' ref='ParamContentEditor' language='json'></monaco-editor>
@@ -64,6 +68,8 @@
               </div>
               <monaco-editor height='150px' ref='ResultContentEditor' language='json'></monaco-editor>
             </a-form-model-item>
+
+            <variables-model ref='VariablesModel'></variables-model>
 
           </a-card>
         </a-col>
@@ -111,7 +117,8 @@ export default {
         scriptName: [{ required: true, message: '请输入脚本名称', trigger: 'blur' }],
         scriptContent: [{ required: true, message: '请输入脚本内容', trigger: 'blur' }]
       },
-      time: -1
+      time: -1,
+      openTest: false
     }
   },
   mounted() {
@@ -185,6 +192,9 @@ export default {
     },
     onClose() {
       this.$router.push({ name: 'scriptList' })
+    },
+    changeOpenTest() {
+      this.openTest = !this.openTest
     }
   }
 }

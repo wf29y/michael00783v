@@ -5,6 +5,8 @@ const fs = require('fs')
 const OriginFilePath = path.join(__dirname, '../dist')
 const CopyFilePath = path.join(__dirname, '../../datalink-web/src/main/resources/static/')
 
+deleteFile(CopyFilePath);
+
 if (!fs.existsSync(CopyFilePath)) {
   fs.mkdir(CopyFilePath, err => {
     // console.log(err)
@@ -30,6 +32,22 @@ function getFiles(OriginFilePath, CopyFilePath) {
       }
     }
   })
+}
+
+function deleteFile(path) {
+  let files = [];
+  if(fs.existsSync(path)) {
+    files = fs.readdirSync(path);
+    files.forEach(function(file, index) {
+      let curPath = path + "/" + file;
+      if(fs.statSync(curPath).isDirectory()) { // recurse
+        deleteFile(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
 }
 
 console.log(`\n> Dist Copy complete! \n`)
