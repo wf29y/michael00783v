@@ -24,7 +24,7 @@
 
       <a-row :gutter='24'>
 
-        <a-col :span='openTest?16:24'>
+        <a-col :span='openTest?15:24'>
           <a-card :bordered='false' :body-style='{paddingBottom: 0}'>
             <a-row :gutter='24'>
               <a-col :span='9'>
@@ -50,7 +50,7 @@
             </a-row>
           </a-card>
         </a-col>
-        <a-col :span='8' v-show='openTest'>
+        <a-col :span='9' v-show='openTest'>
 
           <a-card title='调试' :body-style='{paddingBottom:0}' :bordered='false'>
             <span slot='extra'>

@@ -92,7 +92,7 @@ export default {
           scopedSlots: { customRender: 'transformModeMap' }
         },
         {
-          title: '源数据',
+          title: '数据源',
           dataIndex: 'sourceResourceName',
           scopedSlots: { customRender: 'sourceResourceName' }
         },

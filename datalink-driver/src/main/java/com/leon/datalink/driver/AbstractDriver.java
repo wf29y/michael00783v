@@ -5,7 +5,8 @@ import akka.actor.ActorRef;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leon.datalink.core.utils.JacksonUtils;
+import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.driver.actor.ReceiveDataMsg;
 import com.leon.datalink.driver.constans.DriverModeEnum;
@@ -41,17 +42,22 @@ public abstract class AbstractDriver implements Driver {
 
     // 获得全局变量
     public Map<String, Object> getVariable(Object data) {
-        Map<String, Object> globalProp = GlobalVariableContent.getAllValue();
-        Map<String, Object> ruleProp = RuntimeManger.getVariables(ruleId);
-        if (null != ruleProp) {
-            globalProp.putAll(ruleProp);
+        Map<String, Object> globalVar = GlobalVariableContent.getAllValue();
+        Map<String, Object> ruleVar = RuntimeManger.getVariables(ruleId);
+        if (null != ruleVar) {
+            globalVar.putAll(ruleVar);
         }
-        if (null != data) {
-            globalProp.putAll(new ObjectMapper().convertValue(data, new TypeReference<Map<String, Object>>() {
-            }));
+        if (JacksonUtils.canToMap(data)) {
+            try {
+                globalVar.putAll(JacksonUtils.convertValue(data, new TypeReference<Map<String, Object>>() {
+                }));
+            } catch (Exception e) {
+                Loggers.DRIVER.error("data to map error {}", e.getMessage());
+            }
         }
-        return globalProp;
+        return globalVar;
     }
+
 
     // 发送数据
     public void sendData(Object data) {
@@ -76,7 +82,7 @@ public abstract class AbstractDriver implements Driver {
         if (o instanceof Integer) {
             return (Integer) o;
         } else {
-            return new ObjectMapper().convertValue(o, Integer.class);
+            return JacksonUtils.convertValue(o, Integer.class);
         }
     }
 
@@ -93,7 +99,7 @@ public abstract class AbstractDriver implements Driver {
         if (o instanceof Long) {
             return (Long) o;
         } else {
-            return new ObjectMapper().convertValue(o, Long.class);
+            return JacksonUtils.convertValue(o, Long.class);
         }
     }
 
@@ -109,7 +115,7 @@ public abstract class AbstractDriver implements Driver {
         if (o instanceof Boolean) {
             return (Boolean) o;
         } else {
-            return new ObjectMapper().convertValue(o, Boolean.class);
+            return JacksonUtils.convertValue(o, Boolean.class);
         }
     }
 
@@ -123,7 +129,7 @@ public abstract class AbstractDriver implements Driver {
     public Map<String, String> getMapProp(String key) {
         Object o = properties.get(key);
         if (null == o) return null;
-        return new ObjectMapper().convertValue(o, new TypeReference<Map<String, String>>() {
+        return JacksonUtils.convertValue(o, new TypeReference<Map<String, String>>() {
         });
     }
 
@@ -131,7 +137,7 @@ public abstract class AbstractDriver implements Driver {
     public List<Map<String, Object>> getListProp(String key) {
         Object o = properties.get(key);
         if (null == o) return null;
-        return new ObjectMapper().convertValue(o, new TypeReference<List<Map<String, Object>>>() {
+        return JacksonUtils.convertValue(o, new TypeReference<List<Map<String, Object>>>() {
         });
     }
 

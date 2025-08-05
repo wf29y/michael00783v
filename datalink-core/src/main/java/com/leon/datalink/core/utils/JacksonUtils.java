@@ -3,6 +3,8 @@
 package com.leon.datalink.core.utils;
 
 import cn.hutool.core.util.ClassUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.PageUtil;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -22,6 +24,8 @@ import com.leon.datalink.core.exception.runtime.DatalinkSerializationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -230,6 +234,13 @@ public final class JacksonUtils {
         return mapper.convertValue(obj, collectionType);
     }
 
+    public static <T> T convertValue(Object fromValue, TypeReference<T> toValueTypeRef) {
+        return mapper.convertValue(fromValue, toValueTypeRef);
+    }
+
+    public static <T> T convertValue(Object fromValue, Class<T> toValueType) {
+        return mapper.convertValue(fromValue, toValueType);
+    }
 
     /**
      * Register sub type for child class.
@@ -278,4 +289,28 @@ public final class JacksonUtils {
     public static JavaType constructJavaType(Type type) {
         return mapper.constructType(type);
     }
+
+    /**
+     * object can convert to map
+     * @param obj
+     * @return
+     */
+    public static boolean canToMap(Object obj) {
+        if (null == obj) {
+            return false;
+        } else if (obj instanceof Map) {
+            return true;
+        } else if (obj.getClass().isArray()) {
+            return false;
+        } else if (obj instanceof Collection) {
+            return false;
+        } else if (ObjectUtil.isBasicType(obj)) {
+            return false;
+        } else if (obj instanceof CharSequence) {
+            return false;
+        } else if (obj instanceof Enumeration) {
+            return false;
+        } else return !(obj instanceof Iterable);
+    }
+
 }

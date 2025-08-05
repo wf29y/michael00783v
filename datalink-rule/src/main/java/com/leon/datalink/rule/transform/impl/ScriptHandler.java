@@ -1,8 +1,8 @@
 package com.leon.datalink.rule.transform.impl;
 
 import cn.hutool.core.map.MapUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leon.datalink.core.utils.Loggers;
+import com.leon.datalink.core.utils.ScriptUtil;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.rule.transform.TransformHandler;
@@ -54,16 +54,18 @@ public class ScriptHandler implements TransformHandler {
             scriptEngine.setBindings(bind, ScriptContext.ENGINE_SCOPE);
             scriptEngine.eval(script);
             Invocable jsInvoke = (Invocable) scriptEngine;
-            Object transform = jsInvoke.invokeFunction("transform", data);
+            Object scriptResult = jsInvoke.invokeFunction("transform", data);
 
             // 更新自定义环境变量
             if (MapUtil.isNotEmpty(variables)) {
                 variables.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
             }
-            return new ObjectMapper().convertValue(transform, Object.class);
+
+            return ScriptUtil.toJavaObject(scriptResult);
         } catch (Exception e) {
             Loggers.RULE.error("script error {}", e.getMessage());
         }
         return null;
     }
+
 }

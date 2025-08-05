@@ -51,7 +51,7 @@
       <a-card style='margin-bottom: 24px' :bordered='false'>
         <div class='title'>数据源</div>
         <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px' v-if='modal.sourceResource'>
-          <a-col :span='18'>
+          <a-col :span='20'>
             <a-descriptions :column='2'>
               <a-descriptions-item label='资源名称'>
                 {{ modal.sourceResource.resourceName }}
@@ -65,7 +65,7 @@
               </a-descriptions-item>
             </a-descriptions>
           </a-col>
-          <a-col :span='6' style='text-align: right'>
+          <a-col :span='4' style='text-align: right'>
             <a @click='freshResource("source",modal.sourceResource)'>刷新</a>
             <a-divider type='vertical' />
             <a @click='editResource("source",modal.sourceResource)'>配置</a>
@@ -85,7 +85,7 @@
                 v-if='modal.destResourceList.length>0'>
           <a-list-item slot='renderItem' slot-scope='resource,index'>
             <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
-              <a-col :span='18'>
+              <a-col :span='20'>
                 <a-descriptions :column='2'>
                   <a-descriptions-item label='资源名称'>
                     {{ resource.resourceName }}
@@ -99,7 +99,7 @@
                   </a-descriptions-item>
                 </a-descriptions>
               </a-col>
-              <a-col :span='6' style='text-align: right'>
+              <a-col :span='4' style='text-align: right'>
                 <a @click='freshResource("dest",resource,index)'>刷新</a>
                 <a-divider type='vertical' />
                 <a @click='editResource("dest",resource,index)'>配置</a>

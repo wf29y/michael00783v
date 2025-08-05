@@ -2,9 +2,9 @@ package com.leon.datalink.web.controller;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.utils.JacksonUtils;
+import com.leon.datalink.core.utils.ScriptUtil;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.rule.entity.Script;
 import com.leon.datalink.web.script.ScriptService;
@@ -88,7 +88,7 @@ public class ScriptController {
         }
         long time2 = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
-        result.put("result", new ObjectMapper().convertValue(transform, Object.class));
+        result.put("result", ScriptUtil.toJavaObject(transform));
         result.put("time", time2 - time1);
         result.put("variables", variables);
         return result;
