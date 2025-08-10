@@ -9,12 +9,13 @@
                 <a-input v-model='queryParam.key' placeholder='请输入变量名' />
               </a-form-item>
             </a-col>
-            <a-col :md='14' :sm='24'>
+            <a-col :md='10' :sm='24'>
               <a-button type='primary' @click='loadData'>查询</a-button>
               <a-button style='margin-left: 8px' @click='reset'>重置</a-button>
             </a-col>
-            <a-col :md='3' :sm='24' style='text-align: right'>
-              <a-button type='primary' @click='handleAdd()' icon='plus'>新建变量</a-button>
+            <a-col :md='7' :sm='24' style='text-align: right'>
+              <a-button  @click='loadData' icon='undo'>刷新</a-button>
+              <a-button type='primary' @click='handleAdd()' style='margin-left: 8px' icon='plus'>新建变量</a-button>
             </a-col>
           </a-row>
         </a-form>
@@ -28,8 +29,16 @@
         :pagination='false'
         :loading='loading'
       >
+        <span slot='key' slot-scope='text, record, index'>
+          <a-tag :color="record.type==='SYSTEM'?'cyan':'blue'">{{ text }}</a-tag>
+        </span>
+
         <span slot='serial' slot-scope='text, record, index'>
           {{ index + 1 }}
+        </span>
+
+        <span slot='type' slot-scope='text, record, index'>
+          {{ text==='SYSTEM'?'系统变量':'自定义变量' }}
         </span>
 
         <span slot='desc' slot-scope='text, record, index'>
@@ -67,12 +76,21 @@ export default {
             scopedSlots: { customRender: 'serial' }
           },*/
         {
-          title: '变量名',
-          dataIndex: 'key'
+          title: '变量',
+          dataIndex: 'key',
+          width: '20%',
+          scopedSlots: { customRender: 'key' }
         },
         {
           title: '值',
-          dataIndex: 'value'
+          dataIndex: 'value',
+          width: '30%'
+        },
+        {
+          title: '类型',
+          dataIndex: 'type',
+          width: '20%',
+          scopedSlots: { customRender: 'type' }
         },
         {
           title: '说明',

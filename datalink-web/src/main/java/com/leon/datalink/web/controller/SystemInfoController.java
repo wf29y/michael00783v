@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.core.utils.VersionUtils;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.web.model.DiskInfo;
 import com.leon.datalink.web.model.SystemInfo;
 import com.leon.datalink.web.model.SystemStatistics;
 import com.leon.datalink.web.resource.ResourceService;
@@ -14,6 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.leon.datalink.core.common.Constants.LOCAL_IP_PROPERTY_KEY;
 
@@ -51,5 +57,19 @@ public class SystemInfoController {
         statistics.setRuleCount(ruleService.getCount(new Rule()));
         return statistics;
     }
+
+    @GetMapping("/disk")
+    public Object getDiskInfo() {
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        File[] fs = File.listRoots();
+        return Arrays.stream(fs).map(disk -> {
+            DiskInfo diskInfo = new DiskInfo();
+            diskInfo.setName(fsv.getSystemDisplayName(disk));
+            diskInfo.setTotal(disk.getTotalSpace());
+            diskInfo.setFree(disk.getFreeSpace());
+            return diskInfo;
+        }).collect(Collectors.toList());
+    }
+
 
 }

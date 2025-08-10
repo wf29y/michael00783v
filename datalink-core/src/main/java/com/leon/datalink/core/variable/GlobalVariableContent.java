@@ -2,11 +2,14 @@ package com.leon.datalink.core.variable;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.VersionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.leon.datalink.core.common.Constants.LOCAL_IP_PROPERTY_KEY;
 
 /**
  * 全局变量
@@ -16,11 +19,13 @@ public class GlobalVariableContent {
     private static final Map<String, Variable> globalVariable = new HashMap<>();
 
     static {
-        globalVariable.put("version", new Variable("version", VersionUtils.version, "系统版本", VariableTypeEnum.SYSTEM));
-        globalVariable.put("timestamp", new Variable("timestamp", null, "时间戳", VariableTypeEnum.SYSTEM));
-        globalVariable.put("date", new Variable("date", null, "日期", VariableTypeEnum.SYSTEM));
-        globalVariable.put("dateTime", new Variable("dateTime", null, "日期时间", VariableTypeEnum.SYSTEM));
-        globalVariable.put("uuid", new Variable("uuid", null, "UUID", VariableTypeEnum.SYSTEM));
+        globalVariable.put("ip", new Variable("ip", System.getProperty(LOCAL_IP_PROPERTY_KEY), "系统本地IP", VariableTypeEnum.SYSTEM));
+        globalVariable.put("version", new Variable("version", VersionUtils.version, "当前系统版本", VariableTypeEnum.SYSTEM));
+        globalVariable.put("timestamp", new Variable("timestamp", null, "当前毫秒时间戳", VariableTypeEnum.SYSTEM));
+        globalVariable.put("date", new Variable("date", null, "当前日期", VariableTypeEnum.SYSTEM));
+        globalVariable.put("dateTime", new Variable("dateTime", null, "当前日期时间", VariableTypeEnum.SYSTEM));
+        globalVariable.put("uuid", new Variable("uuid", null, "UUID(动态)", VariableTypeEnum.SYSTEM));
+        globalVariable.put("snowId", new Variable("snowId", null, "雪花算法ID(动态)", VariableTypeEnum.SYSTEM));
     }
 
     private static void freshSystemVariable() {
@@ -29,6 +34,7 @@ public class GlobalVariableContent {
         setValue("date", DateUtil.format(now, "yyyy-MM-dd"));
         setValue("dateTime", DateUtil.format(now, "yyyy-MM-dd HH:mm:ss"));
         setValue("uuid", UUID.randomUUID().toString());
+        setValue("snowId", SnowflakeIdWorker.getId());
     }
 
     public static Variable get(String key) {

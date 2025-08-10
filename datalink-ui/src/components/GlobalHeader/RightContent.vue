@@ -3,17 +3,17 @@
 
     <a-tooltip placement='left'>
       <template slot='title'>服务本地时间</template>
-      <span class='system-info-item'><span>时间：</span> {{ systemInfo.time }}</span>
+      <span class='system-info-item'><span>时间：</span>{{ systemInfo.time }}</span>
     </a-tooltip>
 
     <a-tooltip placement='left'>
       <template slot='title'>服务IP地址</template>
-      <span class='system-info-item'><span>IP：</span> {{ systemInfo.ip }}</span>
+      <span class='system-info-item'><span>IP：</span>{{ systemInfo.ip }}</span>
     </a-tooltip>
 
     <a-tooltip placement='left'>
       <template slot='title'>服务版本</template>
-      <span class='system-info-item' style='padding-right: 12px'><span>版本：</span> {{ systemInfo.version }}</span>
+      <span class='system-info-item' style='padding-right: 12px'><span>版本：</span>{{ systemInfo.version }}</span>
     </a-tooltip>
 
     <avatar-dropdown :menu='showMenu' :current-user='currentUser' :class='prefixCls' @updatePassword='updatePassword' />

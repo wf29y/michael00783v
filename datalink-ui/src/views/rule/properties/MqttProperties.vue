@@ -21,7 +21,7 @@
       </a-col>
       <a-col :span='24' class='payload' v-if="type==='dest'">
         <a-form-model-item label='消息模板'  style='margin-bottom: 0'>
-          <monaco-editor ref='MonacoEditor'></monaco-editor>
+          <monaco-editor ref='MonacoEditor' language='freemarker2'></monaco-editor>
         </a-form-model-item>
       </a-col>
     </a-form-model>
