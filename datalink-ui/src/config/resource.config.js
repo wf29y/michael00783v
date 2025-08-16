@@ -27,6 +27,19 @@ const resourceConfigMap = {
       ]
     }
   },
+  RABBITMQ: {
+    name: 'RabbitMQ',
+    type: TYPE_ALL,
+    details: {
+      resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      rule: [
+        { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '虚拟主机', format: (resource) => resource.properties.virtualHost },
+        { name: '交换机', format: (resource) => resource.properties.exchange },
+        { name: '队列', format: (resource) => resource.properties.queue }
+      ]
+    }
+  },
   MYSQL: {
     name: 'MySQL',
     type: TYPE_ALL,

@@ -34,6 +34,7 @@
       <sqlserver-properties v-if="modal.resourceType === 'SQLSERVER'" ref='PropertiesModal'></sqlserver-properties>
       <opc-u-a-properties v-if="modal.resourceType === 'OPCUA'" ref='PropertiesModal'></opc-u-a-properties>
       <redis-properties v-if="modal.resourceType === 'REDIS'" ref='PropertiesModal'></redis-properties>
+      <rabbit-m-q-properties v-if="modal.resourceType === 'RABBITMQ'" ref='PropertiesModal'></rabbit-m-q-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -71,6 +72,7 @@ import TDengineProperties from '../properties/TDengineProperties'
 import SqlserverProperties from '../properties/SqlserverProperties'
 import OpcUAProperties from '../properties/OpcUAProperties'
 import RedisProperties from '../properties/RedisProperties'
+import RabbitMQProperties from '../properties/RabbitMQProperties'
 
 export default {
   name: 'ResourceModel',
@@ -83,7 +85,8 @@ export default {
     TDengineProperties,
     SqlserverProperties,
     OpcUAProperties,
-    RedisProperties
+    RedisProperties,
+    RabbitMQProperties
   },
   data() {
     return {

@@ -39,6 +39,8 @@
                           :type='resourceMode'></opc-u-a-properties>
       <redis-properties v-if="modal.resourceType === 'REDIS'" ref='PropertiesModal'
                         :type='resourceMode'></redis-properties>
+      <rabbit-m-q-properties v-if="modal.resourceType === 'RABBITMQ'" ref='PropertiesModal'
+                             :type='resourceMode'></rabbit-m-q-properties>
     </a-form-model>
     <div
       :style="{
@@ -71,6 +73,7 @@ import TDengineProperties from '../properties/TDengineProperties'
 import SqlserverProperties from '../properties/SqlserverProperties'
 import OpcUAProperties from '../properties/OpcUAProperties'
 import RedisProperties from '../properties/RedisProperties'
+import RabbitMQProperties from '../properties/RabbitMQProperties'
 
 export default {
   name: 'ResourceModel',
@@ -83,7 +86,8 @@ export default {
     TDengineProperties,
     SqlserverProperties,
     OpcUAProperties,
-    RedisProperties
+    RedisProperties,
+    RabbitMQProperties
   },
   data() {
     return {

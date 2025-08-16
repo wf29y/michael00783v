@@ -35,5 +35,6 @@ out
 
 /data
 /plugin
+/backup
 
 .flattened-pom.xml

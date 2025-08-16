@@ -101,7 +101,7 @@ public class ResourcesController {
      */
     @PostMapping("/test")
     public boolean testResource(@RequestBody Resource resource) throws Exception {
-        ValidatorUtil.isNotEmpty(resource.getResourceName(), resource.getResourceType(), resource.getProperties());
+        ValidatorUtil.isNotEmpty(resource.getResourceType(), resource.getProperties());
         return resourceService.testDriver(resource);
     }
 
