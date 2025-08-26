@@ -140,8 +140,8 @@ const resourceConfigMap = {
       ]
     }
   },
-  HTTP: {
-    name: 'HTTP',
+  HTTPCLIENT: {
+    name: 'HTTP Client',
     type: TYPE_ALL,
     details: {
       resource: { name: '资源地址', format: (resource) => `${resource.properties.url}` },
@@ -156,6 +156,20 @@ const resourceConfigMap = {
           name: '调用频率',
           format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
+      ]
+    }
+  },
+  HTTPSERVER: {
+    name: 'HTTP Server',
+    type: TYPE_SOURCE,
+    details: {
+      resource: { name: '资源地址', format: (resource) => `${resource.properties.port}${resource.properties.path}` },
+      rule: [
+        { name: '监听路径', format: (resource) => `${resource.properties.port}${resource.properties.path}` },
+        {
+          name: '响应内容',
+          format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
+        },
       ]
     }
   },

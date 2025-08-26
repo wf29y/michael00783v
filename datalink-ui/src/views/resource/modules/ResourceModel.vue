@@ -29,7 +29,8 @@
       <kafka-properties v-if="modal.resourceType === 'KAFKA'" ref='PropertiesModal'></kafka-properties>
       <mysql-properties v-if="modal.resourceType === 'MYSQL'" ref='PropertiesModal'></mysql-properties>
       <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal'></postgresql-properties>
-      <http-properties v-if="modal.resourceType === 'HTTP'" ref='PropertiesModal'></http-properties>
+      <http-client-properties v-if="modal.resourceType === 'HTTPCLIENT'" ref='PropertiesModal'></http-client-properties>
+      <http-server-properties v-if="modal.resourceType === 'HTTPSERVER'" ref='PropertiesModal'></http-server-properties>
       <t-dengine-properties v-if="modal.resourceType === 'TDENGINE'" ref='PropertiesModal'></t-dengine-properties>
       <sqlserver-properties v-if="modal.resourceType === 'SQLSERVER'" ref='PropertiesModal'></sqlserver-properties>
       <opc-u-a-properties v-if="modal.resourceType === 'OPCUA'" ref='PropertiesModal'></opc-u-a-properties>
@@ -67,7 +68,8 @@ import MqttProperties from '../properties/MqttProperties'
 import KafkaProperties from '../properties/KafkaProperties'
 import MysqlProperties from '../properties/MysqlProperties'
 import PostgresqlProperties from '../properties/PostgresqlProperties'
-import HttpProperties from '../properties/HttpProperties'
+import HttpClientProperties from '../properties/HttpClientProperties'
+import HttpServerProperties from '../properties/HttpServerProperties'
 import TDengineProperties from '../properties/TDengineProperties'
 import SqlserverProperties from '../properties/SqlserverProperties'
 import OpcUAProperties from '../properties/OpcUAProperties'
@@ -81,7 +83,8 @@ export default {
     KafkaProperties,
     MysqlProperties,
     PostgresqlProperties,
-    HttpProperties,
+    HttpClientProperties,
+    HttpServerProperties,
     TDengineProperties,
     SqlserverProperties,
     OpcUAProperties,

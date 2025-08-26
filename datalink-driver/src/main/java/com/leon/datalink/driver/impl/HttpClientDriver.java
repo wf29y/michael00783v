@@ -44,7 +44,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class HttpDriver extends AbstractDriver {
+public class HttpClientDriver extends AbstractDriver {
 
     private HttpComponentsClientHttpRequestFactory requestFactory;
 
@@ -52,11 +52,11 @@ public class HttpDriver extends AbstractDriver {
 
     private ScheduledExecutorService executor;
 
-    public HttpDriver(Map<String, Object> properties) {
+    public HttpClientDriver(Map<String, Object> properties) {
         super(properties);
     }
 
-    public HttpDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
+    public HttpClientDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
         super(properties, driverMode, ruleActorRef, ruleId);
     }
 

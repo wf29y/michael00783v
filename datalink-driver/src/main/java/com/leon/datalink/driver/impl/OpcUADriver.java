@@ -120,6 +120,6 @@ public class OpcUADriver extends AbstractDriver {
 
     @Override
     public Object handleData(Object data) throws Exception {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
