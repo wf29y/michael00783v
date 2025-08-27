@@ -2,6 +2,8 @@ package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
 import cn.hutool.core.net.NetUtil;
+import com.leon.datalink.core.listener.ListenerContent;
+import com.leon.datalink.core.listener.ListenerTypeEnum;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
 import com.leon.datalink.driver.util.SimpleHttpServer;
@@ -54,11 +56,15 @@ public class HttpServerDriver extends AbstractDriver {
                 });
 
         simpleHttpServer.start();
+        ListenerContent.add(port, ListenerTypeEnum.TCP, "HTTP Server Driver Port");
     }
 
     @Override
     public void destroy() throws Exception {
         if (null != simpleHttpServer) simpleHttpServer.stop(0);
+        Integer port = getIntProp("port");
+        if (null == port) return;
+        ListenerContent.remove(port);
     }
 
     @Override
