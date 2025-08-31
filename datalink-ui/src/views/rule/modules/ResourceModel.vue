@@ -43,6 +43,8 @@
                         :type='resourceMode'></redis-properties>
       <rabbit-m-q-properties v-if="modal.resourceType === 'RABBITMQ'" ref='PropertiesModal'
                              :type='resourceMode'></rabbit-m-q-properties>
+      <tcp-properties v-if="modal.resourceType === 'TCP'" ref='PropertiesModal'
+                      :type='resourceMode'></tcp-properties>
     </a-form-model>
     <div
       :style="{
@@ -77,6 +79,7 @@ import SqlserverProperties from '../properties/SqlserverProperties'
 import OpcUAProperties from '../properties/OpcUAProperties'
 import RedisProperties from '../properties/RedisProperties'
 import RabbitMQProperties from '../properties/RabbitMQProperties'
+import TcpProperties from '../properties/TcpProperties'
 
 export default {
   name: 'ResourceModel',
@@ -91,7 +94,8 @@ export default {
     SqlserverProperties,
     OpcUAProperties,
     RedisProperties,
-    RabbitMQProperties
+    RabbitMQProperties,
+    TcpProperties
   },
   data() {
     return {

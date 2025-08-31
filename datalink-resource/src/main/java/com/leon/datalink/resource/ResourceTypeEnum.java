@@ -11,12 +11,13 @@ public enum ResourceTypeEnum {
     RABBITMQ(RabbitMQDriver.class),
     HTTPCLIENT(HttpClientDriver.class),
     HTTPSERVER(HttpServerDriver.class),
-    MYSQL(MysqlDriver .class),
+    MYSQL(MysqlDriver.class),
     POSTGRESQL(PostgresqlDriver.class),
     TDENGINE(TDengineDriver.class),
     SQLSERVER(SqlServerDriver.class),
     OPCUA(OpcUADriver.class),
-    REDIS(RedisDriver.class);
+    REDIS(RedisDriver.class),
+    TCP(TcpDriver.class);
 
     private final Class<? extends Driver> driver;
 

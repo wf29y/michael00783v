@@ -56,7 +56,7 @@ public class HttpServerDriver extends AbstractDriver {
                 });
 
         simpleHttpServer.start();
-        ListenerContent.add(port, ListenerTypeEnum.TCP, "HTTP Server Driver Port");
+        ListenerContent.add(port, ListenerTypeEnum.TCP, "HTTP server driver port");
     }
 
     @Override

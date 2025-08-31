@@ -27,7 +27,7 @@ public class ListenerServiceImpl implements ListenerService {
 
     @PostConstruct
     private void init() {
-        ListenerContent.add(port, ListenerTypeEnum.TCP, "Server Port");
+        ListenerContent.add(port, ListenerTypeEnum.TCP, "Datalink server port");
     }
 
     @Override
