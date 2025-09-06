@@ -30,6 +30,20 @@ const resourceConfigMap = {
       ]
     }
   },
+  UDP: {
+    name: 'UDP',
+    type: TYPE_SOURCE,
+    details: {
+      resource: { name: '监听地址', format: (resource) => `:${resource.properties.port}` },
+      rule: [
+        { name: '监听地址', format: (resource) => `:${resource.properties.port}` },
+        {
+          name: '响应内容',
+          format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
+        }
+      ]
+    }
+  },
   KAFKA: {
     name: 'Kafka',
     type: TYPE_ALL,

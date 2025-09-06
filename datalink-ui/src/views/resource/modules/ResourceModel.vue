@@ -37,6 +37,7 @@
       <redis-properties v-if="modal.resourceType === 'REDIS'" ref='PropertiesModal'></redis-properties>
       <rabbit-m-q-properties v-if="modal.resourceType === 'RABBITMQ'" ref='PropertiesModal'></rabbit-m-q-properties>
       <tcp-properties v-if="modal.resourceType === 'TCP'" ref='PropertiesModal'></tcp-properties>
+      <udp-properties v-if="modal.resourceType === 'UDP'" ref='PropertiesModal'></udp-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -77,6 +78,7 @@ import OpcUAProperties from '../properties/OpcUAProperties'
 import RedisProperties from '../properties/RedisProperties'
 import RabbitMQProperties from '../properties/RabbitMQProperties'
 import TcpProperties from '../properties/TcpProperties'
+import UdpProperties from '../properties/UdpProperties'
 
 export default {
   name: 'ResourceModel',
@@ -92,7 +94,8 @@ export default {
     OpcUAProperties,
     RedisProperties,
     RabbitMQProperties,
-    TcpProperties
+    TcpProperties,
+    UdpProperties
   },
   data() {
     return {

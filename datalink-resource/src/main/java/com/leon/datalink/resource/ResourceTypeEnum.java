@@ -17,7 +17,8 @@ public enum ResourceTypeEnum {
     SQLSERVER(SqlServerDriver.class),
     OPCUA(OpcUADriver.class),
     REDIS(RedisDriver.class),
-    TCP(TcpDriver.class);
+    TCP(TcpDriver.class),
+    UDP(UdpDriver.class);
 
     private final Class<? extends Driver> driver;
 
