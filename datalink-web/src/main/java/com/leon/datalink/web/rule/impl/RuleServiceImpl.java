@@ -125,8 +125,8 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
             if (!StringUtils.isEmpty(rule.getSearchResourceId())) {
                 stream = stream.filter(r -> {
                     String searchResourceId = rule.getSearchResourceId();
-                    if (searchResourceId.equals(r.getSourceResource().getResourceId())) return true;
-                    return r.getDestResourceList().stream().anyMatch(resource -> searchResourceId.equals(resource.getResourceId()));
+                    return r.getSourceResourceList().stream().anyMatch(resource -> searchResourceId.equals(resource.getResourceId()))
+                            || r.getDestResourceList().stream().anyMatch(resource -> searchResourceId.equals(resource.getResourceId()));
                 });
             }
         }

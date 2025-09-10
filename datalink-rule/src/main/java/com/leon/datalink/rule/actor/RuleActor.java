@@ -6,7 +6,6 @@ import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.driver.constans.DriverModeEnum;
 import com.leon.datalink.driver.actor.*;
-import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.rule.transform.TransformHandler;
 import com.leon.datalink.rule.transform.TransformHandlerFactory;
@@ -53,8 +52,8 @@ public class RuleActor extends AbstractActor {
                 "dest-" + SnowflakeIdWorker.getId())).collect(Collectors.toList());
 
         // 创建源actor
-        Resource sourceResource = rule.getSourceResource();
-        context.actorOf((Props.create(DriverActor.class, sourceResource.getResourceType().getDriver(), sourceResource.getProperties(), DriverModeEnum.SOURCE, rule.getRuleId())), "source");
+        rule.getSourceResourceList().forEach(destResource -> context.actorOf((Props.create(DriverActor.class, destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.SOURCE, rule.getRuleId())),
+                "source-" + SnowflakeIdWorker.getId()));
 
         Loggers.RULE.info("started rule [{}]", getSelf().path());
     }

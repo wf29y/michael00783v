@@ -16,7 +16,7 @@ public class Rule implements Serializable {
 
     private String description;
 
-    private Resource sourceResource;
+    private List<Resource> sourceResourceList;
 
     private List<Resource> destResourceList;
 
@@ -45,13 +45,12 @@ public class Rule implements Serializable {
         return this;
     }
 
-    public Resource getSourceResource() {
-        return sourceResource;
+    public List<Resource> getSourceResourceList() {
+        return sourceResourceList;
     }
 
-    public Rule setSourceResource(Resource sourceResource) {
-        this.sourceResource = sourceResource;
-        return this;
+    public void setSourceResourceList(List<Resource> sourceResourceList) {
+        this.sourceResourceList = sourceResourceList;
     }
 
     public List<Resource> getDestResourceList() {

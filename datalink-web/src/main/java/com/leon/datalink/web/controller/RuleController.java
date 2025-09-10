@@ -39,7 +39,7 @@ public class RuleController {
      */
     @PostMapping("/add")
     public void addRule(@RequestBody Rule rule) throws Exception {
-        ValidatorUtil.isNotEmpty(rule.getRuleName(), rule.getTransformMode(), rule.getSourceResource(), rule.getDestResourceList());
+        ValidatorUtil.isNotEmpty(rule.getRuleName(), rule.getTransformMode(), rule.getSourceResourceList(), rule.getDestResourceList());
         ruleService.add(rule);
     }
 
@@ -74,7 +74,7 @@ public class RuleController {
      */
     @PutMapping("/update")
     public void updateRule(@RequestBody Rule rule) throws Exception {
-        ValidatorUtil.isNotEmpty(rule.getRuleId(),rule.getRuleName(), rule.getTransformMode(), rule.getSourceResource(), rule.getDestResourceList());
+        ValidatorUtil.isNotEmpty(rule.getRuleId(),rule.getRuleName(), rule.getTransformMode(), rule.getSourceResourceList(), rule.getDestResourceList());
         ruleService.update(rule);
     }
 

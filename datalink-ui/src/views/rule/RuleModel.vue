@@ -48,34 +48,41 @@
         </a-row>
       </a-card>
 
+
       <a-card style='margin-bottom: 24px' :bordered='false'>
         <div class='title'>数据源</div>
-        <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px' v-if='modal.sourceResource'>
-          <a-col :span='20'>
-            <a-descriptions :column='2'>
-              <a-descriptions-item label='资源名称'>
-                {{ modal.sourceResource.resourceName }}
-              </a-descriptions-item>
-              <a-descriptions-item label='资源类型'>
-                {{ resourceTypeMap[modal.sourceResource.resourceType] }}
-              </a-descriptions-item>
-              <a-descriptions-item v-for='(element,index) in getDetails(modal.sourceResource)' :key='index'
-                                   :label='element.name'>
-                {{ element.value }}
-              </a-descriptions-item>
-            </a-descriptions>
-          </a-col>
-          <a-col :span='4' style='text-align: right'>
-            <a @click='freshResource("source",modal.sourceResource)'>刷新</a>
-            <a-divider type='vertical' />
-            <a @click='editResource("source",modal.sourceResource)'>配置</a>
-            <a-divider type='vertical' />
-            <a-popconfirm title='移除此资源?' @confirm='() => deleteResource("source")'>
-              <a href='javascript:;'>移除</a>
-            </a-popconfirm>
-          </a-col>
-        </a-row>
-        <a-button @click='addResource("source")' v-if='!modal.sourceResource'> 绑定数据源</a-button>
+        <a-list :grid='{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='modal.sourceResourceList'
+                v-if='modal.sourceResourceList.length>0'>
+          <a-list-item slot='renderItem' slot-scope='resource,index'>
+            <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
+              <a-col :span='20'>
+                <a-descriptions :column='2'>
+                  <a-descriptions-item label='资源名称'>
+                    {{ resource.resourceName }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label='资源类型'>
+                    {{ resourceTypeMap[resource.resourceType] }}
+                  </a-descriptions-item>
+                  <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
+                                       :label='element.name'>
+                    {{ element.value }}
+                  </a-descriptions-item>
+                </a-descriptions>
+              </a-col>
+              <a-col :span='4' style='text-align: right'>
+                <a @click='freshResource("source",resource,index)'>刷新</a>
+                <a-divider type='vertical' />
+                <a @click='editResource("source",resource,index)'>配置</a>
+                <a-divider type='vertical' />
+                <a-popconfirm title='移除此资源?' @confirm='() => deleteResource("source",index)'>
+                  <a href='javascript:;'>移除</a>
+                </a-popconfirm>
+              </a-col>
+            </a-row>
+
+          </a-list-item>
+        </a-list>
+        <a-button @click='addResource("source")'> 添加数据源</a-button>
       </a-card>
 
 
@@ -165,7 +172,7 @@ export default {
   data() {
     return {
       modal: {
-        sourceResource: undefined,
+        sourceResourceList: [],
         destResourceList: [],
         transformMode: 'WITHOUT',
         ignoreNullValue: false
@@ -243,7 +250,7 @@ export default {
       if (mode === 'dest') {
         this.modal.destResourceList.splice(index, 1)
       } else if (mode === 'source') {
-        this.modal.sourceResource = null
+        this.modal.sourceResourceList.splice(index, 1)
       }
     },
     freshResource(mode, resource, index) {
@@ -263,15 +270,14 @@ export default {
       if (mode === 'dest') {
         this.modal.destResourceList.push(resource)
       } else if (mode === 'source') {
-        this.modal.sourceResource = resource
+        this.modal.sourceResourceList.push(resource)
       }
     },
     handleUpdateResource(mode, resource, index) {
       if (mode === 'dest') {
         this.$set(this.modal.destResourceList, index, resource)
-        //this.modal.destResourceList[index] = resource
       } else if (mode === 'source') {
-        this.modal.sourceResource = resource
+        this.$set(this.modal.sourceResourceList, index, resource)
       }
     },
 
@@ -288,12 +294,12 @@ export default {
 
     // 保存规则
     saveRule() {
-      if (!this.modal.sourceResource || !this.modal.sourceResource.resourceId) {
-        this.$message.error('请绑定数据源')
+      if (!this.modal.sourceResourceList || this.modal.sourceResourceList.length === 0) {
+        this.$message.error('至少添加一个数据源')
         return
       }
       if (!this.modal.destResourceList || this.modal.destResourceList.length === 0) {
-        this.$message.error('请至少选择一个目标资源')
+        this.$message.error('至少添加一个目标资源')
         return
       }
       const that = this

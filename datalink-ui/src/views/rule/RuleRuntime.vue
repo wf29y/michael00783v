@@ -64,23 +64,28 @@
 
     </a-card>
 
-
-    <a-card style='margin-bottom: 24px' :bordered='false'>
+    <a-card style='margin-bottom: 24px' :bordered='false' :body-style='{paddingBottom:"10px"}'>
       <div class='title'>数据源</div>
-      <div style='background-color: #f6f6f6;padding: 15px 10px 0 15px' v-if='rule.sourceResource'>
-        <a-descriptions :column='2'>
-          <a-descriptions-item label='资源名称'>
-            {{ rule.sourceResource.resourceName }}
-          </a-descriptions-item>
-          <a-descriptions-item label='资源类型'>
-            {{ resourceTypeMap[rule.sourceResource.resourceType] }}
-          </a-descriptions-item>
-          <a-descriptions-item v-for='(element,index) in getDetails(rule.sourceResource)' :key='index'
-                               :label='element.name'>
-            {{ element.value }}
-          </a-descriptions-item>
-        </a-descriptions>
-      </div>
+      <a-list :grid='{ gutter: 24, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='rule.sourceResourceList'
+              v-if='rule.sourceResourceList && rule.sourceResourceList.length>0'>
+        <a-list-item slot='renderItem' slot-scope='resource,index'>
+          <div style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
+            <a-descriptions :column='2'>
+              <a-descriptions-item label='资源名称'>
+                {{ resource.resourceName }}
+              </a-descriptions-item>
+              <a-descriptions-item label='资源类型'>
+                {{ resourceTypeMap[resource.resourceType] }}
+              </a-descriptions-item>
+              <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
+                                   :label='element.name'>
+                {{ element.value }}
+              </a-descriptions-item>
+            </a-descriptions>
+          </div>
+
+        </a-list-item>
+      </a-list>
     </a-card>
 
 

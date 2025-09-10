@@ -43,11 +43,11 @@
         </span>
 
         <span slot='sourceResourceName' slot-scope='text, item, index'>
-          {{ item.sourceResource.resourceName }}
+        {{ getResourceNameStr(item.sourceResourceList) }}
         </span>
 
         <span slot='destResourceName' slot-scope='text, item, index'>
-          {{ getDestListNameStr(item.destResourceList) }}
+          {{ getResourceNameStr(item.destResourceList) }}
         </span>
 
         <span slot='enable' slot-scope='text, item, index'>
@@ -192,12 +192,12 @@ export default {
     },
     enableChange(item) {
       if (item.enable) {
-          this.handleStop(item)
-      }else {
+        this.handleStop(item)
+      } else {
         this.handleStart(item)
       }
     },
-    getDestListNameStr(destList) {
+    getResourceNameStr(destList) {
       let str = []
       for (let i = destList.length - 1; i >= 0; i--) {
         str.push(destList[i].resourceName)
