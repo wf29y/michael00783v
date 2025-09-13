@@ -3,6 +3,7 @@ package com.leon.datalink.web.rule.impl;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import com.leon.datalink.core.exception.DatalinkException;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
@@ -10,12 +11,14 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
+import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.actor.RuleActor;
 import com.leon.datalink.rule.constants.TransformModeEnum;
 import com.leon.datalink.rule.entity.Plugin;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.plugin.PluginService;
+import com.leon.datalink.web.resource.ResourceService;
 import com.leon.datalink.web.rule.RuleService;
 import com.leon.datalink.web.runtime.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,10 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     @Autowired
     @Lazy
     PluginService pluginService;
+
+    @Autowired
+    @Lazy
+    ResourceService resourceService;
 
     /**
      * 资源列表
@@ -143,6 +150,18 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
         Rule rule = this.get(ruleId);
 
         if (rule.isEnable()) return;
+
+        for (Resource resource : rule.getSourceResourceList()) {
+            if (!resourceService.testDriver(resource)) {
+                throw new DatalinkException(500, String.format("资源[%s]不可用", resource.getResourceName()));
+            }
+        }
+
+        for (Resource resource : rule.getDestResourceList()) {
+            if (!resourceService.testDriver(resource)) {
+                throw new DatalinkException(500, String.format("资源[%s]不可用", resource.getResourceName()));
+            }
+        }
 
         // 修改为启动状态
         rule.setEnable(true);
