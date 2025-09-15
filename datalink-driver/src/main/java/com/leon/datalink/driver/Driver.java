@@ -1,6 +1,8 @@
 package com.leon.datalink.driver;
 
-import java.util.Map;
+import akka.actor.ActorRef;
+import com.leon.datalink.driver.constans.DriverModeEnum;
+import com.leon.datalink.driver.entity.DriverProperties;
 
 /**
  * @ClassName Driver
@@ -12,24 +14,29 @@ import java.util.Map;
 public interface Driver {
 
     /**
+     * init driver
+     */
+    void init(ActorRef ruleActorRef, String ruleId);
+
+    /**
      * create driver
      */
-    void create() throws Exception;
+    void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception;
 
     /**
      * destroy client
      */
-    void destroy() throws Exception;
+    void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception;
 
     /**
      * test ok
      */
-    boolean test();
+    boolean test(DriverProperties properties);
 
     /**
      * handle receive data
      */
-    Object handleData(Object data) throws Exception;
+    Object handleData(Object data, DriverProperties properties) throws Exception;
 
 
 }

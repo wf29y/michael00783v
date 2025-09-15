@@ -1,9 +1,9 @@
 package com.leon.datalink.driver.impl;
 
-import akka.actor.ActorRef;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
+import com.leon.datalink.driver.entity.DriverProperties;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
@@ -23,17 +23,10 @@ public class OpcUADriver extends AbstractDriver {
 
     private ScheduledExecutorService executor;
 
-    public OpcUADriver(Map<String, Object> properties) {
-        super(properties);
-    }
-
-    public OpcUADriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
-        super(properties, driverMode, ruleActorRef, ruleId);
-    }
 
     @Override
-    public void create() throws Exception {
-        String url = getStrProp("url");
+    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+        String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return;
 
         opcUaClient = OpcUaClient.create(
@@ -46,11 +39,11 @@ public class OpcUADriver extends AbstractDriver {
         opcUaClient.connect();
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == getLongProp("initialDelay")) return;
-            if (null == getLongProp("period")) return;
-            if (StringUtils.isEmpty(getStrProp("timeUnit"))) return;
+            if (null == properties.getLong("initialDelay")) return;
+            if (null == properties.getLong("period")) return;
+            if (StringUtils.isEmpty(properties.getString("timeUnit"))) return;
 
-            List<Map<String, Object>> points = getListProp("points");
+            List<Map<String, Object>> points = properties.getList("points");
             if (null == points) return;
 
             this.executor = Executors.newSingleThreadScheduledExecutor();
@@ -61,12 +54,13 @@ public class OpcUADriver extends AbstractDriver {
                         HashMap<String, Object> result = new HashMap<>();
                         result.put("point", point);
                         result.put("value", read(point));
+                        result.put("url", url);
                         sendData(result);
                     }
                 } catch (Exception e) {
                     Loggers.DRIVER.error("{}", e.getMessage());
                 }
-            }, getLongProp("initialDelay"), getLongProp("period"), TimeUnit.valueOf(getStrProp("timeUnit")));
+            }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
         }
 
     }
@@ -93,14 +87,14 @@ public class OpcUADriver extends AbstractDriver {
 
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         executor.shutdown();
         opcUaClient.disconnect();
     }
 
     @Override
-    public boolean test() {
-        String url = getStrProp("url");
+    public boolean test(DriverProperties properties) {
+        String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return false;
 
         try {
@@ -119,7 +113,7 @@ public class OpcUADriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data) throws Exception {
+    public Object handleData(Object data, DriverProperties properties) throws Exception {
         throw new UnsupportedOperationException();
     }
 }

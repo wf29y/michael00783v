@@ -1,11 +1,7 @@
 
 package com.leon.datalink.driver;
 
-import akka.actor.ActorRef;
-import com.leon.datalink.driver.constans.DriverModeEnum;
-
 import java.lang.reflect.Constructor;
-import java.util.Map;
 
 
 /**
@@ -14,16 +10,10 @@ import java.util.Map;
  */
 public class DriverFactory {
 
-    public static Driver getDriver(Class<? extends Driver> driverClass, Map<String, Object> properties) throws Exception {
+    public static Driver getDriver(Class<? extends Driver> driverClass) throws Exception {
         if (driverClass == null) return null;
-        Constructor<? extends Driver> constructor = driverClass.getDeclaredConstructor(Map.class);
-        return constructor.newInstance(properties);
-    }
-
-    public static Driver getDriver(Class<? extends Driver> driverClass, Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef,String ruleId) throws Exception {
-        if (driverClass == null) return null;
-        Constructor<? extends Driver> constructor = driverClass.getDeclaredConstructor(Map.class, DriverModeEnum.class,ActorRef.class,String.class);
-        return constructor.newInstance(properties, driverMode,ruleActorRef,ruleId);
+        Constructor<? extends Driver> constructor = driverClass.getDeclaredConstructor();
+        return constructor.newInstance();
     }
 
 }

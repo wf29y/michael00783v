@@ -1,45 +1,22 @@
 package com.leon.datalink.driver.impl;
 
-import akka.actor.ActorRef;
 import cn.hutool.core.net.NetUtil;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONPObject;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import org.apache.http.HttpRequestFactory;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.http.HttpHeaders;
+import com.leon.datalink.driver.entity.DriverProperties;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RequestCallback;
-import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -52,37 +29,30 @@ public class HttpClientDriver extends AbstractDriver {
 
     private ScheduledExecutorService executor;
 
-    public HttpClientDriver(Map<String, Object> properties) {
-        super(properties);
-    }
-
-    public HttpClientDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
-        super(properties, driverMode, ruleActorRef, ruleId);
-    }
-
     @Override
-    public void create() throws Exception {
+    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+
         this.requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(getIntProp("connectTimeout",6000));
-        requestFactory.setReadTimeout(getIntProp("readTimeout",6000));
+        requestFactory.setConnectTimeout(properties.getInteger("connectTimeout", 6000));
+        requestFactory.setReadTimeout(properties.getInteger("readTimeout", 6000));
 
         this.restTemplate = new RestTemplate(this.requestFactory);
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if(null== getLongProp("initialDelay")) return;
-            if(null== getLongProp("period")) return;
-            if(StringUtils.isEmpty(getStrProp("timeUnit"))) return;
+            if (null == properties.getLong("initialDelay")) return;
+            if (null == properties.getLong("period")) return;
+            if (StringUtils.isEmpty(properties.getString("timeUnit"))) return;
 
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {
-                Map<String, Object> result = doRequest(null);
+                Map<String, Object> result = doRequest(null, properties);
                 sendData(result);
-            }, getLongProp("initialDelay"), getLongProp("period"), TimeUnit.valueOf(getStrProp("timeUnit")));
+            }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
         }
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             executor.shutdown();
         }
@@ -90,8 +60,8 @@ public class HttpClientDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test() {
-        String url = getStrProp("url");
+    public boolean test(DriverProperties properties) {
+        String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return false;
         try {
             URL urlObj = new URL(url);
@@ -104,33 +74,33 @@ public class HttpClientDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data) throws Exception {
-        return doRequest(data);
+    public Object handleData(Object data, DriverProperties properties) throws Exception {
+        return doRequest(data, properties);
     }
 
 
-    private Map<String, Object> doRequest(Object data) {
+    private Map<String, Object> doRequest(Object data, DriverProperties properties) {
 
-        String url = getStrProp("url");
-        String method = getStrProp("method");
-        if(StringUtils.isEmpty(url)) return null;
-        if(StringUtils.isEmpty(method)) return null;
+        String url = properties.getString("url");
+        String method = properties.getString("method");
+        if (StringUtils.isEmpty(url)) return null;
+        if (StringUtils.isEmpty(method)) return null;
 
         Map<String, Object> variable = getVariable(data);
 
         // 路径模板解析
-        String path = getStrProp("path");
+        String path = properties.getString("path");
         if (!StringUtils.isEmpty(path)) {
-            String render = this.templateEngine.getTemplate(path).render(variable);
+            String render = this.templateAnalysis(path, variable);
             if (!StringUtils.isEmpty(render)) path = render;
         }
 
         url += path;
 
         // 请求体模板解析
-        String body = getStrProp("body");
+        String body = properties.getString("body");
         if (!StringUtils.isEmpty(body)) {
-            String render = this.templateEngine.getTemplate(body).render(variable);
+            String render = this.templateAnalysis(body, variable);
             if (!StringUtils.isEmpty(render)) body = render;
         } else {
             if (null != data) {
@@ -138,7 +108,7 @@ public class HttpClientDriver extends AbstractDriver {
             }
         }
 
-        Map<String, String> headersMap = getMapProp("headers");
+        Map<String, String> headersMap = properties.getMap("headers");
 
         final String param = body;
         RequestCallback requestCallback = request -> {
@@ -161,7 +131,7 @@ public class HttpClientDriver extends AbstractDriver {
         result.put("url", url);
         result.put("param", param);
         result.put("response", response);
-
+        result.put("driver", properties);
         return result;
     }
 

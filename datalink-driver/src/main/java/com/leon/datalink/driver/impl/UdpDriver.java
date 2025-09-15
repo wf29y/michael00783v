@@ -1,11 +1,11 @@
 package com.leon.datalink.driver.impl;
 
-import akka.actor.ActorRef;
 import cn.hutool.core.net.NetUtil;
 import com.leon.datalink.core.listener.ListenerContent;
 import com.leon.datalink.core.listener.ListenerTypeEnum;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
+import com.leon.datalink.driver.entity.DriverProperties;
 import com.leon.datalink.driver.util.HexUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -25,17 +25,10 @@ public class UdpDriver extends AbstractDriver {
 
     private Channel channel;
 
-    public UdpDriver(Map<String, Object> properties) {
-        super(properties);
-    }
-
-    public UdpDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
-        super(properties, driverMode, ruleActorRef, ruleId);
-    }
 
     @Override
-    public void create() throws Exception {
-        Integer port = getIntProp("port");
+    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+        Integer port = properties.getInteger("port");
         if (null == port) return;
         bossGroup = new NioEventLoopGroup();
 
@@ -62,9 +55,9 @@ public class UdpDriver extends AbstractDriver {
                                 in.getBytes(in.readerIndex(), bytes);
                                 in.readRetainedSlice(bytes.length);
                                 // 响应解析
-                                String response = getStrProp("response");
+                                String response = properties.getString("response");
                                 if (!StringUtils.isEmpty(response)) {
-                                    String render = templateEngine.getTemplate(response).render(getVariable(null));
+                                    String render = templateAnalysis(response, getVariable(null));
                                     if (!StringUtils.isEmpty(render)) {
                                         response = render;
                                     }
@@ -77,6 +70,7 @@ public class UdpDriver extends AbstractDriver {
                                 map.put("bytes", bytes);
                                 map.put("hex", HexUtil.bytesToHex(bytes));
                                 map.put("response", response);
+                                map.put("driver", properties);
                                 sendData(map);
                             }
                         });
@@ -88,25 +82,25 @@ public class UdpDriver extends AbstractDriver {
 
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         bossGroup.shutdownGracefully();
         bossGroup = null;
         channel.closeFuture().syncUninterruptibly();
         channel = null;
-        Integer port = getIntProp("port");
+        Integer port = properties.getInteger("port");
         if (null == port) return;
         ListenerContent.remove(port);
     }
 
     @Override
-    public boolean test() {
-        Integer port = getIntProp("port");
+    public boolean test(DriverProperties properties) {
+        Integer port = properties.getInteger("port");
         if (null == port) return false;
         return NetUtil.isUsableLocalPort(port);
     }
 
     @Override
-    public Object handleData(Object data) throws Exception {
+    public Object handleData(Object data, DriverProperties properties) throws Exception {
         throw new UnsupportedOperationException();
     }
 

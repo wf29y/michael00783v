@@ -1,11 +1,10 @@
 package com.leon.datalink.driver.impl;
 
-import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
+import com.leon.datalink.driver.entity.DriverProperties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -29,30 +28,22 @@ public class KafkaDriver extends AbstractDriver {
 
     private KafkaProducer<String, String> kafkaProducer;
 
-    public KafkaDriver(Map<String, Object> properties) {
-        super(properties);
-    }
-
-    public KafkaDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
-        super(properties, driverMode, ruleActorRef, ruleId);
-    }
-
     private boolean isClose = false;
 
     @Override
-    public void create() throws Exception {
-        String url = getStrProp("url");
-        if(StringUtils.isEmpty(url)) return;
+    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+        String url = properties.getString("url");
+        if (StringUtils.isEmpty(url)) return;
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            String topic = getStrProp("topic");
-            if(StringUtils.isEmpty(topic)) return;
+            String topic = properties.getString("topic");
+            if (StringUtils.isEmpty(topic)) return;
 
             Properties prop = new Properties();
             prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
             prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
             prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-            prop.put(ConsumerConfig.GROUP_ID_CONFIG, getStrProp("group"));
+            prop.put(ConsumerConfig.GROUP_ID_CONFIG, properties.getString("group"));
             this.kafkaConsumer = new KafkaConsumer<>(prop);
             kafkaConsumer.subscribe(Collections.singletonList(topic));
             new Thread(() -> {
@@ -66,6 +57,7 @@ public class KafkaDriver extends AbstractDriver {
                         Map<String, Object> data = new HashMap<>();
                         data.put("topic", record.topic());
                         data.put("payload", record.value());
+                        data.put("driver", properties);
                         sendData(data);
                     }
                 }
@@ -80,7 +72,7 @@ public class KafkaDriver extends AbstractDriver {
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             this.isClose = true;
         } else {
@@ -89,9 +81,9 @@ public class KafkaDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test() {
-        String url = getStrProp("url");
-        if(StringUtils.isEmpty(url)) return false;
+    public boolean test(DriverProperties properties) {
+        String url = properties.getString("url");
+        if (StringUtils.isEmpty(url)) return false;
         try {
             Properties prop = new Properties();
             prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
@@ -106,16 +98,16 @@ public class KafkaDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data) throws Exception {
-        String topic = getStrProp("topic");
-        if(StringUtils.isEmpty(topic)) return null;
+    public Object handleData(Object data, DriverProperties properties) throws Exception {
+        String topic = properties.getString("topic");
+        if (StringUtils.isEmpty(topic)) return null;
 
         Map<String, Object> variable = getVariable(data);
 
         // 消息模板解析
-        String payload = getStrProp("payload");
+        String payload = properties.getString("payload");
         if (!StringUtils.isEmpty(payload)) {
-            String render = this.templateEngine.getTemplate(payload).render(variable);
+            String render = this.templateAnalysis(payload, variable);
             if (!StringUtils.isEmpty(render)) payload = render;
         } else {
             if (null != data) {
@@ -124,7 +116,7 @@ public class KafkaDriver extends AbstractDriver {
         }
 
         // topic模板解析
-        String render = this.templateEngine.getTemplate(topic).render(variable);
+        String render = this.templateAnalysis(topic, variable);
         if (!StringUtils.isEmpty(render)) topic = render;
 
 

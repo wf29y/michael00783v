@@ -1,7 +1,5 @@
 package com.leon.datalink.driver.impl;
 
-import akka.actor.ActorRef;
-import cn.hutool.db.DbUtil;
 import cn.hutool.db.Entity;
 import cn.hutool.db.handler.EntityListHandler;
 import cn.hutool.db.sql.SqlExecutor;
@@ -9,16 +7,13 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.taosdata.jdbc.TSDBDriver;
+import com.leon.datalink.driver.entity.DriverProperties;
 import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,34 +24,26 @@ public class TDengineDriver extends AbstractDriver {
 
     private ScheduledExecutorService executor;
 
-    public TDengineDriver(Map<String, Object> properties) {
-        super(properties);
-    }
-
-    public TDengineDriver(Map<String, Object> properties, DriverModeEnum driverMode, ActorRef ruleActorRef, String ruleId) throws Exception {
-        super(properties, driverMode, ruleActorRef, ruleId);
-    }
-
     @Override
-    public void create() throws Exception {
-        if (StringUtils.isEmpty(getStrProp("ip"))) return;
-        if (StringUtils.isEmpty(getStrProp("port"))) return;
-        if (StringUtils.isEmpty(getStrProp("databaseName"))) return;
-        if (StringUtils.isEmpty(getStrProp("username"))) return;
-        if (StringUtils.isEmpty(getStrProp("password"))) return;
+    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+        if (StringUtils.isEmpty(properties.getString("ip"))) return;
+        if (StringUtils.isEmpty(properties.getString("port"))) return;
+        if (StringUtils.isEmpty(properties.getString("databaseName"))) return;
+        if (StringUtils.isEmpty(properties.getString("username"))) return;
+        if (StringUtils.isEmpty(properties.getString("password"))) return;
 
         try {
             DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
             dataSource.setDriverClassName("com.taosdata.jdbc.rs.RestfulDriver");
             dataSource.setUrl(String.format("jdbc:TAOS-RS://%s:%s/%s",
-                    getStrProp("ip"),
-                    getStrProp("port"),
-                    getStrProp("databaseName"))); // 设置数据库的连接地址
-            dataSource.setUsername(getStrProp("username")); // 数据库的用户名
-            dataSource.setPassword(getStrProp("password")); // 数据库的密码
-            dataSource.setInitialSize(getIntProp("initSize", 8)); // 设置连接池的初始大小
-            dataSource.setMinIdle(getIntProp("minIdle", 1)); // 设置连接池大小的下限
-            dataSource.setMaxActive(getIntProp("maxActive", 20)); // 设置连接池大小的上限
+                    properties.getString("ip"),
+                    properties.getString("port"),
+                    properties.getString("databaseName"))); // 设置数据库的连接地址
+            dataSource.setUsername(properties.getString("username")); // 数据库的用户名
+            dataSource.setPassword(properties.getString("password")); // 数据库的密码
+            dataSource.setInitialSize(properties.getInteger("initSize", 8)); // 设置连接池的初始大小
+            dataSource.setMinIdle(properties.getInteger("minIdle", 1)); // 设置连接池大小的下限
+            dataSource.setMaxActive(properties.getInteger("maxActive", 20)); // 设置连接池大小的上限
             dataSource.setValidationQuery("select server_status();");
             this.dataSource = dataSource;
         } catch (Exception throwables) {
@@ -64,25 +51,23 @@ public class TDengineDriver extends AbstractDriver {
         }
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == getLongProp("initialDelay")) return;
-            if (null == getLongProp("period")) return;
-            if (StringUtils.isEmpty(getStrProp("timeUnit"))) return;
+            if (null == properties.getLong("initialDelay")) return;
+            if (null == properties.getLong("period")) return;
+            if (StringUtils.isEmpty(properties.getString("timeUnit"))) return;
 
             this.executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleAtFixedRate(() -> {
-                sendData(select());
-            }, getLongProp("initialDelay"), getLongProp("period"), TimeUnit.valueOf(getStrProp("timeUnit")));
+            executor.scheduleAtFixedRate(() -> sendData(select(properties)), properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
         }
     }
 
-    private Object select() {
-        String sql = getStrProp("sql");
+    private Object select(DriverProperties properties) {
+        String sql = properties.getString("sql");
         if (StringUtils.isEmpty(sql)) return null;
 
         List<Entity> result = null;
         try (Connection connection = dataSource.getConnection()) {
             if (connection != null) {
-                String render = this.templateEngine.getTemplate(sql).render(getVariable(null));
+                String render = this.templateAnalysis(sql, getVariable(null));
                 if (!StringUtils.isEmpty(render)) sql = render;
                 result = SqlExecutor.query(connection, sql, new EntityListHandler());
             }
@@ -93,12 +78,13 @@ public class TDengineDriver extends AbstractDriver {
         HashMap<String, Object> map = new HashMap<>();
         map.put("sql", sql);
         map.put("result", result);
+        map.put("driver", properties);
         return map;
     }
 
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             executor.shutdown();
         }
@@ -106,21 +92,21 @@ public class TDengineDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test() {
-        if (StringUtils.isEmpty(getStrProp("ip"))) return false;
-        if (StringUtils.isEmpty(getStrProp("port"))) return false;
-        if (StringUtils.isEmpty(getStrProp("databaseName"))) return false;
-        if (StringUtils.isEmpty(getStrProp("username"))) return false;
-        if (StringUtils.isEmpty(getStrProp("password"))) return false;
+    public boolean test(DriverProperties properties) {
+        if (StringUtils.isEmpty(properties.getString("ip"))) return false;
+        if (StringUtils.isEmpty(properties.getString("port"))) return false;
+        if (StringUtils.isEmpty(properties.getString("databaseName"))) return false;
+        if (StringUtils.isEmpty(properties.getString("username"))) return false;
+        if (StringUtils.isEmpty(properties.getString("password"))) return false;
 
         try {
             Class.forName("com.taosdata.jdbc.rs.RestfulDriver");
             DriverManager.getConnection(String.format("jdbc:TAOS-RS://%s:%s/%s",
-                    getStrProp("ip"),
-                    getStrProp("port"),
-                    getStrProp("databaseName")),
-                    getStrProp("username"),
-                    getStrProp("password"));
+                    properties.getString("ip"),
+                    properties.getString("port"),
+                    properties.getString("databaseName")),
+                    properties.getString("username"),
+                    properties.getString("password"));
             return true;
         } catch (Exception e) {
             Loggers.DRIVER.error("td driver test {}", e.getMessage());
@@ -129,13 +115,13 @@ public class TDengineDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data) throws Exception {
-        String sql = getStrProp("sql");
+    public Object handleData(Object data, DriverProperties properties) throws Exception {
+        String sql = properties.getString("sql");
         if (StringUtils.isEmpty(sql)) return null;
         Boolean result = null;
         try (Connection connection = dataSource.getConnection()) {
             if (connection != null) {
-                String render = this.templateEngine.getTemplate(sql).render(getVariable(data));
+                String render = this.templateAnalysis(sql, getVariable(data));
                 if (!StringUtils.isEmpty(render)) sql = render;
                 result = connection.createStatement().execute(sql);
             }

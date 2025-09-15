@@ -107,8 +107,8 @@ public class ResourceServiceImpl implements ResourceService, BackupData<Resource
 
     @Override
     public boolean testDriver(Resource resource) throws Exception {
-        Driver driver = DriverFactory.getDriver(resource.getResourceType().getDriver(), resource.getProperties());
-        return driver.test();
+        Driver driver = DriverFactory.getDriver(resource.getResourceType().getDriver());
+        return driver.test(resource.getProperties());
     }
 
     @Override

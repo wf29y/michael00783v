@@ -5,9 +5,8 @@ import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.Driver;
 import com.leon.datalink.driver.DriverFactory;
 import com.leon.datalink.driver.constans.DriverModeEnum;
+import com.leon.datalink.driver.entity.DriverProperties;
 import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
-
-import java.util.Map;
 
 /**
  * @ClassName DriverActor
@@ -20,15 +19,22 @@ public class DriverActor extends AbstractActor {
 
     private final Driver driver;
 
-    public DriverActor(Class<? extends Driver> driverClass, Map<String, Object> properties, DriverModeEnum driverMode, String ruleId) throws Exception {
-        this.driver = DriverFactory.getDriver(driverClass, properties, driverMode, getContext().getParent(), ruleId);
+    private final DriverModeEnum driverMode;
+
+    private final DriverProperties driverProperties;
+
+    public DriverActor(Class<? extends Driver> driverClass, DriverProperties driverProperties, DriverModeEnum driverMode, String ruleId) throws Exception {
+        this.driverMode = driverMode;
+        this.driverProperties = driverProperties;
+        this.driver = DriverFactory.getDriver(driverClass);
+        this.driver.init(getContext().getParent(), ruleId);
     }
 
     @Override
     public void preStart() {
         Loggers.DRIVER.info("start driver [{}]", getSelf().path());
         try {
-            driver.create();
+            driver.create(driverMode, driverProperties);
         } catch (Exception e) {
             e.printStackTrace();
             Loggers.DRIVER.error("driver actor start error {} : {}", driver.getClass(), e.getMessage());
@@ -39,7 +45,7 @@ public class DriverActor extends AbstractActor {
     public void postStop() {
         Loggers.DRIVER.info("stop  driver [{}]", getSelf().path());
         try {
-            driver.destroy();
+            driver.destroy(driverMode, driverProperties);
         } catch (Exception e) {
             Loggers.DRIVER.error("driver actor stop error {} : {}", driver.getClass(), e.getMessage());
         }
@@ -50,7 +56,7 @@ public class DriverActor extends AbstractActor {
         return receiveBuilder().match(PublishDataMsg.class, msg -> {
                     RuntimeUpdateDataMsg runtimeUpdateDataMsg = msg.getRuntimeUpdateDataMsg();
                     try {
-                        Object publishData = driver.handleData(msg.getData());
+                        Object publishData = driver.handleData(msg.getData(), driverProperties);
                         runtimeUpdateDataMsg.setPublishData(publishData);
                         runtimeUpdateDataMsg.setPublishSuccess(true);
                         runtimeUpdateDataMsg.setMessage("success");

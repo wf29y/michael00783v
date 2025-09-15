@@ -1,7 +1,8 @@
 package com.leon.datalink.resource;
 
+import com.leon.datalink.driver.entity.DriverProperties;
+
 import java.io.Serializable;
-import java.util.Map;
 
 public class Resource implements Serializable {
     private static final long serialVersionUID = 1276156087085594264L;
@@ -14,7 +15,7 @@ public class Resource implements Serializable {
 
     private ResourceTypeEnum resourceType;
 
-    private Map<String, Object> properties;
+    private DriverProperties properties;
 
     public String getResourceId() {
         return resourceId;
@@ -40,17 +41,18 @@ public class Resource implements Serializable {
         this.description = description;
     }
 
-    public Map<String, Object> getProperties() {
+    public DriverProperties getProperties() {
         return properties;
     }
 
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(DriverProperties properties) {
         this.properties = properties;
     }
 
     public ResourceTypeEnum getResourceType() {
         return resourceType;
     }
+
     public void setResourceType(ResourceTypeEnum resourceType) {
         this.resourceType = resourceType;
     }
