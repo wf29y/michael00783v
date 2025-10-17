@@ -7,6 +7,11 @@ datalink是一个在各种异构数据源之间实现数据采集、桥接的工
 
 MQTT、Kafka、Rabbit MQ、Mysql、Postgresql、SQL Server、TDengine、Redis、TCP、UDP、HTTP、OPC UA
 
+待开发数据源：
+
+SNMP、Modbus TCP、CoAP、Lwm2m
+
+
 支持透传、JavaScript脚本、Java插件三种数据转换方式。
 
 ### 二、打包&安装
@@ -50,7 +55,8 @@ sh shutdown.sh
 
 ### 四、Dashboard
 
-程序启动后，使用浏览器访问 http://127.0.0.1:9966/ 即可管理页面，默认用户名：datalink   密码：aaaaaa
+程序启动后，使用浏览器访问 http://127.0.0.1:9966/ 即可打开管理页面，
+默认用户名：datalink   密码：aaaaaa
 
 ### 五、配置文件
 
@@ -72,4 +78,4 @@ management.endpoints.web.exposure.include=*
 
 http://120.48.0.250:9966/ 
 
-用户名：datalink  密码：aaaaaa
+用户名：datalink   密码：aaaaaa
