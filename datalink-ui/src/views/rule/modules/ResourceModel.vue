@@ -34,6 +34,7 @@
       <rabbit-m-q-properties v-if="modal.resourceType === 'RABBITMQ'" ref='PropertiesModal' :type='resourceMode'></rabbit-m-q-properties>
       <tcp-properties v-if="modal.resourceType === 'TCP'" ref='PropertiesModal' :type='resourceMode'></tcp-properties>
       <udp-properties v-if="modal.resourceType === 'UDP'" ref='PropertiesModal' :type='resourceMode'></udp-properties>
+      <snmp-properties v-if="modal.resourceType === 'SNMP'" ref='PropertiesModal' :type='resourceMode'></snmp-properties>
     </a-form-model>
     <div
       :style="{
@@ -70,6 +71,7 @@ import RedisProperties from '../properties/RedisProperties'
 import RabbitMQProperties from '../properties/RabbitMQProperties'
 import TcpProperties from '../properties/TcpProperties'
 import UdpProperties from '../properties/UdpProperties'
+import SnmpProperties from '../properties/SnmpProperties'
 
 export default {
   name: 'ResourceModel',
@@ -86,7 +88,8 @@ export default {
     RedisProperties,
     RabbitMQProperties,
     TcpProperties,
-    UdpProperties
+    UdpProperties,
+    SnmpProperties
   },
   data() {
     return {

@@ -1,5 +1,5 @@
 <template>
-  <a-form-model layout="vertical" :model="properties" ref='propForm' :rules='rules'>
+  <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
     <a-row :gutter='24'>
       <a-col :span='12'>
         <a-form-model-item label='IP' prop='ip'>
@@ -11,19 +11,19 @@
           <a-input v-model='properties.port' placeholder='请输入端口' />
         </a-form-model-item>
       </a-col>
-      <a-col :span='12'>
-        <a-form-model-item label='账户' prop='username'>
-          <a-input v-model='properties.username' placeholder='请输入账户' />
-        </a-form-model-item>
-      </a-col>
-      <a-col :span='12'>
-        <a-form-model-item label='密码' prop='password'>
-          <a-input-password v-model='properties.password' placeholder='请输入密码' />
-        </a-form-model-item>
-      </a-col>
       <a-col :span='24'>
-        <a-form-model-item label='虚拟主机(VirtualHost)' prop='virtualHost'>
-          <a-input v-model='properties.virtualHost' placeholder='请输入虚拟主机' />
+        <a-form-model-item label='团体名' prop='community'>
+          <a-input v-model='properties.community' placeholder='请输入团体名' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12'>
+        <a-form-model-item label='重连次数' prop='retries'>
+          <a-input-number v-model='properties.retries' placeholder='请输入最大重连次数' style='width: 100%' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12'>
+        <a-form-model-item label='超时时间' prop='timeout'>
+          <a-input-number v-model='properties.timeout' placeholder='请输入超时时间' style='width: 100%' />
         </a-form-model-item>
       </a-col>
     </a-row>
@@ -37,20 +37,20 @@ export default {
   data() {
     return {
       properties: {
-        virtualHost:'/'
+        community: 'public',
+        retries: 3,
+        timeout: 3000
       },
       rules: {
         ip: [{ required: true, message: '请输入IP', trigger: 'blur' }],
         port: [{ required: true, message: '请输入端口', trigger: 'blur' }],
-        username: [{ required: true, message: '请输入账户', trigger: 'blur' }],
-        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-        virtualHost: [{ required: true, message: '请输入虚拟主机', trigger: 'blur' }]
+        community: [{ required: true, message: '请输入团体名', trigger: 'blur' }]
       }
     }
   },
   methods: {
     set(properties) {
-      this.properties = properties
+      this.properties = Object.assign({}, this.properties, properties)
     },
     get(callback) {
       let that = this

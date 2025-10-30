@@ -18,7 +18,8 @@ public enum ResourceTypeEnum {
     OPCUA(OpcUADriver.class),
     REDIS(RedisDriver.class),
     TCP(TcpDriver.class),
-    UDP(UdpDriver.class);
+    UDP(UdpDriver.class),
+    SNMP(SnmpDriver.class);
 
     private final Class<? extends Driver> driver;
 

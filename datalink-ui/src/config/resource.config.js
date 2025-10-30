@@ -44,6 +44,25 @@ const resourceConfigMap = {
       ]
     }
   },
+  SNMP: {
+    name: 'SNMP V2',
+    type: TYPE_SOURCE,
+    details: {
+      resource: { name: '资源地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
+      rule: [
+        { name: '资源地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
+        { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
+        {
+          name: '启动延迟',
+          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        },
+        {
+          name: '调用频率',
+          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        }
+      ]
+    }
+  },
   KAFKA: {
     name: 'Kafka',
     type: TYPE_ALL,
@@ -191,7 +210,7 @@ const resourceConfigMap = {
     name: 'HTTP Server',
     type: TYPE_SOURCE,
     details: {
-      resource: { name: '资源地址', format: (resource) => `:${resource.properties.port}${resource.properties.path}` },
+      resource: { name: '监听地址', format: (resource) => `:${resource.properties.port}${resource.properties.path}` },
       rule: [
         { name: '监听地址', format: (resource) => `:${resource.properties.port}${resource.properties.path}` },
         {
@@ -208,7 +227,15 @@ const resourceConfigMap = {
       resource: { name: '资源地址', format: (resource) => `${resource.properties.url}` },
       rule: [
         { name: '资源地址', format: (resource) => `${resource.properties.url}` },
-        { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` }
+        { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
+        {
+          name: '启动延迟',
+          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        },
+        {
+          name: '调用频率',
+          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        }
       ]
     }
   },
