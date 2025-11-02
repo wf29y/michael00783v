@@ -5,14 +5,14 @@ datalink是一个在各种异构数据源之间实现数据采集、桥接的工
 
 目前支持的数据源有：
 
-MQTT、Kafka、Rabbit MQ、Mysql、Postgresql、SQL Server、TDengine、Redis、TCP、UDP、HTTP、OPC UA
+MQTT、Kafka、Rabbit MQ、Mysql、Postgresql、SQL Server、TDengine、Redis、TCP、UDP、HTTP、OPC UA、SNMP
 
 待开发数据源：
 
-SNMP、Modbus TCP、CoAP、Lwm2m
+Modbus TCP、CoAP、Lwm2m
 
 
-支持透传、JavaScript脚本、Java插件三种数据转换方式。
+支持无转换透传、JavaScript脚本、Java插件三种数据转换方式。
 
 ### 二、打包&安装
 
