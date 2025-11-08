@@ -51,7 +51,8 @@
 
       <a-card style='margin-bottom: 24px' :bordered='false'>
         <div class='title'>数据源</div>
-        <a-list :grid='{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='modal.sourceResourceList'
+        <a-list :grid='{ gutter: 16, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }'
+                :data-source='modal.sourceResourceList'
                 v-if='modal.sourceResourceList.length>0'>
           <a-list-item slot='renderItem' slot-scope='resource,index'>
             <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
@@ -70,6 +71,8 @@
                 </a-descriptions>
               </a-col>
               <a-col :span='4' style='text-align: right'>
+                <a v-if='resource.properties.points !== undefined' @click='pointConfig("source",resource,index)'>点位</a>
+                <a-divider type='vertical' v-if='resource.properties.points !== undefined'/>
                 <a @click='freshResource("source",resource,index)'>刷新</a>
                 <a-divider type='vertical' />
                 <a @click='editResource("source",resource,index)'>配置</a>
@@ -107,6 +110,8 @@
                 </a-descriptions>
               </a-col>
               <a-col :span='4' style='text-align: right'>
+                <a v-if='resource.properties.points !== undefined' @click='pointConfig("dest",resource,index)'>点位</a>
+                <a-divider type='vertical' v-if='resource.properties.points !== undefined'/>
                 <a @click='freshResource("dest",resource,index)'>刷新</a>
                 <a-divider type='vertical' />
                 <a @click='editResource("dest",resource,index)'>配置</a>
@@ -153,7 +158,7 @@
     </a-form-model>
     <resource-model ref='ResourceModel' @update='handleUpdateResource' @add='handleAddResource'></resource-model>
     <script-select-model ref='ScriptSelectModel' @select='handleSelectedScript'></script-select-model>
-
+    <points-config-model ref='PointsConfigModel' @update='handleUpdatePoints'></points-config-model>
 
   </div>
 </template>
@@ -166,9 +171,10 @@ import VariablesModel from './modules/VariablesModel'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 import { transformModeList } from '@/config/rule.config'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
+import PointsConfigModel from './points/PointsConfigModel'
 
 export default {
-  components: { ResourceModel, ScriptSelectModel, VariablesModel, MonacoEditor },
+  components: { ResourceModel, ScriptSelectModel, VariablesModel, MonacoEditor, PointsConfigModel },
   data() {
     return {
       modal: {
@@ -255,14 +261,14 @@ export default {
     },
     freshResource(mode, resource, index) {
       getAction(this.url.resource, { resourceId: resource.resourceId }).then((res) => {
-        if(res.code === 200){
+        if (res.code === 200) {
           let tempProperties = Object.assign({}, resource.properties, res.data.properties)
           let result = Object.assign({}, resource, res.data)
-          result.properties = tempProperties;
+          result.properties = tempProperties
           this.handleUpdateResource(mode, result, index)
-          this.$message.success("刷新成功")
-        }else {
-          this.$message.error("刷新失败")
+          this.$message.success('刷新成功')
+        } else {
+          this.$message.error('刷新失败')
         }
       })
     },
@@ -290,6 +296,19 @@ export default {
       this.$nextTick(() => {
         this.$refs.MonacoEditor.set(this.modal.script)
       })
+    },
+
+    // 打开点位配置
+    pointConfig(mode, resource, index) {
+      this.$refs.PointsConfigModel.config(resource.resourceType, mode, index, resource.properties.points)
+    },
+    // 更新点位配置
+    handleUpdatePoints(mode, index, points) {
+      if (mode === 'dest') {
+        this.modal.destResourceList[index].properties.points = points
+      } else if (mode === 'source') {
+        this.modal.sourceResourceList[index].properties.points = points
+      }
     },
 
     // 保存规则

@@ -44,7 +44,7 @@ public class OpcUADriver extends AbstractDriver {
             if (StringUtils.isEmpty(properties.getString("timeUnit"))) return;
 
             List<Map<String, Object>> points = properties.getList("points");
-            if (null == points) return;
+            if (null == points || points.isEmpty()) return;
 
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {

@@ -57,7 +57,7 @@ const resourceConfigMap = {
           format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
-          name: '调用频率',
+          name: '读取频率',
           format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
@@ -233,7 +233,7 @@ const resourceConfigMap = {
           format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
-          name: '调用频率',
+          name: '读取频率',
           format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
@@ -258,7 +258,7 @@ const resourceConfigMap = {
           format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
-          name: '调用频率',
+          name: '执行频率',
           format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]

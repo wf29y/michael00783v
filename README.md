@@ -38,7 +38,7 @@ cd datalink/bin
 ### 三、启动&停止
 
 ```bash
-cd datalink\bin
+cd datalink/bin
 
 #windows start
 startup.cmd

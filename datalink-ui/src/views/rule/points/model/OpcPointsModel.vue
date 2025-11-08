@@ -1,8 +1,7 @@
 <template>
   <div>
-    <div
-      style='margin-top: -30px;width: 100%;text-align: right;height: 30px;color: #000000;padding-top: 4px'>
-      <a @click='newItem'>添加</a>
+    <div style='width: 100%;padding-bottom: 10px' v-show='!disableEdit'>
+      <a-button type='primary' @click='newItem'>添加</a-button>
     </div>
 
     <a-table
@@ -57,6 +56,12 @@
 
 export default {
   name: 'OpcPointsModel',
+  props: {
+    disableEdit: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       loading: false,
@@ -75,13 +80,17 @@ export default {
           key: 'tag',
           width: '40%',
           scopedSlots: { customRender: 'tag' }
-        },
-        {
-          title: '操作',
-          key: 'action',
-          scopedSlots: { customRender: 'action' }
         }
       ]
+    }
+  },
+  mounted() {
+    if (!this.disableEdit) {
+      this.columns.push({
+        title: '操作',
+        key: 'action',
+        scopedSlots: { customRender: 'action' }
+      })
     }
   },
   methods: {
@@ -100,11 +109,12 @@ export default {
       }
     },
     get() {
-      let result = [];
+      let result = []
       for (let item of this.data) {
+        if (item.isNew) continue
         result.push({
           namespace: item.namespace,
-          tag: item.tag,
+          tag: item.tag
         })
       }
       return result

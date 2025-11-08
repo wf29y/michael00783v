@@ -48,20 +48,23 @@
     </a-card>
 
     <a-card :bordered='false' style='margin-bottom: 24px'>
-      <a-descriptions title='规则信息' :column='2'>
-        <a-descriptions-item label='规则名称'>{{ rule.ruleName }}</a-descriptions-item>
-        <a-descriptions-item label='忽略空值'>{{ rule.ignoreNullValue === true ? '是' : '否' }}</a-descriptions-item>
-        <a-descriptions-item label='转换方式'>
+      <a-row>
+        <a-col :span='22'>
+          <a-descriptions title='规则信息' :column='2'>
+            <a-descriptions-item label='规则名称'>{{ rule.ruleName }}</a-descriptions-item>
+            <a-descriptions-item label='忽略空值'>{{ rule.ignoreNullValue === true ? '是' : '否' }}</a-descriptions-item>
+            <a-descriptions-item label='转换方式'>
           <span v-if='rule.transformMode==="SCRIPT"'><a @click='showScript'>{{ transformModeMap[rule.transformMode]
             }}</a></span>
-          <span v-else>{{ transformModeMap[rule.transformMode] }}</span>
-        </a-descriptions-item>
-        <a-descriptions-item label='备注'> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
-        <a-descriptions-item label='转换插件' v-if='rule.transformMode==="PLUGIN"'>
-          {{ plugin.pluginName }}
-        </a-descriptions-item>
-      </a-descriptions>
-
+              <span v-else>{{ transformModeMap[rule.transformMode] }}</span>
+            </a-descriptions-item>
+            <a-descriptions-item label='备注'> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
+            <a-descriptions-item label='转换插件' v-if='rule.transformMode==="PLUGIN"'>
+              {{ plugin.pluginName }}
+            </a-descriptions-item>
+          </a-descriptions>
+        </a-col>
+      </a-row>
     </a-card>
 
     <a-card style='margin-bottom: 24px' :bordered='false' :body-style='{paddingBottom:"10px"}'>
@@ -69,20 +72,25 @@
       <a-list :grid='{ gutter: 24, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='rule.sourceResourceList'
               v-if='rule.sourceResourceList && rule.sourceResourceList.length>0'>
         <a-list-item slot='renderItem' slot-scope='resource,index'>
-          <div style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
-            <a-descriptions :column='2'>
-              <a-descriptions-item label='资源名称'>
-                {{ resource.resourceName }}
-              </a-descriptions-item>
-              <a-descriptions-item label='资源类型'>
-                {{ resourceTypeMap[resource.resourceType] }}
-              </a-descriptions-item>
-              <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
-                                   :label='element.name'>
-                {{ element.value }}
-              </a-descriptions-item>
-            </a-descriptions>
-          </div>
+          <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
+            <a-col :span='22'>
+              <a-descriptions :column='2'>
+                <a-descriptions-item label='资源名称'>
+                  {{ resource.resourceName }}
+                </a-descriptions-item>
+                <a-descriptions-item label='资源类型'>
+                  {{ resourceTypeMap[resource.resourceType] }}
+                </a-descriptions-item>
+                <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
+                                     :label='element.name'>
+                  {{ element.value }}
+                </a-descriptions-item>
+              </a-descriptions>
+            </a-col>
+            <a-col :span='2' style='text-align: right;padding-right: 5px'>
+              <a v-if='resource.properties.points !== undefined' @click='pointConfig(resource)'>查看点位</a>
+            </a-col>
+          </a-row>
 
         </a-list-item>
       </a-list>
@@ -94,20 +102,25 @@
       <a-list :grid='{ gutter: 24, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='rule.destResourceList'
               v-if='rule.destResourceList && rule.destResourceList.length>0'>
         <a-list-item slot='renderItem' slot-scope='resource,index'>
-          <div style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
-            <a-descriptions :column='2'>
-              <a-descriptions-item label='资源名称'>
-                {{ resource.resourceName }}
-              </a-descriptions-item>
-              <a-descriptions-item label='资源类型'>
-                {{ resourceTypeMap[resource.resourceType] }}
-              </a-descriptions-item>
-              <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
-                                   :label='element.name'>
-                {{ element.value }}
-              </a-descriptions-item>
-            </a-descriptions>
-          </div>
+          <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
+            <a-col :span='22'>
+              <a-descriptions :column='2'>
+                <a-descriptions-item label='资源名称'>
+                  {{ resource.resourceName }}
+                </a-descriptions-item>
+                <a-descriptions-item label='资源类型'>
+                  {{ resourceTypeMap[resource.resourceType] }}
+                </a-descriptions-item>
+                <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
+                                     :label='element.name'>
+                  {{ element.value }}
+                </a-descriptions-item>
+              </a-descriptions>
+            </a-col>
+            <a-col :span='2' style='text-align: right;padding-right: 5px'>
+              <a v-if='resource.properties.points !== undefined' @click='pointConfig(resource)'>查看点位</a>
+            </a-col>
+          </a-row>
 
         </a-list-item>
       </a-list>
@@ -155,7 +168,7 @@
       </a-table>
     </a-card>
 
-
+    <points-config-model ref='PointsConfigModel'></points-config-model>
     <script-view-model ref='ScriptViewModel'></script-view-model>
   </div>
 </template>
@@ -165,10 +178,11 @@ import { getAction, postAction } from '@/api/manage'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 import { transformModeMap } from '@/config/rule.config'
 import ScriptViewModel from './modules/ScriptViewModel'
+import PointsConfigModel from './points/PointsConfigModel'
 
 export default {
   components: {
-    ScriptViewModel
+    ScriptViewModel, PointsConfigModel
   },
   data() {
     return {
@@ -229,11 +243,6 @@ export default {
   mounted() {
     this.ruleId = this.$route.params.ruleId
     this.getInfo()
-  },
-  computed: {
-    // title() {
-    //   return this.$route.meta.title
-    // }
   },
   methods: {
     showScript() {
@@ -297,6 +306,9 @@ export default {
     },
     getDetails(resource) {
       return getResourceDetails(resource, 'rule')
+    },
+    pointConfig(resource) {
+      this.$refs.PointsConfigModel.show(resource.resourceType, resource.properties.points)
     }
   }
 

@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :confirmLoading='confirmLoading'
-    :title='resourceMode==="source"?"源数据":"目标资源"'
+    :title='resourceMode==="source"?"数据源":"目标资源"'
     :width='550'
     :visible='visible'
     @cancel='onClose'

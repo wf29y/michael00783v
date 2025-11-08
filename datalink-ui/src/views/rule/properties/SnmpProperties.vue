@@ -19,23 +19,25 @@
           <a-input-number v-model='properties.period' placeholder='请输入读取频率' style='width: 100%' />
         </a-form-model-item>
       </a-col>
-      <a-col :span='24'>
+<!--      <a-col :span='24'>
         <a-form-model-item label='读取点位' prop='points'>
           <snmp-points-model ref='SnmpPointsModel'></snmp-points-model>
         </a-form-model-item>
-      </a-col>
+      </a-col>-->
     </a-form-model>
   </a-row>
 </template>
 
 <script>
 
-import SnmpPointsModel from './model/SnmpPointsModel'
+//import SnmpPointsModel from '../points/model/SnmpPointsModel'
 import { timeUnitList } from '@/config/time.config'
 
 
 export default {
-  components: { SnmpPointsModel },
+  components: {
+   // SnmpPointsModel
+  },
   data() {
     return {
       properties: {
@@ -43,10 +45,10 @@ export default {
       },
       timeUnitList: timeUnitList,
       rules: {
-        points: [{ required: true, validator: this.checkPoints, message: '请配置读取点位', trigger: 'blur' }],
+        //points: [{ required: true, validator: this.checkPoints, message: '请配置读取点位', trigger: 'blur' }],
         timeUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }],
         initialDelay: [{ required: true, message: '请输入启动延迟', trigger: 'blur' }],
-        period: [{ required: true, message: '请输入请求频率', trigger: 'blur' }]
+        period: [{ required: true, message: '请输入读取频率', trigger: 'blur' }]
       }
     }
   },
@@ -61,12 +63,12 @@ export default {
   methods: {
     set(properties) {
       this.properties = Object.assign({}, this.properties, properties)
-      this.$nextTick(() => {
-        this.$refs.SnmpPointsModel.set(this.properties.points)
-      })
+      // this.$nextTick(() => {
+      //   this.$refs.SnmpPointsModel.set(this.properties.points)
+      // })
     },
     get(callback) {
-      this.properties.points = this.$refs.SnmpPointsModel.get()
+     // this.properties.points = this.$refs.SnmpPointsModel.get()
       let that = this
       this.$refs.propForm.validate(valid => {
         if (valid) {
@@ -76,14 +78,14 @@ export default {
         }
       })
     },
-    checkPoints(rule, value, callback) {
-      let content = this.$refs.SnmpPointsModel.get()
-      if (!content || content.length === 0) {
-        return callback(new Error())
-      } else {
-        return callback()
-      }
-    }
+    // checkPoints(rule, value, callback) {
+    //   let content = this.$refs.SnmpPointsModel.get()
+    //   if (!content || content.length === 0) {
+    //     return callback(new Error())
+    //   } else {
+    //     return callback()
+    //   }
+    // }
   }
 }
 </script>
