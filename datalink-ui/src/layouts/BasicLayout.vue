@@ -8,6 +8,7 @@
     :handleCollapse="handleCollapse"
     :i18nRender="i18nRender"
     v-bind="settings"
+    :sider-width="215"
   >
     <!-- Ads begin
       广告代码 真实项目中请移除

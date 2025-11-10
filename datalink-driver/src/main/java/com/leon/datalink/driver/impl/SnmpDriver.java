@@ -9,6 +9,7 @@ import com.leon.datalink.driver.entity.DriverProperties;
 import org.snmp4j.*;
 import org.snmp4j.event.ResponseEvent;
 import org.snmp4j.event.ResponseListener;
+import org.snmp4j.mp.MPv1;
 import org.snmp4j.mp.MPv2c;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityModel;
@@ -27,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * snmp v2   // todo v1 v3
+ * snmp v1 v2c   // todo v3
  */
 public class SnmpDriver extends AbstractDriver {
 
@@ -49,15 +50,20 @@ public class SnmpDriver extends AbstractDriver {
         String community = properties.getString("community");
         if (StringUtils.isEmpty(community)) return;
 
+        Integer version = properties.getInteger("version"); // 0 1 3
+        if (version == null) return;
+
         MessageDispatcher messageDispatcher = new MessageDispatcherImpl();
-        messageDispatcher.addMessageProcessingModel(new MPv2c());
+
+        if (version == SnmpConstants.version1) messageDispatcher.addMessageProcessingModel(new MPv1());
+        if (version == SnmpConstants.version2c) messageDispatcher.addMessageProcessingModel(new MPv2c());
         snmp = new Snmp(messageDispatcher, new DefaultUdpTransportMapping());
         snmp.listen();
 
         target = new CommunityTarget();
         target.setSecurityName(new OctetString(community));
-        target.setSecurityModel(SecurityModel.SECURITY_MODEL_SNMPv2c);
-        target.setVersion(SnmpConstants.version2c);
+        if (version == SnmpConstants.version2c) target.setSecurityModel(SecurityModel.SECURITY_MODEL_SNMPv2c);
+        target.setVersion(version);
         target.setAddress(GenericAddress.parse(url));
         target.setRetries(properties.getInteger("retries", 3));
         target.setTimeout(properties.getLong("timeout", 3000));
@@ -82,6 +88,7 @@ public class SnmpDriver extends AbstractDriver {
         };
 
         List<Map<String, Object>> points = properties.getList("points");
+        if (null == points || points.isEmpty()) return;
 
         List<String> getOidList = points.stream().filter(point -> point.get("type").equals("GET")).map(point -> (String) point.get("oid")).collect(Collectors.toList());
         List<String> walkOidList = points.stream().filter(point -> point.get("type").equals("WALK")).map(point -> (String) point.get("oid")).collect(Collectors.toList());
@@ -101,11 +108,14 @@ public class SnmpDriver extends AbstractDriver {
         return String.format("udp:%s/%s", ip, port);
     }
 
-    public void sendSnmp(int type, List<String> OidList) {
+    public void sendSnmp(int type, List<String> oidList) {
+        if (null == oidList || oidList.isEmpty()) {
+            return;
+        }
         try {
             PDU pdu = new PDU();
             pdu.setType(type);
-            for (String oid : OidList) {
+            for (String oid : oidList) {
                 pdu.add(new VariableBinding(new OID(oid)));
             }
             this.snmp.send(pdu, target, null, listener);
@@ -123,8 +133,9 @@ public class SnmpDriver extends AbstractDriver {
 
     @Override
     public boolean test(DriverProperties properties) {
-        //todo
-        return true;
+        Integer port = properties.getInteger("port");
+        if (null == port) return false;
+        return NetUtil.isValidPort(port);
     }
 
     @Override

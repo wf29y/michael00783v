@@ -45,7 +45,7 @@ const resourceConfigMap = {
     }
   },
   SNMP: {
-    name: 'SNMP V2',
+    name: 'SNMP',
     type: TYPE_SOURCE,
     details: {
       resource: { name: '资源地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
