@@ -216,7 +216,7 @@ const resourceConfigMap = {
         {
           name: '响应内容',
           format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
-        },
+        }
       ]
     }
   },
@@ -293,6 +293,8 @@ function getResourceTypeList(type) {
   return result
 }
 
+const resourceTypeList = getResourceTypeList()
+
 function getResourceDetails(resource, mode) {
   if (!resource || !resource.resourceType) {
     if (mode === 'resource') {
@@ -331,5 +333,5 @@ function getResourceDetails(resource, mode) {
 
 
 export {
-  resourceTypeMap, getResourceTypeList, getResourceDetails
+  resourceTypeMap, resourceTypeList, getResourceTypeList, getResourceDetails
 }

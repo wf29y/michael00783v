@@ -4,16 +4,25 @@
       <div class='table-page-search-wrapper'>
         <a-form layout='inline'>
           <a-row :gutter='24'>
-            <a-col :md='7' :sm='24'>
+            <a-col :md='6' :sm='24'>
               <a-form-item label='资源名称'>
                 <a-input v-model='queryParam.resourceName' placeholder='请输入资源名称' />
               </a-form-item>
             </a-col>
-            <a-col :md='14' :sm='24'>
+            <a-col :md='6' :sm='24'>
+              <a-form-item label='资源类型'>
+                <a-select v-model='queryParam.resourceType' placeholder='请选择资源类型'>
+                  <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>
+                    {{ item.name }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md='6' :sm='24'>
               <a-button type='primary' @click='loadData'>查询</a-button>
               <a-button style='margin-left: 8px' @click='reset'>重置</a-button>
             </a-col>
-            <a-col :md='3' :sm='24' style='text-align: right'>
+            <a-col :md='6' :sm='24' style='text-align: right'>
               <a-button type='primary' @click='handleAdd()' icon='plus'>新建资源</a-button>
             </a-col>
           </a-row>
@@ -61,7 +70,7 @@
 <script>
 import { postAction, putAction } from '@/api/manage'
 import ResourceModel from './modules/ResourceModel'
-import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
+import { resourceTypeMap, resourceTypeList, getResourceDetails } from '@/config/resource.config'
 
 export default {
   name: 'ResourceList',
@@ -78,7 +87,8 @@ export default {
         remove: '/api/resource/remove',
         update: '/api/resource/update'
       },
-      resourceTypeMap: resourceTypeMap
+      resourceTypeMap: resourceTypeMap,
+      resourceTypeList: resourceTypeList
     }
   },
   mounted() {
