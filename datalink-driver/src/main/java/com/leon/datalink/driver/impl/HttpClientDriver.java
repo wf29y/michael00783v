@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.net.NetUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
@@ -39,14 +40,17 @@ public class HttpClientDriver extends AbstractDriver {
         this.restTemplate = new RestTemplate(this.requestFactory);
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == properties.getLong("initialDelay")) return;
-            if (null == properties.getLong("period")) return;
-            if (StringUtils.isEmpty(properties.getString("timeUnit"))) return;
+            if (null == properties.getLong("initialDelay")) throw new ValidateException();
+            if (null == properties.getLong("period")) throw new ValidateException();
+            if (StringUtils.isEmpty(properties.getString("timeUnit"))) throw new ValidateException();
 
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {
-                Map<String, Object> result = doRequest(null, properties);
-                sendData(result);
+                try {
+                    produceData(doRequest(null, properties));
+                } catch (Exception e) {
+                    produceDataError(e.getMessage());
+                }
             }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
         }
     }

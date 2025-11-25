@@ -17,6 +17,8 @@ public class Resource implements Serializable {
 
     private DriverProperties properties;
 
+    private String resourceRuntimeId; //资源运行时id
+
     public String getResourceId() {
         return resourceId;
     }
@@ -57,4 +59,11 @@ public class Resource implements Serializable {
         this.resourceType = resourceType;
     }
 
+    public String getResourceRuntimeId() {
+        return resourceRuntimeId;
+    }
+
+    public void setResourceRuntimeId(String resourceRuntimeId) {
+        this.resourceRuntimeId = resourceRuntimeId;
+    }
 }

@@ -7,5 +7,7 @@ package com.leon.datalink.runtime.constants;
  * @Version V1.0
  **/
 public class Constants {
-    public static final int RULE_LAST_DATA_COUNT = 10;
+
+    public static final int DATA_RECORD_LIMIT = 5;
+
 }

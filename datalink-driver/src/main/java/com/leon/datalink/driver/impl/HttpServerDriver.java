@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.net.NetUtil;
 import com.leon.datalink.core.listener.ListenerContent;
 import com.leon.datalink.core.listener.ListenerTypeEnum;
@@ -20,8 +21,8 @@ public class HttpServerDriver extends AbstractDriver {
     public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         Integer port = properties.getInteger("port");
         String path = properties.getString("path");
-        if (null == port) return;
-        if (StringUtils.isEmpty(path)) return;
+        if (null == port) throw new ValidateException();
+        if (StringUtils.isEmpty(path)) throw new ValidateException();
 
 
         simpleHttpServer = new SimpleHttpServer(port)
@@ -45,7 +46,7 @@ public class HttpServerDriver extends AbstractDriver {
 
                     result.put("response", response);
                     result.put("driver", properties);
-                    this.sendData(result);
+                    this.produceData(result);
                 });
 
         simpleHttpServer.start();
@@ -56,7 +57,7 @@ public class HttpServerDriver extends AbstractDriver {
     public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         if (null != simpleHttpServer) simpleHttpServer.stop(0);
         Integer port = properties.getInteger("port");
-        if (null == port) return;
+        if (null == port) throw new ValidateException();
         ListenerContent.remove(port);
     }
 

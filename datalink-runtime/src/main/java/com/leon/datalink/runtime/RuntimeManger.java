@@ -1,12 +1,15 @@
 package com.leon.datalink.runtime;
 
 import cn.hutool.core.date.DateTime;
-import com.google.common.collect.Lists;
-import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
-//import com.leon.datalink.runtime.actor.RuntimeUpdateVarMsg;
+import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
+import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
+import com.leon.datalink.runtime.entity.RuntimeData;
+import com.leon.datalink.runtime.entity.RuntimeStatus;
 import com.leon.datalink.runtime.entity.Runtime;
+import com.leon.datalink.runtime.entity.RuntimeEntity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,71 +20,146 @@ public class RuntimeManger {
      */
     private static final ConcurrentHashMap<String, Runtime> runtimeList = new ConcurrentHashMap<>();
 
-
-    public static void init(String ruleId, Map<String, Object> initVariables) {
+    /**
+     * 初始化
+     */
+    public static void init(String ruleId, Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList) {
         Runtime ruleRuntime = runtimeList.get(ruleId);
-        // 重新启动
+        // 非首次初始化
         if (null != ruleRuntime) {
-            Map<String, Object> variables = ruleRuntime.getVariables();
+
             // 同名变量保持运行值
+            Map<String, Object> variables = ruleRuntime.getVariables();
             for (String key : variables.keySet()) {
                 if (initVariables.containsKey(key)) {
                     initVariables.put(key, variables.get(key));
                 }
             }
             ruleRuntime.setVariables(initVariables);
+
+            // 资源运行状保持
+            Map<String, RuntimeEntity> sourceRuntimeMap = new HashMap<>(sourceRuntimeIdList.size());
+            Map<String, RuntimeEntity> sourceRuntimeList = ruleRuntime.getSourceRuntimeList();
+            for (String id : sourceRuntimeIdList) {
+                if (sourceRuntimeList.containsKey(id)) {
+                    RuntimeEntity runtimeEntity = sourceRuntimeList.get(id);
+                    runtimeEntity.setStatus(RuntimeStatusEnum.INIT);
+                    sourceRuntimeMap.put(id, runtimeEntity);
+                } else {
+                    sourceRuntimeMap.put(id, new RuntimeEntity());
+                }
+            }
+            ruleRuntime.setSourceRuntimeList(sourceRuntimeMap);
+
+            // 资源运行状保持
+            Map<String, RuntimeEntity> destRuntimeMap = new HashMap<>(destRuntimeIdList.size());
+            Map<String, RuntimeEntity> destRuntimeList = ruleRuntime.getDestRuntimeList();
+            for (String id : destRuntimeIdList) {
+                if (destRuntimeList.containsKey(id)) {
+                    RuntimeEntity runtimeEntity = destRuntimeList.get(id);
+                    runtimeEntity.setStatus(RuntimeStatusEnum.INIT);
+                    destRuntimeMap.put(id, runtimeEntity);
+                } else {
+                    destRuntimeMap.put(id, new RuntimeEntity());
+                }
+            }
+            ruleRuntime.setDestRuntimeList(destRuntimeMap);
+
+            //todo 转换runtimeEntity的初始化
+
         } else {
-            runtimeList.put(ruleId, newRuntime(initVariables));
+            resetRuntime(ruleId, initVariables, sourceRuntimeIdList, destRuntimeIdList);
         }
     }
 
-    private static Runtime newRuntime(Map<String, Object> initVariables) {
+    /**
+     * 新加运行
+     */
+    private static Runtime newRuntime(Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList) {
+        Map<String, RuntimeEntity> sourceRuntimeMap = new HashMap<>(sourceRuntimeIdList.size());
+        for (String id : sourceRuntimeIdList) {
+            sourceRuntimeMap.put(id, new RuntimeEntity());
+        }
+
+        Map<String, RuntimeEntity> destRuntimeMap = new HashMap<>(destRuntimeIdList.size());
+        for (String id : destRuntimeIdList) {
+            destRuntimeMap.put(id, new RuntimeEntity());
+        }
+
         Runtime runtime = new Runtime();
-        runtime.setTotal(0L);
-        runtime.setTransformSuccessCount(0L);
-        runtime.setTransformFailCount(0L);
-        runtime.setPublishSuccessCount(0L);
-        runtime.setPublishFailCount(0L);
         runtime.setStartTime(DateTime.now());
-        runtime.setLastData(Lists.newLinkedList());
+        runtime.setTransformRuntime(new RuntimeEntity());
+        runtime.setSourceRuntimeList(sourceRuntimeMap);
+        runtime.setDestRuntimeList(destRuntimeMap);
         runtime.setVariables(null == initVariables ? new HashMap<>() : initVariables);
         return runtime;
     }
 
-    public static void resetRuntime(String ruleId, Map<String, Object> initVariables) {
-        runtimeList.put(ruleId, newRuntime(initVariables));
+
+    public static void resetRuntime(String ruleId, Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList) {
+        runtimeList.put(ruleId, newRuntime(initVariables, sourceRuntimeIdList, destRuntimeIdList));
+    }
+
+    public static void handleRecord(String ruleId, RuntimeData runtimeData) {
+        handleRecord(ruleId, null, runtimeData);
+    }
+
+
+    public static void handleRecord(String ruleId, String entityRuntimeId, RuntimeData runtimeData) {
+        Runtime runtime = runtimeList.get(ruleId);
+        if (null == runtime) return;
+
+        RuntimeTypeEnum type = runtimeData.getType();
+
+        switch (type) {
+            case SOURCE: {
+                Map<String, RuntimeEntity> sourceRuntimeList = runtime.getSourceRuntimeList();
+                sourceRuntimeList.get(entityRuntimeId).addDataRecord(runtimeData);
+                break;
+            }
+            case TRANSFORM: {
+                runtime.getTransformRuntime().addDataRecord(runtimeData);
+                break;
+            }
+            case DEST: {
+                Map<String, RuntimeEntity> destRuntimeList = runtime.getDestRuntimeList();
+                destRuntimeList.get(entityRuntimeId).addDataRecord(runtimeData);
+                break;
+            }
+        }
+    }
+
+    public static void handleStatus(String ruleId, RuntimeStatus runtimeStatus) {
+        handleStatus(ruleId, null, runtimeStatus);
+    }
+
+    public static void handleStatus(String ruleId, String entityRuntimeId, RuntimeStatus runtimeStatus) {
+        Runtime runtime = runtimeList.get(ruleId);
+        if (null == runtime) return;
+
+        RuntimeTypeEnum type = runtimeStatus.getType();
+
+        switch (type) {
+            case SOURCE: {
+                Map<String, RuntimeEntity> sourceRuntimeList = runtime.getSourceRuntimeList();
+                sourceRuntimeList.get(entityRuntimeId).updateStatus(runtimeStatus);
+                break;
+            }
+            case TRANSFORM: {
+                runtime.getTransformRuntime().updateStatus(runtimeStatus);
+                break;
+            }
+            case DEST: {
+                Map<String, RuntimeEntity> destRuntimeList = runtime.getDestRuntimeList();
+                destRuntimeList.get(entityRuntimeId).updateStatus(runtimeStatus);
+                break;
+            }
+        }
     }
 
     public static ConcurrentHashMap<String, Runtime> getRuntimeList() {
         return runtimeList;
     }
-
-    public static void updateData(String ruleId, RuntimeUpdateDataMsg msg) {
-        Runtime runtime = runtimeList.get(ruleId);
-        runtime.addLastData(msg);
-        runtime.setLastTime(msg.getTime());
-        runtime.addTotalCount();
-        if (null != msg.getTransformSuccess()) {
-            if (msg.getTransformSuccess()) {
-                runtime.addTransformSuccessCount();
-                if (null != msg.getPublishSuccess()) {
-                    if (msg.getPublishSuccess()) {
-                        runtime.addPublishSuccessCount();
-                    } else if (!msg.getPublishSuccess()) {
-                        runtime.addPublishFailCount();
-                    }
-                }
-            } else if (!msg.getTransformSuccess()) {
-                runtime.addTransformFailCount();
-            }
-        }
-
-    }
-
-//    public static void updateVariable(String ruleId, RuntimeUpdateVarMsg runtimeUpdateVarMsg) {
-//        Runtime runtime = runtimeList.get(ruleId);
-//        runtime.setVariables(runtimeUpdateVarMsg.getVariables());
-//    }
 
     public static void setRuntime(String ruleId, Runtime runtime) {
         runtimeList.put(ruleId, runtime);
@@ -99,5 +177,6 @@ public class RuntimeManger {
     public static void removeRuntime(String ruleId) {
         runtimeList.remove(ruleId);
     }
+
 
 }

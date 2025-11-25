@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import cn.hutool.core.exceptions.ValidateException;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
@@ -33,11 +34,11 @@ public class KafkaDriver extends AbstractDriver {
     @Override
     public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         String url = properties.getString("url");
-        if (StringUtils.isEmpty(url)) return;
+        if (StringUtils.isEmpty(url)) throw new ValidateException();
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             String topic = properties.getString("topic");
-            if (StringUtils.isEmpty(topic)) return;
+            if (StringUtils.isEmpty(topic)) throw new ValidateException();
 
             Properties prop = new Properties();
             prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
@@ -58,7 +59,7 @@ public class KafkaDriver extends AbstractDriver {
                         data.put("topic", record.topic());
                         data.put("payload", record.value());
                         data.put("driver", properties);
-                        sendData(data);
+                        produceData(data);
                     }
                 }
             }).start();
@@ -100,7 +101,7 @@ public class KafkaDriver extends AbstractDriver {
     @Override
     public Object handleData(Object data, DriverProperties properties) throws Exception {
         String topic = properties.getString("topic");
-        if (StringUtils.isEmpty(topic)) return null;
+        if (StringUtils.isEmpty(topic)) throw new ValidateException();
 
         Map<String, Object> variable = getVariable(data);
 

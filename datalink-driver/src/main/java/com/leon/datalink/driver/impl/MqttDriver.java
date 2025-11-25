@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import cn.hutool.core.exceptions.ValidateException;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
@@ -22,11 +23,11 @@ public class MqttDriver extends AbstractDriver {
 
     private volatile MqttClient mqttHandler;
 
-    private static final Integer HANDLER_COUNT = 10;
+    private static final Integer HANDLER_COUNT = 20;
 
     @Override
     public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
-        if (StringUtils.isEmpty(properties.getString("url"))) return;
+        if (StringUtils.isEmpty(properties.getString("url"))) throw new ValidateException();
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             mqttHandler = createClient(properties);
@@ -79,7 +80,7 @@ public class MqttDriver extends AbstractDriver {
     @Override
     public Object handleData(Object data, DriverProperties properties) throws Exception {
         String topic = properties.getString("topic");
-        if (StringUtils.isEmpty(topic)) return null;
+        if (StringUtils.isEmpty(topic)) throw new ValidateException();
 
         Map<String, Object> variable = getVariable(data);
 
@@ -120,89 +121,75 @@ public class MqttDriver extends AbstractDriver {
     }
 
 
-    private MqttClient createClient(DriverProperties properties) {
-        try {
-            MqttClient mqttClient = new MqttClient(properties.getString("url"), SnowflakeIdWorker.getId(), new MemoryPersistence());
-            MqttConnectOptions options = new MqttConnectOptions();
-            // 如果想要断线这段时间的数据，要设置成false，并且重连后不用再次订阅，否则不会得到断线时间的数据
-            options.setCleanSession(true);
-            // 设置连接的用户名
-            options.setUserName(properties.getString("username"));
-            // 增加 actualInFlight 的值
-            options.setMaxInflight(1000);
-            // 设置连接的密码
-            options.setPassword(properties.getString("password", "").toCharArray());
-            // 设置超时时间 单位为秒
-            options.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
-            // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
-            options.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
-            // 自动重连
-            options.setAutomaticReconnect(true);
-            // 连接服务器
-            mqttClient.connect(options);
+    private MqttClient createClient(DriverProperties properties) throws Exception {
+        MqttClient mqttClient = new MqttClient(properties.getString("url"), SnowflakeIdWorker.getId(), new MemoryPersistence());
+        MqttConnectOptions options = new MqttConnectOptions();
+        // 如果想要断线这段时间的数据，要设置成false，并且重连后不用再次订阅，否则不会得到断线时间的数据
+        options.setCleanSession(true);
+        // 设置连接的用户名
+        options.setUserName(properties.getString("username"));
+        // 增加 actualInFlight 的值
+        options.setMaxInflight(1000);
+        // 设置连接的密码
+        options.setPassword(properties.getString("password", "").toCharArray());
+        // 设置超时时间 单位为秒
+        options.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
+        // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
+        options.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
+        // 自动重连
+        options.setAutomaticReconnect(true);
+        // 连接服务器
+        mqttClient.connect(options);
 
-            mqttClient.setCallback(new MqttCallback() {
-                @Override
-                public void connectionLost(Throwable throwable) {
-                    try {
-                        mqttClient.connect(options);
-                    } catch (MqttException e) {
-                        Loggers.DRIVER.error("mqtt connection lost handle error {}", e.getMessage());
-                    }
+        mqttClient.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable throwable) {
+                try {
+                    mqttClient.connect(options);
+                } catch (MqttException e) {
+                    Loggers.DRIVER.error("mqtt connection lost handle error {}", e.getMessage());
                 }
-
-                @Override
-                public void messageArrived(String s, MqttMessage mqttMessage) {
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("topic", s);
-                    data.put("payload", mqttMessage.toString());
-                    data.put("driver", properties);
-                    sendData(data);
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-                }
-            });
-            try {
-                String topic = properties.getString("topic");
-                mqttClient.subscribe(topic);
-            } catch (MqttException e) {
-                Loggers.DRIVER.error("ReceiveMqttDriver subscribe error {}", e.getMessage());
             }
 
-            return mqttClient;
-        } catch (MqttException e) {
-            Loggers.DRIVER.error("ReceiveMqttDriver error {}", e.getMessage());
-        }
-        return null;
+            @Override
+            public void messageArrived(String s, MqttMessage mqttMessage) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("topic", s);
+                data.put("payload", mqttMessage.toString());
+                data.put("driver", properties);
+                produceData(data);
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+            }
+        });
+        String topic = properties.getString("topic");
+        mqttClient.subscribe(topic);
+
+        return mqttClient;
     }
 
-    private MqttAsyncClient createAsyncClient(DriverProperties properties) {
-        try {
-            MqttAsyncClient mqttClient = new MqttAsyncClient(properties.getString("url"), SnowflakeIdWorker.getId(), new MemoryPersistence());
-            MqttConnectOptions options = new MqttConnectOptions();
-            // 如果想要断线这段时间的数据，要设置成false，并且重连后不用再次订阅，否则不会得到断线时间的数据
-            options.setCleanSession(true);
-            // 设置连接的用户名
-            options.setUserName(properties.getString("username"));
-            // 增加 actualInFlight 的值
-            options.setMaxInflight(1000);
-            // 设置连接的密码
-            options.setPassword(properties.getString("password", "").toCharArray());
-            // 设置超时时间 单位为秒
-            options.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
-            // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
-            options.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
-            // 自动重连
-            options.setAutomaticReconnect(true);
-            // 连接服务器
-            mqttClient.connect(options);
-            return mqttClient;
-        } catch (MqttException e) {
-            Loggers.DRIVER.error("ReceiveMqttDriver {}", e.getMessage());
-        }
-        return null;
+    private MqttAsyncClient createAsyncClient(DriverProperties properties) throws Exception {
+        MqttAsyncClient mqttClient = new MqttAsyncClient(properties.getString("url"), SnowflakeIdWorker.getId(), new MemoryPersistence());
+        MqttConnectOptions options = new MqttConnectOptions();
+        // 如果想要断线这段时间的数据，要设置成false，并且重连后不用再次订阅，否则不会得到断线时间的数据
+        options.setCleanSession(true);
+        // 设置连接的用户名
+        options.setUserName(properties.getString("username"));
+        // 增加 actualInFlight 的值
+        options.setMaxInflight(1000);
+        // 设置连接的密码
+        options.setPassword(properties.getString("password", "").toCharArray());
+        // 设置超时时间 单位为秒
+        options.setConnectionTimeout(properties.getInteger("connectionTimeout", 10));
+        // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
+        options.setKeepAliveInterval(properties.getInteger("keepAliveInterval", 30));
+        // 自动重连
+        options.setAutomaticReconnect(true);
+        // 连接服务器
+        mqttClient.connect(options);
+        return mqttClient;
     }
 
 }

@@ -8,11 +8,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.variable.GlobalVariableContent;
-import com.leon.datalink.driver.actor.ReceiveDataMsg;
-import com.leon.datalink.driver.constans.DriverModeEnum;
 import com.leon.datalink.runtime.RuntimeManger;
+import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
+import com.leon.datalink.runtime.entity.RuntimeData;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,15 +19,15 @@ import java.util.Map;
  */
 public abstract class AbstractDriver implements Driver {
 
-    private ActorRef ruleActorRef;
+    private ActorRef driverActorRef;
 
     private TemplateEngine templateEngine;
 
     private String ruleId;
 
     @Override
-    public final void init(ActorRef ruleActorRef, String ruleId) {
-        this.ruleActorRef = ruleActorRef;
+    public final void init(ActorRef driverActorRef, String ruleId) {
+        this.driverActorRef = driverActorRef;
         this.ruleId = ruleId;
         this.templateEngine = TemplateUtil.createEngine();
     }
@@ -52,12 +51,19 @@ public abstract class AbstractDriver implements Driver {
     }
 
     protected final String templateAnalysis(String template, Map<?, ?> data) {
-       return this.templateEngine.getTemplate(template).render(data);
+        return this.templateEngine.getTemplate(template).render(data);
     }
 
-    // 发送数据
-    protected final void sendData(Object data) {
-        ruleActorRef.tell(new ReceiveDataMsg(data), ActorRef.noSender());
+    // 产出数据
+    protected final void produceData(Object data) {
+        RuntimeData runtimeData = new RuntimeData(RuntimeTypeEnum.SOURCE).success(data);
+        driverActorRef.tell(runtimeData, ActorRef.noSender());
+    }
+
+    // 产出数据错误
+    protected final void produceDataError(String errorMessage) {
+        RuntimeData runtimeData = new RuntimeData(RuntimeTypeEnum.SOURCE).fail(errorMessage);
+        driverActorRef.tell(runtimeData, ActorRef.noSender());
     }
 
 }

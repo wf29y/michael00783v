@@ -16,6 +16,7 @@ import com.leon.datalink.rule.actor.RuleActor;
 import com.leon.datalink.rule.constants.TransformModeEnum;
 import com.leon.datalink.rule.entity.Plugin;
 import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.plugin.PluginService;
 import com.leon.datalink.web.resource.ResourceService;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -103,6 +105,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
         if (StringUtils.isEmpty(rule.getRuleId())) rule.setRuleId(SnowflakeIdWorker.getId());
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
+        runtimeService.initRuntime(rule);
     }
 
     @Override
@@ -117,6 +120,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     public void update(Rule rule) throws KvStorageException {
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
+        runtimeService.initRuntime(rule);
     }
 
     @Override
@@ -150,18 +154,6 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
         Rule rule = this.get(ruleId);
 
         if (rule.isEnable()) return;
-
-        for (Resource resource : rule.getSourceResourceList()) {
-            if (!resourceService.testDriver(resource)) {
-                throw new DatalinkException(500, String.format("资源[%s]不可用", resource.getResourceName()));
-            }
-        }
-
-        for (Resource resource : rule.getDestResourceList()) {
-            if (!resourceService.testDriver(resource)) {
-                throw new DatalinkException(500, String.format("资源[%s]不可用", resource.getResourceName()));
-            }
-        }
 
         // 修改为启动状态
         rule.setEnable(true);

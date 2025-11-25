@@ -1,6 +1,7 @@
 package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
+import cn.hutool.core.exceptions.ValidateException;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SignUtil;
 import com.leon.datalink.driver.AbstractDriver;
@@ -43,29 +44,35 @@ public class RedisDriver extends AbstractDriver {
 
         if ("STANDALONE".equals(mode)) {
             String ip = properties.getString("ip");
-            if (StringUtils.isEmpty(ip)) return;
+            if (StringUtils.isEmpty(ip)) throw new ValidateException();
             Integer port = properties.getInteger("port");
-            if (null == port) return;
+            if (null == port) throw new ValidateException();
             jedisPool = new JedisPool(config, ip, port, timeout, password, properties.getInteger("database", 0));
         } else if ("CLUSTER".equals(mode)) {
             String nodes = properties.getString("nodes");
-            if (StringUtils.isEmpty(nodes)) return;
+            if (StringUtils.isEmpty(nodes)) throw new ValidateException();
             jedisCluster = new JedisCluster(nodesToHostAndPortSet(nodes), timeout, timeout, 3, password, config);
         } else {
             String nodes = properties.getString("nodes");
-            if (StringUtils.isEmpty(nodes)) return;
+            if (StringUtils.isEmpty(nodes)) throw new ValidateException();
             String masterName = properties.getString("masterName");
-            if (StringUtils.isEmpty(masterName)) return;
+            if (StringUtils.isEmpty(masterName)) throw new ValidateException();
             jedisPool = new JedisSentinelPool(masterName, nodesToNodeSet(nodes), config, timeout, password, properties.getInteger("database", 0));
         }
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == properties.getLong("initialDelay")) return;
-            if (null == properties.getLong("period")) return;
-            if (StringUtils.isEmpty(properties.getString("timeUnit"))) return;
+            if (null == properties.getLong("initialDelay")) throw new ValidateException();
+            if (null == properties.getLong("period")) throw new ValidateException();
+            if (StringUtils.isEmpty(properties.getString("timeUnit"))) throw new ValidateException();
 
             this.executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleAtFixedRate(() -> sendData(execute(null, properties)),
+            executor.scheduleAtFixedRate(() -> {
+                        try {
+                            produceData(execute(null, properties));
+                        } catch (Exception e) {
+                            produceDataError(e.getMessage());
+                        }
+                    },
                     properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
         }
 
@@ -150,7 +157,7 @@ public class RedisDriver extends AbstractDriver {
     private Object execute(Object data, DriverProperties properties) {
 
         String command = properties.getString("command");
-        if (StringUtils.isEmpty(command)) return null;
+        if (StringUtils.isEmpty(command)) throw new ValidateException();
 
         // 命令模板解析
         Map<String, Object> variable = getVariable(data);
@@ -167,6 +174,7 @@ public class RedisDriver extends AbstractDriver {
                 result = RedisCmd.execute(jedis, command);
             } catch (Exception e) {
                 Loggers.DRIVER.error("redis execute command error {}", e.getMessage());
+                throw e;
             }
         }
 

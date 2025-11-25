@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import cn.hutool.core.exceptions.ValidateException;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
@@ -27,7 +28,7 @@ public class OpcUADriver extends AbstractDriver {
     @Override
     public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         String url = properties.getString("url");
-        if (StringUtils.isEmpty(url)) return;
+        if (StringUtils.isEmpty(url)) throw new ValidateException();
 
         opcUaClient = OpcUaClient.create(
                 url,
@@ -39,12 +40,12 @@ public class OpcUADriver extends AbstractDriver {
         opcUaClient.connect();
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == properties.getLong("initialDelay")) return;
-            if (null == properties.getLong("period")) return;
-            if (StringUtils.isEmpty(properties.getString("timeUnit"))) return;
+            if (null == properties.getLong("initialDelay")) throw new ValidateException();
+            if (null == properties.getLong("period")) throw new ValidateException();
+            if (StringUtils.isEmpty(properties.getString("timeUnit"))) throw new ValidateException();
 
             List<Map<String, Object>> points = properties.getList("points");
-            if (null == points || points.isEmpty()) return;
+            if (null == points || points.isEmpty()) throw new ValidateException();
 
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {
@@ -55,9 +56,10 @@ public class OpcUADriver extends AbstractDriver {
                         result.put("point", point);
                         result.put("value", read(point));
                         result.put("url", url);
-                        sendData(result);
+                        produceData(result);
                     }
                 } catch (Exception e) {
+                    produceDataError(e.getMessage());
                     Loggers.DRIVER.error("{}", e.getMessage());
                 }
             }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
@@ -65,7 +67,7 @@ public class OpcUADriver extends AbstractDriver {
 
     }
 
-    public String read(Map<String, Object> point) {
+    public String read(Map<String, Object> point) throws Exception {
         int namespace = Integer.parseInt((String) point.get("namespace"));
         String tag = (String) point.get("tag");
         NodeId nodeId = new NodeId(namespace, tag);
@@ -75,14 +77,10 @@ public class OpcUADriver extends AbstractDriver {
                 value.complete(dataValue.getValue().getValue().toString());
             } catch (Exception e) {
                 Loggers.DRIVER.error("accept point(ns={};s={}) value error: {}", namespace, tag, e.getMessage());
+                throw e;
             }
         });
-        try {
-            return value.get(1, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            Loggers.DRIVER.error("read point(ns={};s={}) value error: {}", namespace, tag, e.getMessage());
-        }
-        return null;
+        return value.get(1, TimeUnit.SECONDS);
     }
 
 

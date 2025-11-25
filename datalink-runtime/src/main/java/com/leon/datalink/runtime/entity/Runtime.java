@@ -2,35 +2,29 @@ package com.leon.datalink.runtime.entity;
 
 import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.leon.datalink.runtime.actor.RuntimeUpdateDataMsg;
-import com.leon.datalink.runtime.constants.Constants;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.Map;
 
-public class Runtime  implements Serializable {
+public class Runtime implements Serializable {
     private static final long serialVersionUID = 1345156087085808964L;
 
+    // 启动时间
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private DateTime startTime;
 
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private DateTime lastTime;
+    // 数据源运行状态
+    private Map<String, RuntimeEntity> sourceRuntimeList;
 
-    private Long total;
+    // 目的资源运行状态
+    private Map<String, RuntimeEntity> destRuntimeList;
 
-    private Long transformSuccessCount;
+    // 转换运行状态
+    private RuntimeEntity transformRuntime;
 
-    private Long publishSuccessCount;
-
-    private Long transformFailCount;
-
-    private Long publishFailCount;
-
-    private LinkedList<RuntimeUpdateDataMsg> lastData;
-
+    // 变量
     private Map<String, Object> variables;
+
 
     public DateTime getStartTime() {
         return startTime;
@@ -40,60 +34,28 @@ public class Runtime  implements Serializable {
         this.startTime = startTime;
     }
 
-    public DateTime getLastTime() {
-        return lastTime;
+    public Map<String, RuntimeEntity> getSourceRuntimeList() {
+        return sourceRuntimeList;
     }
 
-    public void setLastTime(DateTime lastTime) {
-        this.lastTime = lastTime;
+    public void setSourceRuntimeList(Map<String, RuntimeEntity> sourceRuntimeList) {
+        this.sourceRuntimeList = sourceRuntimeList;
     }
 
-    public Long getTotal() {
-        return total;
+    public Map<String, RuntimeEntity> getDestRuntimeList() {
+        return destRuntimeList;
     }
 
-    public void setTotal(Long total) {
-        this.total = total;
+    public void setDestRuntimeList(Map<String, RuntimeEntity> destRuntimeList) {
+        this.destRuntimeList = destRuntimeList;
     }
 
-    public Long getTransformSuccessCount() {
-        return transformSuccessCount;
+    public RuntimeEntity getTransformRuntime() {
+        return transformRuntime;
     }
 
-    public void setTransformSuccessCount(Long transformSuccessCount) {
-        this.transformSuccessCount = transformSuccessCount;
-    }
-
-    public Long getTransformFailCount() {
-        return transformFailCount;
-    }
-
-    public void setTransformFailCount(Long transformFailCount) {
-        this.transformFailCount = transformFailCount;
-    }
-
-    public Long getPublishSuccessCount() {
-        return publishSuccessCount;
-    }
-
-    public void setPublishSuccessCount(Long publishSuccessCount) {
-        this.publishSuccessCount = publishSuccessCount;
-    }
-
-    public Long getPublishFailCount() {
-        return publishFailCount;
-    }
-
-    public void setPublishFailCount(Long publishFailCount) {
-        this.publishFailCount = publishFailCount;
-    }
-
-    public LinkedList<RuntimeUpdateDataMsg> getLastData() {
-        return lastData;
-    }
-
-    public void setLastData(LinkedList<RuntimeUpdateDataMsg> lastData) {
-        this.lastData = lastData;
+    public void setTransformRuntime(RuntimeEntity transformRuntime) {
+        this.transformRuntime = transformRuntime;
     }
 
     public Map<String, Object> getVariables() {
@@ -103,33 +65,5 @@ public class Runtime  implements Serializable {
     public void setVariables(Map<String, Object> variables) {
         this.variables = variables;
     }
-
-    public void addLastData(RuntimeUpdateDataMsg runtimeUpdateDataMsg) {
-        this.lastData.addFirst(runtimeUpdateDataMsg);
-        if (lastData.size() > Constants.RULE_LAST_DATA_COUNT) {
-            this.lastData.removeLast();
-        }
-    }
-
-    public void addTotalCount() {
-        this.total++;
-    }
-
-    public void addTransformSuccessCount() {
-        this.transformSuccessCount++;
-    }
-
-    public void addPublishSuccessCount() {
-        this.publishSuccessCount++;
-    }
-
-    public void addTransformFailCount() {
-        this.transformFailCount++;
-    }
-
-    public void addPublishFailCount() {
-        this.publishFailCount++;
-    }
-
 
 }

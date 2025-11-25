@@ -22,7 +22,7 @@
     <a-card :bordered='false' style='margin-bottom: 24px'>
       <a-row>
         <a-col :span='3'>
-          <a-statistic title='累计总数' :value='runtime.total' />
+          <a-statistic title='接收成功' :value='runtime.receiveSuccessCount' />
         </a-col>
         <a-col :span='3'>
           <a-statistic title='转换成功' :value='runtime.transformSuccessCount' />
@@ -31,20 +31,23 @@
           <a-statistic title='发送成功' :value='runtime.publishSuccessCount' />
         </a-col>
         <a-col :span='3'>
+          <a-statistic title='接收失败' :value='runtime.receiveFailCount' />
+        </a-col>
+        <a-col :span='3'>
           <a-statistic title='转换失败' :value='runtime.transformFailCount' />
         </a-col>
         <a-col :span='3'>
           <a-statistic title='发送失败' :value='runtime.publishFailCount' />
         </a-col>
-        <a-col :span='4'>
-          <a-statistic title='最近执行' :value="runtime.lastTime ? runtime.lastTime : '—'"
-                       :value-style='{fontSize: "21px"}' />
-        </a-col>
-        <a-col :span='5'>
+        <a-col :span='6'>
           <a-statistic title='启动时间' :value="runtime.startTime ? runtime.startTime : '—'"
                        :value-style='{fontSize: "21px"}' />
         </a-col>
       </a-row>
+    </a-card>
+
+    <a-card :bordered='false' style='margin-bottom: 24px'>
+      <runtime-graph ref='RuntimeGraph'></runtime-graph>
     </a-card>
 
     <a-card :bordered='false' style='margin-bottom: 24px'>
@@ -88,6 +91,8 @@
               </a-descriptions>
             </a-col>
             <a-col :span='2' style='text-align: right;padding-right: 5px'>
+              <a @click='lastData("source",resource.resourceRuntimeId)'>最近数据</a>
+              <a-divider type='vertical' v-if='resource.properties.points !== undefined'/>
               <a v-if='resource.properties.points !== undefined' @click='pointConfig(resource)'>查看点位</a>
             </a-col>
           </a-row>
@@ -118,6 +123,8 @@
               </a-descriptions>
             </a-col>
             <a-col :span='2' style='text-align: right;padding-right: 5px'>
+              <a @click='lastData("dest",resource.resourceRuntimeId)'>最近数据</a>
+              <a-divider type='vertical' v-if='resource.properties.points !== undefined'/>
               <a v-if='resource.properties.points !== undefined' @click='pointConfig(resource)'>查看点位</a>
             </a-col>
           </a-row>
@@ -133,43 +140,10 @@
       </a-table>
     </a-card>
 
-    <a-card :bordered='false' style='margin-bottom: 24px'>
-      <div class='title'>
-        最近数据
-        <span @click='refresh' style='cursor: pointer'><a-icon type='redo'></a-icon></span>
-      </div>
-      <a-table :columns='dataColumns' :data-source='runtime.lastData' size='middle' :pagination='false'>
-        <span slot='receiveData' slot-scope='text'> {{ text ? text : '—' }} </span>
-
-        <span slot='transformSuccess' slot-scope='text,record'>
-          <a-popover title='转换结果'>
-            <template slot='content'>
-              {{ record.transformData ? record.transformData : '—' }}
-            </template>
-              <span style='cursor: pointer'>
-              <a-badge v-if='text===true' color='green' text='成功' />
-              <a-badge v-if='text===false' color='red' text='失败' />
-              </span>
-          </a-popover>
-        </span>
-
-        <span slot='publishSuccess' slot-scope='text,record'>
-          <a-popover title='发送数据'>
-            <template slot='content'>
-              {{ record.publishData ? record.publishData : '—' }}
-            </template>
-            <span style='cursor: pointer'>
-              <a-badge v-if='text===true' color='green' text='成功' />
-              <a-badge v-if='text===false' color='red' text='失败' />
-            </span>
-          </a-popover>
-        </span>
-
-      </a-table>
-    </a-card>
-
     <points-config-model ref='PointsConfigModel'></points-config-model>
     <script-view-model ref='ScriptViewModel'></script-view-model>
+    <data-view-model ref='DataViewModel'></data-view-model>
+
   </div>
 </template>
 
@@ -178,11 +152,13 @@ import { getAction, postAction } from '@/api/manage'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 import { transformModeMap } from '@/config/rule.config'
 import ScriptViewModel from './modules/ScriptViewModel'
+import DataViewModel from './modules/DataViewModel'
 import PointsConfigModel from './points/PointsConfigModel'
+import RuntimeGraph from '@/views/rule/graph/RuntimeGraph'
 
 export default {
   components: {
-    ScriptViewModel, PointsConfigModel
+    RuntimeGraph, ScriptViewModel, PointsConfigModel, DataViewModel
   },
   data() {
     return {
@@ -198,31 +174,6 @@ export default {
       plugin: {},
       transformModeMap: transformModeMap,
       resourceTypeMap: resourceTypeMap,
-      dataColumns: [
-        {
-          title: '时间',
-          dataIndex: 'time'
-        },
-        {
-          title: '接收数据',
-          dataIndex: 'receiveData',
-          scopedSlots: { customRender: 'receiveData' }
-        },
-        {
-          title: '转换',
-          dataIndex: 'transformSuccess',
-          scopedSlots: { customRender: 'transformSuccess' }
-        },
-        {
-          title: '发送',
-          dataIndex: 'publishSuccess',
-          scopedSlots: { customRender: 'publishSuccess' }
-        },
-        {
-          title: '说明',
-          dataIndex: 'message'
-        }
-      ],
       varColumns: [
         {
           title: '变量名称',
@@ -272,9 +223,8 @@ export default {
       if (this.ruleId) {
         getAction(this.url.rule, { ruleId: this.ruleId }).then(res => {
           this.rule = res.data
-          if (!this.rule) return
-          this.getRuntime()
-          if (this.rule.transformMode === 'PLUGIN') {
+          if (this.rule) {
+            this.getRuntime()
             this.getPlugin()
           }
         })
@@ -283,20 +233,29 @@ export default {
     getRuntime() {
       getAction(this.url.runtime, { ruleId: this.ruleId }).then(res => {
         this.runtime = res.data
+        if (!this.runtime) return
 
+        this.$refs.RuntimeGraph.init(this.rule, this.runtime)
+
+        // 处理变量
         this.variables = []
-        if (!this.rule.variables) return
-        let keys = Object.keys(this.rule.variables)
-        for (let key of keys) {
-          this.variables.push({
-            name: key,
-            value: this.runtime.variables[key],
-            initValue: this.rule.variables[key]
-          })
+        if (this.rule.variables) {
+          let keys = Object.keys(this.rule.variables)
+          for (let key of keys) {
+            this.variables.push({
+              name: key,
+              value: this.runtime.variables[key],
+              initValue: this.rule.variables[key]
+            })
+          }
         }
+
+        this.countHandle()
+
       })
     },
     getPlugin() {
+      if (this.rule.transformMode !== 'PLUGIN') return
       getAction(this.url.plugin, { pluginId: this.rule.pluginId }).then(res => {
         this.plugin = res.data
       })
@@ -309,6 +268,37 @@ export default {
     },
     pointConfig(resource) {
       this.$refs.PointsConfigModel.show(resource.resourceType, resource.properties.points)
+    },
+    countHandle() {
+      let receiveSuccessCount = 0
+      let receiveFailCount = 0
+      let publishSuccessCount = 0
+      let publishFailCount = 0
+      let sourceRuntimes = Object.values(this.runtime.sourceRuntimeList)
+      for (let sourceRuntime of sourceRuntimes) {
+        receiveSuccessCount += sourceRuntime.successCount
+        receiveFailCount += sourceRuntime.failCount
+      }
+      let destRuntimes = Object.values(this.runtime.destRuntimeList)
+      for (let destRuntime of destRuntimes) {
+        publishSuccessCount += destRuntime.successCount
+        publishFailCount += destRuntime.failCount
+      }
+      this.runtime.receiveSuccessCount = receiveSuccessCount
+      this.runtime.receiveFailCount = receiveFailCount
+      this.runtime.publishSuccessCount = publishSuccessCount
+      this.runtime.publishFailCount = publishFailCount
+      this.runtime.transformSuccessCount = this.runtime.transformRuntime.successCount
+      this.runtime.transformFailCount = this.runtime.transformRuntime.failCount
+    },
+    lastData(mode,resourceRuntimeId){
+      let dataList = [];
+      if (mode === 'dest') {
+        dataList = this.runtime.destRuntimeList[resourceRuntimeId].runtimeDataList
+      } else if (mode === 'source') {
+        dataList = this.runtime.sourceRuntimeList[resourceRuntimeId].runtimeDataList
+      }
+      this.$refs.DataViewModel.show(dataList);
     }
   }
 

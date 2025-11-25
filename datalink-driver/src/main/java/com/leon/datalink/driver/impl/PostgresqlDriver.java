@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.db.Entity;
 import cn.hutool.db.handler.EntityListHandler;
 import cn.hutool.db.sql.SqlExecutor;
@@ -26,46 +27,48 @@ public class PostgresqlDriver extends AbstractDriver {
 
     @Override
     public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
-        if (StringUtils.isEmpty(properties.getString("ip"))) return;
-        if (StringUtils.isEmpty(properties.getString("port"))) return;
-        if (StringUtils.isEmpty(properties.getString("databaseName"))) return;
-        if (StringUtils.isEmpty(properties.getString("username"))) return;
-        if (StringUtils.isEmpty(properties.getString("password"))) return;
+        if (StringUtils.isEmpty(properties.getString("ip"))) throw new ValidateException();
+        if (StringUtils.isEmpty(properties.getString("port"))) throw new ValidateException();
+        if (StringUtils.isEmpty(properties.getString("databaseName"))) throw new ValidateException();
+        if (StringUtils.isEmpty(properties.getString("username"))) throw new ValidateException();
+        if (StringUtils.isEmpty(properties.getString("password"))) throw new ValidateException();
 
-        try {
-            DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
-            dataSource.setDriverClassName("org.postgresql.Driver"); // 设置连接池的数据库驱动
-            dataSource.setUrl(String.format("jdbc:postgresql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
-                    properties.getString("ip"),
-                    properties.getString("port"),
-                    properties.getString("databaseName"))); // 设置数据库的连接地址
-            dataSource.setUsername(properties.getString("username")); // 数据库的用户名
-            dataSource.setPassword(properties.getString("password")); // 数据库的密码
-            dataSource.setInitialSize(properties.getInteger("initSize", 8)); // 设置连接池的初始大小
-            dataSource.setMinIdle(properties.getInteger("minIdle", 1)); // 设置连接池大小的下限
-            dataSource.setMaxActive(properties.getInteger("maxActive", 20)); // 设置连接池大小的上限
-            dataSource.setValidationQuery("select version();");
-            this.dataSource = dataSource;
-        } catch (Exception throwables) {
-            return;
-        }
+
+        DruidDataSource dataSource = new DruidDataSource(); // 创建Druid连接池
+        dataSource.setDriverClassName("org.postgresql.Driver"); // 设置连接池的数据库驱动
+        dataSource.setUrl(String.format("jdbc:postgresql://%s:%s/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT",
+                properties.getString("ip"),
+                properties.getString("port"),
+                properties.getString("databaseName"))); // 设置数据库的连接地址
+        dataSource.setUsername(properties.getString("username")); // 数据库的用户名
+        dataSource.setPassword(properties.getString("password")); // 数据库的密码
+        dataSource.setInitialSize(properties.getInteger("initSize", 8)); // 设置连接池的初始大小
+        dataSource.setMinIdle(properties.getInteger("minIdle", 1)); // 设置连接池大小的下限
+        dataSource.setMaxActive(properties.getInteger("maxActive", 20)); // 设置连接池大小的上限
+        dataSource.setValidationQuery("select version();");
+        this.dataSource = dataSource;
+
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == properties.getLong("initialDelay")) return;
-            if (null == properties.getLong("period")) return;
-            if (StringUtils.isEmpty(properties.getString("timeUnit"))) return;
+            if (null == properties.getLong("initialDelay")) throw new ValidateException();
+            if (null == properties.getLong("period")) throw new ValidateException();
+            if (StringUtils.isEmpty(properties.getString("timeUnit"))) throw new ValidateException();
 
             this.executor = Executors.newSingleThreadScheduledExecutor();
             executor.scheduleAtFixedRate(() -> {
-                sendData(select(properties));
+                try {
+                    produceData(select(properties));
+                } catch (Exception e) {
+                    produceDataError(e.getMessage());
+                }
             }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
         }
     }
 
 
-    private Object select(DriverProperties properties) {
+    private Object select(DriverProperties properties) throws Exception {
         String sql = properties.getString("sql");
-        if (StringUtils.isEmpty(sql)) return null;
+        if (StringUtils.isEmpty(sql)) throw new ValidateException();
 
         List<Entity> result = null;
         try (Connection connection = dataSource.getConnection()) {
@@ -76,6 +79,7 @@ public class PostgresqlDriver extends AbstractDriver {
             }
         } catch (Exception e) {
             Loggers.DRIVER.error("pgsql driver error {}", e.getMessage());
+            throw e;
         }
 
         HashMap<String, Object> map = new HashMap<>();
@@ -119,7 +123,7 @@ public class PostgresqlDriver extends AbstractDriver {
     @Override
     public Object handleData(Object data, DriverProperties properties) throws Exception {
         String sql = properties.getString("sql");
-        if (StringUtils.isEmpty(sql)) return null;
+        if (StringUtils.isEmpty(sql)) throw new ValidateException();
 
         Boolean result = null;
         try (Connection connection = dataSource.getConnection()) {
@@ -130,6 +134,7 @@ public class PostgresqlDriver extends AbstractDriver {
             }
         } catch (Exception e) {
             Loggers.DRIVER.error("pgsql driver error {}", e.getMessage());
+            throw e;
         }
 
         HashMap<String, Object> map = new HashMap<>();

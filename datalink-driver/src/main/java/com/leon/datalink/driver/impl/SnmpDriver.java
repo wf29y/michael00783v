@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.net.NetUtil;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.StringUtils;
@@ -45,13 +46,13 @@ public class SnmpDriver extends AbstractDriver {
     public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
 
         String url = getUrl(properties);
-        if (StringUtils.isEmpty(url)) return;
+        if (StringUtils.isEmpty(url)) throw new ValidateException();
 
         String community = properties.getString("community");
-        if (StringUtils.isEmpty(community)) return;
+        if (StringUtils.isEmpty(community)) throw new ValidateException();
 
         Integer version = properties.getInteger("version"); // 0 1 3
-        if (version == null) return;
+        if (version == null) throw new ValidateException();
 
         MessageDispatcher messageDispatcher = new MessageDispatcherImpl();
 
@@ -74,6 +75,7 @@ public class SnmpDriver extends AbstractDriver {
                 PDU response = event.getResponse();
                 if (response == null || response.getErrorStatus() != 0) {
                     Loggers.DRIVER.error("snmp driver error {}", response);
+                    produceDataError(response == null ? "null response" : response.getErrorStatusText());
                 } else {
                     for (int i = 0; i < response.size(); i++) {
                         VariableBinding vb = response.get(i);
@@ -81,22 +83,26 @@ public class SnmpDriver extends AbstractDriver {
                         map.put("oid", vb.getOid().toString());
                         map.put("value", vb.getVariable().toString());
                         map.put("url", url);
-                        sendData(map);
+                        produceData(map);
                     }
                 }
             }
         };
 
         List<Map<String, Object>> points = properties.getList("points");
-        if (null == points || points.isEmpty()) return;
+        if (null == points || points.isEmpty()) throw new ValidateException();
 
         List<String> getOidList = points.stream().filter(point -> point.get("type").equals("GET")).map(point -> (String) point.get("oid")).collect(Collectors.toList());
         List<String> walkOidList = points.stream().filter(point -> point.get("type").equals("WALK")).map(point -> (String) point.get("oid")).collect(Collectors.toList());
 
         this.executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleAtFixedRate(() -> {
-            sendSnmp(PDU.GET, getOidList);
-            sendSnmp(PDU.GETNEXT, walkOidList);
+            try {
+                sendSnmp(PDU.GET, getOidList);
+                sendSnmp(PDU.GETNEXT, walkOidList);
+            } catch (Exception e) {
+                produceDataError(e.getMessage());
+            }
         }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
 
     }
@@ -108,9 +114,9 @@ public class SnmpDriver extends AbstractDriver {
         return String.format("udp:%s/%s", ip, port);
     }
 
-    public void sendSnmp(int type, List<String> oidList) {
+    public void sendSnmp(int type, List<String> oidList) throws Exception {
         if (null == oidList || oidList.isEmpty()) {
-            return;
+            throw new ValidateException();
         }
         try {
             PDU pdu = new PDU();
@@ -121,6 +127,7 @@ public class SnmpDriver extends AbstractDriver {
             this.snmp.send(pdu, target, null, listener);
         } catch (Exception e) {
             Loggers.DRIVER.error("snmp driver error {}", e.getMessage());
+            throw e;
         }
     }
 

@@ -1,5 +1,6 @@
 package com.leon.datalink.driver.impl;
 
+import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.net.NetUtil;
 import com.leon.datalink.core.listener.ListenerContent;
 import com.leon.datalink.core.listener.ListenerTypeEnum;
@@ -29,7 +30,7 @@ public class UdpDriver extends AbstractDriver {
     @Override
     public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         Integer port = properties.getInteger("port");
-        if (null == port) return;
+        if (null == port) throw new ValidateException();
         bossGroup = new NioEventLoopGroup();
 
         Bootstrap bootstrap = new Bootstrap();
@@ -71,7 +72,7 @@ public class UdpDriver extends AbstractDriver {
                                 map.put("hex", HexUtil.bytesToHex(bytes));
                                 map.put("response", response);
                                 map.put("driver", properties);
-                                sendData(map);
+                                produceData(map);
                             }
                         });
                     }

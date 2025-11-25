@@ -1,6 +1,7 @@
 package com.leon.datalink.driver.impl;
 
 import akka.actor.ActorRef;
+import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.net.NetUtil;
 import com.leon.datalink.core.listener.ListenerContent;
 import com.leon.datalink.core.listener.ListenerTypeEnum;
@@ -33,7 +34,7 @@ public class TcpDriver extends AbstractDriver {
     @Override
     public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
         Integer port = properties.getInteger("port");
-        if (null == port) return;
+        if (null == port) throw new ValidateException();
         bossGroup = new NioEventLoopGroup(properties.getInteger("bossTread", 1));
         workerGroup = new NioEventLoopGroup(properties.getInteger("workerTread", 5));
         ServerBootstrap bootstrap = new ServerBootstrap()
@@ -74,7 +75,7 @@ public class TcpDriver extends AbstractDriver {
                                 }
                                 map.put("response", response);
                                 map.put("driver", properties);
-                                sendData(map);
+                                produceData(map);
                             }
                         });
                     }

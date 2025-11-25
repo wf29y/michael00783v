@@ -5,6 +5,7 @@ import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
+import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.entity.Runtime;
@@ -16,9 +17,12 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
@@ -86,7 +90,17 @@ public class RuntimeServiceImpl implements RuntimeService {
     @Override
     public void resetRuntime(String ruleId) throws KvStorageException {
         Rule rule = ruleService.get(ruleId);
-        RuntimeManger.resetRuntime(ruleId, new HashMap<>(rule.getVariables()));
+        List<String> sourceRuntimeIdList = rule.getSourceResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
+        List<String> destRuntimeIdList = rule.getDestResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
+        RuntimeManger.resetRuntime(rule.getRuleId(), new HashMap<>(rule.getVariables()), sourceRuntimeIdList, destRuntimeIdList);
         this.kvStorage.delete(ruleId.getBytes());
+    }
+
+
+    @Override
+    public void initRuntime(Rule rule) throws KvStorageException {
+        List<String> sourceRuntimeIdList = rule.getSourceResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
+        List<String> destRuntimeIdList = rule.getDestResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
+        RuntimeManger.init(rule.getRuleId(), new HashMap<>(rule.getVariables()), sourceRuntimeIdList, destRuntimeIdList);
     }
 }
