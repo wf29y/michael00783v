@@ -110,14 +110,12 @@ public class SnmpDriver extends AbstractDriver {
     private String getUrl(DriverProperties properties) {
         String ip = properties.getString("ip");
         Integer port = properties.getInteger("port");
-        if (StringUtils.isEmpty(ip) || null == port) return null;
+        if (StringUtils.isEmpty(ip) || null == port) throw new ValidateException();
         return String.format("udp:%s/%s", ip, port);
     }
 
     public void sendSnmp(int type, List<String> oidList) throws Exception {
-        if (null == oidList || oidList.isEmpty()) {
-            throw new ValidateException();
-        }
+        if (null == oidList || oidList.isEmpty()) return;
         try {
             PDU pdu = new PDU();
             pdu.setType(type);
