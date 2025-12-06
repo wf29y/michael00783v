@@ -6,7 +6,6 @@ import akka.actor.Props;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.actor.DriverActor;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.rule.transform.TransformHandler;
 import com.leon.datalink.rule.transform.TransformHandlerFactory;
@@ -15,7 +14,6 @@ import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.runtime.entity.RuntimeStatus;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,7 +86,7 @@ public class RuleActor extends AbstractActor {
 
             try {
                 Object transformData = transformHandler.transform(dataRecord.getData());
-
+                transformRecord.success(transformData);
                 // 忽略空值
                 if (!(null == transformData && rule.isIgnoreNullValue())) {
                     // 发送给所有目的driver
@@ -96,8 +94,6 @@ public class RuleActor extends AbstractActor {
                         actorRef.tell(transformRecord, getSelf());
                     }
                 }
-
-                transformRecord.success(transformData);
             } catch (Exception e) {
                 Loggers.DRIVER.error("transform data error: {}", e.getMessage());
                 transformRecord.fail(e.getMessage());
