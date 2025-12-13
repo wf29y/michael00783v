@@ -55,16 +55,7 @@
         <a-col :span='22'>
           <a-descriptions title='规则信息' :column='2'>
             <a-descriptions-item label='规则名称'>{{ rule.ruleName }}</a-descriptions-item>
-            <a-descriptions-item label='忽略空值'>{{ rule.ignoreNullValue === true ? '是' : '否' }}</a-descriptions-item>
-            <a-descriptions-item label='转换方式'>
-          <span v-if='rule.transformMode==="SCRIPT"'><a @click='showScript'>{{ transformModeMap[rule.transformMode]
-            }}</a></span>
-              <span v-else>{{ transformModeMap[rule.transformMode] }}</span>
-            </a-descriptions-item>
             <a-descriptions-item label='备注'> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
-            <a-descriptions-item label='转换插件' v-if='rule.transformMode==="PLUGIN"'>
-              {{ plugin.pluginName }}
-            </a-descriptions-item>
           </a-descriptions>
         </a-col>
       </a-row>
@@ -76,7 +67,7 @@
               v-if='rule.sourceResourceList && rule.sourceResourceList.length>0'>
         <a-list-item slot='renderItem' slot-scope='resource,index'>
           <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
-            <a-col :span='22'>
+            <a-col :span='20'>
               <a-descriptions :column='2'>
                 <a-descriptions-item label='资源名称'>
                   {{ resource.resourceName }}
@@ -90,10 +81,38 @@
                 </a-descriptions-item>
               </a-descriptions>
             </a-col>
-            <a-col :span='2' style='text-align: right;padding-right: 5px'>
+            <a-col :span='4' style='text-align: right;padding-right: 5px'>
               <a @click='lastData("source",resource.resourceRuntimeId)'>最近数据</a>
-              <a-divider type='vertical' v-if='resource.properties.points !== undefined'/>
+              <a-divider type='vertical' v-if='resource.properties.points !== undefined' />
               <a v-if='resource.properties.points !== undefined' @click='pointConfig(resource)'>查看点位</a>
+            </a-col>
+          </a-row>
+
+        </a-list-item>
+      </a-list>
+    </a-card>
+
+
+    <a-card style='margin-bottom: 24px' :bordered='false' :body-style='{paddingBottom:"10px"}'>
+      <div class='title'>数据转换</div>
+      <a-list :grid='{ gutter: 24, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='rule.transformList'
+              v-if='rule.transformList && rule.transformList.length>0'>
+        <a-list-item slot='renderItem' slot-scope='transform,index'>
+          <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
+            <a-col :span='20'>
+              <a-descriptions :column='2'>
+                <a-descriptions-item label='执行顺序'>
+                  {{ index + 1 }}
+                </a-descriptions-item>
+                <a-descriptions-item label='转换类型'>
+                  {{ transformModeMap[transform.transformMode] }}
+                </a-descriptions-item>
+              </a-descriptions>
+            </a-col>
+            <a-col :span='4' style='text-align: right;padding-right: 5px'>
+              <a @click='showScript(transform.properties.script)' v-if='transform.transformMode === "SCRIPT"'>查看脚本</a>
+              <a-divider type='vertical' v-if='transform.transformMode === "SCRIPT"' />
+              <a @click='lastData("transform",transform.transformRuntimeId)'>最近数据</a>
             </a-col>
           </a-row>
 
@@ -108,7 +127,7 @@
               v-if='rule.destResourceList && rule.destResourceList.length>0'>
         <a-list-item slot='renderItem' slot-scope='resource,index'>
           <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
-            <a-col :span='22'>
+            <a-col :span='20'>
               <a-descriptions :column='2'>
                 <a-descriptions-item label='资源名称'>
                   {{ resource.resourceName }}
@@ -122,9 +141,9 @@
                 </a-descriptions-item>
               </a-descriptions>
             </a-col>
-            <a-col :span='2' style='text-align: right;padding-right: 5px'>
+            <a-col :span='4' style='text-align: right;padding-right: 5px'>
               <a @click='lastData("dest",resource.resourceRuntimeId)'>最近数据</a>
-              <a-divider type='vertical' v-if='resource.properties.points !== undefined'/>
+              <a-divider type='vertical' v-if='resource.properties.points !== undefined' />
               <a v-if='resource.properties.points !== undefined' @click='pointConfig(resource)'>查看点位</a>
             </a-col>
           </a-row>
@@ -150,7 +169,7 @@
 <script>
 import { getAction, postAction } from '@/api/manage'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
-import { transformModeMap } from '@/config/rule.config'
+import { transformModeMap } from '@/config/transform.config'
 import ScriptViewModel from './modules/ScriptViewModel'
 import DataViewModel from './modules/DataViewModel'
 import PointsConfigModel from './points/PointsConfigModel'
@@ -165,13 +184,11 @@ export default {
       url: {
         runtime: '/api/runtime/info',
         rule: '/api/rule/info',
-        reset: '/api/runtime/reset',
-        plugin: '/api/plugin/info'
+        reset: '/api/runtime/reset'
       },
       rule: {},
       runtime: {},
       variables: [],
-      plugin: {},
       transformModeMap: transformModeMap,
       resourceTypeMap: resourceTypeMap,
       varColumns: [
@@ -196,8 +213,8 @@ export default {
     this.getInfo()
   },
   methods: {
-    showScript() {
-      this.$refs.ScriptViewModel.show(this.rule.script)
+    showScript(script) {
+      this.$refs.ScriptViewModel.show(script)
     },
     refresh() {
       this.getInfo()
@@ -225,7 +242,6 @@ export default {
           this.rule = res.data
           if (this.rule) {
             this.getRuntime()
-            this.getPlugin()
           }
         })
       }
@@ -254,12 +270,6 @@ export default {
 
       })
     },
-    getPlugin() {
-      if (this.rule.transformMode !== 'PLUGIN') return
-      getAction(this.url.plugin, { pluginId: this.rule.pluginId }).then(res => {
-        this.plugin = res.data
-      })
-    },
     onClose() {
       this.$router.push({ name: 'ruleList' })
     },
@@ -274,6 +284,8 @@ export default {
       let receiveFailCount = 0
       let publishSuccessCount = 0
       let publishFailCount = 0
+      let transformSuccessCount = 0
+      let transformFailCount = 0
       let sourceRuntimes = Object.values(this.runtime.sourceRuntimeList)
       for (let sourceRuntime of sourceRuntimes) {
         receiveSuccessCount += sourceRuntime.successCount
@@ -284,21 +296,28 @@ export default {
         publishSuccessCount += destRuntime.successCount
         publishFailCount += destRuntime.failCount
       }
+      let transformRuntimes = Object.values(this.runtime.transformRuntimeList)
+      for (let transformRuntime of transformRuntimes) {
+        transformSuccessCount += transformRuntime.successCount
+        transformFailCount += transformRuntime.failCount
+      }
       this.runtime.receiveSuccessCount = receiveSuccessCount
       this.runtime.receiveFailCount = receiveFailCount
       this.runtime.publishSuccessCount = publishSuccessCount
       this.runtime.publishFailCount = publishFailCount
-      this.runtime.transformSuccessCount = this.runtime.transformRuntime.successCount
-      this.runtime.transformFailCount = this.runtime.transformRuntime.failCount
+      this.runtime.transformSuccessCount = transformSuccessCount
+      this.runtime.transformFailCount = transformFailCount
     },
-    lastData(mode,resourceRuntimeId){
-      let dataList = [];
+    lastData(mode, runtimeId) {
+      let dataList = []
       if (mode === 'dest') {
-        dataList = this.runtime.destRuntimeList[resourceRuntimeId].runtimeDataList
+        dataList = this.runtime.destRuntimeList[runtimeId].runtimeDataList
       } else if (mode === 'source') {
-        dataList = this.runtime.sourceRuntimeList[resourceRuntimeId].runtimeDataList
+        dataList = this.runtime.sourceRuntimeList[runtimeId].runtimeDataList
+      } else if (mode === 'transform') {
+        dataList = this.runtime.transformRuntimeList[runtimeId].runtimeDataList
       }
-      this.$refs.DataViewModel.show(dataList);
+      this.$refs.DataViewModel.show(dataList)
     }
   }
 

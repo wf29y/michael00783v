@@ -1,14 +1,15 @@
-package com.leon.datalink.rule.transform;
+package com.leon.datalink.transform.handler;
 
-import com.leon.datalink.rule.entity.Rule;
+
+import com.leon.datalink.transform.Transform;
 
 public interface TransformHandler {
 
     /**
      * handler init
-     * @param rule
+     * @param transform
      */
-    void init(Rule rule);
+    void init(Transform transform);
 
     /**
      * handler destroy

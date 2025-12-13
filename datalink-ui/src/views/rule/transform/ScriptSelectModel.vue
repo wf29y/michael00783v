@@ -10,28 +10,12 @@
   >
     <div style='min-height: 400px'>
 
-
       <a-table :columns='columns' :data-source='scriptList' size='small' :pagination='false'>
-      <span slot='action' slot-scope='text,record'>
-        <a @click='select(record)'>选择</a>
-      </span>
+          <span slot='action' slot-scope='text,record'>
+            <a @click='select(record)'>选择</a>
+          </span>
       </a-table>
 
-<!--      <div
-        :style="{
-        position: 'absolute',
-        right: 0,
-        bottom: 0,
-        width: '100%',
-        borderTop: '1px solid #e9e9e9',
-        padding: '10px 16px',
-        background: '#fff',
-        textAlign: 'right',
-        zIndex: 1
-      }"
-      >
-        <a-button :style="{ marginRight: '8px' }" @click='onClose'> 取消</a-button>
-      </div>-->
     </div>
   </a-modal>
 </template>
@@ -54,13 +38,11 @@ export default {
           title: '名称',
           align:'center',
           dataIndex: 'scriptName',
-          width: '40%'
         },
         {
           title: '最后修改',
           align:'center',
           dataIndex: 'updateTime',
-          width: '40%'
         },
         {
           title: '操作',

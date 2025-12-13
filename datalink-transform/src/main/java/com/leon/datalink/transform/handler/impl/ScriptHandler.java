@@ -1,12 +1,12 @@
-package com.leon.datalink.rule.transform.impl;
+package com.leon.datalink.transform.handler.impl;
 
 import cn.hutool.core.map.MapUtil;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.ScriptUtil;
 import com.leon.datalink.core.variable.GlobalVariableContent;
-import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.rule.transform.TransformHandler;
 import com.leon.datalink.runtime.RuntimeManger;
+import com.leon.datalink.transform.Transform;
+import com.leon.datalink.transform.handler.TransformHandler;
 import org.springframework.util.StringUtils;
 
 import javax.script.*;
@@ -14,13 +14,13 @@ import java.util.Map;
 
 public class ScriptHandler implements TransformHandler {
 
-    private Rule rule;
+    private Transform transform;
 
     private ScriptEngine scriptEngine;
 
     @Override
-    public void init(Rule rule) {
-        this.rule = rule;
+    public void init(Transform transform) {
+        this.transform = transform;
         this.scriptEngine = new ScriptEngineManager().getEngineByName("javascript");
     }
 
@@ -31,12 +31,12 @@ public class ScriptHandler implements TransformHandler {
 
     @Override
     public Object transform(Object data) {
-        String script = rule.getScript();
+        String script = transform.getProperties().getString("script");
         if (StringUtils.isEmpty(script) || null == data) {
             return null;
         }
         try {
-            String ruleId = rule.getRuleId();
+            String ruleId = transform.getRuleId();
 
             // 获取并绑定自定义环境变量
             Bindings bind = scriptEngine.createBindings();

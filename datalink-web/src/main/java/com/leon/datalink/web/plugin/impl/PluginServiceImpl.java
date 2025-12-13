@@ -8,7 +8,7 @@ import com.leon.datalink.core.storage.kv.FileKvStorage;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
-import com.leon.datalink.rule.entity.Plugin;
+import com.leon.datalink.transform.plugin.Plugin;
 import com.leon.datalink.web.plugin.PluginService;
 import org.springframework.stereotype.Service;
 

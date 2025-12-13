@@ -2,8 +2,7 @@ package com.leon.datalink.web.plugin;
 
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.service.BaseService;
-import com.leon.datalink.rule.entity.Plugin;
-import com.leon.datalink.rule.entity.Script;
+import com.leon.datalink.transform.plugin.Plugin;
 
 public interface PluginService extends BaseService<Plugin> {
 

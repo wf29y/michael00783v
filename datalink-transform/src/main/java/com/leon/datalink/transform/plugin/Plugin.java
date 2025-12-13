@@ -1,4 +1,4 @@
-package com.leon.datalink.rule.entity;
+package com.leon.datalink.transform.plugin;
 
 import java.io.Serializable;
 

@@ -3,7 +3,6 @@ package com.leon.datalink.web.rule.impl;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import com.leon.datalink.core.exception.DatalinkException;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
@@ -11,12 +10,10 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
-import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.actor.RuleActor;
-import com.leon.datalink.rule.constants.TransformModeEnum;
-import com.leon.datalink.rule.entity.Plugin;
 import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.runtime.RuntimeManger;
+import com.leon.datalink.transform.constants.TransformModeEnum;
+import com.leon.datalink.transform.plugin.Plugin;
 import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.plugin.PluginService;
 import com.leon.datalink.web.resource.ResourceService;
@@ -26,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -130,14 +126,20 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
             if (!StringUtils.isEmpty(rule.getRuleName())) {
                 stream = stream.filter(r -> r.getRuleName().contains(rule.getRuleName()));
             }
-            if (!StringUtils.isEmpty(rule.getPluginId())) {
-                stream = stream.filter(r -> r.getPluginId().contains(rule.getPluginId()));
-            }
             if (!StringUtils.isEmpty(rule.getSearchResourceId())) {
                 stream = stream.filter(r -> {
                     String searchResourceId = rule.getSearchResourceId();
                     return r.getSourceResourceList().stream().anyMatch(resource -> searchResourceId.equals(resource.getResourceId()))
                             || r.getDestResourceList().stream().anyMatch(resource -> searchResourceId.equals(resource.getResourceId()));
+                });
+            }
+            if (!StringUtils.isEmpty(rule.getSearchPluginId())) {
+                stream = stream.filter(r -> {
+                    String searchPluginId = rule.getSearchPluginId();
+                    return r.getTransformList().stream().anyMatch(transform ->
+                        TransformModeEnum.PLUGIN.equals(transform.getTransformMode())
+                                && searchPluginId.equals(transform.getProperties().getObject("plugin", Plugin.class).getPluginId())
+                    );
                 });
             }
         }
@@ -158,12 +160,6 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
         // 修改为启动状态
         rule.setEnable(true);
         ruleList.put(ruleId, rule);
-
-        // 查询插件
-        if (TransformModeEnum.PLUGIN.equals(rule.getTransformMode())) {
-            Plugin plugin = pluginService.get(rule.getPluginId());
-            rule.setPlugin(plugin);
-        }
 
         // 创建rule actor
         ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule)), "rule-" + ruleId);

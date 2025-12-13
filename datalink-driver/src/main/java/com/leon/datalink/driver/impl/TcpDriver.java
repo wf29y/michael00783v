@@ -1,13 +1,12 @@
 package com.leon.datalink.driver.impl;
 
-import akka.actor.ActorRef;
 import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.net.NetUtil;
 import com.leon.datalink.core.listener.ListenerContent;
 import com.leon.datalink.core.listener.ListenerTypeEnum;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.driver.util.HexUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -32,7 +31,7 @@ public class TcpDriver extends AbstractDriver {
     private Channel channel;
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         Integer port = properties.getInteger("port");
         if (null == port) throw new ValidateException();
         bossGroup = new NioEventLoopGroup(properties.getInteger("bossTread", 1));
@@ -89,7 +88,7 @@ public class TcpDriver extends AbstractDriver {
 
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         bossGroup.shutdownGracefully();
         bossGroup = null;
         workerGroup.shutdownGracefully();
@@ -102,14 +101,14 @@ public class TcpDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         Integer port = properties.getInteger("port");
         if (null == port) return false;
         return NetUtil.isUsableLocalPort(port);
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         throw new UnsupportedOperationException();
     }
 

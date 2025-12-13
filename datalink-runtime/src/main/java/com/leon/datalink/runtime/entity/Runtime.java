@@ -20,7 +20,7 @@ public class Runtime implements Serializable {
     private Map<String, RuntimeEntity> destRuntimeList;
 
     // 转换运行状态
-    private RuntimeEntity transformRuntime;
+    private Map<String, RuntimeEntity> transformRuntimeList;
 
     // 变量
     private Map<String, Object> variables;
@@ -50,12 +50,12 @@ public class Runtime implements Serializable {
         this.destRuntimeList = destRuntimeList;
     }
 
-    public RuntimeEntity getTransformRuntime() {
-        return transformRuntime;
+    public Map<String, RuntimeEntity> getTransformRuntimeList() {
+        return transformRuntimeList;
     }
 
-    public void setTransformRuntime(RuntimeEntity transformRuntime) {
-        this.transformRuntime = transformRuntime;
+    public void setTransformRuntimeList(Map<String, RuntimeEntity> transformRuntimeList) {
+        this.transformRuntimeList = transformRuntimeList;
     }
 
     public Map<String, Object> getVariables() {

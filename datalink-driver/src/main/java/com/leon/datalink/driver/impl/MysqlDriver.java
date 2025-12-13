@@ -8,7 +8,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
@@ -26,7 +26,7 @@ public class MysqlDriver extends AbstractDriver {
     private ScheduledExecutorService executor;
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (StringUtils.isEmpty(properties.getString("ip"))) throw new ValidateException();
         if (StringUtils.isEmpty(properties.getString("port"))) throw new ValidateException();
         if (StringUtils.isEmpty(properties.getString("databaseName"))) throw new ValidateException();
@@ -65,7 +65,7 @@ public class MysqlDriver extends AbstractDriver {
         }
     }
 
-    private Object select(DriverProperties properties) throws Exception {
+    private Object select(ConfigProperties properties) throws Exception {
         String sql = properties.getString("sql");
         if (StringUtils.isEmpty(sql)) throw new ValidateException();
 
@@ -90,7 +90,7 @@ public class MysqlDriver extends AbstractDriver {
 
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             executor.shutdown();
         }
@@ -98,7 +98,7 @@ public class MysqlDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         if (StringUtils.isEmpty(properties.getString("ip"))) return false;
         if (StringUtils.isEmpty(properties.getString("port"))) return false;
         if (StringUtils.isEmpty(properties.getString("databaseName"))) return false;
@@ -121,7 +121,7 @@ public class MysqlDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         String sql = properties.getString("sql");
         if (StringUtils.isEmpty(sql)) throw new ValidateException();
 

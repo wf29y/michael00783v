@@ -3,8 +3,8 @@ package com.leon.datalink.web.controller;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.core.exception.KvStorageException;
-import com.leon.datalink.rule.entity.Plugin;
 import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.transform.plugin.Plugin;
 import com.leon.datalink.web.plugin.PluginService;
 import com.leon.datalink.web.rule.RuleService;
 import com.leon.datalink.web.util.ValidatorUtil;
@@ -119,7 +119,7 @@ public class PluginController {
         ValidatorUtil.isNotEmpty(pluginId);
 
         Rule rule = new Rule();
-        rule.setPluginId(pluginId);
+        rule.setSearchPluginId(pluginId);
         List<Rule> list = ruleService.list(rule);
         if (CollectionUtil.isNotEmpty(list)) {
             throw new ValidationException("该插件已被规则绑定,无法删除");

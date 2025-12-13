@@ -28,23 +28,6 @@
               <a-input v-model='modal.description' placeholder='请输入备注' />
             </a-form-model-item>
           </a-col>
-          <a-col :span='12'>
-            <a-form-model-item label='数据转换方式' prop='transformMode'>
-              <a-select v-model='modal.transformMode' placeholder='请选择数据转换方式' @change='transformModeChange'>
-                <a-select-option v-for='(item,index) in transformModeList' :value='item.value' :key='index'>
-                  {{ item.name }}
-                </a-select-option>
-              </a-select>
-            </a-form-model-item>
-          </a-col>
-          <a-col :span='12'>
-            <a-form-model-item label='忽略空数据' prop='ignoreNullValue'>
-              <a-select v-model='modal.ignoreNullValue' placeholder='请选择是否忽略空数据'>
-                <a-select-option :value='true'>是</a-select-option>
-                <a-select-option :value='false'>否</a-select-option>
-              </a-select>
-            </a-form-model-item>
-          </a-col>
         </a-row>
       </a-card>
 
@@ -72,7 +55,7 @@
               </a-col>
               <a-col :span='4' style='text-align: right'>
                 <a v-if='resource.properties.points !== undefined' @click='pointConfig("source",resource,index)'>点位</a>
-                <a-divider type='vertical' v-if='resource.properties.points !== undefined'/>
+                <a-divider type='vertical' v-if='resource.properties.points !== undefined' />
                 <a @click='freshResource("source",resource,index)'>刷新</a>
                 <a-divider type='vertical' />
                 <a @click='editResource("source",resource,index)'>配置</a>
@@ -85,7 +68,43 @@
 
           </a-list-item>
         </a-list>
-        <a-button @click='addResource("source")'> 添加数据源</a-button>
+        <a-button @click='addResource("source")' icon='plus'> 添加数据源</a-button>
+      </a-card>
+
+
+      <a-card style='margin-bottom: 24px' :bordered='false'>
+        <div class='title'>数据转换</div>
+        <draggable v-model='modal.transformList' :options='{animation:300}'>
+          <transition-group>
+            <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px;margin-bottom: 16px;cursor: pointer'
+                   :key='index+1' v-for='(transform,index) in modal.transformList'>
+              <a-col :span='20'>
+                <a-descriptions :column='2'>
+                  <a-descriptions-item label='执行顺序'>
+                    {{ index + 1 }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label='转换类型'>
+                    {{ transformModeMap[transform.transformMode] }}
+                  </a-descriptions-item>
+                </a-descriptions>
+              </a-col>
+              <a-col :span='4' style='text-align: right'>
+                <a @click='editTransform(transform,index)' v-show='transform.transformMode !=="WITHOUT"'>配置</a>
+                <a-divider type='vertical' v-show='transform.transformMode !=="WITHOUT"' />
+                <a-popconfirm title='移除此转换?' @confirm='() => deleteTransform(index)'>
+                  <a href='javascript:;'>移除</a>
+                </a-popconfirm>
+              </a-col>
+            </a-row>
+          </transition-group>
+        </draggable>
+        <a-dropdown>
+          <a-menu slot='overlay' @click='addTransform'>
+            <a-menu-item v-for='transform in transformModeList' :key='transform.value'> {{ transform.name }}
+            </a-menu-item>
+          </a-menu>
+          <a-button icon='plus'>添加数据转换</a-button>
+        </a-dropdown>
       </a-card>
 
 
@@ -111,7 +130,7 @@
               </a-col>
               <a-col :span='4' style='text-align: right'>
                 <a v-if='resource.properties.points !== undefined' @click='pointConfig("dest",resource,index)'>点位</a>
-                <a-divider type='vertical' v-if='resource.properties.points !== undefined'/>
+                <a-divider type='vertical' v-if='resource.properties.points !== undefined' />
                 <a @click='freshResource("dest",resource,index)'>刷新</a>
                 <a-divider type='vertical' />
                 <a @click='editResource("dest",resource,index)'>配置</a>
@@ -124,101 +143,64 @@
 
           </a-list-item>
         </a-list>
-        <a-button @click='addResource("dest")'> 添加目标资源</a-button>
-      </a-card>
-
-
-      <a-card style='margin-bottom: 24px' :bordered='false' v-if="modal.transformMode!=='WITHOUT'">
-
-        <a-row style='padding: 0'>
-          <a-col :span='12' class='title'>数据转换</a-col>
-          <a-col :span='12' style='text-align: right' v-if="modal.transformMode==='SCRIPT'"><a
-            @click='selectScript'>选择脚本</a></a-col>
-        </a-row>
-
-        <a-row :gutter='24'>
-          <a-col :span='24' v-if="modal.transformMode==='SCRIPT'">
-            <monaco-editor ref='MonacoEditor' height='300px' :minimap='true'></monaco-editor>
-          </a-col>
-          <a-col :span='24' v-if="modal.transformMode==='PLUGIN'">
-            <a-form-model-item label='插件' prop='script'>
-              <a-select v-model='modal.pluginId' placeholder='请选择插件' style='width: 50%'>
-                <a-select-option v-for='(item,index) in pluginList' :value='item.pluginId' :key='index'>
-                  {{ item.pluginName }}
-                </a-select-option>
-              </a-select>
-            </a-form-model-item>
-          </a-col>
-        </a-row>
-
+        <a-button @click='addResource("dest")' icon='plus'>添加目标资源</a-button>
       </a-card>
 
       <variables-model ref='VariablesModel'></variables-model>
 
     </a-form-model>
     <resource-model ref='ResourceModel' @update='handleUpdateResource' @add='handleAddResource'></resource-model>
-    <script-select-model ref='ScriptSelectModel' @select='handleSelectedScript'></script-select-model>
     <points-config-model ref='PointsConfigModel' @update='handleUpdatePoints'></points-config-model>
 
+    <transform-script-model ref='TransformScriptModel' @update='handleUpdateTransform'
+                            @add='handleAddTransform'></transform-script-model>
+    <transform-plugin-model ref='TransformPluginModel' @update='handleUpdateTransform'
+                            @add='handleAddTransform'></transform-plugin-model>
   </div>
 </template>
 
 <script>
+import draggable from 'vuedraggable'
 import { postAction, putAction, getAction } from '@/api/manage'
-import ResourceModel from './modules/ResourceModel'
-import ScriptSelectModel from './modules/ScriptSelectModel'
-import VariablesModel from './modules/VariablesModel'
-import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
-import { transformModeList } from '@/config/rule.config'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
+import ResourceModel from './modules/ResourceModel'
+import VariablesModel from './modules/VariablesModel'
 import PointsConfigModel from './points/PointsConfigModel'
+import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
+import { transformModeMap, transformModeList } from '@/config/transform.config'
+import TransformScriptModel from './transform/TransformScriptModel'
+import TransformPluginModel from './transform/TransformPluginModel'
+
 
 export default {
-  components: { ResourceModel, ScriptSelectModel, VariablesModel, MonacoEditor, PointsConfigModel },
+  components: {
+    draggable,
+    ResourceModel,
+    VariablesModel,
+    MonacoEditor,
+    PointsConfigModel,
+    TransformScriptModel,
+    TransformPluginModel
+  },
   data() {
     return {
       modal: {
         sourceResourceList: [],
         destResourceList: [],
-        transformMode: 'WITHOUT',
-        ignoreNullValue: false
+        transformList: []
       },
       url: {
         add: '/api/rule/add',
         update: '/api/rule/update',
         info: '/api/rule/info',
-        plugin: '/api/plugin/list',
         resource: '/api/resource/info'
       },
       rules: {
-        ruleName: [{ required: true, message: '请输入规则名称', trigger: 'blur' }],
-        transformMode: [{ required: true, message: '请选择转换方式', trigger: 'change' }],
-        ignoreNullValue: [{ required: true, message: '请选择是否忽略空值', trigger: 'change' }]
+        ruleName: [{ required: true, message: '请输入规则名称', trigger: 'blur' }]
       },
       resourceTypeMap: resourceTypeMap,
-      options: {
-        mode: { name: 'text/javascript', json: true },
-        height: 150,
-        lineNumbers: true,
-        tabSize: 2,
-        theme: 'base16-light',
-        line: true,
-        autoCloseTags: true,
-        lineWrapping: true,
-        styleActiveLine: true,
-        extraKeys: { 'tab': 'autocomplete' }, //自定义快捷键
-        hintOptions: {
-          tables: {}
-        }
-      },
-      pluginList: [],
-      transformModeList: transformModeList,
-      defaultScript: '/**\n' +
-        '* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +
-        '*/\n' +
-        'function transform(data) {\n' +
-        '    return data;\n' +
-        '}'
+      transformModeMap: transformModeMap,
+      transformModeList: transformModeList
     }
   },
   mounted() {
@@ -229,17 +211,17 @@ export default {
         let temp = res.data
         if (temp) {
           this.modal = res.data
-          // this.modal.destResourceList.push({})
           this.$nextTick(() => {
             this.$refs.VariablesModel.set(this.modal.variables)
-            if (this.modal.transformMode === 'SCRIPT') {
-              this.$refs.MonacoEditor.set(this.modal.script)
-            }
           })
         }
       })
     }
-    this.getPluginList()
+    //为了防止火狐浏览器拖拽的时候以新标签打开
+    document.body.ondrop = function(event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
   },
   methods: {
     getDetails(resource) {
@@ -286,18 +268,6 @@ export default {
         this.$set(this.modal.sourceResourceList, index, resource)
       }
     },
-
-    transformModeChange(mode) {
-      if (mode === 'SCRIPT' && !this.modal.script) {
-        this.modal.script = this.defaultScript
-      } else {
-        this.modal.script = ''
-      }
-      this.$nextTick(() => {
-        this.$refs.MonacoEditor.set(this.modal.script)
-      })
-    },
-
     // 打开点位配置
     pointConfig(mode, resource, index) {
       this.$refs.PointsConfigModel.config(resource.resourceType, mode, index, resource.properties.points)
@@ -311,10 +281,62 @@ export default {
       }
     },
 
+    // 数据转换
+    addTransform({ key }) {
+      switch (key) {
+        case 'WITHOUT': {
+          this.modal.transformList.push({ transformMode: 'WITHOUT' })
+          break
+        }
+        case 'SCRIPT': {
+          this.$refs.TransformScriptModel.add()
+          break
+        }
+        case 'PLUGIN': {
+          this.$refs.TransformPluginModel.add()
+          break
+        }
+        case 'SQL': {
+          break
+        }
+      }
+    },
+    editTransform(transform, index) {
+      switch (transform.transformMode) {
+        case 'WITHOUT': {
+          break
+        }
+        case 'SCRIPT': {
+          this.$refs.TransformScriptModel.edit(transform, index)
+          break
+        }
+        case 'PLUGIN': {
+          this.$refs.TransformPluginModel.edit(transform, index)
+          break
+        }
+        case 'SQL': {
+          break
+        }
+      }
+    },
+    deleteTransform(index) {
+      this.modal.transformList.splice(index, 1)
+    },
+    handleAddTransform(transform) {
+      this.modal.transformList.push(transform)
+    },
+    handleUpdateTransform(transform, index) {
+      this.$set(this.modal.transformList, index, transform)
+    },
+
     // 保存规则
     saveRule() {
       if (!this.modal.sourceResourceList || this.modal.sourceResourceList.length === 0) {
         this.$message.error('至少添加一个数据源')
+        return
+      }
+      if (!this.modal.transformList || this.modal.transformList.length === 0) {
+        this.$message.error('至少添加一个数据转换')
         return
       }
       if (!this.modal.destResourceList || this.modal.destResourceList.length === 0) {
@@ -327,14 +349,6 @@ export default {
           that.confirmLoading = true
           let rule = JSON.parse(JSON.stringify(this.modal))
           rule.variables = this.$refs.VariablesModel.get()
-          if (this.modal.transformMode === 'SCRIPT') {
-            rule.script = this.$refs.MonacoEditor.get()
-          } else {
-            delete rule.script
-          }
-          if (this.modal.transformMode !== 'PLUGIN') {
-            delete rule.pluginId
-          }
           let obj
           if (this.ruleId) {
             obj = putAction(this.url.update, rule)
@@ -359,26 +373,9 @@ export default {
         }
       })
     },
-    selectScript() {
-      this.$refs.ScriptSelectModel.show()
-    },
-    handleSelectedScript(script) {
-      this.modal.script = script.scriptContent
-      this.$refs.MonacoEditor.set(this.modal.script)
-    },
-    getPluginList() {
-      postAction(this.url.plugin, {}).then(res => {
-        if (res.code === 200) {
-          this.pluginList = res.data
-        }
-      })
-    },
-
     onClose() {
       this.$router.push({ name: 'ruleList' })
     }
-
-
   }
 }
 </script>

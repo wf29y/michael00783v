@@ -1,11 +1,11 @@
-package com.leon.datalink.rule.transform.impl;
+package com.leon.datalink.transform.handler.impl;
 
-import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.rule.transform.TransformHandler;
+import com.leon.datalink.transform.Transform;
+import com.leon.datalink.transform.handler.TransformHandler;
 
 public class WithoutHandler implements TransformHandler {
     @Override
-    public void init(Rule rule) {
+    public void init(Transform transform) {
     }
 
     @Override

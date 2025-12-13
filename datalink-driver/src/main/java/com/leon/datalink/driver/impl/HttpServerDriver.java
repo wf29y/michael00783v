@@ -6,7 +6,7 @@ import com.leon.datalink.core.listener.ListenerContent;
 import com.leon.datalink.core.listener.ListenerTypeEnum;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.driver.util.SimpleHttpServer;
 import org.springframework.util.StringUtils;
 
@@ -18,7 +18,7 @@ public class HttpServerDriver extends AbstractDriver {
     SimpleHttpServer simpleHttpServer;
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         Integer port = properties.getInteger("port");
         String path = properties.getString("path");
         if (null == port) throw new ValidateException();
@@ -54,7 +54,7 @@ public class HttpServerDriver extends AbstractDriver {
     }
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (null != simpleHttpServer) simpleHttpServer.stop(0);
         Integer port = properties.getInteger("port");
         if (null == port) throw new ValidateException();
@@ -62,14 +62,14 @@ public class HttpServerDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         Integer port = properties.getInteger("port");
         if (null == port) return false;
         return NetUtil.isUsableLocalPort(port);
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         throw new UnsupportedOperationException();
     }
 

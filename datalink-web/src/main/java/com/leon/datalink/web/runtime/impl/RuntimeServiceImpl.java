@@ -9,6 +9,7 @@ import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.entity.Runtime;
+import com.leon.datalink.transform.Transform;
 import com.leon.datalink.web.rule.RuleService;
 import com.leon.datalink.web.runtime.RuntimeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +92,8 @@ public class RuntimeServiceImpl implements RuntimeService {
         Rule rule = ruleService.get(ruleId);
         List<String> sourceRuntimeIdList = rule.getSourceResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
         List<String> destRuntimeIdList = rule.getDestResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
-        RuntimeManger.resetRuntime(rule.getRuleId(), new HashMap<>(rule.getVariables()), sourceRuntimeIdList, destRuntimeIdList);
+        List<String> transformRuntimeIdList = rule.getTransformList().stream().map(Transform::getTransformRuntimeId).collect(Collectors.toList());
+        RuntimeManger.resetRuntime(rule.getRuleId(), new HashMap<>(rule.getVariables()), sourceRuntimeIdList, destRuntimeIdList, transformRuntimeIdList);
         this.kvStorage.delete(ruleId.getBytes());
     }
 
@@ -101,6 +102,7 @@ public class RuntimeServiceImpl implements RuntimeService {
     public void initRuntime(Rule rule) throws KvStorageException {
         List<String> sourceRuntimeIdList = rule.getSourceResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
         List<String> destRuntimeIdList = rule.getDestResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
-        RuntimeManger.init(rule.getRuleId(), new HashMap<>(rule.getVariables()), sourceRuntimeIdList, destRuntimeIdList);
+        List<String> transformRuntimeIdList = rule.getTransformList().stream().map(Transform::getTransformRuntimeId).collect(Collectors.toList());
+        RuntimeManger.init(rule.getRuleId(), new HashMap<>(rule.getVariables()), sourceRuntimeIdList, destRuntimeIdList, transformRuntimeIdList);
     }
 }

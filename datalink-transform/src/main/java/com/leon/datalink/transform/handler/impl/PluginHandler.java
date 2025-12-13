@@ -1,31 +1,33 @@
-package com.leon.datalink.rule.transform.impl;
+package com.leon.datalink.transform.handler.impl;
 
 import cn.hutool.core.map.MapUtil;
 import com.leon.datalink.core.common.Constants;
-import com.leon.datalink.core.plugin.PluginFactory;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.plugin.DataLinkTransformPlugin;
-import com.leon.datalink.rule.entity.Plugin;
-import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.rule.transform.TransformHandler;
 import com.leon.datalink.runtime.RuntimeManger;
+import com.leon.datalink.transform.Transform;
+import com.leon.datalink.transform.handler.TransformHandler;
+import com.leon.datalink.transform.plugin.Plugin;
+import com.leon.datalink.transform.plugin.PluginFactory;
 
 import java.nio.file.Paths;
 import java.util.Map;
 
 public class PluginHandler implements TransformHandler {
 
-    private Rule rule;
+    private Transform transform;
 
     private DataLinkTransformPlugin transformPlugin;
 
     @Override
-    public void init(Rule rule) {
-        this.rule = rule;
+    public void init(Transform transform) {
+        this.transform = transform;
+        ConfigProperties properties = transform.getProperties();
         // 创建插件
-        Plugin plugin = rule.getPlugin();
+        Plugin plugin = properties.getObject("plugin", Plugin.class);
         try {
             this.transformPlugin = PluginFactory.createTransformPlugin(Paths.get(Constants.PLUGIN_FILE_PATH, plugin.getPluginName()).toString(), plugin.getPackagePath());
             if (null != transformPlugin) {
@@ -47,7 +49,7 @@ public class PluginHandler implements TransformHandler {
     public Object transform(Object data) {
         // 环境变量
         Map<String, Object> globalProp = GlobalVariableContent.getAllValue();
-        Map<String, Object> ruleProp = RuntimeManger.getVariables(rule.getRuleId());
+        Map<String, Object> ruleProp = RuntimeManger.getVariables(transform.getRuleId());
         if (null != ruleProp) {
             globalProp.putAll(ruleProp);
         }

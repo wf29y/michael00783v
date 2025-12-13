@@ -1,4 +1,4 @@
-package com.leon.datalink.driver.entity;
+package com.leon.datalink.core.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.leon.datalink.core.utils.JacksonUtils;
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 驱动参数
+ * 配置参数
  */
-public class DriverProperties extends LinkedHashMap<String, Object> {
+public class ConfigProperties extends LinkedHashMap<String, Object> {
 
     public String getString(String key) {
         Object o = this.get(key);
@@ -84,6 +84,13 @@ public class DriverProperties extends LinkedHashMap<String, Object> {
         if (null == o) return null;
         return JacksonUtils.convertValue(o, new TypeReference<List<Map<String, Object>>>() {
         });
+    }
+
+
+    public <T> T getObject(String key,Class<T> tClass) {
+        Object o = this.get(key);
+        if (null == o) return null;
+        return JacksonUtils.convertValue(o, tClass);
     }
 
 }

@@ -46,6 +46,10 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>datalink-transform</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>datalink-runtime</artifactId>
         </dependency>
     </dependencies>

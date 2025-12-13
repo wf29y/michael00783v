@@ -38,9 +38,9 @@
           <a @click='handleRuntime(item)'>{{ text }}</a>
         </span>
 
-        <span slot='transformModeMap' slot-scope='text, item, index'>
+<!--        <span slot='transformModeMap' slot-scope='text, item, index'>
           {{ transformModeMap[item.transformMode] }}
-        </span>
+        </span>-->
 
         <span slot='sourceResourceName' slot-scope='text, item, index'>
         {{ getResourceNameStr(item.sourceResourceList) }}
@@ -68,7 +68,7 @@
 
 <script>
 import { postAction } from '@/api/manage'
-import { transformModeMap } from '@/config/rule.config'
+//import { transformModeMap } from '@/config/transform.config'
 
 export default {
   name: 'RuleList',
@@ -86,11 +86,11 @@ export default {
           dataIndex: 'ruleName',
           scopedSlots: { customRender: 'ruleName' }
         },
-        {
-          title: '转换方式',
-          dataIndex: 'transformModeMap',
-          scopedSlots: { customRender: 'transformModeMap' }
-        },
+        // {
+        //   title: '转换方式',
+        //   dataIndex: 'transformModeMap',
+        //   scopedSlots: { customRender: 'transformModeMap' }
+        // },
         {
           title: '数据源',
           dataIndex: 'sourceResourceName',
@@ -123,7 +123,7 @@ export default {
         stop: '/api/rule/stop',
         runtime: '/api/rule/runtime'
       },
-      transformModeMap: transformModeMap
+     // transformModeMap: transformModeMap
     }
   },
   mounted() {

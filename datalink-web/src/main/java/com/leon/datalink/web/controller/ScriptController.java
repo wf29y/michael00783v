@@ -6,7 +6,7 @@ import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.ScriptUtil;
 import com.leon.datalink.core.variable.GlobalVariableContent;
-import com.leon.datalink.rule.entity.Script;
+import com.leon.datalink.transform.script.Script;
 import com.leon.datalink.web.script.ScriptService;
 import com.leon.datalink.web.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;

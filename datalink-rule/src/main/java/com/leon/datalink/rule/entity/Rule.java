@@ -1,7 +1,7 @@
 package com.leon.datalink.rule.entity;
 
+import com.leon.datalink.transform.Transform;
 import com.leon.datalink.resource.Resource;
-import com.leon.datalink.rule.constants.TransformModeEnum;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,21 +20,15 @@ public class Rule implements Serializable {
 
     private List<Resource> destResourceList;
 
-    private TransformModeEnum transformMode;
-
-    private String script;
-
-    private String pluginId;
-
-    private Plugin plugin;
+    private List<Transform> transformList;
 
     private Map<String, Object> variables;
 
     private boolean enable = false;
 
-    private boolean ignoreNullValue;
-
     private String searchResourceId;
+
+    private String searchPluginId;
 
     public String getRuleId() {
         return ruleId;
@@ -80,24 +74,6 @@ public class Rule implements Serializable {
         return this;
     }
 
-    public String getScript() {
-        return script;
-    }
-
-    public Rule setScript(String script) {
-        this.script = script;
-        return this;
-    }
-
-    public TransformModeEnum getTransformMode() {
-        return transformMode;
-    }
-
-    public Rule setTransformMode(TransformModeEnum transformMode) {
-        this.transformMode = transformMode;
-        return this;
-    }
-
     public boolean isEnable() {
         return enable;
     }
@@ -107,30 +83,12 @@ public class Rule implements Serializable {
         return this;
     }
 
-    public boolean isIgnoreNullValue() {
-        return ignoreNullValue;
+    public List<Transform> getTransformList() {
+        return transformList;
     }
 
-    public Rule setIgnoreNullValue(boolean ignoreNullValue) {
-        this.ignoreNullValue = ignoreNullValue;
-        return this;
-    }
-
-    public String getPluginId() {
-        return pluginId;
-    }
-
-    public Rule setPluginId(String pluginId) {
-        this.pluginId = pluginId;
-        return this;
-    }
-
-    public Plugin getPlugin() {
-        return plugin;
-    }
-
-    public Rule setPlugin(Plugin plugin) {
-        this.plugin = plugin;
+    public Rule setTransformList(List<Transform> transformList) {
+        this.transformList = transformList;
         return this;
     }
 
@@ -149,6 +107,15 @@ public class Rule implements Serializable {
 
     public Rule setSearchResourceId(String searchResourceId) {
         this.searchResourceId = searchResourceId;
+        return this;
+    }
+
+    public String getSearchPluginId() {
+        return searchPluginId;
+    }
+
+    public Rule setSearchPluginId(String searchPluginId) {
+        this.searchPluginId = searchPluginId;
         return this;
     }
 }

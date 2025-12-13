@@ -6,7 +6,7 @@ import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.util.StringUtils;
@@ -26,7 +26,7 @@ public class MqttDriver extends AbstractDriver {
     private static final Integer HANDLER_COUNT = 20;
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (StringUtils.isEmpty(properties.getString("url"))) throw new ValidateException();
 
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
@@ -40,7 +40,7 @@ public class MqttDriver extends AbstractDriver {
     }
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             mqttHandler.disconnect();
             mqttHandler.close();
@@ -57,7 +57,7 @@ public class MqttDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return false;
         try {
@@ -78,7 +78,7 @@ public class MqttDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         String topic = properties.getString("topic");
         if (StringUtils.isEmpty(topic)) throw new ValidateException();
 
@@ -121,7 +121,7 @@ public class MqttDriver extends AbstractDriver {
     }
 
 
-    private MqttClient createClient(DriverProperties properties) throws Exception {
+    private MqttClient createClient(ConfigProperties properties) throws Exception {
         MqttClient mqttClient = new MqttClient(properties.getString("url"), SnowflakeIdWorker.getId(), new MemoryPersistence());
         MqttConnectOptions options = new MqttConnectOptions();
         // 如果想要断线这段时间的数据，要设置成false，并且重连后不用再次订阅，否则不会得到断线时间的数据
@@ -170,7 +170,7 @@ public class MqttDriver extends AbstractDriver {
         return mqttClient;
     }
 
-    private MqttAsyncClient createAsyncClient(DriverProperties properties) throws Exception {
+    private MqttAsyncClient createAsyncClient(ConfigProperties properties) throws Exception {
         MqttAsyncClient mqttClient = new MqttAsyncClient(properties.getString("url"), SnowflakeIdWorker.getId(), new MemoryPersistence());
         MqttConnectOptions options = new MqttConnectOptions();
         // 如果想要断线这段时间的数据，要设置成false，并且重连后不用再次订阅，否则不会得到断线时间的数据

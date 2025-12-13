@@ -23,7 +23,7 @@ public class RuntimeManger {
     /**
      * 初始化
      */
-    public static void init(String ruleId, Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList) {
+    public static void init(String ruleId, Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList, List<String> transformIdList) {
         Runtime ruleRuntime = runtimeList.get(ruleId);
         // 非首次初始化
         if (null != ruleRuntime) {
@@ -65,45 +65,54 @@ public class RuntimeManger {
             }
             ruleRuntime.setDestRuntimeList(destRuntimeMap);
 
-            //todo 转换runtimeEntity的初始化
+            // 转换运行状保持
+            Map<String, RuntimeEntity> transformRuntimeMap = new HashMap<>(transformIdList.size());
+            Map<String, RuntimeEntity> transformRuntimeList = ruleRuntime.getTransformRuntimeList();
+            for (String id : transformIdList) {
+                if (transformRuntimeList.containsKey(id)) {
+                    RuntimeEntity runtimeEntity = transformRuntimeList.get(id);
+                    runtimeEntity.setStatus(RuntimeStatusEnum.INIT);
+                    transformRuntimeMap.put(id, runtimeEntity);
+                } else {
+                    transformRuntimeMap.put(id, new RuntimeEntity());
+                }
+            }
+            ruleRuntime.setTransformRuntimeList(transformRuntimeMap);
 
         } else {
-            resetRuntime(ruleId, initVariables, sourceRuntimeIdList, destRuntimeIdList);
+            resetRuntime(ruleId, initVariables, sourceRuntimeIdList, destRuntimeIdList, transformIdList);
         }
     }
 
     /**
      * 新加运行
      */
-    private static Runtime newRuntime(Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList) {
+    private static Runtime newRuntime(Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList, List<String> transformIdList) {
         Map<String, RuntimeEntity> sourceRuntimeMap = new HashMap<>(sourceRuntimeIdList.size());
         for (String id : sourceRuntimeIdList) {
             sourceRuntimeMap.put(id, new RuntimeEntity());
         }
-
         Map<String, RuntimeEntity> destRuntimeMap = new HashMap<>(destRuntimeIdList.size());
         for (String id : destRuntimeIdList) {
             destRuntimeMap.put(id, new RuntimeEntity());
         }
+        Map<String, RuntimeEntity> transformRuntimeMap = new HashMap<>(transformIdList.size());
+        for (String id : transformIdList) {
+            transformRuntimeMap.put(id, new RuntimeEntity());
+        }
 
         Runtime runtime = new Runtime();
         runtime.setStartTime(DateTime.now());
-        runtime.setTransformRuntime(new RuntimeEntity());
+        runtime.setTransformRuntimeList(transformRuntimeMap);
         runtime.setSourceRuntimeList(sourceRuntimeMap);
         runtime.setDestRuntimeList(destRuntimeMap);
         runtime.setVariables(null == initVariables ? new HashMap<>() : initVariables);
         return runtime;
     }
 
-
-    public static void resetRuntime(String ruleId, Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList) {
-        runtimeList.put(ruleId, newRuntime(initVariables, sourceRuntimeIdList, destRuntimeIdList));
+    public static void resetRuntime(String ruleId, Map<String, Object> initVariables, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList, List<String> transformIdList) {
+        runtimeList.put(ruleId, newRuntime(initVariables, sourceRuntimeIdList, destRuntimeIdList, transformIdList));
     }
-
-    public static void handleRecord(String ruleId, RuntimeData runtimeData) {
-        handleRecord(ruleId, null, runtimeData);
-    }
-
 
     public static void handleRecord(String ruleId, String entityRuntimeId, RuntimeData runtimeData) {
         Runtime runtime = runtimeList.get(ruleId);
@@ -118,7 +127,8 @@ public class RuntimeManger {
                 break;
             }
             case TRANSFORM: {
-                runtime.getTransformRuntime().addDataRecord(runtimeData);
+                Map<String, RuntimeEntity> transformRuntimeList = runtime.getTransformRuntimeList();
+                transformRuntimeList.get(entityRuntimeId).addDataRecord(runtimeData);
                 break;
             }
             case DEST: {
@@ -127,10 +137,6 @@ public class RuntimeManger {
                 break;
             }
         }
-    }
-
-    public static void handleStatus(String ruleId, RuntimeStatus runtimeStatus) {
-        handleStatus(ruleId, null, runtimeStatus);
     }
 
     public static void handleStatus(String ruleId, String entityRuntimeId, RuntimeStatus runtimeStatus) {
@@ -146,7 +152,8 @@ public class RuntimeManger {
                 break;
             }
             case TRANSFORM: {
-                runtime.getTransformRuntime().updateStatus(runtimeStatus);
+                Map<String, RuntimeEntity> transformRuntimeList = runtime.getTransformRuntimeList();
+                transformRuntimeList.get(entityRuntimeId).updateStatus(runtimeStatus);
                 break;
             }
             case DEST: {

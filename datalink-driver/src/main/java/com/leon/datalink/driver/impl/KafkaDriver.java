@@ -5,7 +5,7 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -32,7 +32,7 @@ public class KafkaDriver extends AbstractDriver {
     private boolean isClose = false;
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) throw new ValidateException();
 
@@ -73,7 +73,7 @@ public class KafkaDriver extends AbstractDriver {
     }
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             this.isClose = true;
         } else {
@@ -82,7 +82,7 @@ public class KafkaDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return false;
         try {
@@ -99,7 +99,7 @@ public class KafkaDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         String topic = properties.getString("topic");
         if (StringUtils.isEmpty(topic)) throw new ValidateException();
 

@@ -6,7 +6,7 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.StringUtils;
@@ -31,7 +31,7 @@ public class HttpClientDriver extends AbstractDriver {
     private ScheduledExecutorService executor;
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
 
         this.requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(properties.getInteger("connectTimeout", 6000));
@@ -56,7 +56,7 @@ public class HttpClientDriver extends AbstractDriver {
     }
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             executor.shutdown();
         }
@@ -64,7 +64,7 @@ public class HttpClientDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return false;
         try {
@@ -78,12 +78,12 @@ public class HttpClientDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         return doRequest(data, properties);
     }
 
 
-    private Map<String, Object> doRequest(Object data, DriverProperties properties) {
+    private Map<String, Object> doRequest(Object data, ConfigProperties properties) {
 
         String url = properties.getString("url");
         String method = properties.getString("method");

@@ -23,6 +23,10 @@ export default {
       type: String,
       default: 'javascript'
     },
+    theme: {
+      type: String,
+      default: 'vs'
+    },
     readOnly: {
       type: Boolean,
       default: false
@@ -69,11 +73,12 @@ export default {
         wordWrap: 'on', // 自动换行
         minimap: {
           enabled: this.minimap // 是否启用预览图
-        }
+        },
+        theme: this.theme
       })
     },
     set(value) {
-      if(!value) return
+      if (!value) return
       if (this.monacoEditor === null) {
         this.$nextTick(() => {
           this.init()

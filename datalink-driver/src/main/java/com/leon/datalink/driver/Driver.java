@@ -2,7 +2,7 @@ package com.leon.datalink.driver;
 
 import akka.actor.ActorRef;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 
 /**
  * @ClassName Driver
@@ -21,22 +21,22 @@ public interface Driver {
     /**
      * create driver
      */
-    void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception;
+    void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception;
 
     /**
      * destroy client
      */
-    void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception;
+    void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception;
 
     /**
      * test ok
      */
-    boolean test(DriverProperties properties);
+    boolean test(ConfigProperties properties);
 
     /**
      * handle receive data
      */
-    Object handleData(Object data, DriverProperties properties) throws Exception;
+    Object handleData(Object data, ConfigProperties properties) throws Exception;
 
 
 }

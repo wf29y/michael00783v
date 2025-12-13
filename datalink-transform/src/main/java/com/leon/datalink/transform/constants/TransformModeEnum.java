@@ -1,13 +1,15 @@
-package com.leon.datalink.rule.constants;
+package com.leon.datalink.transform.constants;
 
-import com.leon.datalink.rule.transform.TransformHandler;
-import com.leon.datalink.rule.transform.impl.PluginHandler;
-import com.leon.datalink.rule.transform.impl.ScriptHandler;
-import com.leon.datalink.rule.transform.impl.WithoutHandler;
+import com.leon.datalink.transform.handler.TransformHandler;
+import com.leon.datalink.transform.handler.impl.PluginHandler;
+import com.leon.datalink.transform.handler.impl.ScriptHandler;
+import com.leon.datalink.transform.handler.impl.SqlHandler;
+import com.leon.datalink.transform.handler.impl.WithoutHandler;
 
 public enum TransformModeEnum {
 
     WITHOUT(WithoutHandler.class),
+    SQL(SqlHandler.class),
     SCRIPT(ScriptHandler.class),
     PLUGIN(PluginHandler.class);
 

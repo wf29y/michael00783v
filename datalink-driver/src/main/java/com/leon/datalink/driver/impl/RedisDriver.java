@@ -1,12 +1,11 @@
 package com.leon.datalink.driver.impl;
 
-import akka.actor.ActorRef;
 import cn.hutool.core.exceptions.ValidateException;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SignUtil;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.driver.util.RedisClusterCmd;
 import com.leon.datalink.driver.util.RedisCmd;
 import org.springframework.util.StringUtils;
@@ -27,7 +26,7 @@ public class RedisDriver extends AbstractDriver {
 
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
 
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxTotal(properties.getInteger("maxTotal", 8));
@@ -101,7 +100,7 @@ public class RedisDriver extends AbstractDriver {
 
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             executor.shutdown();
         }
@@ -109,7 +108,7 @@ public class RedisDriver extends AbstractDriver {
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         try {
             JedisPoolConfig config = new JedisPoolConfig();
             config.setMaxTotal(1);
@@ -150,11 +149,11 @@ public class RedisDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         return execute(data, properties);
     }
 
-    private Object execute(Object data, DriverProperties properties) {
+    private Object execute(Object data, ConfigProperties properties) {
 
         String command = properties.getString("command");
         if (StringUtils.isEmpty(command)) throw new ValidateException();

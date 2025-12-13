@@ -1,14 +1,14 @@
 <template>
   <a-popover title='统计'>
     <template slot='content'>
-      <p v-if='rule.transformMode==="PLUGIN"'>插件名称：{{ rule.pluginName }}</p>
-      <p>转换成功：{{transform.successCount}}</p>
-      <p>转换失败：{{transform.failCount}}</p>
-      <p v-show='transform.message'>失败原因：{{transform.message}}</p>
+      <p v-show='runtime.time'>最近时间：{{runtime.time}}</p>
+      <p>处理成功：{{runtime.successCount}}</p>
+      <p>处理失败：{{runtime.failCount}}</p>
+      <p v-show='runtime.message'>失败原因：{{runtime.message}}</p>
     </template>
     <div class='node' :class='nodeClass'>
-      <a-icon :component='nodeIcon[rule.transformMode]' class='icon'></a-icon>
-      <span class='name'>{{transformModeMap[rule.transformMode]}}</span>
+      <a-icon :component='nodeIcon[transform.transformMode]' class='icon'></a-icon>
+      <span class='name'>{{transformModeMap[transform.transformMode]}}</span>
     </div>
   </a-popover>
 
@@ -16,7 +16,7 @@
 
 <script>
 import { pluginNode, scriptNode, withoutNode } from '@/core/icons'
-import { transformModeMap } from '@/config/rule.config'
+import { transformModeMap } from '@/config/transform.config'
 
 export default {
   inject: ['getGraph', 'getNode'],
@@ -26,7 +26,7 @@ export default {
       pluginNode,
       scriptNode,
       withoutNode,
-      rule:{},
+      runtime:{},
       transform: {},
       nodeIcon: {
         WITHOUT: withoutNode,
@@ -55,8 +55,8 @@ export default {
   computed: {
     nodeClass: function() {
       let clazz = {}
-      if (this.transform) {
-        let status = this.transform.status.toLowerCase()
+      if (this.runtime) {
+        let status = this.runtime.status.toLowerCase()
         clazz[status] = true
       }
       return clazz

@@ -4,7 +4,7 @@ import cn.hutool.core.exceptions.ValidateException;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
@@ -26,7 +26,7 @@ public class OpcUADriver extends AbstractDriver {
 
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) throw new ValidateException();
 
@@ -85,13 +85,13 @@ public class OpcUADriver extends AbstractDriver {
 
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         executor.shutdown();
         opcUaClient.disconnect();
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         String url = properties.getString("url");
         if (StringUtils.isEmpty(url)) return false;
 
@@ -111,7 +111,7 @@ public class OpcUADriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         throw new UnsupportedOperationException();
     }
 }

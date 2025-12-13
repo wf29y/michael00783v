@@ -1,6 +1,6 @@
 package com.leon.datalink.resource;
 
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 
 import java.io.Serializable;
 
@@ -15,7 +15,7 @@ public class Resource implements Serializable {
 
     private ResourceTypeEnum resourceType;
 
-    private DriverProperties properties;
+    private ConfigProperties properties;
 
     private String resourceRuntimeId; //资源运行时id
 
@@ -43,11 +43,11 @@ public class Resource implements Serializable {
         this.description = description;
     }
 
-    public DriverProperties getProperties() {
+    public ConfigProperties getProperties() {
         return properties;
     }
 
-    public void setProperties(DriverProperties properties) {
+    public void setProperties(ConfigProperties properties) {
         this.properties = properties;
     }
 

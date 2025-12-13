@@ -5,7 +5,7 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.driver.AbstractDriver;
 import com.leon.datalink.driver.constans.DriverModeEnum;
-import com.leon.datalink.driver.entity.DriverProperties;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.rabbitmq.client.*;
 import org.springframework.util.StringUtils;
 
@@ -18,7 +18,7 @@ public class RabbitMQDriver extends AbstractDriver {
     Connection connection;
 
     @Override
-    public void create(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (StringUtils.isEmpty(properties.getString("ip"))) throw new ValidateException();
         if (StringUtils.isEmpty(properties.getInteger("port"))) throw new ValidateException();
         if (StringUtils.isEmpty(properties.getString("virtualHost"))) throw new ValidateException();
@@ -52,12 +52,12 @@ public class RabbitMQDriver extends AbstractDriver {
     }
 
     @Override
-    public void destroy(DriverModeEnum driverMode, DriverProperties properties) throws Exception {
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         connection.close();
     }
 
     @Override
-    public boolean test(DriverProperties properties) {
+    public boolean test(ConfigProperties properties) {
         if (StringUtils.isEmpty(properties.getString("ip"))) return false;
         if (StringUtils.isEmpty(properties.getInteger("port"))) return false;
         if (StringUtils.isEmpty(properties.getString("virtualHost"))) return false;
@@ -80,7 +80,7 @@ public class RabbitMQDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data, DriverProperties properties) throws Exception {
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
         String queue = properties.getString("queue");
         if (StringUtils.isEmpty(queue)) throw new ValidateException();
 
