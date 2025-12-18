@@ -8,6 +8,7 @@ import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.plugin.DataLinkTransformPlugin;
 import com.leon.datalink.runtime.RuntimeManger;
+import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.transform.Transform;
 import com.leon.datalink.transform.handler.TransformHandler;
 import com.leon.datalink.transform.plugin.Plugin;
@@ -15,6 +16,7 @@ import com.leon.datalink.transform.plugin.PluginFactory;
 
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class PluginHandler implements TransformHandler {
 
@@ -46,7 +48,7 @@ public class PluginHandler implements TransformHandler {
     }
 
     @Override
-    public Object transform(Object data) {
+    public void transform(RuntimeData runtimeData, Consumer<Object> consumer) {
         // 环境变量
         Map<String, Object> globalProp = GlobalVariableContent.getAllValue();
         Map<String, Object> ruleProp = RuntimeManger.getVariables(transform.getRuleId());
@@ -55,7 +57,7 @@ public class PluginHandler implements TransformHandler {
         }
         transformPlugin.setVariable(globalProp);
 
-        Object transform = transformPlugin.transform(JacksonUtils.toJson(data));
+        Object transform = transformPlugin.transform(JacksonUtils.toJson(runtimeData.getData()));
 
         // 更新自定义环境变量
         Map<String, Object> variable = transformPlugin.getVariable();
@@ -63,6 +65,6 @@ public class PluginHandler implements TransformHandler {
             ruleProp.replaceAll((k, v) -> variable.get(k));
         }
 
-        return transform;
+        consumer.accept(transform);
     }
 }

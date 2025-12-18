@@ -9,9 +9,9 @@ const resourceConfigMap = {
     name: 'MQTT Broker',
     type: TYPE_ALL,
     details: {
-      resource: { name: '资源地址', format: (resource) => resource.properties.url },
+      resource: { name: '地址', format: (resource) => resource.properties.url },
       rule: [
-        { name: '资源地址', format: (resource) => resource.properties.url },
+        { name: '地址', format: (resource) => resource.properties.url },
         { name: 'Topic', format: (resource) => resource.properties.topic }
       ]
     }
@@ -48,9 +48,9 @@ const resourceConfigMap = {
     name: 'SNMP',
     type: TYPE_SOURCE,
     details: {
-      resource: { name: '资源地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
+      resource: { name: '地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
       rule: [
-        { name: '资源地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
+        { name: '地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
         { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
@@ -67,9 +67,9 @@ const resourceConfigMap = {
     name: 'Kafka',
     type: TYPE_ALL,
     details: {
-      resource: { name: '资源地址', format: (resource) => `${resource.properties.url}` },
+      resource: { name: '地址', format: (resource) => `${resource.properties.url}` },
       rule: [
-        { name: '资源地址', format: (resource) => `${resource.properties.url}` },
+        { name: '地址', format: (resource) => `${resource.properties.url}` },
         { name: 'Topic', format: (resource) => resource.properties.topic }
       ]
     }
@@ -78,9 +78,9 @@ const resourceConfigMap = {
     name: 'RabbitMQ',
     type: TYPE_ALL,
     details: {
-      resource: { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
-        { name: '资源地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
         { name: '虚拟主机', format: (resource) => resource.properties.virtualHost },
         { name: '交换机', format: (resource) => resource.properties.exchange },
         { name: '队列', format: (resource) => resource.properties.queue }
@@ -92,12 +92,12 @@ const resourceConfigMap = {
     type: TYPE_ALL,
     details: {
       resource: {
-        name: '资源地址',
+        name: '地址',
         format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
-          name: '资源地址',
+          name: '地址',
           format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
         { name: 'SQL模板', format: (resource) => resource.properties.sql },
@@ -117,12 +117,12 @@ const resourceConfigMap = {
     type: TYPE_ALL,
     details: {
       resource: {
-        name: '资源地址',
+        name: '地址',
         format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
-          name: '资源地址',
+          name: '地址',
           format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
         { name: 'SQL模板', format: (resource) => resource.properties.sql },
@@ -142,12 +142,12 @@ const resourceConfigMap = {
     type: TYPE_ALL,
     details: {
       resource: {
-        name: '资源地址',
+        name: '地址',
         format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
-          name: '资源地址',
+          name: '地址',
           format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
         { name: 'SQL模板', format: (resource) => resource.properties.sql },
@@ -167,12 +167,12 @@ const resourceConfigMap = {
     type: TYPE_ALL,
     details: {
       resource: {
-        name: '资源地址',
+        name: '地址',
         format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
-          name: '资源地址',
+          name: '地址',
           format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
         { name: 'SQL模板', format: (resource) => resource.properties.sql },
@@ -191,7 +191,7 @@ const resourceConfigMap = {
     name: 'HTTP Client',
     type: TYPE_ALL,
     details: {
-      resource: { name: '资源地址', format: (resource) => `${resource.properties.url}` },
+      resource: { name: '地址', format: (resource) => `${resource.properties.url}` },
       rule: [
         { name: '请求路径', format: (resource) => `${resource.properties.url}${resource.properties.path}` },
         { name: '请求方式', format: (resource) => `${resource.properties.method}` },
@@ -224,9 +224,9 @@ const resourceConfigMap = {
     name: 'OPC UA',
     type: TYPE_SOURCE,
     details: {
-      resource: { name: '资源地址', format: (resource) => `${resource.properties.url}` },
+      resource: { name: '地址', format: (resource) => `${resource.properties.url}` },
       rule: [
-        { name: '资源地址', format: (resource) => `${resource.properties.url}` },
+        { name: '地址', format: (resource) => `${resource.properties.url}` },
         { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
@@ -244,12 +244,12 @@ const resourceConfigMap = {
     type: TYPE_ALL,
     details: {
       resource: {
-        name: '资源地址',
+        name: '地址',
         format: (resource) => resource.properties.mode === 'STANDALONE' ? `${resource.properties.ip}:${resource.properties.port}` : `${resource.properties.nodes}`
       },
       rule: [
         {
-          name: '资源地址',
+          name: '地址',
           format: (resource) => resource.properties.mode === 'STANDALONE' ? `${resource.properties.ip}:${resource.properties.port}` : `${resource.properties.nodes}`
         },
         { name: '执行命令', format: (resource) => `${resource.properties.command}` },

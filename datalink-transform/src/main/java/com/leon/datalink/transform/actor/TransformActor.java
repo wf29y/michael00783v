@@ -34,7 +34,7 @@ public class TransformActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         Loggers.DRIVER.info("start transform [{}]", getSelf().path());
-        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM);
+        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM, transformRuntimeId);
         try {
             transform.setRuleId(ruleId);
             handler.init(transform);
@@ -43,14 +43,14 @@ public class TransformActor extends AbstractActor {
             runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("transform actor start error {} : {}", handler.getClass(), e.getMessage());
         } finally {
-            RuntimeManger.handleStatus(ruleId, transformRuntimeId, runtimeStatus);
+            RuntimeManger.handleStatus(ruleId, runtimeStatus);
         }
     }
 
     @Override
     public void postStop() throws Exception {
         Loggers.DRIVER.info("stop transform [{}]", getSelf().path());
-        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM);
+        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM, transformRuntimeId);
         try {
             handler.destroy();
             runtimeStatus.init();
@@ -58,23 +58,22 @@ public class TransformActor extends AbstractActor {
             runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("transform actor stop error {} : {}", handler.getClass(), e.getMessage());
         } finally {
-            RuntimeManger.handleStatus(ruleId, transformRuntimeId, runtimeStatus);
+            RuntimeManger.handleStatus(ruleId, runtimeStatus);
         }
     }
 
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(RuntimeData.class, dataRecord -> {
-            RuntimeData transformRecord = new RuntimeData(RuntimeTypeEnum.TRANSFORM);
+            RuntimeData transformRecord = new RuntimeData(RuntimeTypeEnum.TRANSFORM, transformRuntimeId);
             try {
-                Object transformData = handler.transform(dataRecord.getData());
-                transformRecord.success(transformData);
+                handler.transform(dataRecord, transformRecord::success);
                 next.tell(transformRecord, getSelf());
             } catch (Exception e) {
                 Loggers.DRIVER.error("transform data error: {}", e.getMessage());
                 transformRecord.fail(e.getMessage());
             } finally {
-                RuntimeManger.handleRecord(ruleId, transformRuntimeId, transformRecord);
+                RuntimeManger.handleRecord(ruleId, transformRecord);
             }
         }).build();
     }

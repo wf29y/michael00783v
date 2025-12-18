@@ -13,22 +13,27 @@ public class RuntimeStatus {
 
     private String errorMessage;
 
+    private String entityRuntimeId;
+
     public RuntimeStatus() {
     }
 
-    public RuntimeStatus(RuntimeTypeEnum type) {
+    public RuntimeStatus(RuntimeTypeEnum type,String entityRuntimeId) {
         this.type = type;
+        this.entityRuntimeId = entityRuntimeId;
     }
 
-    public RuntimeStatus(RuntimeTypeEnum type,RuntimeStatusEnum status) {
+    public RuntimeStatus(RuntimeTypeEnum type,RuntimeStatusEnum status,String entityRuntimeId) {
         this.type = type;
         this.status = status;
+        this.entityRuntimeId = entityRuntimeId;
     }
 
-    public RuntimeStatus(RuntimeTypeEnum type,RuntimeStatusEnum status,String errorMessage) {
+    public RuntimeStatus(RuntimeTypeEnum type,RuntimeStatusEnum status,String errorMessage,String entityRuntimeId) {
         this.type = type;
         this.status = status;
         this.errorMessage = errorMessage;
+        this.entityRuntimeId = entityRuntimeId;
     }
 
     public void init(){
@@ -67,5 +72,13 @@ public class RuntimeStatus {
 
     public void setStatus(RuntimeStatusEnum status) {
         this.status = status;
+    }
+
+    public String getEntityRuntimeId() {
+        return entityRuntimeId;
+    }
+
+    public void setEntityRuntimeId(String entityRuntimeId) {
+        this.entityRuntimeId = entityRuntimeId;
     }
 }

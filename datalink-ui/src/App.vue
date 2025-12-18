@@ -28,4 +28,8 @@ export default {
  padding: 0 !important;
 }
 
+.ant-card-bordered{
+  border-radius: 3px !important;
+}
+
 </style>

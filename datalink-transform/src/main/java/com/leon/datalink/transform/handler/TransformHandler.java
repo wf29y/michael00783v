@@ -1,7 +1,10 @@
 package com.leon.datalink.transform.handler;
 
 
+import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.transform.Transform;
+
+import java.util.function.Consumer;
 
 public interface TransformHandler {
 
@@ -18,9 +21,9 @@ public interface TransformHandler {
 
     /**
      * handle data
-     * @param data
+     * @param runtimeData
      * @return
      */
-    Object transform(Object data);
+    void transform(RuntimeData runtimeData, Consumer<Object> consumer);
 
 }

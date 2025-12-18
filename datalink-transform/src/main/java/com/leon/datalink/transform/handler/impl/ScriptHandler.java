@@ -5,12 +5,14 @@ import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.ScriptUtil;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.runtime.RuntimeManger;
+import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.transform.Transform;
 import com.leon.datalink.transform.handler.TransformHandler;
 import org.springframework.util.StringUtils;
 
 import javax.script.*;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class ScriptHandler implements TransformHandler {
 
@@ -30,10 +32,10 @@ public class ScriptHandler implements TransformHandler {
     }
 
     @Override
-    public Object transform(Object data) {
+    public void transform(RuntimeData runtimeData, Consumer<Object> consumer) {
         String script = transform.getProperties().getString("script");
-        if (StringUtils.isEmpty(script) || null == data) {
-            return null;
+        if (StringUtils.isEmpty(script) || null == runtimeData) {
+            return;
         }
         try {
             String ruleId = transform.getRuleId();
@@ -54,18 +56,17 @@ public class ScriptHandler implements TransformHandler {
             scriptEngine.setBindings(bind, ScriptContext.ENGINE_SCOPE);
             scriptEngine.eval(script);
             Invocable jsInvoke = (Invocable) scriptEngine;
-            Object scriptResult = jsInvoke.invokeFunction("transform", data);
+            Object scriptResult = jsInvoke.invokeFunction("transform", runtimeData.getData());
 
             // 更新自定义环境变量
             if (MapUtil.isNotEmpty(variables)) {
                 variables.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
             }
 
-            return ScriptUtil.toJavaObject(scriptResult);
+            consumer.accept(ScriptUtil.toJavaObject(scriptResult));
         } catch (Exception e) {
             Loggers.RULE.error("script error {}", e.getMessage());
         }
-        return null;
     }
 
 }

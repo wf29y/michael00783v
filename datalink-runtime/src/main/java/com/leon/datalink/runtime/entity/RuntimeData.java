@@ -8,6 +8,8 @@ public class RuntimeData {
 
     private RuntimeTypeEnum type;
 
+    private String entityRuntimeId;
+
     private Object data;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -22,6 +24,11 @@ public class RuntimeData {
 
     public RuntimeData(RuntimeTypeEnum type) {
         this.type = type;
+    }
+
+    public RuntimeData(RuntimeTypeEnum type,String entityRuntimeId) {
+        this.type = type;
+        this.entityRuntimeId = entityRuntimeId;
     }
 
     public RuntimeData success(Object data) {
@@ -77,5 +84,13 @@ public class RuntimeData {
 
     public void setType(RuntimeTypeEnum type) {
         this.type = type;
+    }
+
+    public String getEntityRuntimeId() {
+        return entityRuntimeId;
+    }
+
+    public void setEntityRuntimeId(String entityRuntimeId) {
+        this.entityRuntimeId = entityRuntimeId;
     }
 }

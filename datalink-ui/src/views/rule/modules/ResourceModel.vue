@@ -9,7 +9,7 @@
   >
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-form-model-item label='类型' prop='resourceType'>
-        <a-select v-model='modal.resourceType' placeholder='请选择资源类型' @change='resourceTypeChange'>
+        <a-select v-model='modal.resourceType' placeholder='请选择资源类型' @change='resourceTypeChange' :disabled='resourceIndex >= 0'>
           <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>{{ item.name }}
           </a-select-option>
         </a-select>

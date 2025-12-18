@@ -1,14 +1,22 @@
 package com.leon.datalink.web.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.leon.datalink.core.utils.IdUtil;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.transform.Transform;
+import com.leon.datalink.web.model.CreateIdParamVO;
 import com.leon.datalink.web.rule.RuleService;
 import com.leon.datalink.web.util.ValidatorUtil;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @ClassName RulesController
@@ -23,6 +31,23 @@ public class RuleController {
 
     @Autowired
     private RuleService ruleService;
+
+    /**
+     * 生成与已有id不重复的id
+     *
+     * @param ids 已有id
+     * @throws Exception
+     */
+    @PostMapping("/createId")
+    public Object createId(@RequestBody List<String> ids) throws Exception {
+        String id;
+        do {
+            id = IdUtil.getId(6);
+        } while (CollectionUtil.isNotEmpty(ids) && ids.contains(id));
+        JSONObject result = new JSONObject();
+        result.put("id", id);
+        return result;
+    }
 
     /**
      * 查询规则
@@ -45,21 +70,21 @@ public class RuleController {
     public void addRule(@RequestBody Rule rule) throws Exception {
         ValidatorUtil.isNotEmpty(rule.getRuleName(), rule.getTransformList(), rule.getSourceResourceList(), rule.getDestResourceList());
 
-        for (Resource resource : rule.getSourceResourceList()) {
-            if(StringUtils.isEmpty(resource.getResourceRuntimeId())){
-                resource.setResourceRuntimeId(SnowflakeIdWorker.getId());
-            }
-        }
-        for (Resource resource : rule.getDestResourceList()) {
-            if(StringUtils.isEmpty(resource.getResourceRuntimeId())){
-                resource.setResourceRuntimeId(SnowflakeIdWorker.getId());
-            }
-        }
-        for (Transform transform : rule.getTransformList()) {
-            if(StringUtils.isEmpty(transform.getTransformRuntimeId())){
-                transform.setTransformRuntimeId(SnowflakeIdWorker.getId());
-            }
-        }
+//        for (Resource resource : rule.getSourceResourceList()) {
+//            if(StringUtils.isEmpty(resource.getResourceRuntimeId())){
+//                resource.setResourceRuntimeId(SnowflakeIdWorker.getId());
+//            }
+//        }
+//        for (Resource resource : rule.getDestResourceList()) {
+//            if(StringUtils.isEmpty(resource.getResourceRuntimeId())){
+//                resource.setResourceRuntimeId(SnowflakeIdWorker.getId());
+//            }
+//        }
+//        for (Transform transform : rule.getTransformList()) {
+//            if(StringUtils.isEmpty(transform.getTransformRuntimeId())){
+//                transform.setTransformRuntimeId(SnowflakeIdWorker.getId());
+//            }
+//        }
 
         ruleService.add(rule);
     }
@@ -95,20 +120,20 @@ public class RuleController {
      */
     @PutMapping("/update")
     public void updateRule(@RequestBody Rule rule) throws Exception {
-        ValidatorUtil.isNotEmpty(rule.getRuleId(),rule.getRuleName(), rule.getTransformList(), rule.getSourceResourceList(), rule.getDestResourceList());
+        ValidatorUtil.isNotEmpty(rule.getRuleId(), rule.getRuleName(), rule.getTransformList(), rule.getSourceResourceList(), rule.getDestResourceList());
 
         for (Resource resource : rule.getSourceResourceList()) {
-            if(StringUtils.isEmpty(resource.getResourceRuntimeId())){
+            if (StringUtils.isEmpty(resource.getResourceRuntimeId())) {
                 resource.setResourceRuntimeId(SnowflakeIdWorker.getId());
             }
         }
         for (Resource resource : rule.getDestResourceList()) {
-            if(StringUtils.isEmpty(resource.getResourceRuntimeId())){
+            if (StringUtils.isEmpty(resource.getResourceRuntimeId())) {
                 resource.setResourceRuntimeId(SnowflakeIdWorker.getId());
             }
         }
         for (Transform transform : rule.getTransformList()) {
-            if(StringUtils.isEmpty(transform.getTransformRuntimeId())){
+            if (StringUtils.isEmpty(transform.getTransformRuntimeId())) {
                 transform.setTransformRuntimeId(SnowflakeIdWorker.getId());
             }
         }

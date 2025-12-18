@@ -41,11 +41,11 @@
             <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
               <a-col :span='20'>
                 <a-descriptions :column='2'>
-                  <a-descriptions-item label='资源名称'>
+                  <a-descriptions-item label='名称'>
                     {{ resource.resourceName }}
                   </a-descriptions-item>
-                  <a-descriptions-item label='资源类型'>
-                    {{ resourceTypeMap[resource.resourceType] }}
+                  <a-descriptions-item label='ID'>
+                    {{ resource.resourceRuntimeId }}
                   </a-descriptions-item>
                   <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
                                        :label='element.name'>
@@ -83,8 +83,17 @@
                   <a-descriptions-item label='执行顺序'>
                     {{ index + 1 }}
                   </a-descriptions-item>
-                  <a-descriptions-item label='转换类型'>
+                  <a-descriptions-item label='ID'>
+                    {{ transform.transformRuntimeId }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label='类型'>
                     {{ transformModeMap[transform.transformMode] }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label='SQL' v-if='transform.transformMode === "SQL"'>
+                    {{ transform.properties.sql }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label='插件' v-if='transform.transformMode === "PLUGIN"'>
+                    {{ transform.properties.plugin.pluginName }}
                   </a-descriptions-item>
                 </a-descriptions>
               </a-col>
@@ -98,7 +107,7 @@
             </a-row>
           </transition-group>
         </draggable>
-        <a-dropdown>
+        <a-dropdown trigger='click'>
           <a-menu slot='overlay' @click='addTransform'>
             <a-menu-item v-for='transform in transformModeList' :key='transform.value'> {{ transform.name }}
             </a-menu-item>
@@ -116,11 +125,11 @@
             <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
               <a-col :span='20'>
                 <a-descriptions :column='2'>
-                  <a-descriptions-item label='资源名称'>
+                  <a-descriptions-item label='名称'>
                     {{ resource.resourceName }}
                   </a-descriptions-item>
-                  <a-descriptions-item label='资源类型'>
-                    {{ resourceTypeMap[resource.resourceType] }}
+                  <a-descriptions-item label='资源ID'>
+                    {{ resource.resourceRuntimeId }}
                   </a-descriptions-item>
                   <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
                                        :label='element.name'>
@@ -156,6 +165,8 @@
                             @add='handleAddTransform'></transform-script-model>
     <transform-plugin-model ref='TransformPluginModel' @update='handleUpdateTransform'
                             @add='handleAddTransform'></transform-plugin-model>
+    <transform-sql-model ref='TransformSqlModel' @update='handleUpdateTransform'
+                         @add='handleAddTransform'></transform-sql-model>
   </div>
 </template>
 
@@ -170,6 +181,7 @@ import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 import { transformModeMap, transformModeList } from '@/config/transform.config'
 import TransformScriptModel from './transform/TransformScriptModel'
 import TransformPluginModel from './transform/TransformPluginModel'
+import TransformSqlModel from './transform/TransformSqlModel'
 
 
 export default {
@@ -180,7 +192,8 @@ export default {
     MonacoEditor,
     PointsConfigModel,
     TransformScriptModel,
-    TransformPluginModel
+    TransformPluginModel,
+    TransformSqlModel
   },
   data() {
     return {
@@ -193,6 +206,7 @@ export default {
         add: '/api/rule/add',
         update: '/api/rule/update',
         info: '/api/rule/info',
+        createId: '/api/rule/createId',
         resource: '/api/resource/info'
       },
       rules: {
@@ -256,9 +270,17 @@ export default {
     },
     handleAddResource(mode, resource) {
       if (mode === 'dest') {
-        this.modal.destResourceList.push(resource)
+        let ids = this.modal.destResourceList.map(x => x.resourceRuntimeId.split('_')[2])
+        postAction(this.url.createId, ids).then((res) => {
+          resource.resourceRuntimeId = 'dest_' + resource.resourceType.toLowerCase() + '_' + res.data.id
+          this.modal.destResourceList.push(resource)
+        })
       } else if (mode === 'source') {
-        this.modal.sourceResourceList.push(resource)
+        let ids = this.modal.sourceResourceList.map(x => x.resourceRuntimeId.split('_')[2])
+        postAction(this.url.createId, ids).then((res) => {
+          resource.resourceRuntimeId = 'source_' + resource.resourceType.toLowerCase() + '_' + res.data.id
+          this.modal.sourceResourceList.push(resource)
+        })
       }
     },
     handleUpdateResource(mode, resource, index) {
@@ -285,7 +307,10 @@ export default {
     addTransform({ key }) {
       switch (key) {
         case 'WITHOUT': {
-          this.modal.transformList.push({ transformMode: 'WITHOUT' })
+          let ids = this.modal.transformList.map(x => x.transformRuntimeId.split('_')[2])
+          postAction(this.url.createId, ids).then((res) => {
+            this.modal.transformList.push({ transformMode: 'WITHOUT',transformRuntimeId: 'transform_without_' + res.data.id})
+          })
           break
         }
         case 'SCRIPT': {
@@ -297,6 +322,7 @@ export default {
           break
         }
         case 'SQL': {
+          this.$refs.TransformSqlModel.add()
           break
         }
       }
@@ -315,6 +341,7 @@ export default {
           break
         }
         case 'SQL': {
+          this.$refs.TransformSqlModel.edit(transform, index)
           break
         }
       }
@@ -323,7 +350,11 @@ export default {
       this.modal.transformList.splice(index, 1)
     },
     handleAddTransform(transform) {
-      this.modal.transformList.push(transform)
+      let ids = this.modal.transformList.map(x => x.transformRuntimeId.split('_')[2])
+      postAction(this.url.createId, ids).then((res) => {
+        transform.transformRuntimeId = 'transform_' + transform.transformMode.toLowerCase() + '_' + res.data.id
+        this.modal.transformList.push(transform)
+      })
     },
     handleUpdateTransform(transform, index) {
       this.$set(this.modal.transformList, index, transform)

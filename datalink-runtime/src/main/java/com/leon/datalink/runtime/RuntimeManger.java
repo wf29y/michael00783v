@@ -114,11 +114,12 @@ public class RuntimeManger {
         runtimeList.put(ruleId, newRuntime(initVariables, sourceRuntimeIdList, destRuntimeIdList, transformIdList));
     }
 
-    public static void handleRecord(String ruleId, String entityRuntimeId, RuntimeData runtimeData) {
+    public static void handleRecord(String ruleId, RuntimeData runtimeData) {
         Runtime runtime = runtimeList.get(ruleId);
         if (null == runtime) return;
 
         RuntimeTypeEnum type = runtimeData.getType();
+        String entityRuntimeId = runtimeData.getEntityRuntimeId();
 
         switch (type) {
             case SOURCE: {
@@ -139,11 +140,12 @@ public class RuntimeManger {
         }
     }
 
-    public static void handleStatus(String ruleId, String entityRuntimeId, RuntimeStatus runtimeStatus) {
+    public static void handleStatus(String ruleId, RuntimeStatus runtimeStatus) {
         Runtime runtime = runtimeList.get(ruleId);
         if (null == runtime) return;
 
         RuntimeTypeEnum type = runtimeStatus.getType();
+        String entityRuntimeId = runtimeStatus.getEntityRuntimeId();
 
         switch (type) {
             case SOURCE: {

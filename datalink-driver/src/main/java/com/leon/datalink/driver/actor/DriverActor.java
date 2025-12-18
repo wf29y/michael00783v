@@ -43,7 +43,7 @@ public class DriverActor extends AbstractActor {
     @Override
     public void preStart() {
         Loggers.DRIVER.info("start driver [{}]", getSelf().path());
-        RuntimeStatus runtimeStatus = new RuntimeStatus(DriverModeEnum.SOURCE.equals(driverMode) ? RuntimeTypeEnum.SOURCE : RuntimeTypeEnum.DEST);
+        RuntimeStatus runtimeStatus = new RuntimeStatus(DriverModeEnum.SOURCE.equals(driverMode) ? RuntimeTypeEnum.SOURCE : RuntimeTypeEnum.DEST, resourceRuntimeId);
         try {
             // 创建驱动
             driver.create(driverMode, properties);
@@ -53,14 +53,14 @@ public class DriverActor extends AbstractActor {
             Loggers.DRIVER.error("driver actor start error {} : {}", driver.getClass(), e.getMessage());
         } finally {
             // 结果发送到runtime
-            RuntimeManger.handleStatus(ruleId, resourceRuntimeId, runtimeStatus);
+            RuntimeManger.handleStatus(ruleId, runtimeStatus);
         }
     }
 
     @Override
     public void postStop() {
         Loggers.DRIVER.info("stop  driver [{}]", getSelf().path());
-        RuntimeStatus runtimeStatus = new RuntimeStatus(DriverModeEnum.SOURCE.equals(driverMode) ? RuntimeTypeEnum.SOURCE : RuntimeTypeEnum.DEST);
+        RuntimeStatus runtimeStatus = new RuntimeStatus(DriverModeEnum.SOURCE.equals(driverMode) ? RuntimeTypeEnum.SOURCE : RuntimeTypeEnum.DEST, resourceRuntimeId);
         try {
             // 销毁驱动
             driver.destroy(driverMode, properties);
@@ -70,7 +70,7 @@ public class DriverActor extends AbstractActor {
             Loggers.DRIVER.error("driver actor stop error {} : {}", driver.getClass(), e.getMessage());
         } finally {
             // 结果发送到runtime
-            RuntimeManger.handleStatus(ruleId, resourceRuntimeId, runtimeStatus);
+            RuntimeManger.handleStatus(ruleId, runtimeStatus);
         }
     }
 
@@ -81,14 +81,17 @@ public class DriverActor extends AbstractActor {
                         // 驱动产生数据
                         case SOURCE: {
                             // 传给rule actor
-                            if (!runtimeData.isError()) getContext().getParent().tell(runtimeData, getSelf());
+                            if (!runtimeData.isError()) {
+                                runtimeData.setEntityRuntimeId(resourceRuntimeId);
+                                getContext().getParent().tell(runtimeData, getSelf());
+                            }
                             // 结果发送到runtime
-                            RuntimeManger.handleRecord(ruleId, resourceRuntimeId, runtimeData);
+                            RuntimeManger.handleRecord(ruleId, runtimeData);
                             break;
                         }
                         // 驱动处理数据
                         case TRANSFORM: {
-                            RuntimeData destRecord = new RuntimeData(RuntimeTypeEnum.DEST);
+                            RuntimeData destRecord = new RuntimeData(RuntimeTypeEnum.DEST, resourceRuntimeId);
                             try {
                                 // 调用驱动处理数据
                                 Object publishResult = driver.handleData(runtimeData.getData(), properties);
@@ -98,7 +101,7 @@ public class DriverActor extends AbstractActor {
                                 destRecord.fail(e.getMessage());
                             } finally {
                                 // 结果发送到runtime
-                                RuntimeManger.handleRecord(ruleId, resourceRuntimeId, destRecord);
+                                RuntimeManger.handleRecord(ruleId, destRecord);
                             }
                             break;
                         }
