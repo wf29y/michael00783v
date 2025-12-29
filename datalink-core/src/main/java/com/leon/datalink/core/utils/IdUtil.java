@@ -1,6 +1,7 @@
 package com.leon.datalink.core.utils;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,5 +20,12 @@ public class IdUtil {
         return StringUtils.join(RandomUtil.randomEleSet(charList, length), "");
     }
 
+    public static String getId(int length, List<String> excludeList) {
+        String id;
+        do {
+            id = getId(length);
+        } while (CollectionUtil.isNotEmpty(excludeList) && excludeList.contains(id));
+        return id;
+    }
 
 }
