@@ -7,12 +7,8 @@ datalink是一个在各种异构数据源之间实现数据采集、桥接的工
 
 MQTT、Kafka、Rabbit MQ、Mysql、Postgresql、SQL Server、TDengine、Redis、TCP、UDP、HTTP、OPC UA、SNMP
 
-待开发数据源：
 
-Modbus TCP、CoAP、Lwm2m
-
-
-支持无转换透传、JavaScript脚本、Java插件三种数据转换方式。
+支持无转换透传、JavaScript脚本、Java插件、SQL语句四种数据转换方式。
 
 ### 二、打包&安装
 
@@ -73,9 +69,3 @@ server.port=9966
 ### Metrics for prometheus
 management.endpoints.web.exposure.include=*
 ```
-
-### 六、演示地址
-
-http://120.48.0.250:9966/ 
-
-用户名：datalink   密码：aaaaaa

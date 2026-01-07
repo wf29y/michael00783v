@@ -261,6 +261,7 @@ export default {
           let tempProperties = Object.assign({}, resource.properties, res.data.properties)
           let result = Object.assign({}, resource, res.data)
           result.properties = tempProperties
+          result.resourceRuntimeId = resource.resourceRuntimeId
           this.handleUpdateResource(mode, result, index)
           this.$message.success('刷新成功')
         } else {
@@ -309,7 +310,10 @@ export default {
         case 'WITHOUT': {
           let ids = this.modal.transformList.map(x => x.transformRuntimeId.split('_')[2])
           postAction(this.url.createId, ids).then((res) => {
-            this.modal.transformList.push({ transformMode: 'WITHOUT',transformRuntimeId: 'transform_without_' + res.data.id})
+            this.modal.transformList.push({
+              transformMode: 'WITHOUT',
+              transformRuntimeId: 'transform_without_' + res.data.id
+            })
           })
           break
         }
