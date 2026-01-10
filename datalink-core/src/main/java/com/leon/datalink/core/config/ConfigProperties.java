@@ -14,8 +14,11 @@ public class ConfigProperties extends LinkedHashMap<String, Object> {
 
     public String getString(String key) {
         Object o = this.get(key);
-        if (null != o) return (String) o;
-        else return null;
+        if (o instanceof String) {
+            return (String) o;
+        } else {
+            return JacksonUtils.convertValue(o, String.class);
+        }
     }
 
     public String getString(String key, String defaultValue) {

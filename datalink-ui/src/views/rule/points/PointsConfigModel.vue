@@ -7,6 +7,7 @@
 
     <opc-points-model ref='PointModel' v-if='resourceType === "OPCUA"' :disable-edit='disableEdit'></opc-points-model>
     <snmp-points-model ref='PointModel' v-if='resourceType === "SNMP"' :disable-edit='disableEdit'></snmp-points-model>
+    <modbus-tcp-points-model ref='PointModel' v-if='resourceType === "MODBUSTCP"' :disable-edit='disableEdit'></modbus-tcp-points-model>
 
   </a-modal>
 </template>
@@ -14,10 +15,11 @@
 <script>
 import OpcPointsModel from './model/OpcPointsModel'
 import SnmpPointsModel from './model/SnmpPointsModel'
+import ModbusTcpPointsModel from './model/ModbusTcpPointsModel'
 
 export default {
   name: 'PointsConfigModel',
-  components: { OpcPointsModel, SnmpPointsModel },
+  components: { OpcPointsModel, SnmpPointsModel, ModbusTcpPointsModel },
   data() {
     return {
       visible: false,

@@ -35,6 +35,7 @@
       <tcp-properties v-if="modal.resourceType === 'TCP'" ref='PropertiesModal' :type='resourceMode'></tcp-properties>
       <udp-properties v-if="modal.resourceType === 'UDP'" ref='PropertiesModal' :type='resourceMode'></udp-properties>
       <snmp-properties v-if="modal.resourceType === 'SNMP'" ref='PropertiesModal' :type='resourceMode'></snmp-properties>
+      <modbus-tcp-properties v-if="modal.resourceType === 'MODBUSTCP'" ref='PropertiesModal' :type='resourceMode'></modbus-tcp-properties>
     </a-form-model>
     <div
       :style="{
@@ -72,6 +73,7 @@ import RabbitMQProperties from '../properties/RabbitMQProperties'
 import TcpProperties from '../properties/TcpProperties'
 import UdpProperties from '../properties/UdpProperties'
 import SnmpProperties from '../properties/SnmpProperties'
+import ModbusTcpProperties from '../properties/ModbusTcpProperties'
 
 export default {
   name: 'ResourceModel',
@@ -89,7 +91,8 @@ export default {
     RabbitMQProperties,
     TcpProperties,
     UdpProperties,
-    SnmpProperties
+    SnmpProperties,
+    ModbusTcpProperties
   },
   data() {
     return {

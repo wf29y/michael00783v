@@ -60,6 +60,7 @@
         <spring-boot-dependencies.version>2.1.6.RELEASE</spring-boot-dependencies.version>
         <rocksdbjni.version>6.22.1.1</rocksdbjni.version>
         <snmp4j.version>2.6.2</snmp4j.version>
+        <plc4j.version>0.10.0</plc4j.version>
         <milo.version>0.4.2</milo.version>
         <utgard-external.version>1.2.25</utgard-external.version>
         <utgard-core.version>2.1.8</utgard-core.version>
@@ -366,60 +367,28 @@
                 <version>${beetl.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.plc4x</groupId>
+                <artifactId>plc4j-api</artifactId>
+                <version>${plc4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.plc4x</groupId>
+                <artifactId>plc4j-driver-modbus</artifactId>
+                <version>${plc4j.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.eclipse.milo</groupId>
                 <artifactId>sdk-client</artifactId>
                 <version>${milo.version}</version>
             </dependency>
             <!--utgard start-->
-            <dependency>
-                <groupId>org.openscada.external</groupId>
-                <artifactId>org.openscada.external.jcifs</artifactId>
-                <version>${utgard-external.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk15on</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.openscada.jinterop</groupId>
-                <artifactId>org.openscada.jinterop.core</artifactId>
-                <version>${utgard-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openscada.jinterop</groupId>
-                <artifactId>org.openscada.jinterop.deps</artifactId>
-                <version>${utgard-deps.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>bcprov-jdk15on</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.openscada.utgard</groupId>
-                <artifactId>org.openscada.opc.dcom</artifactId>
-                <version>${utgard-dcom.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openscada.utgard</groupId>
-                <artifactId>org.openscada.opc.lib</artifactId>
-                <version>${utgard-lib.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
-                <version>${bouncycastle.version}</version>
-            </dependency>
 
             <!-- Logging libs -->
-            <dependency>
+  <!--          <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
@@ -430,7 +399,7 @@
                 <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
             </dependency>
-            <dependency>
+<!--            <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j.version}</version>
@@ -444,7 +413,7 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j-impl</artifactId>
                 <version>${log4j.version}</version>
-            </dependency>
+            </dependency>-->
 
             <dependency>
                 <groupId>org.reflections</groupId>

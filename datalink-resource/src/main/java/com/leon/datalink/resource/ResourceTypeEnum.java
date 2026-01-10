@@ -19,7 +19,8 @@ public enum ResourceTypeEnum {
     REDIS(RedisDriver.class),
     TCP(TcpDriver.class),
     UDP(UdpDriver.class),
-    SNMP(SnmpDriver.class);
+    SNMP(SnmpDriver.class),
+    MODBUSTCP(ModbusTcpDriver.class);
 
     private final Class<? extends Driver> driver;
 

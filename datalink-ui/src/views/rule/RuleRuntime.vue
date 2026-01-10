@@ -82,9 +82,9 @@
               </a-descriptions>
             </a-col>
             <a-col :span='4' style='text-align: right;padding-right: 5px'>
-              <a @click='lastData("source",resource.resourceRuntimeId)'>最近数据</a>
-              <a-divider type='vertical' v-if='resource.properties.points !== undefined' />
               <a v-if='resource.properties.points !== undefined' @click='pointConfig(resource)'>查看点位</a>
+              <a-divider type='vertical' v-if='resource.properties.points !== undefined' />
+              <a @click='lastData("source",resource.resourceRuntimeId)'>最近数据</a>
             </a-col>
           </a-row>
 
@@ -151,9 +151,9 @@
               </a-descriptions>
             </a-col>
             <a-col :span='4' style='text-align: right;padding-right: 5px'>
-              <a @click='lastData("dest",resource.resourceRuntimeId)'>最近数据</a>
-              <a-divider type='vertical' v-if='resource.properties.points !== undefined' />
               <a v-if='resource.properties.points !== undefined' @click='pointConfig(resource)'>查看点位</a>
+              <a-divider type='vertical' v-if='resource.properties.points !== undefined' />
+              <a @click='lastData("dest",resource.resourceRuntimeId)'>最近数据</a>
             </a-col>
           </a-row>
 
