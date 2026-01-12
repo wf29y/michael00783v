@@ -1,9 +1,24 @@
 <template>
   <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
     <a-row :gutter='24'>
-      <a-col :span='24'>
-        <a-form-model-item label='URL' prop='url'>
-          <a-input v-model='properties.url' placeholder='请输入URL' />
+      <a-col :span='12'>
+        <a-form-model-item label='IP' prop='ip'>
+          <a-input v-model='properties.ip' placeholder='请输入IP' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12'>
+        <a-form-model-item label='端口' prop='port'>
+          <a-input-number v-model='properties.port' placeholder='请输入端口' style='width: 100%'/>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12'>
+        <a-form-model-item label='用户名' prop='username'>
+          <a-input v-model='properties.username' placeholder='请输入用户名'/>
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12'>
+        <a-form-model-item label='密码' prop='password'>
+          <a-input v-model='properties.password' placeholder='请输入密码'/>
         </a-form-model-item>
       </a-col>
     </a-row>
@@ -18,7 +33,8 @@ export default {
     return {
       properties: {},
       rules: {
-        url: [{ required: true, message: '请输入URL', trigger: 'blur' }]
+        ip: [{ required: true, message: '请输入IP', trigger: 'blur' }],
+        port: [{ required: true, message: '请输入端口', trigger: 'blur' }]
       }
     }
   },

@@ -61,7 +61,6 @@
         <rocksdbjni.version>6.22.1.1</rocksdbjni.version>
         <snmp4j.version>2.6.2</snmp4j.version>
         <plc4j.version>0.10.0</plc4j.version>
-        <milo.version>0.4.2</milo.version>
         <utgard-external.version>1.2.25</utgard-external.version>
         <utgard-core.version>2.1.8</utgard-core.version>
         <utgard-deps.version>1.5.0</utgard-deps.version>
@@ -377,18 +376,12 @@
                 <version>${plc4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.milo</groupId>
-                <artifactId>sdk-client</artifactId>
-                <version>${milo.version}</version>
+                <groupId>org.apache.plc4x</groupId>
+                <artifactId>plc4j-driver-opcua</artifactId>
+                <version>${plc4j.version}</version>
             </dependency>
-            <!--utgard start-->
 
             <!-- Logging libs -->
-  <!--          <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j-api.version}</version>
-            </dependency>-->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>

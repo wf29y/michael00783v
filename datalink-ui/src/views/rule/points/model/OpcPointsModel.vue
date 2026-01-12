@@ -12,7 +12,7 @@
       size='small'
       style='border: 1px #e8e3e3 solid'
     >
-      <template v-for="(col, i) in ['namespace', 'tag']" :slot='col' slot-scope='text, record'>
+      <template v-for="(col, i) in ['tag','address']" :slot='col' slot-scope='text, record'>
         <a-input
           :key='col'
           v-if='record.editable'
@@ -68,18 +68,18 @@ export default {
       data: [],
       columns: [
         {
-          title: '命名空间',
-          dataIndex: 'namespace',
-          key: 'namespace',
-          width: '40%',
-          scopedSlots: { customRender: 'namespace' }
-        },
-        {
-          title: '标识',
+          title: '标签',
           dataIndex: 'tag',
           key: 'tag',
-          width: '40%',
+          width: '30%',
           scopedSlots: { customRender: 'tag' }
+        },
+        {
+          title: '地址',
+          dataIndex: 'address',
+          key: 'address',
+          width: '50%',
+          scopedSlots: { customRender: 'address' }
         }
       ]
     }
@@ -101,8 +101,8 @@ export default {
       for (let point of points) {
         this.data.push({
           key: index++,
-          namespace: point.namespace,
           tag: point.tag,
+          address: point.address,
           editable: false,
           isNew: false
         })
@@ -113,8 +113,8 @@ export default {
       for (let item of this.data) {
         if (item.isNew) continue
         result.push({
-          namespace: item.namespace,
-          tag: item.tag
+          tag: item.tag,
+          address: item.address
         })
       }
       return result
@@ -123,8 +123,8 @@ export default {
       const length = this.data.length
       this.data.push({
         key: length === 0 ? '1' : (parseInt(this.data[length - 1].key) + 1).toString(),
-        namespace: 0,
         tag: '',
+        address: '',
         editable: true,
         isNew: true
       })
@@ -134,8 +134,8 @@ export default {
     },
     saveRow(record) {
       this.loading = true
-      const { key, namespace, tag } = record
-      if (!namespace || !tag) {
+      const { key, tag, address } = record
+      if (!tag || !address) {
         this.loading = false
         this.$message.error('填写不完整')
         return

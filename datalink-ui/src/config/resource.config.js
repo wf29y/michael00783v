@@ -224,9 +224,9 @@ const resourceConfigMap = {
     name: 'OPC UA',
     type: TYPE_SOURCE,
     details: {
-      resource: { name: '地址', format: (resource) => `${resource.properties.url}` },
+      resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
-        { name: '地址', format: (resource) => `${resource.properties.url}` },
+        { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
         { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
