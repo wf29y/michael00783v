@@ -40,18 +40,16 @@
           <a-card>
             <div slot='title'>{{ item.resourceName }}</div>
             <a-row>
-              <a-col :span='7'>
+              <a-col :span='6'>
                 <div>资源类型：</div>
               </a-col>
-              <a-col :span='12'>
+              <a-col :span='18'>
                 <div>{{ resourceTypeMap[item.resourceType] }}</div>
               </a-col>
-            </a-row>
-            <a-row>
-              <a-col :span='7'>
-                <div>{{ getDetails(item).name }}：</div>
+              <a-col :span='6'>
+                <div style='text-align: right'>{{ getDetails(item).name }}：</div>
               </a-col>
-              <a-col :span='12'>
+              <a-col :span='18'>
                 <div>{{ getDetails(item).value }}</div>
               </a-col>
             </a-row>

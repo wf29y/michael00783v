@@ -20,7 +20,8 @@ public enum ResourceTypeEnum {
     TCP(TcpDriver.class),
     UDP(UdpDriver.class),
     SNMP(SnmpDriver.class),
-    MODBUSTCP(ModbusTcpDriver.class);
+    MODBUSTCP(ModbusTcpDriver.class),
+    TIMESCALEDB(TimescaleDBDriver.class);
 
     private final Class<? extends Driver> driver;
 

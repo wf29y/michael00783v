@@ -36,6 +36,7 @@
       <udp-properties v-if="modal.resourceType === 'UDP'" ref='PropertiesModal' :type='resourceMode'></udp-properties>
       <snmp-properties v-if="modal.resourceType === 'SNMP'" ref='PropertiesModal' :type='resourceMode'></snmp-properties>
       <modbus-tcp-properties v-if="modal.resourceType === 'MODBUSTCP'" ref='PropertiesModal' :type='resourceMode'></modbus-tcp-properties>
+      <timescale-d-b-properties v-if="modal.resourceType === 'TIMESCALEDB'" ref='PropertiesModal' :type='resourceMode'></timescale-d-b-properties>
     </a-form-model>
     <div
       :style="{
@@ -74,6 +75,7 @@ import TcpProperties from '../properties/TcpProperties'
 import UdpProperties from '../properties/UdpProperties'
 import SnmpProperties from '../properties/SnmpProperties'
 import ModbusTcpProperties from '../properties/ModbusTcpProperties'
+import TimescaleDBProperties from '../properties/TimescaleDBProperties'
 
 export default {
   name: 'ResourceModel',
@@ -92,7 +94,8 @@ export default {
     TcpProperties,
     UdpProperties,
     SnmpProperties,
-    ModbusTcpProperties
+    ModbusTcpProperties,
+    TimescaleDBProperties
   },
   data() {
     return {

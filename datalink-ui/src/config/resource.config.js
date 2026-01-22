@@ -137,6 +137,31 @@ const resourceConfigMap = {
       ]
     }
   },
+  TIMESCALEDB: {
+    name: 'TimescaleDB',
+    type: TYPE_ALL,
+    details: {
+      resource: {
+        name: '地址',
+        format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+      },
+      rule: [
+        {
+          name: '地址',
+          format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+        },
+        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        {
+          name: '启动延迟',
+          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        },
+        {
+          name: '查询频率',
+          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        }
+      ]
+    }
+  },
   SQLSERVER: {
     name: 'SQL Server',
     type: TYPE_ALL,
