@@ -1,5 +1,6 @@
 package com.leon.datalink.web.plugin.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
@@ -12,6 +13,7 @@ import com.leon.datalink.transform.plugin.Plugin;
 import com.leon.datalink.web.plugin.PluginService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -112,7 +114,7 @@ public class PluginServiceImpl implements PluginService {
                 stream = stream.filter(s -> s.getPluginName().contains(plugin.getPluginName()));
             }
         }
-        return stream.collect(Collectors.toList());
+        return CollectionUtil.reverse(stream.sorted(Comparator.comparingLong(item -> Long.parseLong(item.getPluginId()))).collect(Collectors.toList()));
     }
 
     @Override

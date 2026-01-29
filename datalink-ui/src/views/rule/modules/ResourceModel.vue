@@ -10,8 +10,11 @@
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
       <a-form-model-item label='类型' prop='resourceType'>
         <a-select v-model='modal.resourceType' placeholder='请选择资源类型' @change='resourceTypeChange' :disabled='resourceIndex >= 0'>
-          <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>{{ item.name }}
-          </a-select-option>
+          <a-select-opt-group v-for='(group,groupIndex) in resourceTypeList' :key='groupIndex' :label='group.group'>
+            <a-select-option v-for='(item,itemIndex) in group.list' :value='item.code' :key='itemIndex'>{{ item.name
+              }}
+            </a-select-option>
+          </a-select-opt-group>
         </a-select>
       </a-form-model-item>
       <a-form-model-item label='资源' prop='resourceId' v-show='modal.resourceType'>
@@ -59,7 +62,7 @@
 
 <script>
 import { postAction } from '@/api/manage'
-import { getResourceTypeList } from '@/config/resource.config'
+import { getResourceListByType } from '@/config/resource.config'
 import MqttProperties from '../properties/MqttProperties'
 import KafkaProperties from '../properties/KafkaProperties'
 import MysqlProperties from '../properties/MysqlProperties'
@@ -129,7 +132,7 @@ export default {
       this.resourceMode = resourceMode
       this.resourceIndex = resourceIndex
       this.modal = JSON.parse(JSON.stringify(record))
-      this.resourceTypeList = getResourceTypeList(resourceMode)
+      this.resourceTypeList = getResourceListByType(resourceMode)
       this.visible = true
       this.$nextTick(() => {
         if (this.modal.resourceType) {

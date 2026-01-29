@@ -34,7 +34,7 @@
         </span>
 
         <span slot='port' slot-scope='text, record, index'>
-          :{{ text }}
+          0.0.0.0:{{ text }}
         </span>
 
         <span slot='desc' slot-scope='text, record, index'>

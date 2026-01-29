@@ -13,7 +13,7 @@ import javax.xml.bind.ValidationException;
 import java.util.List;
 
 /**
- * @ClassName ResourcesController
+ * @ClassName ResourceController
  * @Description 资源管理
  * @Author Leon
  * @Date 2022年7月22日15:22:32
@@ -21,7 +21,7 @@ import java.util.List;
  **/
 @RestController
 @RequestMapping("/api/resource")
-public class ResourcesController {
+public class ResourceController {
 
     @Autowired
     private ResourceService resourceService;

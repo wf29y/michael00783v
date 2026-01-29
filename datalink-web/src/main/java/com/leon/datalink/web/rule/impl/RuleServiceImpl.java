@@ -3,6 +3,7 @@ package com.leon.datalink.web.rule.impl;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import cn.hutool.core.collection.CollectionUtil;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -143,7 +145,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
                 });
             }
         }
-        return stream.collect(Collectors.toList());
+        return CollectionUtil.reverse(stream.sorted(Comparator.comparingLong(item -> Long.parseLong(item.getRuleId()))).collect(Collectors.toList()));
     }
 
     @Override

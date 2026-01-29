@@ -50,17 +50,6 @@
       <runtime-graph ref='RuntimeGraph'></runtime-graph>
     </a-card>
 
-    <a-card :bordered='false' style='margin-bottom: 24px'>
-      <a-row>
-        <a-col :span='22'>
-          <a-descriptions title='规则信息' :column='2'>
-            <a-descriptions-item label='规则名称'>{{ rule.ruleName }}</a-descriptions-item>
-            <a-descriptions-item label='备注'> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
-          </a-descriptions>
-        </a-col>
-      </a-row>
-    </a-card>
-
     <a-card style='margin-bottom: 24px' :bordered='false' :body-style='{paddingBottom:"10px"}'>
       <div class='title'>数据源</div>
       <a-list :grid='{ gutter: 24, xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1 }' :data-source='rule.sourceResourceList'
@@ -166,6 +155,17 @@
       <a-table :columns='varColumns' :data-source='variables' size='middle' :pagination='false'
                style='margin-bottom: 20px'>
       </a-table>
+    </a-card>
+
+    <a-card :bordered='false' style='margin-bottom: 24px'>
+      <a-row>
+        <a-col :span='22'>
+          <a-descriptions title='备注' :column='2'>
+<!--            <a-descriptions-item label='规则名称'>{{ rule.ruleName }}</a-descriptions-item>-->
+            <a-descriptions-item> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
+          </a-descriptions>
+        </a-col>
+      </a-row>
     </a-card>
 
     <points-config-model ref='PointsConfigModel'></points-config-model>

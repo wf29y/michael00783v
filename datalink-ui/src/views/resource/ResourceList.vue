@@ -12,9 +12,13 @@
             <a-col :md='6' :sm='24'>
               <a-form-item label='资源类型'>
                 <a-select v-model='queryParam.resourceType' placeholder='请选择资源类型'>
-                  <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>
-                    {{ item.name }}
-                  </a-select-option>
+                  <a-select-opt-group v-for='(group,groupIndex) in resourceTypeAllList' :key='groupIndex'
+                                      :label='group.group'>
+                    <a-select-option v-for='(item,itemIndex) in group.list' :value='item.code' :key='itemIndex'>
+                      {{ item.name
+                      }}
+                    </a-select-option>
+                  </a-select-opt-group>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -31,44 +35,44 @@
     </a-card>
 
     <a-card :body-style='{minHeight:"500px"}' :bordered='false'>
-      <a-list
-        :grid='{ gutter: 24, lg: 4, md: 2, sm: 1, xs: 1 }'
+
+      <a-table
+        ref='table'
+        :columns='columns'
+        :data-source='dataSource'
+        :pagination='false'
         :loading='loading'
-        :data-source='data'
       >
-        <a-list-item slot='renderItem' slot-scope='item'>
-          <a-card>
-            <div slot='title'>{{ item.resourceName }}</div>
-            <a-row>
-              <a-col :span='6'>
-                <div>资源类型：</div>
-              </a-col>
-              <a-col :span='18'>
-                <div>{{ resourceTypeMap[item.resourceType] }}</div>
-              </a-col>
-              <a-col :span='6'>
-                <div style='text-align: right'>{{ getDetails(item).name }}：</div>
-              </a-col>
-              <a-col :span='18'>
-                <div>{{ getDetails(item).value }}</div>
-              </a-col>
-            </a-row>
-            <a slot='actions' @click='handleEdit(item)'>编辑</a>
-            <a-popconfirm slot='actions' title='确定删除此资源?' @confirm='() => handleDelete(item)'>
-              <a href='javascript:;'>删除</a>
-            </a-popconfirm>
-          </a-card>
-        </a-list-item>
-      </a-list>
-      <resource-model ref='ResourceModel' @ok='loadData'></resource-model>
+        <span slot='serial' slot-scope='text, item, index'>
+          {{ index + 1 }}
+        </span>
+
+        <span slot='resourceType' slot-scope='text, item, index'>
+        {{ resourceTypeMap[item.resourceType] }}
+        </span>
+
+        <span slot='details' slot-scope='text, item, index'>
+          {{ getDetails(item).value }}
+        </span>
+
+        <span slot='action' slot-scope='text, item'>
+              <a @click='handleEdit(item)' :disabled='item.enable'>编辑</a>
+             <a-divider type='vertical' />
+                <a @click='handleDelete(item)'>删除</a>
+        </span>
+      </a-table>
     </a-card>
+
+
+    <resource-model ref='ResourceModel' @ok='loadData'></resource-model>
+
   </page-header-wrapper>
 </template>
 
 <script>
 import { postAction, putAction } from '@/api/manage'
 import ResourceModel from './modules/ResourceModel'
-import { resourceTypeMap, resourceTypeList, getResourceDetails } from '@/config/resource.config'
+import { resourceTypeMap, resourceTypeAllList, getResourceDetails } from '@/config/resource.config'
 
 export default {
   name: 'ResourceList',
@@ -78,7 +82,33 @@ export default {
   data() {
     return {
       loading: true,
-      data: [],
+      dataSource: [],
+      columns: [
+        // {
+        //   title: '#',
+        //   scopedSlots: { customRender: 'serial' }
+        // },
+        {
+          title: '资源名称',
+          dataIndex: 'resourceName',
+        },
+        {
+          title: '资源类型',
+          dataIndex: 'resourceType',
+          scopedSlots: { customRender: 'resourceType' }
+        },
+        {
+          title: '详情',
+          dataIndex: 'details',
+          scopedSlots: { customRender: 'details' }
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          width: '150px',
+          scopedSlots: { customRender: 'action' }
+        }
+      ],
       queryParam: {},
       url: {
         list: '/api/resource/list',
@@ -86,7 +116,7 @@ export default {
         update: '/api/resource/update'
       },
       resourceTypeMap: resourceTypeMap,
-      resourceTypeList: resourceTypeList
+      resourceTypeAllList: resourceTypeAllList
     }
   },
   mounted() {
@@ -105,17 +135,24 @@ export default {
     loadData() {
       this.loading = true
       postAction(this.url.list, this.queryParam).then(res => {
-        this.data = res.data
+        this.dataSource = res.data
         this.loading = false
       })
     },
     handleDelete(item) {
-      postAction(this.url.remove, item).then(res => {
-        if (res.code === 200) {
-          this.$message.success('删除成功')
-          this.loadData()
-        } else {
-          this.$message.error(res.message)
+      this.$confirm({
+        title: '删除此资源?',
+        content: item.resourceName,
+        okType: 'danger',
+        onOk: () => {
+          postAction(this.url.remove, item).then(res => {
+            if (res.code === 200) {
+              this.$message.success('删除成功')
+              this.loadData()
+            } else {
+              this.$message.error(res.message)
+            }
+          })
         }
       })
     },

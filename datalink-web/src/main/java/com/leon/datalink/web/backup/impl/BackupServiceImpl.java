@@ -1,5 +1,6 @@
 package com.leon.datalink.web.backup.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ClassUtil;
 import com.leon.datalink.core.backup.Backup;
@@ -13,10 +14,7 @@ import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.backup.BackupService;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -175,7 +173,7 @@ public class BackupServiceImpl implements BackupService {
                 stream = stream.filter(s -> s.getBackupName().contains(backup.getBackupName()));
             }
         }
-        return stream.collect(Collectors.toList());
+        return CollectionUtil.reverse(stream.sorted(Comparator.comparingLong(item -> Long.parseLong(item.getBackupId()))).collect(Collectors.toList()));
     }
 
     @Override

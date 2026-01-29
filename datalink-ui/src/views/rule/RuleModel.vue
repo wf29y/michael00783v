@@ -107,7 +107,7 @@
             </a-row>
           </transition-group>
         </draggable>
-        <a-dropdown trigger='click'>
+        <a-dropdown :trigger="['click']">
           <a-menu slot='overlay' @click='addTransform'>
             <a-menu-item v-for='transform in transformModeList' :key='transform.value'> {{ transform.name }}
             </a-menu-item>

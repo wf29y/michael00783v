@@ -1,13 +1,16 @@
-const TYPE_ALL = 'all'   // 可做任意资源
-const TYPE_DEST = 'dest' // 仅可做目的资源
-const TYPE_SOURCE = 'source'  // 仅可做源资源
-
 import { timeUnitMap } from './time.config'
+
+const resourceGroupMap = {
+  DATABASE: '数据库',
+  CHANNEL: '消息通道',
+  PROTOCOL: '通讯协议'
+}
 
 const resourceConfigMap = {
   MQTT: {
     name: 'MQTT Broker',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'CHANNEL',
     details: {
       resource: { name: '地址', format: (resource) => resource.properties.url },
       rule: [
@@ -18,11 +21,12 @@ const resourceConfigMap = {
   },
   TCP: {
     name: 'TCP',
-    type: TYPE_SOURCE,
+    type: 'source',
+    group: 'PROTOCOL',
     details: {
-      resource: { name: '监听地址', format: (resource) => `:${resource.properties.port}` },
+      resource: { name: '监听地址', format: (resource) => `0.0.0.0:${resource.properties.port}` },
       rule: [
-        { name: '监听地址', format: (resource) => `:${resource.properties.port}` },
+        { name: '监听地址', format: (resource) => `0.0.0.0:${resource.properties.port}` },
         {
           name: '响应内容',
           format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
@@ -32,11 +36,12 @@ const resourceConfigMap = {
   },
   UDP: {
     name: 'UDP',
-    type: TYPE_SOURCE,
+    type: 'source',
+    group: 'PROTOCOL',
     details: {
-      resource: { name: '监听地址', format: (resource) => `:${resource.properties.port}` },
+      resource: { name: '监听地址', format: (resource) => `0.0.0.0:${resource.properties.port}` },
       rule: [
-        { name: '监听地址', format: (resource) => `:${resource.properties.port}` },
+        { name: '监听地址', format: (resource) => `0.0.0.0:${resource.properties.port}` },
         {
           name: '响应内容',
           format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
@@ -46,7 +51,8 @@ const resourceConfigMap = {
   },
   SNMP: {
     name: 'SNMP',
-    type: TYPE_SOURCE,
+    type: 'source',
+    group: 'PROTOCOL',
     details: {
       resource: { name: '地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
       rule: [
@@ -65,7 +71,8 @@ const resourceConfigMap = {
   },
   KAFKA: {
     name: 'Kafka',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'CHANNEL',
     details: {
       resource: { name: '地址', format: (resource) => `${resource.properties.url}` },
       rule: [
@@ -76,7 +83,8 @@ const resourceConfigMap = {
   },
   RABBITMQ: {
     name: 'RabbitMQ',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'CHANNEL',
     details: {
       resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
@@ -89,7 +97,8 @@ const resourceConfigMap = {
   },
   MYSQL: {
     name: 'MySQL',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'DATABASE',
     details: {
       resource: {
         name: '地址',
@@ -114,7 +123,8 @@ const resourceConfigMap = {
   },
   POSTGRESQL: {
     name: 'PostgreSQL',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'DATABASE',
     details: {
       resource: {
         name: '地址',
@@ -139,7 +149,8 @@ const resourceConfigMap = {
   },
   TIMESCALEDB: {
     name: 'TimescaleDB',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'DATABASE',
     details: {
       resource: {
         name: '地址',
@@ -164,7 +175,8 @@ const resourceConfigMap = {
   },
   SQLSERVER: {
     name: 'SQL Server',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'DATABASE',
     details: {
       resource: {
         name: '地址',
@@ -189,7 +201,8 @@ const resourceConfigMap = {
   },
   TDENGINE: {
     name: 'TDengine',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'DATABASE',
     details: {
       resource: {
         name: '地址',
@@ -214,7 +227,8 @@ const resourceConfigMap = {
   },
   HTTPCLIENT: {
     name: 'HTTP Client',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'PROTOCOL',
     details: {
       resource: { name: '地址', format: (resource) => `${resource.properties.url}` },
       rule: [
@@ -233,11 +247,12 @@ const resourceConfigMap = {
   },
   HTTPSERVER: {
     name: 'HTTP Server',
-    type: TYPE_SOURCE,
+    type: 'source',
+    group: 'PROTOCOL',
     details: {
-      resource: { name: '监听地址', format: (resource) => `:${resource.properties.port}${resource.properties.path}` },
+      resource: { name: '监听地址', format: (resource) => `http://0.0.0.0:${resource.properties.port}${resource.properties.path}` },
       rule: [
-        { name: '监听地址', format: (resource) => `:${resource.properties.port}${resource.properties.path}` },
+        { name: '监听地址', format: (resource) => `http://0.0.0.0:${resource.properties.port}${resource.properties.path}` },
         {
           name: '响应内容',
           format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
@@ -247,7 +262,8 @@ const resourceConfigMap = {
   },
   OPCUA: {
     name: 'OPC UA',
-    type: TYPE_SOURCE,
+    type: 'source',
+    group: 'PROTOCOL',
     details: {
       resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
@@ -266,7 +282,8 @@ const resourceConfigMap = {
   },
   MODBUSTCP: {
     name: 'Modbus TCP',
-    type: TYPE_SOURCE,
+    type: 'source',
+    group: 'PROTOCOL',
     details: {
       resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
@@ -285,7 +302,8 @@ const resourceConfigMap = {
   },
   REDIS: {
     name: 'Redis',
-    type: TYPE_ALL,
+    type: 'all',
+    group: 'DATABASE',
     details: {
       resource: {
         name: '地址',
@@ -321,23 +339,42 @@ function createTypeMap() {
 
 const resourceTypeMap = createTypeMap()
 
-function getResourceTypeList(type) {
+function getResourceListByType(type) {
   let result = []
-  for (let resourceConfigMapKey in resourceConfigMap) {
-    let resourceType = resourceConfigMap[resourceConfigMapKey].type
-    if (!type || resourceType === TYPE_ALL || resourceType === type) {
-      let item = {
-        name: resourceConfigMap[resourceConfigMapKey].name,
-        code: resourceConfigMapKey,
-        type: resourceType
-      }
-      result.push(item)
+  for (let resourceGroupMapKey in resourceGroupMap) {
+    let resourceTypeList = getResourceListByTypeAndGroup(type, resourceGroupMapKey)
+    if (!resourceTypeList || resourceTypeList.length === 0) {
+      continue
     }
+    result.push({
+      group: resourceGroupMap[resourceGroupMapKey],
+      list: resourceTypeList
+    })
   }
   return result
 }
 
-const resourceTypeList = getResourceTypeList()
+function getResourceListByTypeAndGroup(type, group) {
+  let result = []
+  for (let resourceConfigMapKey in resourceConfigMap) {
+    let resourceConfig = resourceConfigMap[resourceConfigMapKey]
+    if (type && resourceConfig.type !== type && resourceConfig.type !== 'all') {
+      continue
+    }
+    if (group && resourceConfig.group !== group) {
+      continue
+    }
+    let item = {
+      name: resourceConfig.name,
+      type: resourceConfig.type,
+      code: resourceConfigMapKey
+    }
+    result.push(item)
+  }
+  return result
+}
+
+const resourceTypeAllList = getResourceListByType(undefined)
 
 function getResourceDetails(resource, mode) {
   if (!resource || !resource.resourceType) {
@@ -377,5 +414,5 @@ function getResourceDetails(resource, mode) {
 
 
 export {
-  resourceTypeMap, resourceTypeList, getResourceTypeList, getResourceDetails
+  resourceTypeMap, resourceTypeAllList, getResourceListByType, getResourceListByTypeAndGroup, getResourceDetails
 }

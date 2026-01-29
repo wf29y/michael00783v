@@ -75,10 +75,10 @@ export default {
   data() {
     return {
       columns: [
-        {
+   /*     {
           title: '#',
           scopedSlots: { customRender: 'serial' }
-        },
+        },*/
         {
           title: '名称',
           dataIndex: 'backupName'

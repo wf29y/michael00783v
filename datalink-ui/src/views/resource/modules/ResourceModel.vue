@@ -13,9 +13,11 @@
         <a-col :span='12'>
           <a-form-model-item label='资源类型' prop='resourceType'>
             <a-select v-model='modal.resourceType' placeholder='请选择资源类型' :disabled='modal.resourceId'>
-              <a-select-option v-for='(item,index) in resourceTypeList' :value='item.code' :key='index'>{{ item.name
-                }}
-              </a-select-option>
+              <a-select-opt-group v-for='(group,groupIndex) in resourceTypeAllList' :key='groupIndex' :label='group.group'>
+                <a-select-option v-for='(item,itemIndex) in group.list' :value='item.code' :key='itemIndex'>{{ item.name
+                  }}
+                </a-select-option>
+              </a-select-opt-group>
             </a-select>
           </a-form-model-item>
         </a-col>
@@ -40,7 +42,8 @@
       <udp-properties v-if="modal.resourceType === 'UDP'" ref='PropertiesModal'></udp-properties>
       <snmp-properties v-if="modal.resourceType === 'SNMP'" ref='PropertiesModal'></snmp-properties>
       <modbus-tcp-properties v-if="modal.resourceType === 'MODBUSTCP'" ref='PropertiesModal'></modbus-tcp-properties>
-      <timescale-d-b-properties v-if="modal.resourceType === 'TIMESCALEDB'" ref='PropertiesModal'></timescale-d-b-properties>
+      <timescale-d-b-properties v-if="modal.resourceType === 'TIMESCALEDB'"
+                                ref='PropertiesModal'></timescale-d-b-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -59,7 +62,7 @@
         zIndex: 1
       }"
     >
-      <a-button :style="{ marginRight: '10px',width: '110px' }" @click='testDriver'> 测试连接</a-button>
+      <a-button :style="{ marginRight: '10px',width: '110px' }" @click='testDriver'> 测试</a-button>
       <a-button :style="{ marginRight: '10px',width: '110px' }" @click='onClose'> 取消</a-button>
       <a-button :style="{ width: '110px' }" @click='handleOk' type='primary'> 保存</a-button>
     </div>
@@ -68,7 +71,7 @@
 
 <script>
 import { postAction, putAction } from '@/api/manage'
-import { getResourceTypeList } from '@/config/resource.config'
+import { resourceTypeAllList } from '@/config/resource.config'
 import MqttProperties from '../properties/MqttProperties'
 import KafkaProperties from '../properties/KafkaProperties'
 import MysqlProperties from '../properties/MysqlProperties'
@@ -121,11 +124,8 @@ export default {
         resourceType: [{ required: true, message: '请选择资源类型', trigger: 'change' }],
         resourceName: [{ required: true, message: '请输入资源名称', trigger: 'blur' }]
       },
-      resourceTypeList: []
+      resourceTypeAllList: resourceTypeAllList
     }
-  },
-  mounted() {
-    this.resourceTypeList = getResourceTypeList()
   },
   methods: {
     add() {
@@ -179,15 +179,15 @@ export default {
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
     testDriver() {
-      let that = this;
+      let that = this
       this.$refs.PropertiesModal.get((checked, prop) => {
-        if (!checked) return false;
-        that.modal.properties = prop;
+        if (!checked) return false
+        that.modal.properties = prop
         postAction(that.url.test, that.modal).then((res) => {
           if (res.code === 200 && res.data === true) {
-            that.$message.success('连接成功')
+            that.$message.success('资源可用')
           } else {
-            that.$message.error('连接失败')
+            that.$message.error('资源不可用')
           }
         })
       })

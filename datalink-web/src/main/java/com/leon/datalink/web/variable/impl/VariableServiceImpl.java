@@ -95,7 +95,7 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
                 stream = stream.filter(r -> r.getType().equals(variable.getType()));
             }
         }
-        return stream.sorted(Comparator.comparing(Variable::getType)).collect(Collectors.toList());
+        return stream.sorted(Comparator.comparing(Variable::getType).thenComparing(Variable::getKey)).collect(Collectors.toList());
     }
 
     @Override

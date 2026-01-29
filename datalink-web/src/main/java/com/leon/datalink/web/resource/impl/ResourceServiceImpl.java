@@ -1,5 +1,6 @@
 package com.leon.datalink.web.resource.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
@@ -14,6 +15,7 @@ import com.leon.datalink.web.backup.BackupData;
 import com.leon.datalink.web.resource.ResourceService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -97,7 +99,7 @@ public class ResourceServiceImpl implements ResourceService, BackupData<Resource
                 stream = stream.filter(r -> r.getResourceName().contains(resource.getResourceName()));
             }
         }
-        return stream.collect(Collectors.toList());
+        return CollectionUtil.reverse(stream.sorted(Comparator.comparingLong(item -> Long.parseLong(item.getResourceId()))).collect(Collectors.toList()));
     }
 
     @Override

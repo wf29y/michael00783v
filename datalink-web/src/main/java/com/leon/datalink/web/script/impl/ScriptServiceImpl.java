@@ -1,5 +1,6 @@
 package com.leon.datalink.web.script.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
@@ -10,6 +11,7 @@ import com.leon.datalink.transform.script.Script;
 import com.leon.datalink.web.script.ScriptService;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -90,7 +92,7 @@ public class ScriptServiceImpl implements ScriptService {
                 stream = stream.filter(s -> s.getScriptName().contains(script.getScriptName()));
             }
         }
-        return stream.collect(Collectors.toList());
+        return CollectionUtil.reverse(stream.sorted(Comparator.comparingLong(item -> Long.parseLong(item.getScriptId()))).collect(Collectors.toList()));
     }
 
     @Override
