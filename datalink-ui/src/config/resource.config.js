@@ -1,9 +1,9 @@
 import { timeUnitMap } from './time.config'
 
 const resourceGroupMap = {
-  DATABASE: '数据库',
   CHANNEL: '消息通道',
-  PROTOCOL: '通讯协议'
+  PROTOCOL: '通讯协议',
+  DATABASE: '数据存储'
 }
 
 const resourceConfigMap = {
@@ -97,6 +97,32 @@ const resourceConfigMap = {
   },
   MYSQL: {
     name: 'MySQL',
+    type: 'all',
+    group: 'DATABASE',
+    details: {
+      resource: {
+        name: '地址',
+        format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+      },
+      rule: [
+        {
+          name: '地址',
+          format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+        },
+        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        {
+          name: '启动延迟',
+          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        },
+        {
+          name: '查询频率',
+          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+        }
+      ]
+    }
+  },
+  MARIADB: {
+    name: 'MariaDB',
     type: 'all',
     group: 'DATABASE',
     details: {

@@ -42,8 +42,8 @@
       <udp-properties v-if="modal.resourceType === 'UDP'" ref='PropertiesModal'></udp-properties>
       <snmp-properties v-if="modal.resourceType === 'SNMP'" ref='PropertiesModal'></snmp-properties>
       <modbus-tcp-properties v-if="modal.resourceType === 'MODBUSTCP'" ref='PropertiesModal'></modbus-tcp-properties>
-      <timescale-d-b-properties v-if="modal.resourceType === 'TIMESCALEDB'"
-                                ref='PropertiesModal'></timescale-d-b-properties>
+      <timescale-d-b-properties v-if="modal.resourceType === 'TIMESCALEDB'" ref='PropertiesModal'></timescale-d-b-properties>
+      <maria-d-b-properties v-if="modal.resourceType === 'MARIADB'" ref='PropertiesModal'></maria-d-b-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -88,6 +88,7 @@ import UdpProperties from '../properties/UdpProperties'
 import SnmpProperties from '../properties/SnmpProperties'
 import ModbusTcpProperties from '../properties/ModbusTcpProperties'
 import TimescaleDBProperties from '../properties/TimescaleDBProperties'
+import MariaDBProperties from '../properties/MariaDBProperties'
 
 export default {
   name: 'ResourceModel',
@@ -107,7 +108,8 @@ export default {
     UdpProperties,
     SnmpProperties,
     ModbusTcpProperties,
-    TimescaleDBProperties
+    TimescaleDBProperties,
+    MariaDBProperties
   },
   data() {
     return {

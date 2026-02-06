@@ -21,7 +21,8 @@ public enum ResourceTypeEnum {
     UDP(UdpDriver.class),
     SNMP(SnmpDriver.class),
     MODBUSTCP(ModbusTcpDriver.class),
-    TIMESCALEDB(TimescaleDBDriver.class);
+    TIMESCALEDB(TimescaleDBDriver.class),
+    MARIADB(MariaDBDriver.class);
 
     private final Class<? extends Driver> driver;
 

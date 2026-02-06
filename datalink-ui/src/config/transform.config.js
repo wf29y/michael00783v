@@ -1,8 +1,8 @@
 const transformModeMap = {
-  WITHOUT: '无转换透传',
-  SCRIPT: 'JS脚本转换',
+  WITHOUT: '透传',
+  SQL: 'SQL转换',
+  SCRIPT: '脚本转换',
   PLUGIN: '插件转换',
-  SQL: 'SQL转换'
 }
 
 function createModeList() {

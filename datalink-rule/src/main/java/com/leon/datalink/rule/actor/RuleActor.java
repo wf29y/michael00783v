@@ -39,18 +39,18 @@ public class RuleActor extends AbstractActor {
         ActorRef next = getSelf();
         for (Transform transform : transformList) {
             ActorRef transformActor = context.actorOf(Props.create(TransformActor.class, transform, next, rule.getRuleId(), transform.getTransformRuntimeId()),
-                    "transform-" +  transform.getTransformRuntimeId());
+                    transform.getTransformRuntimeId());
             transformActorRefList.add(transformActor);
             next = transformActor;
         }
 
         // 创建目的actor
         destActorRefList = rule.getDestResourceList().stream().map(destResource -> context.actorOf((Props.create(DriverActor.class, destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.DEST, rule.getRuleId(), destResource.getResourceRuntimeId())),
-                "dest-" + destResource.getResourceRuntimeId())).collect(Collectors.toList());
+                destResource.getResourceRuntimeId())).collect(Collectors.toList());
 
         // 创建源actor
         sourceActorRefList = rule.getSourceResourceList().stream().map(sourceResource -> context.actorOf((Props.create(DriverActor.class, sourceResource.getResourceType().getDriver(), sourceResource.getProperties(), DriverModeEnum.SOURCE, rule.getRuleId(), sourceResource.getResourceRuntimeId())),
-                "source-" + sourceResource.getResourceRuntimeId())).collect(Collectors.toList());
+                sourceResource.getResourceRuntimeId())).collect(Collectors.toList());
 
         Loggers.RULE.info("started rule [{}]", getSelf().path());
     }
