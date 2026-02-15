@@ -37,6 +37,11 @@
             <artifactId>datalink-runtime</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.ibeetl</groupId>
+            <artifactId>beetl</artifactId>
+        </dependency>
+
         <!-- driver -->
         <dependency>
             <groupId>org.apache.plc4x</groupId>

@@ -4,6 +4,7 @@ package com.leon.datalink.driver;
 import akka.actor.ActorRef;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
@@ -11,6 +12,7 @@ import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;
+import org.beetl.core.statement.PlaceholderST;
 
 import java.util.Map;
 
@@ -24,6 +26,17 @@ public abstract class AbstractDriver implements Driver {
     private TemplateEngine templateEngine;
 
     private String ruleId;
+
+    static {
+        // 模板引擎输出json
+        PlaceholderST.output = (ctx, value) -> {
+            if (value instanceof String) {
+                ctx.byteWriter.writeString(value.toString());
+            } else {
+                ctx.byteWriter.writeString(JacksonUtils.toJson(value));
+            }
+        };
+    }
 
     @Override
     public final void init(ActorRef driverActorRef, String ruleId) {
