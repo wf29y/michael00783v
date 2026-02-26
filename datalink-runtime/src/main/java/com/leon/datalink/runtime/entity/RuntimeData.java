@@ -4,7 +4,10 @@ import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 
-public class RuntimeData {
+import java.io.Serializable;
+
+public class RuntimeData implements Serializable {
+    private static final long serialVersionUID = 1895166087085804888L;
 
     private RuntimeTypeEnum type;
 

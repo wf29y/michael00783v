@@ -4,10 +4,12 @@ import com.google.common.collect.Lists;
 import com.leon.datalink.runtime.constants.Constants;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
 
+import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 
-public class RuntimeEntity {
+public class RuntimeEntity implements Serializable {
+    private static final long serialVersionUID = 1895166087085804777L;
+
 
     // 当前状态（初始化、正常、异常）
     private RuntimeStatusEnum status;
@@ -84,7 +86,4 @@ public class RuntimeEntity {
         this.failCount = failedCount;
     }
 
-    public LinkedList<RuntimeData> getDataRecordList() {
-        return runtimeDataList;
-    }
 }
