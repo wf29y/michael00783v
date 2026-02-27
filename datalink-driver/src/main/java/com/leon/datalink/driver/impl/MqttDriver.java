@@ -23,7 +23,7 @@ public class MqttDriver extends AbstractDriver {
 
     private volatile MqttClient mqttHandler;
 
-    private static final Integer HANDLER_COUNT = 20;
+    private volatile Integer poolSize;
 
     @Override
     public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
@@ -32,8 +32,9 @@ public class MqttDriver extends AbstractDriver {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             mqttHandler = createClient(properties);
         } else {
-            mqttHandlerMap = new ConcurrentHashMap<>();
-            for (int i = 0; i < HANDLER_COUNT; i++) {
+            poolSize = properties.getInteger("poolSize", 10);
+            mqttHandlerMap = new ConcurrentHashMap<>(poolSize);
+            for (int i = 0; i < poolSize; i++) {
                 mqttHandlerMap.put(i, createAsyncClient(properties));
             }
         }
@@ -50,7 +51,7 @@ public class MqttDriver extends AbstractDriver {
                     x.disconnect();
                     x.close();
                 } catch (MqttException e) {
-                    Loggers.DRIVER.error(e.getMessage());
+                    Loggers.DRIVER.error("mqtt driver destroy {}",e.getMessage());
                 }
             });
         }
@@ -72,7 +73,7 @@ public class MqttDriver extends AbstractDriver {
             mqttClient.connect(options);
             return true;
         } catch (MqttException e) {
-            Loggers.DRIVER.error("driver test {}", e.getMessage());
+            Loggers.DRIVER.error("mqtt driver test {}", e.getMessage());
             return false;
         }
     }
@@ -111,7 +112,7 @@ public class MqttDriver extends AbstractDriver {
 
     private void publish(String topic, String payload, int qos, boolean retained) throws MqttException {
         Random random = new Random();
-        MqttAsyncClient messageHandler = mqttHandlerMap.get(random.nextInt(HANDLER_COUNT));
+        MqttAsyncClient messageHandler = mqttHandlerMap.get(random.nextInt(poolSize));
         if (messageHandler.isConnected()) {
             messageHandler.publish(topic, payload.getBytes(), qos, retained);
         } else {

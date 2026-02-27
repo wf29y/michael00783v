@@ -6,7 +6,7 @@
           <a-input v-model='properties.topic' placeholder='请输入Topic' />
         </a-form-model-item>
       </a-col>
-      <a-col :span='12' v-if="type==='dest'">
+      <a-col :span='8' v-if="type==='dest'">
         <a-form-model-item label='消息保留' prop='retained'>
           <a-select v-model='properties.retained' placeholder='请选择是否消息保留'>
             <a-select-option :value='true'>是</a-select-option>
@@ -14,9 +14,14 @@
           </a-select>
         </a-form-model-item>
       </a-col>
-      <a-col :span="type==='dest'?12:24">
+      <a-col :span="type==='dest'?8:24">
         <a-form-model-item label='Qos' prop='qos'>
           <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span="type==='dest'?8:24">
+        <a-form-model-item label='连接数' prop='poolSize'>
+          <a-input-number v-model='properties.poolSize' placeholder='请输入连接数' style='width: 100%' />
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='payload' v-if="type==='dest'">
@@ -39,6 +44,7 @@ export default {
     return {
       properties: {
         qos: 0,
+        poolSize: 10,
         retained: false
       },
       rules: {
