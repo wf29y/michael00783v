@@ -41,6 +41,7 @@
       <modbus-tcp-properties v-if="modal.resourceType === 'MODBUSTCP'" ref='PropertiesModal' :type='resourceMode'></modbus-tcp-properties>
       <timescale-d-b-properties v-if="modal.resourceType === 'TIMESCALEDB'" ref='PropertiesModal' :type='resourceMode'></timescale-d-b-properties>
       <maria-d-b-properties v-if="modal.resourceType === 'MARIADB'" ref='PropertiesModal' :type='resourceMode'></maria-d-b-properties>
+      <rocket-m-q-properties v-if="modal.resourceType === 'ROCKETMQ'" ref='PropertiesModal' :type='resourceMode'></rocket-m-q-properties>
     </a-form-model>
     <div
       :style="{
@@ -81,6 +82,7 @@ import SnmpProperties from '../properties/SnmpProperties'
 import ModbusTcpProperties from '../properties/ModbusTcpProperties'
 import TimescaleDBProperties from '../properties/TimescaleDBProperties'
 import MariaDBProperties from '../properties/MariaDBProperties'
+import RocketMQProperties from '../properties/RocketMQProperties'
 
 export default {
   name: 'ResourceModel',
@@ -101,7 +103,8 @@ export default {
     SnmpProperties,
     ModbusTcpProperties,
     TimescaleDBProperties,
-    MariaDBProperties
+    MariaDBProperties,
+    RocketMQProperties
   },
   data() {
     return {

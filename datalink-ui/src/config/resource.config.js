@@ -95,6 +95,19 @@ const resourceConfigMap = {
       ]
     }
   },
+  ROCKETMQ: {
+    name: 'RocketMQ',
+    type: 'all',
+    group: 'CHANNEL',
+    details: {
+      resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      rule: [
+        { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '分组', format: (resource) => resource.properties.group },
+        { name: 'Topic', format: (resource) => resource.properties.topic }
+      ]
+    }
+  },
   MYSQL: {
     name: 'MySQL',
     type: 'all',

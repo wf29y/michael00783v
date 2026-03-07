@@ -61,6 +61,7 @@
         <spring-boot-dependencies.version>2.1.6.RELEASE</spring-boot-dependencies.version>
         <rocksdbjni.version>6.22.1.1</rocksdbjni.version>
         <snmp4j.version>2.6.2</snmp4j.version>
+        <rocketmq-client.version>5.0.0</rocketmq-client.version>
         <plc4j.version>0.10.0</plc4j.version>
         <utgard-external.version>1.2.25</utgard-external.version>
         <utgard-core.version>2.1.8</utgard-core.version>
@@ -361,6 +362,11 @@
                 <groupId>org.snmp4j</groupId>
                 <artifactId>snmp4j</artifactId>
                 <version>${snmp4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
+                <version>${rocketmq-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ibeetl</groupId>

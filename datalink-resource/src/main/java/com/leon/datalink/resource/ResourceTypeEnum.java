@@ -22,7 +22,8 @@ public enum ResourceTypeEnum {
     SNMP(SnmpDriver.class),
     MODBUSTCP(ModbusTcpDriver.class),
     TIMESCALEDB(TimescaleDBDriver.class),
-    MARIADB(MariaDBDriver.class);
+    MARIADB(MariaDBDriver.class),
+    ROCKETMQ(RocketMQDriver.class);
 
     private final Class<? extends Driver> driver;
 

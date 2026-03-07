@@ -6,30 +6,32 @@
           <a-input v-model='properties.topic' placeholder='请输入Topic' />
         </a-form-model-item>
       </a-col>
-      <a-col :span="type==='dest'?8:24">
-        <a-form-model-item label='Qos' prop='qos'>
-          <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%' />
+      <a-col :span='12'>
+        <a-form-model-item label='消息Tags' prop='tags'>
+          <a-input v-model='properties.tags' placeholder='请输入消息Tags' />
         </a-form-model-item>
       </a-col>
 
-      <a-col :span='8' v-if="type==='dest'">
-        <a-form-model-item label='消息保留' prop='retained'>
-          <a-select v-model='properties.retained' placeholder='请选择是否消息保留'>
-            <a-select-option :value='true'>是</a-select-option>
-            <a-select-option :value='false'>否</a-select-option>
+      <a-col :span='12' v-if="type==='source'">
+        <a-form-model-item label='消费模式' prop='model'>
+          <a-select v-model='properties.model' placeholder='请选择消费模式'>
+            <tag-select-option value='CLUSTERING'>集群模式</tag-select-option>
+            <tag-select-option value='BROADCASTING'>广播模式</tag-select-option>
           </a-select>
         </a-form-model-item>
       </a-col>
-      <a-col :span='8' v-if="type==='dest'">
-        <a-form-model-item label='连接数' prop='poolSize'>
-          <a-input-number v-model='properties.poolSize' placeholder='请输入连接数' style='width: 100%' />
+
+      <a-col :span='12' v-if="type==='dest'">
+        <a-form-model-item label='发送超时(ms)' prop='timeout'>
+          <a-input-number v-model='properties.timeout' placeholder='请输入发送超时' style='width: 100%' />
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='payload' v-if="type==='dest'">
-        <a-form-model-item label='消息模板'  style='margin-bottom: 0'>
+        <a-form-model-item label='消息模板' style='margin-bottom: 0'>
           <monaco-editor ref='MonacoEditor' language='freemarker2'></monaco-editor>
         </a-form-model-item>
       </a-col>
+
     </a-form-model>
   </a-row>
 </template>
@@ -37,21 +39,22 @@
 <script>
 
 import MonacoEditor from '@/components/Editor/MonacoEditor'
+import TagSelectOption from '@/components/TagSelect/TagSelectOption'
 
 
 export default {
-  components: { MonacoEditor },
+  components: { TagSelectOption, MonacoEditor },
   data() {
     return {
       properties: {
-        qos: 0,
-        poolSize: 10,
-        retained: false
+        timeout: this.type === 'dest' ? 10000 : undefined,
+        tags: this.type === 'dest' ? '' : '*',
+        model: this.type === 'dest' ? undefined : 'CLUSTERING'
       },
       rules: {
         topic: [{ required: true, message: '请输入Topic', trigger: 'blur' }],
-        retained: [{ required: true, message: '请选择是否消息保留', trigger: 'change' }],
-        qos: [{ required: true, message: '请输入Qos', trigger: 'blur' }]
+        timeout: [{ required: true, message: '请输入发送超时', trigger: 'change' }],
+        model: [{ required: true, message: '请选择消费模式', trigger: 'change' }]
       }
     }
   },
