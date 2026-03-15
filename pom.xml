@@ -62,6 +62,7 @@
         <rocksdbjni.version>6.22.1.1</rocksdbjni.version>
         <snmp4j.version>2.6.2</snmp4j.version>
         <rocketmq-client.version>5.0.0</rocketmq-client.version>
+        <activemq-core.version>5.7.0</activemq-core.version>
         <plc4j.version>0.10.0</plc4j.version>
         <utgard-external.version>1.2.25</utgard-external.version>
         <utgard-core.version>2.1.8</utgard-core.version>
@@ -367,6 +368,11 @@
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-client</artifactId>
                 <version>${rocketmq-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-core</artifactId>
+                <version>${activemq-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ibeetl</groupId>

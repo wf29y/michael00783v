@@ -45,6 +45,7 @@
       <timescale-d-b-properties v-if="modal.resourceType === 'TIMESCALEDB'" ref='PropertiesModal'></timescale-d-b-properties>
       <maria-d-b-properties v-if="modal.resourceType === 'MARIADB'" ref='PropertiesModal'></maria-d-b-properties>
       <rocket-m-q-properties v-if="modal.resourceType === 'ROCKETMQ'" ref='PropertiesModal'></rocket-m-q-properties>
+      <active-m-q-properties v-if="modal.resourceType === 'ACTIVEMQ'" ref='PropertiesModal'></active-m-q-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -91,6 +92,7 @@ import ModbusTcpProperties from '../properties/ModbusTcpProperties'
 import TimescaleDBProperties from '../properties/TimescaleDBProperties'
 import MariaDBProperties from '../properties/MariaDBProperties'
 import RocketMQProperties from '../properties/RocketMQProperties'
+import ActiveMQProperties from '../properties/ActiveMQProperties'
 
 export default {
   name: 'ResourceModel',
@@ -112,7 +114,8 @@ export default {
     ModbusTcpProperties,
     TimescaleDBProperties,
     MariaDBProperties,
-    RocketMQProperties
+    RocketMQProperties,
+    ActiveMQProperties
   },
   data() {
     return {

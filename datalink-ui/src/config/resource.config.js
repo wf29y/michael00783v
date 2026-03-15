@@ -8,14 +8,14 @@ const resourceGroupMap = {
 
 const resourceConfigMap = {
   MQTT: {
-    name: 'MQTT Broker',
+    name: 'MQTT',
     type: 'all',
     group: 'CHANNEL',
     details: {
-      resource: { name: '地址', format: (resource) => resource.properties.url },
+      resource: { name: '地址', value: (resource) => resource.properties.url },
       rule: [
-        { name: '地址', format: (resource) => resource.properties.url },
-        { name: 'Topic', format: (resource) => resource.properties.topic }
+        { name: '地址', value: (resource) => resource.properties.url },
+        { name: 'Topic', value: (resource) => resource.properties.topic }
       ]
     }
   },
@@ -24,12 +24,12 @@ const resourceConfigMap = {
     type: 'source',
     group: 'PROTOCOL',
     details: {
-      resource: { name: '监听地址', format: (resource) => `0.0.0.0:${resource.properties.port}` },
+      resource: { name: '监听地址', value: (resource) => `0.0.0.0:${resource.properties.port}` },
       rule: [
-        { name: '监听地址', format: (resource) => `0.0.0.0:${resource.properties.port}` },
+        { name: '监听地址', value: (resource) => `0.0.0.0:${resource.properties.port}` },
         {
           name: '响应内容',
-          format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
+          value: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
         }
       ]
     }
@@ -39,12 +39,12 @@ const resourceConfigMap = {
     type: 'source',
     group: 'PROTOCOL',
     details: {
-      resource: { name: '监听地址', format: (resource) => `0.0.0.0:${resource.properties.port}` },
+      resource: { name: '监听地址', value: (resource) => `0.0.0.0:${resource.properties.port}` },
       rule: [
-        { name: '监听地址', format: (resource) => `0.0.0.0:${resource.properties.port}` },
+        { name: '监听地址', value: (resource) => `0.0.0.0:${resource.properties.port}` },
         {
           name: '响应内容',
-          format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
+          value: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
         }
       ]
     }
@@ -54,17 +54,17 @@ const resourceConfigMap = {
     type: 'source',
     group: 'PROTOCOL',
     details: {
-      resource: { name: '地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
+      resource: { name: '地址', value: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
       rule: [
-        { name: '地址', format: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
-        { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
+        { name: '地址', value: (resource) => `udp:${resource.properties.ip}/${resource.properties.port}` },
+        { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '读取频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -74,10 +74,10 @@ const resourceConfigMap = {
     type: 'all',
     group: 'CHANNEL',
     details: {
-      resource: { name: '地址', format: (resource) => `${resource.properties.url}` },
+      resource: { name: '地址', value: (resource) => `${resource.properties.url}` },
       rule: [
-        { name: '地址', format: (resource) => `${resource.properties.url}` },
-        { name: 'Topic', format: (resource) => resource.properties.topic }
+        { name: '地址', value: (resource) => `${resource.properties.url}` },
+        { name: 'Topic', value: (resource) => resource.properties.topic }
       ]
     }
   },
@@ -86,12 +86,12 @@ const resourceConfigMap = {
     type: 'all',
     group: 'CHANNEL',
     details: {
-      resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
-        { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-        { name: '虚拟主机', format: (resource) => resource.properties.virtualHost },
-        { name: '交换机', format: (resource) => resource.properties.exchange },
-        { name: '队列', format: (resource) => resource.properties.queue }
+        { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '虚拟主机', value: (resource) => resource.properties.virtualHost },
+        { name: '交换机', value: (resource) => resource.properties.exchange },
+        { name: '队列', value: (resource) => resource.properties.queue }
       ]
     }
   },
@@ -100,11 +100,26 @@ const resourceConfigMap = {
     type: 'all',
     group: 'CHANNEL',
     details: {
-      resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
-        { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-        { name: '分组', format: (resource) => resource.properties.group },
-        { name: 'Topic', format: (resource) => resource.properties.topic }
+        { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '分组', value: (resource) => resource.properties.group },
+        { name: 'Topic', value: (resource) => resource.properties.topic }
+      ]
+    }
+  },
+  ACTIVEMQ: {
+    name: 'ActiveMQ',
+    type: 'all',
+    group: 'CHANNEL',
+    details: {
+      resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      rule: [
+        { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        {
+          name: (resource) => resource.properties.model === 'queue' ? 'Queue' : 'Topic',
+          value: (resource) => resource.properties.model === 'queue' ? resource.properties.queue : resource.properties.topic
+        }
       ]
     }
   },
@@ -115,21 +130,21 @@ const resourceConfigMap = {
     details: {
       resource: {
         name: '地址',
-        format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+        value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
           name: '地址',
-          format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+          value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
-        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '查询频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -141,21 +156,21 @@ const resourceConfigMap = {
     details: {
       resource: {
         name: '地址',
-        format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+        value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
           name: '地址',
-          format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+          value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
-        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '查询频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -167,21 +182,21 @@ const resourceConfigMap = {
     details: {
       resource: {
         name: '地址',
-        format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+        value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
           name: '地址',
-          format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+          value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
-        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '查询频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -193,21 +208,21 @@ const resourceConfigMap = {
     details: {
       resource: {
         name: '地址',
-        format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+        value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
           name: '地址',
-          format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+          value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
-        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '查询频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -219,21 +234,21 @@ const resourceConfigMap = {
     details: {
       resource: {
         name: '地址',
-        format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+        value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
           name: '地址',
-          format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+          value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
-        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '查询频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -245,21 +260,21 @@ const resourceConfigMap = {
     details: {
       resource: {
         name: '地址',
-        format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+        value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
       },
       rule: [
         {
           name: '地址',
-          format: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
+          value: (resource) => `${resource.properties.ip}:${resource.properties.port}/${resource.properties.databaseName}`
         },
-        { name: 'SQL模板', format: (resource) => resource.properties.sql },
+        { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '查询频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -269,17 +284,17 @@ const resourceConfigMap = {
     type: 'all',
     group: 'PROTOCOL',
     details: {
-      resource: { name: '地址', format: (resource) => `${resource.properties.url}` },
+      resource: { name: '地址', value: (resource) => `${resource.properties.url}` },
       rule: [
-        { name: '请求路径', format: (resource) => `${resource.properties.url}${resource.properties.path}` },
-        { name: '请求方式', format: (resource) => `${resource.properties.method}` },
+        { name: '请求路径', value: (resource) => `${resource.properties.url}${resource.properties.path}` },
+        { name: '请求方式', value: (resource) => `${resource.properties.method}` },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '调用频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -289,12 +304,15 @@ const resourceConfigMap = {
     type: 'source',
     group: 'PROTOCOL',
     details: {
-      resource: { name: '监听地址', format: (resource) => `http://0.0.0.0:${resource.properties.port}${resource.properties.path}` },
+      resource: {
+        name: '监听地址',
+        value: (resource) => `http://0.0.0.0:${resource.properties.port}${resource.properties.path}`
+      },
       rule: [
-        { name: '监听地址', format: (resource) => `http://0.0.0.0:${resource.properties.port}${resource.properties.path}` },
+        { name: '监听地址', value: (resource) => `http://0.0.0.0:${resource.properties.port}${resource.properties.path}` },
         {
           name: '响应内容',
-          format: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
+          value: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
         }
       ]
     }
@@ -304,17 +322,17 @@ const resourceConfigMap = {
     type: 'source',
     group: 'PROTOCOL',
     details: {
-      resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
-        { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-        { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
+        { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '读取频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -324,17 +342,17 @@ const resourceConfigMap = {
     type: 'source',
     group: 'PROTOCOL',
     details: {
-      resource: { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
       rule: [
-        { name: '地址', format: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
-        { name: '读取点位', format: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
+        { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '读取频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -346,21 +364,21 @@ const resourceConfigMap = {
     details: {
       resource: {
         name: '地址',
-        format: (resource) => resource.properties.mode === 'STANDALONE' ? `${resource.properties.ip}:${resource.properties.port}` : `${resource.properties.nodes}`
+        value: (resource) => resource.properties.mode === 'STANDALONE' ? `${resource.properties.ip}:${resource.properties.port}` : `${resource.properties.nodes}`
       },
       rule: [
         {
           name: '地址',
-          format: (resource) => resource.properties.mode === 'STANDALONE' ? `${resource.properties.ip}:${resource.properties.port}` : `${resource.properties.nodes}`
+          value: (resource) => resource.properties.mode === 'STANDALONE' ? `${resource.properties.ip}:${resource.properties.port}` : `${resource.properties.nodes}`
         },
-        { name: '执行命令', format: (resource) => `${resource.properties.command}` },
+        { name: '执行命令', value: (resource) => `${resource.properties.command}` },
         {
           name: '启动延迟',
-          format: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         },
         {
           name: '执行频率',
-          format: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
         }
       ]
     }
@@ -415,40 +433,27 @@ function getResourceListByTypeAndGroup(type, group) {
 
 const resourceTypeAllList = getResourceListByType(undefined)
 
+const emptyDetail = { name: '', value: '' }
+
 function getResourceDetails(resource, mode) {
   if (!resource || !resource.resourceType) {
-    if (mode === 'resource') {
-      return { name: '', value: '' }
-    } else {
-      return [{ name: '', value: '' }]
-    }
+    return mode === 'resource' ? emptyDetail : [emptyDetail]
   }
   let resourceConfigMapElement = resourceConfigMap[resource.resourceType]
   let detail = resourceConfigMapElement.details[mode]
   if (mode === 'resource') {
-    let value = detail.format(resource)
-    if (value) {
-      return {
-        name: detail.name,
-        value: value
-      }
-    } else {
-      return { name: '', value: '' }
-    }
+    return toResultItem(detail, resource)
   } else {
-    let result = []
-    for (let item of detail) {
-      let value = item.format(resource)
-      if (value) {
-        result.push({
-          name: item.name,
-          value: value
-        })
-      }
-    }
-    return result
+    return detail.map((item) => toResultItem(item, resource))
   }
+}
 
+function toResultItem(detailItem, resource) {
+  let name = typeof detailItem.name === 'string' ? detailItem.name : detailItem.name(resource)
+  if (!name) return emptyDetail
+  let value = typeof detailItem.value === 'string' ? detailItem.value : detailItem.value(resource)
+  if (!value) return emptyDetail
+  return { name: name, value: value }
 }
 
 

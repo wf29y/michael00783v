@@ -93,6 +93,10 @@
             <artifactId>amqp-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.snmp4j</groupId>
             <artifactId>snmp4j</artifactId>
         </dependency>
