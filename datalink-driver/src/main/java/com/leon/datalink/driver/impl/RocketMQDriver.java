@@ -26,21 +26,20 @@ public class RocketMQDriver extends AbstractDriver {
 
     @Override
     public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
-        if (StringUtils.isEmpty(properties.getString("ip"))) throw new ValidateException();
-        if (StringUtils.isEmpty(properties.getInteger("port"))) throw new ValidateException();
+        if (StringUtils.isEmpty(properties.getString("url"))) throw new ValidateException();
         if (StringUtils.isEmpty(properties.getString("group"))) throw new ValidateException();
 
         if (driverMode.equals(DriverModeEnum.DEST)) {
             // 生产者
             producer = new DefaultMQProducer(properties.getString("group"));
-            producer.setNamesrvAddr(String.format("%s:%s", properties.getString("ip"), properties.getInteger("port")));
+            producer.setNamesrvAddr(properties.getString("url"));
             producer.start();
         } else if (driverMode.equals(DriverModeEnum.SOURCE)) {
             //消费者
             if (StringUtils.isEmpty(properties.getString("topic"))) throw new ValidateException();
 
             consumer = new DefaultMQPushConsumer(properties.getString("group"));
-            consumer.setNamesrvAddr(String.format("%s:%s", properties.getString("ip"), properties.getInteger("port")));
+            consumer.setNamesrvAddr(properties.getString("url"));
             consumer.subscribe(properties.getString("topic"), properties.getString("tags", "*"));
             consumer.setMessageModel(MessageModel.valueOf(properties.getString("model", "CLUSTERING")));
 
@@ -69,14 +68,13 @@ public class RocketMQDriver extends AbstractDriver {
 
     @Override
     public boolean test(ConfigProperties properties) {
-        if (StringUtils.isEmpty(properties.getString("ip"))) return false;
-        if (StringUtils.isEmpty(properties.getInteger("port"))) return false;
+        if (StringUtils.isEmpty(properties.getString("url"))) return false;
         if (StringUtils.isEmpty(properties.getString("group"))) return false;
 
         DefaultMQPushConsumer consumer = null;
         try {
             consumer = new DefaultMQPushConsumer(properties.getString("group"));
-            consumer.setNamesrvAddr(String.format("%s:%s", properties.getString("ip"), properties.getInteger("port")));
+            consumer.setNamesrvAddr(properties.getString("url"));
             consumer.registerMessageListener((MessageListenerConcurrently) (list, consumeConcurrentlyContext) -> ConsumeConcurrentlyStatus.CONSUME_SUCCESS);
             consumer.start();
             return true;

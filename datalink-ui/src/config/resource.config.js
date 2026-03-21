@@ -100,9 +100,9 @@ const resourceConfigMap = {
     type: 'all',
     group: 'CHANNEL',
     details: {
-      resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '地址', value: (resource) => `${resource.properties.url}` },
       rule: [
-        { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '地址', value: (resource) => `${resource.properties.url}` },
         { name: '分组', value: (resource) => resource.properties.group },
         { name: 'Topic', value: (resource) => resource.properties.topic }
       ]
@@ -113,9 +113,9 @@ const resourceConfigMap = {
     type: 'all',
     group: 'CHANNEL',
     details: {
-      resource: { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+      resource: { name: '地址', value: (resource) => `${resource.properties.url}` },
       rule: [
-        { name: '地址', value: (resource) => `${resource.properties.ip}:${resource.properties.port}` },
+        { name: '地址', value: (resource) => `${resource.properties.url}` },
         {
           name: (resource) => resource.properties.model === 'queue' ? 'Queue' : 'Topic',
           value: (resource) => resource.properties.model === 'queue' ? resource.properties.queue : resource.properties.topic

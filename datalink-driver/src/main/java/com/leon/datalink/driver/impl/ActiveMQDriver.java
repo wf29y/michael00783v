@@ -23,15 +23,14 @@ public class ActiveMQDriver extends AbstractDriver {
 
     @Override
     public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
-        if (StringUtils.isEmpty(properties.getString("ip"))) throw new ValidateException();
-        if (StringUtils.isEmpty(properties.getInteger("port"))) throw new ValidateException();
+        if (StringUtils.isEmpty(properties.getString("url"))) throw new ValidateException();
         if (StringUtils.isEmpty(properties.getString("model"))) throw new ValidateException();
         if (StringUtils.isEmpty(properties.getString(properties.getString("model")))) throw new ValidateException();
 
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                 properties.getString("username", ActiveMQConnectionFactory.DEFAULT_USER),
                 properties.getString("password", ActiveMQConnectionFactory.DEFAULT_PASSWORD),
-                String.format("tcp://%s:%s", properties.getString("ip"), properties.getInteger("port")));
+                properties.getString("url"));
         connection = connectionFactory.createConnection();
         session = connection.createSession(Boolean.FALSE, Session.AUTO_ACKNOWLEDGE);
         connection.start();
@@ -70,14 +69,13 @@ public class ActiveMQDriver extends AbstractDriver {
 
     @Override
     public boolean test(ConfigProperties properties) {
-        if (StringUtils.isEmpty(properties.getString("ip"))) throw new ValidateException();
-        if (StringUtils.isEmpty(properties.getInteger("port"))) throw new ValidateException();
+        if (StringUtils.isEmpty(properties.getString("url"))) throw new ValidateException();
         Connection connection = null;
         try {
             ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
                     properties.getString("username", ActiveMQConnectionFactory.DEFAULT_USER),
                     properties.getString("password", ActiveMQConnectionFactory.DEFAULT_PASSWORD),
-                    String.format("tcp://%s:%s", properties.getString("ip"), properties.getInteger("port")));
+                    properties.getString("url"));
             connection = connectionFactory.createConnection();
             connection.start();
             return true;

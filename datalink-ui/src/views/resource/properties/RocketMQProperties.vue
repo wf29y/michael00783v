@@ -1,14 +1,9 @@
 <template>
   <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
     <a-row :gutter='24'>
-      <a-col :span='12'>
-        <a-form-model-item label='IP' prop='ip'>
-          <a-input v-model='properties.ip' placeholder='请输入IP' />
-        </a-form-model-item>
-      </a-col>
-      <a-col :span='12'>
-        <a-form-model-item label='端口' prop='port'>
-          <a-input-number v-model='properties.port' placeholder='请输入端口' style='width: 100%' />
+      <a-col :span='24'>
+        <a-form-model-item label='Url' prop='url'>
+          <a-input v-model='properties.url' placeholder='请输入Url' />
         </a-form-model-item>
       </a-col>
       <a-col :span='24'>
@@ -27,11 +22,10 @@ export default {
   data() {
     return {
       properties: {
-        port: 9876,
+        url: '127.0.0.1:9876',
       },
       rules: {
-        ip: [{ required: true, message: '请输入IP', trigger: 'blur' }],
-        port: [{ required: true, message: '请输入端口', trigger: 'blur' }],
+        url: [{ required: true, message: '请输入Url', trigger: 'blur' }],
         group: [{ required: true, message: '请输入分组', trigger: 'blur' }]
       }
     }
