@@ -42,6 +42,7 @@
       <timescale-d-b-properties v-if="modal.resourceType === 'TIMESCALEDB'" ref='PropertiesModal' :type='resourceMode'></timescale-d-b-properties>
       <maria-d-b-properties v-if="modal.resourceType === 'MARIADB'" ref='PropertiesModal' :type='resourceMode'></maria-d-b-properties>
       <active-m-q-properties v-if="modal.resourceType === 'ACTIVEMQ'" ref='PropertiesModal' :type='resourceMode'></active-m-q-properties>
+      <pulsar-properties v-if="modal.resourceType === 'PULSAR'" ref='PropertiesModal' :type='resourceMode'></pulsar-properties>
     </a-form-model>
     <div
       :style="{
@@ -84,6 +85,7 @@ import TimescaleDBProperties from '../properties/TimescaleDBProperties'
 import MariaDBProperties from '../properties/MariaDBProperties'
 import RocketMQProperties from '../properties/RocketMQProperties'
 import ActiveMQProperties from '../properties/ActiveMQProperties'
+import PulsarProperties from '../properties/PulsarProperties'
 
 export default {
   name: 'ResourceModel',
@@ -106,7 +108,8 @@ export default {
     TimescaleDBProperties,
     MariaDBProperties,
     RocketMQProperties,
-    ActiveMQProperties
+    ActiveMQProperties,
+    PulsarProperties
   },
   data() {
     return {

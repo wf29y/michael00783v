@@ -24,7 +24,8 @@ public enum ResourceTypeEnum {
     TIMESCALEDB(TimescaleDBDriver.class),
     MARIADB(MariaDBDriver.class),
     ROCKETMQ(RocketMQDriver.class),
-    ACTIVEMQ(ActiveMQDriver.class);
+    ACTIVEMQ(ActiveMQDriver.class),
+    PULSAR(PulsarDriver.class);
 
     private final Class<? extends Driver> driver;
 

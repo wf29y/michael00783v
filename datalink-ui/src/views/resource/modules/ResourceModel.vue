@@ -46,6 +46,7 @@
       <maria-d-b-properties v-if="modal.resourceType === 'MARIADB'" ref='PropertiesModal'></maria-d-b-properties>
       <rocket-m-q-properties v-if="modal.resourceType === 'ROCKETMQ'" ref='PropertiesModal'></rocket-m-q-properties>
       <active-m-q-properties v-if="modal.resourceType === 'ACTIVEMQ'" ref='PropertiesModal'></active-m-q-properties>
+      <pulsar-properties v-if="modal.resourceType === 'PULSAR'" ref='PropertiesModal'></pulsar-properties>
       <a-form-model-item label='备注' prop='description'>
         <a-textarea v-model='modal.description' :rows='4' placeholder='请输入备注'
         />
@@ -93,6 +94,7 @@ import TimescaleDBProperties from '../properties/TimescaleDBProperties'
 import MariaDBProperties from '../properties/MariaDBProperties'
 import RocketMQProperties from '../properties/RocketMQProperties'
 import ActiveMQProperties from '../properties/ActiveMQProperties'
+import PulsarProperties from '../properties/PulsarProperties'
 
 export default {
   name: 'ResourceModel',
@@ -115,7 +117,8 @@ export default {
     TimescaleDBProperties,
     MariaDBProperties,
     RocketMQProperties,
-    ActiveMQProperties
+    ActiveMQProperties,
+    PulsarProperties
   },
   data() {
     return {

@@ -123,6 +123,18 @@ const resourceConfigMap = {
       ]
     }
   },
+  PULSAR: {
+    name: 'Pulsar',
+    type: 'all',
+    group: 'CHANNEL',
+    details: {
+      resource: { name: '地址', value: (resource) => resource.properties.url },
+      rule: [
+        { name: '地址', value: (resource) => resource.properties.url },
+        { name: 'Topic', value: (resource) => resource.properties.topic }
+      ]
+    }
+  },
   MYSQL: {
     name: 'MySQL',
     type: 'all',
