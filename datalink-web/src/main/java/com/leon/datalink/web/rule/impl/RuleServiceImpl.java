@@ -13,6 +13,7 @@ import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.rule.actor.RuleActor;
 import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.transform.Transform;
 import com.leon.datalink.transform.constants.TransformModeEnum;
 import com.leon.datalink.transform.plugin.Plugin;
 import com.leon.datalink.web.backup.BackupData;
@@ -101,6 +102,13 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     @Override
     public void add(Rule rule) throws KvStorageException {
         if (StringUtils.isEmpty(rule.getRuleId())) rule.setRuleId(SnowflakeIdWorker.getId());
+
+        List<Transform> transformList = rule.getTransformList();
+        for (Transform transform : transformList) {
+            transform.setWorkerNum(3);// todo 自定义数量
+            transform.setRuleId(rule.getRuleId());
+        }
+
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
         runtimeService.initRuntime(rule);
@@ -116,6 +124,12 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
 
     @Override
     public void update(Rule rule) throws KvStorageException {
+        List<Transform> transformList = rule.getTransformList();
+        for (Transform transform : transformList) {
+            transform.setWorkerNum(3);// todo 自定义数量
+            transform.setRuleId(rule.getRuleId());
+        }
+
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
         runtimeService.initRuntime(rule);
@@ -139,8 +153,8 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
                 stream = stream.filter(r -> {
                     String searchPluginId = rule.getSearchPluginId();
                     return r.getTransformList().stream().anyMatch(transform ->
-                        TransformModeEnum.PLUGIN.equals(transform.getTransformMode())
-                                && searchPluginId.equals(transform.getProperties().getObject("plugin", Plugin.class).getPluginId())
+                            TransformModeEnum.PLUGIN.equals(transform.getTransformMode())
+                                    && searchPluginId.equals(transform.getProperties().getObject("plugin", Plugin.class).getPluginId())
                     );
                 });
             }

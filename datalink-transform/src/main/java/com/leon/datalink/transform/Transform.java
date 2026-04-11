@@ -13,6 +13,8 @@ public class Transform {
 
     private String transformRuntimeId; //转换运行时id
 
+    private Integer workerNum;
+
     public String getRuleId() {
         return ruleId;
     }
@@ -46,6 +48,15 @@ public class Transform {
 
     public Transform setTransformRuntimeId(String transformRuntimeId) {
         this.transformRuntimeId = transformRuntimeId;
+        return this;
+    }
+
+    public Integer getWorkerNum() {
+        return workerNum;
+    }
+
+    public Transform setWorkerNum(Integer workerNum) {
+        this.workerNum = workerNum;
         return this;
     }
 }

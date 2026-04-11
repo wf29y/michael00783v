@@ -10,7 +10,7 @@ import com.leon.datalink.driver.constans.DriverModeEnum;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.transform.Transform;
-import com.leon.datalink.transform.actor.TransformActor;
+import com.leon.datalink.transform.actor.TransformMasterActor;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class RuleActor extends AbstractActor {
 
     private List<ActorRef> destActorRefList;
 
-    private LinkedList<ActorRef> transformActorRefList = new LinkedList<>();
+    private final LinkedList<ActorRef> transformActorRefList = new LinkedList<>();
 
     public RuleActor(Rule rule) {
         this.rule = rule;
@@ -38,8 +38,7 @@ public class RuleActor extends AbstractActor {
         List<Transform> transformList = ListUtil.reverse(rule.getTransformList());
         ActorRef next = getSelf();
         for (Transform transform : transformList) {
-            ActorRef transformActor = context.actorOf(Props.create(TransformActor.class, transform, next, rule.getRuleId(), transform.getTransformRuntimeId()),
-                    transform.getTransformRuntimeId());
+            ActorRef transformActor = context.actorOf(Props.create(TransformMasterActor.class, transform, next), transform.getTransformRuntimeId());
             transformActorRefList.add(transformActor);
             next = transformActor;
         }
@@ -52,7 +51,7 @@ public class RuleActor extends AbstractActor {
         sourceActorRefList = rule.getSourceResourceList().stream().map(sourceResource -> context.actorOf((Props.create(DriverActor.class, sourceResource.getResourceType().getDriver(), sourceResource.getProperties(), DriverModeEnum.SOURCE, rule.getRuleId(), sourceResource.getResourceRuntimeId())),
                 sourceResource.getResourceRuntimeId())).collect(Collectors.toList());
 
-        Loggers.RULE.info("started rule [{}]", getSelf().path());
+        Loggers.RULE.info("start rule [{}]", getSelf().path());
     }
 
     @Override
@@ -68,7 +67,7 @@ public class RuleActor extends AbstractActor {
             switch (dataRecord.getType()) {
                 // 来自数据源actor的数据 转发给第一个转换actor
                 case SOURCE: {
-                    transformActorRefList.getLast().tell(dataRecord,getSelf());
+                    transformActorRefList.getLast().tell(dataRecord, getSelf());
                     break;
                 }
                 // 来自转换actor的数据 转发给所有目的地actor

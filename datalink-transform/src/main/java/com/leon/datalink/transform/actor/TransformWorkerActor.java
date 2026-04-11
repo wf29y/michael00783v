@@ -11,46 +11,39 @@ import com.leon.datalink.transform.Transform;
 import com.leon.datalink.transform.handler.TransformHandler;
 import com.leon.datalink.transform.handler.TransformHandlerFactory;
 
-public class TransformActor extends AbstractActor {
+public class TransformWorkerActor extends AbstractActor {
 
     private final Transform transform;
 
     private final TransformHandler handler;
 
-    private final ActorRef next;
+    private final ActorRef nextActor;
 
-    private final String ruleId;
-
-    private final String transformRuntimeId;
-
-    public TransformActor(Transform transform, ActorRef next, String ruleId, String transformRuntimeId) throws Exception {
+    public TransformWorkerActor(Transform transform, ActorRef nextActor) throws Exception {
         this.transform = transform;
-        this.next = next;
-        this.ruleId = ruleId;
-        this.transformRuntimeId = transformRuntimeId;
+        this.nextActor = nextActor;
         this.handler = TransformHandlerFactory.getHandler(transform.getTransformMode().getTransformHandler());
     }
 
     @Override
     public void preStart() throws Exception {
         Loggers.DRIVER.info("start transform [{}]", getSelf().path());
-        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM, transformRuntimeId);
+        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM, transform.getTransformRuntimeId());
         try {
-            transform.setRuleId(ruleId);
             handler.init(transform);
             runtimeStatus.normal();
         } catch (Exception e) {
             runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("transform actor start error {} : {}", handler.getClass(), e.getMessage());
         } finally {
-            RuntimeManger.handleStatus(ruleId, runtimeStatus);
+            RuntimeManger.handleStatus(transform.getRuleId(), runtimeStatus);
         }
     }
 
     @Override
     public void postStop() throws Exception {
         Loggers.DRIVER.info("stop transform [{}]", getSelf().path());
-        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM, transformRuntimeId);
+        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM, transform.getTransformRuntimeId());
         try {
             handler.destroy();
             runtimeStatus.init();
@@ -58,22 +51,22 @@ public class TransformActor extends AbstractActor {
             runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("transform actor stop error {} : {}", handler.getClass(), e.getMessage());
         } finally {
-            RuntimeManger.handleStatus(ruleId, runtimeStatus);
+            RuntimeManger.handleStatus(transform.getRuleId(), runtimeStatus);
         }
     }
 
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(RuntimeData.class, dataRecord -> {
-            RuntimeData transformRecord = new RuntimeData(RuntimeTypeEnum.TRANSFORM, transformRuntimeId);
+            RuntimeData transformRecord = new RuntimeData(RuntimeTypeEnum.TRANSFORM, transform.getTransformRuntimeId());
             try {
                 handler.transform(dataRecord, transformRecord::success);
-                next.tell(transformRecord, getSelf());
+                nextActor.tell(transformRecord, getSelf());
             } catch (Exception e) {
                 Loggers.DRIVER.error("transform data error: {}", e.getMessage());
                 transformRecord.fail(e.getMessage());
             } finally {
-                RuntimeManger.handleRecord(ruleId, transformRecord);
+                RuntimeManger.handleRecord(transform.getRuleId(), transformRecord);
             }
         }).build();
     }
