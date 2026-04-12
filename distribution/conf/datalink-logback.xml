@@ -85,24 +85,6 @@
         </encoder>
     </appender>
 
-    <appender name="datalink-driver"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/datalink-driver.log</file>
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/datalink-driver.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
-            <maxFileSize>2GB</maxFileSize>
-            <maxHistory>7</maxHistory>
-            <totalSizeCap>7GB</totalSizeCap>
-            <cleanHistoryOnStart>true</cleanHistoryOnStart>
-        </rollingPolicy>
-        <encoder>
-            <Pattern>%date %level %msg%n%n</Pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-    </appender>
-
-
     <appender name="datalink-rule"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_HOME}/datalink-rule.log</file>
@@ -159,12 +141,6 @@
         <level value="INFO"/>
         <level value="ERROR"/>
         <appender-ref ref="datalink-resource"/>
-    </logger>
-
-    <logger name="com.leon.datalink.driver" additivity="false">
-        <level value="INFO"/>
-        <level value="ERROR"/>
-        <appender-ref ref="datalink-driver"/>
     </logger>
 
     <logger name="com.leon.datalink.rule" additivity="false">

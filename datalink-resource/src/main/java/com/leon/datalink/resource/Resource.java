@@ -1,6 +1,7 @@
 package com.leon.datalink.resource;
 
 import com.leon.datalink.core.config.ConfigProperties;
+import com.leon.datalink.resource.constans.ResourceTypeEnum;
 
 import java.io.Serializable;
 
@@ -18,6 +19,8 @@ public class Resource implements Serializable {
     private ConfigProperties properties;
 
     private String resourceRuntimeId; //资源运行时id
+
+    private String ruleId;
 
     public String getResourceId() {
         return resourceId;
@@ -65,5 +68,14 @@ public class Resource implements Serializable {
 
     public void setResourceRuntimeId(String resourceRuntimeId) {
         this.resourceRuntimeId = resourceRuntimeId;
+    }
+
+    public String getRuleId() {
+        return ruleId;
+    }
+
+    public Resource setRuleId(String ruleId) {
+        this.ruleId = ruleId;
+        return this;
     }
 }

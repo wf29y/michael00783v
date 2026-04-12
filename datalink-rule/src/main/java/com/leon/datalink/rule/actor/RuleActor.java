@@ -5,8 +5,8 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import cn.hutool.core.collection.ListUtil;
 import com.leon.datalink.core.utils.Loggers;
-import com.leon.datalink.driver.actor.DriverActor;
-import com.leon.datalink.driver.constans.DriverModeEnum;
+import com.leon.datalink.resource.actor.DriverActor;
+import com.leon.datalink.resource.constans.DriverModeEnum;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.transform.Transform;
@@ -32,6 +32,8 @@ public class RuleActor extends AbstractActor {
 
     @Override
     public void preStart() {
+        Loggers.RULE.info("start rule [{}]", getSelf().path());
+
         ActorContext context = getContext();
 
         // 创建数据转换actor
@@ -44,14 +46,12 @@ public class RuleActor extends AbstractActor {
         }
 
         // 创建目的actor
-        destActorRefList = rule.getDestResourceList().stream().map(destResource -> context.actorOf((Props.create(DriverActor.class, destResource.getResourceType().getDriver(), destResource.getProperties(), DriverModeEnum.DEST, rule.getRuleId(), destResource.getResourceRuntimeId())),
+        destActorRefList = rule.getDestResourceList().stream().map(destResource -> context.actorOf((Props.create(DriverActor.class, destResource, DriverModeEnum.DEST)),
                 destResource.getResourceRuntimeId())).collect(Collectors.toList());
 
         // 创建源actor
-        sourceActorRefList = rule.getSourceResourceList().stream().map(sourceResource -> context.actorOf((Props.create(DriverActor.class, sourceResource.getResourceType().getDriver(), sourceResource.getProperties(), DriverModeEnum.SOURCE, rule.getRuleId(), sourceResource.getResourceRuntimeId())),
+        sourceActorRefList = rule.getSourceResourceList().stream().map(sourceResource -> context.actorOf((Props.create(DriverActor.class, sourceResource, DriverModeEnum.SOURCE)),
                 sourceResource.getResourceRuntimeId())).collect(Collectors.toList());
-
-        Loggers.RULE.info("start rule [{}]", getSelf().path());
     }
 
     @Override

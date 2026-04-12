@@ -6,7 +6,6 @@
     <inceptionYear>2022</inceptionYear>
     <modules>
         <module>datalink-web</module>
-        <module>datalink-driver</module>
         <module>datalink-resource</module>
         <module>datalink-core</module>
         <module>datalink-rule</module>
@@ -318,11 +317,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>datalink-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>datalink-driver</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

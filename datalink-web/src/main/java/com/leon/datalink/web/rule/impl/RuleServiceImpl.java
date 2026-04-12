@@ -11,6 +11,7 @@ import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
+import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.actor.RuleActor;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.transform.Transform;
@@ -108,6 +109,14 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
             transform.setWorkerNum(3);// todo 自定义数量
             transform.setRuleId(rule.getRuleId());
         }
+        List<Resource> destResourceList = rule.getDestResourceList();
+        for (Resource resource : destResourceList) {
+            resource.setRuleId(rule.getRuleId());
+        }
+        List<Resource> sourceResourceList = rule.getSourceResourceList();
+        for (Resource resource : sourceResourceList) {
+            resource.setRuleId(rule.getRuleId());
+        }
 
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
@@ -128,6 +137,14 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
         for (Transform transform : transformList) {
             transform.setWorkerNum(3);// todo 自定义数量
             transform.setRuleId(rule.getRuleId());
+        }
+        List<Resource> destResourceList = rule.getDestResourceList();
+        for (Resource resource : destResourceList) {
+            resource.setRuleId(rule.getRuleId());
+        }
+        List<Resource> sourceResourceList = rule.getSourceResourceList();
+        for (Resource resource : sourceResourceList) {
+            resource.setRuleId(rule.getRuleId());
         }
 
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
