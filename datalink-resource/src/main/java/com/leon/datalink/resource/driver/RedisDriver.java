@@ -6,8 +6,8 @@ import com.leon.datalink.core.utils.SignUtil;
 import com.leon.datalink.resource.AbstractDriver;
 import com.leon.datalink.resource.constans.DriverModeEnum;
 import com.leon.datalink.core.config.ConfigProperties;
-import com.leon.datalink.resource.util.RedisClusterCmd;
-import com.leon.datalink.resource.util.RedisCmd;
+import com.leon.datalink.resource.util.redis.RedisClusterCmd;
+import com.leon.datalink.resource.util.redis.RedisCmd;
 import org.springframework.util.StringUtils;
 import redis.clients.jedis.*;
 

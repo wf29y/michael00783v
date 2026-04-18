@@ -1,21 +1,20 @@
-package com.leon.datalink.resource.util;
+package com.leon.datalink.resource.util.redis;
 
 import com.leon.datalink.core.utils.SignUtil;
-import com.leon.datalink.resource.constans.RedisCommandEnum;
-import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * redis命令执行工具
+ * 集群模式redis命令执行工具
  *
  * @author leon
  * @date 2022年8月15日17:15:04
  */
-public class RedisCmd {
+public class RedisClusterCmd {
 
-    public static Object execute(Jedis jedis, String command) {
+    public static Object execute(JedisCluster jedis, String command) {
         Object result = null;
         try {
             RedisCommandEnum commandEnum = getCmd(command);
@@ -73,7 +72,7 @@ public class RedisCmd {
         return result;
     }
 
-    public static Object string(Jedis jedis, String command) {
+    public static Object string(JedisCluster jedis, String command) {
         String[] list = SignUtil.splitBySpace(command);
         RedisCommandEnum cmd = getCmd(command);
         String key = list[1];
@@ -91,7 +90,7 @@ public class RedisCmd {
         return result;
     }
 
-    public static Object hash(Jedis jedis, String command) {
+    public static Object hash(JedisCluster jedis, String command) {
         String[] list = SignUtil.splitBySpace(command);
         RedisCommandEnum cmd = getCmd(command);
         String key = list[1];
@@ -127,7 +126,7 @@ public class RedisCmd {
         return result;
     }
 
-    public static Object list(Jedis jedis, String command) {
+    public static Object list(JedisCluster jedis, String command) {
         String[] list = SignUtil.splitBySpace(command);
         RedisCommandEnum cmd = getCmd(command);
         String key = list[1];
@@ -160,7 +159,7 @@ public class RedisCmd {
         return result;
     }
 
-    public static Object set(Jedis jedis, String command) {
+    public static Object set(JedisCluster jedis, String command) {
         String[] list = SignUtil.splitBySpace(command);
         RedisCommandEnum cmd = getCmd(command);
         String key = list[1];
@@ -190,7 +189,7 @@ public class RedisCmd {
         return result;
     }
 
-    public static Object zset(Jedis jedis, String command) {
+    public static Object zset(JedisCluster jedis, String command) {
         String[] list = SignUtil.splitBySpace(command);
         RedisCommandEnum cmd = getCmd(command);
         String key = list[1];
@@ -229,13 +228,13 @@ public class RedisCmd {
     }
 
 
-    public static Object type(Jedis jedis, String command) {
+    public static Object type(JedisCluster jedis, String command) {
         String key = getKey(command);
         return jedis.type(key);
     }
 
 
-    public static Object del(Jedis jedis, String command) {
+    public static Object del(JedisCluster jedis, String command) {
         String key = getKey(command);
         return jedis.del(key);
     }

@@ -1,4 +1,4 @@
-package com.leon.datalink.resource.constans;
+package com.leon.datalink.resource.util.redis;
 
 public enum RedisCommandEnum {
     GET,

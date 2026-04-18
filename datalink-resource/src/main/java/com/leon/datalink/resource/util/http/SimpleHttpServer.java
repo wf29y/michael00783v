@@ -1,4 +1,4 @@
-package com.leon.datalink.resource.util;
+package com.leon.datalink.resource.util.http;
 
 import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.lang.Console;

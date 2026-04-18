@@ -7,7 +7,7 @@ import com.leon.datalink.core.listener.ListenerTypeEnum;
 import com.leon.datalink.resource.AbstractDriver;
 import com.leon.datalink.resource.constans.DriverModeEnum;
 import com.leon.datalink.core.config.ConfigProperties;
-import com.leon.datalink.resource.util.SimpleHttpServer;
+import com.leon.datalink.resource.util.http.SimpleHttpServer;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
