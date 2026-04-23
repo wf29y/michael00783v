@@ -44,7 +44,7 @@
                   <a-descriptions-item label='名称'>
                     {{ resource.resourceName }}
                   </a-descriptions-item>
-                  <a-descriptions-item label='ID'>
+                  <a-descriptions-item label='资源ID'>
                     {{ resource.resourceRuntimeId }}
                   </a-descriptions-item>
                   <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
@@ -80,17 +80,23 @@
                    :key='index+1' v-for='(transform,index) in modal.transformList'>
               <a-col :span='20'>
                 <a-descriptions :column='2'>
-                  <a-descriptions-item label='执行顺序'>
-                    {{ index + 1 }}
-                  </a-descriptions-item>
-                  <a-descriptions-item label='ID'>
-                    {{ transform.transformRuntimeId }}
-                  </a-descriptions-item>
                   <a-descriptions-item label='类型'>
                     {{ transformModeMap[transform.transformMode] }}
                   </a-descriptions-item>
+                  <a-descriptions-item label='处理器'>
+                    {{ transform.workerNum }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label='执行顺序'>
+                    {{ index + 1 }}
+                  </a-descriptions-item>
+                  <!--                  <a-descriptions-item label='转换ID'>
+                                      {{ transform.transformRuntimeId }}
+                                    </a-descriptions-item>-->
                   <a-descriptions-item label='SQL' v-if='transform.transformMode === "SQL"'>
                     {{ transform.properties.sql }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label='脚本' v-if='transform.transformMode === "SCRIPT"'>
+                    {{ subScript(transform.properties.script) }}
                   </a-descriptions-item>
                   <a-descriptions-item label='插件' v-if='transform.transformMode === "PLUGIN"'>
                     {{ transform.properties.plugin.pluginName }}
@@ -311,6 +317,7 @@ export default {
           let ids = this.modal.transformList.map(x => x.transformRuntimeId.split('_')[2])
           postAction(this.url.createId, ids).then((res) => {
             this.modal.transformList.push({
+              workerNum: 3,
               transformMode: 'WITHOUT',
               transformRuntimeId: 'transform_without_' + res.data.id
             })
@@ -410,7 +417,13 @@ export default {
     },
     onClose() {
       this.$router.push({ name: 'ruleList' })
+    },
+    subScript(content) {
+      let start = content.indexOf('function')
+      let end = start + 100
+      return content.substring(start, content.length > end ? end : content.length)
     }
+
   }
 }
 </script>

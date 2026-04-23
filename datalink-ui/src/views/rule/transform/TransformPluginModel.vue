@@ -6,18 +6,40 @@
     @cancel='handleCancel'
     :destroyOnClose='true'
     :maskClosable='false'
-    :footer='null'
     :bodyStyle='{padding:0}'
   >
     <div style='min-height: 400px'>
+      <a-table :columns='columns'
+               :data-source='pluginList'
+               size='small'
+               :pagination='false'
+               rowKey='pluginId'
+               :rowSelection="{ type:'radio',selectedRowKeys:selectedRowKeys,onChange:onSelectChange }">
 
-      <a-table :columns='columns' :data-source='pluginList' size='small' :pagination='false'>
-          <span slot='action' slot-scope='text,record'>
-            <a @click='select(record)'>选择</a>
-          </span>
+        <span slot='description' slot-scope='text, record, index'>
+          {{ text ? text : '-' }}
+        </span>
+
       </a-table>
-
     </div>
+
+    <template slot='footer'>
+      <div class='table-page-search-wrapper'>
+        <a-form layout='inline'>
+          <a-row :gutter='24'>
+            <a-col :md='6' :sm='24'>
+              <a-form-item label='处理器数量' style='margin-bottom: 0'>
+                <a-input-number v-model='transform.workerNum' placeholder='处理器数量' style='width: 100%' :min='1' />
+              </a-form-item>
+            </a-col>
+            <a-col :md='18' :sm='24'>
+              <a-button key='submit' type='primary' @click='handleOk'>确定</a-button>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+    </template>
+
   </a-modal>
 </template>
 
@@ -30,24 +52,23 @@ export default {
   data() {
     return {
       visible: false,
+      selectedRowKeys: [],
       url: {
         plugin: '/api/plugin/list'
       },
       columns: [
         {
-          title: '插件名称',
+          title: '名称',
           dataIndex: 'pluginName'
+        },
+        {
+          title: '包路径',
+          dataIndex: 'packagePath'
         },
         {
           title: '说明',
           dataIndex: 'description',
           scopedSlots: { customRender: 'description' }
-        },
-        {
-          title: '操作',
-          dataIndex: 'action',
-          align: 'center',
-          scopedSlots: { customRender: 'action' }
         }
       ],
       pluginList: [],
@@ -56,26 +77,33 @@ export default {
     }
   },
   mounted() {
-    this.init();
+    this.init()
   },
   methods: {
     init() {
       this.transformIndex = -1
       this.transform = {
         transformMode: 'PLUGIN',
+        workerNum: 3,
         properties: {
           plugin: {}
         }
       }
     },
     add() {
-      this.init();
+      this.init()
       this.edit(this.transform, -1)
     },
     edit(transform, index) {
       this.visible = true
       this.transform = JSON.parse(JSON.stringify(transform))
       this.transformIndex = index
+
+      if (this.transform.properties.plugin.pluginId) {
+        this.selectedRowKeys = [this.transform.properties.plugin.pluginId]
+      } else {
+        this.selectedRowKeys = []
+      }
 
       postAction(this.url.plugin, {}).then(res => {
         if (res.code === 200) {
@@ -84,8 +112,11 @@ export default {
       })
 
     },
-    select(record) {
-      this.transform.properties.plugin = JSON.parse(JSON.stringify(record))
+    onSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.transform.properties.plugin = JSON.parse(JSON.stringify(selectedRows[0]))
+    },
+    handleOk() {
       if (this.transformIndex >= 0) {
         this.$emit('update', this.transform, this.transformIndex)
       } else {
@@ -94,7 +125,7 @@ export default {
       this.visible = false
     },
     handleCancel() {
-      this.init();
+      this.init()
       this.visible = false
     }
   }

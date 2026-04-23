@@ -14,9 +14,21 @@
     </div>
 
     <template slot='footer'>
-      <a-button key='select' @click='handleSelect'>选择脚本</a-button>
-      <a-button key='back' @click='handleCancel'>取消</a-button>
-      <a-button key='submit' type='primary' @click='handleOk'>确定</a-button>
+      <div class='table-page-search-wrapper'>
+        <a-form layout='inline'>
+          <a-row :gutter='24'>
+            <a-col :md='6' :sm='24'>
+              <a-form-item label='处理器数量' style='margin-bottom: 0'>
+                <a-input-number v-model='transform.workerNum' placeholder='处理器数量' style='width: 100%' :min='1'/>
+              </a-form-item>
+            </a-col>
+            <a-col :md='18' :sm='24'>
+              <a-button key='select' @click='handleSelect'>选择脚本</a-button>
+              <a-button key='submit' type='primary' @click='handleOk'>确定</a-button>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
     </template>
 
     <script-select-model ref='ScriptSelectModel' @select='select'></script-select-model>
@@ -35,27 +47,18 @@ export default {
     return {
       visible: false,
       transformIndex: -1,
-      transform: {
-        transformMode: 'SCRIPT',
-        properties: {
-          script: '/**\n' +
-            '* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +
-            '*/\n' +
-            'function transform(data) {\n' +
-            '    return data;\n' +
-            '}'
-        }
-      }
+      transform: {}
     }
   },
   mounted() {
-    this.init();
+    this.init()
   },
   methods: {
     init() {
       this.transformIndex = -1
       this.transform = {
         transformMode: 'SCRIPT',
+        workerNum: 3,
         properties: {
           script: '/**\n' +
             '* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +
@@ -67,7 +70,7 @@ export default {
       }
     },
     add() {
-      this.init();
+      this.init()
       this.edit(this.transform, -1)
     },
     edit(transform, index) {
@@ -88,7 +91,7 @@ export default {
       this.visible = false
     },
     handleCancel() {
-      this.init();
+      this.init()
       this.visible = false
     },
     handleSelect() {

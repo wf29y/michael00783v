@@ -106,7 +106,9 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
 
         List<Transform> transformList = rule.getTransformList();
         for (Transform transform : transformList) {
-            transform.setWorkerNum(3);// todo 自定义数量
+            if (null == transform.getWorkerNum() || transform.getWorkerNum() <= 0) {
+                transform.setWorkerNum(3);
+            }
             transform.setRuleId(rule.getRuleId());
         }
         List<Resource> destResourceList = rule.getDestResourceList();
@@ -135,7 +137,9 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     public void update(Rule rule) throws KvStorageException {
         List<Transform> transformList = rule.getTransformList();
         for (Transform transform : transformList) {
-            transform.setWorkerNum(3);// todo 自定义数量
+            if (null == transform.getWorkerNum() || transform.getWorkerNum() <= 0) {
+                transform.setWorkerNum(3);
+            }
             transform.setRuleId(rule.getRuleId());
         }
         List<Resource> destResourceList = rule.getDestResourceList();

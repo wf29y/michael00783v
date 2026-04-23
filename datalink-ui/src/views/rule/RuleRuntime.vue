@@ -61,7 +61,7 @@
                 <a-descriptions-item label='名称'>
                   {{ resource.resourceName }}
                 </a-descriptions-item>
-                <a-descriptions-item label='ID'>
+                <a-descriptions-item label='资源ID'>
                   {{ resource.resourceRuntimeId }}
                 </a-descriptions-item>
                 <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
@@ -90,17 +90,23 @@
           <a-row style='background-color: #f6f6f6;padding: 15px 10px 0 15px'>
             <a-col :span='20'>
               <a-descriptions :column='2'>
-                <a-descriptions-item label='执行顺序'>
-                  {{ index + 1 }}
-                </a-descriptions-item>
-                <a-descriptions-item label='ID'>
-                  {{ transform.transformRuntimeId }}
-                </a-descriptions-item>
                 <a-descriptions-item label='类型'>
                   {{ transformModeMap[transform.transformMode] }}
                 </a-descriptions-item>
+                <a-descriptions-item label='处理器'>
+                  {{ transform.workerNum }}
+                </a-descriptions-item>
+                <a-descriptions-item label='执行顺序'>
+                  {{ index + 1 }}
+                </a-descriptions-item>
+                <!--                  <a-descriptions-item label='转换ID'>
+                                    {{ transform.transformRuntimeId }}
+                                  </a-descriptions-item>-->
                 <a-descriptions-item label='SQL' v-if='transform.transformMode === "SQL"'>
                   {{ transform.properties.sql }}
+                </a-descriptions-item>
+                <a-descriptions-item label='脚本' v-if='transform.transformMode === "SCRIPT"'>
+                  {{ subScript(transform.properties.script) }}
                 </a-descriptions-item>
                 <a-descriptions-item label='插件' v-if='transform.transformMode === "PLUGIN"'>
                   {{ transform.properties.plugin.pluginName }}
@@ -130,7 +136,7 @@
                 <a-descriptions-item label='名称'>
                   {{ resource.resourceName }}
                 </a-descriptions-item>
-                <a-descriptions-item label='ID'>
+                <a-descriptions-item label='资源ID'>
                   {{ resource.resourceRuntimeId }}
                 </a-descriptions-item>
                 <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index'
@@ -327,6 +333,11 @@ export default {
         dataList = this.runtime.transformRuntimeList[runtimeId].runtimeDataList
       }
       this.$refs.DataViewModel.show(dataList)
+    },
+    subScript(content) {
+      let start = content.indexOf('function')
+      let end = start + 100
+      return content.substring(start, content.length > end ? end : content.length)
     }
   }
 
