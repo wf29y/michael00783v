@@ -117,6 +117,10 @@ export default {
       this.transform.properties.plugin = JSON.parse(JSON.stringify(selectedRows[0]))
     },
     handleOk() {
+      if(this.selectedRowKeys.length === 0){
+        this.$message.error('请选择一个插件')
+        return
+      }
       if (this.transformIndex >= 0) {
         this.$emit('update', this.transform, this.transformIndex)
       } else {

@@ -314,13 +314,10 @@ export default {
     addTransform({ key }) {
       switch (key) {
         case 'WITHOUT': {
-          let ids = this.modal.transformList.map(x => x.transformRuntimeId.split('_')[2])
-          postAction(this.url.createId, ids).then((res) => {
-            this.modal.transformList.push({
-              workerNum: 3,
-              transformMode: 'WITHOUT',
-              transformRuntimeId: 'transform_without_' + res.data.id
-            })
+          if (this.modal.transformList.length > 0) break // 仅可在无转换的时候添加一个透传处理器
+          this.handleAddTransform({
+            workerNum: 3,
+            transformMode: 'WITHOUT'
           })
           break
         }
@@ -363,6 +360,10 @@ export default {
     handleAddTransform(transform) {
       let ids = this.modal.transformList.map(x => x.transformRuntimeId.split('_')[2])
       postAction(this.url.createId, ids).then((res) => {
+        // 移除透传
+        let withoutIndex = this.modal.transformList.findIndex(item => item.transformMode === 'WITHOUT')
+        if (withoutIndex >= 0) this.modal.transformList.splice(withoutIndex, 1)
+
         transform.transformRuntimeId = 'transform_' + transform.transformMode.toLowerCase() + '_' + res.data.id
         this.modal.transformList.push(transform)
       })

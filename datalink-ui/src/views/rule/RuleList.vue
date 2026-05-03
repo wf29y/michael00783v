@@ -27,6 +27,7 @@
         ref='table'
         :columns='columns'
         :data-source='dataSource'
+        rowKey='ruleId'
         :pagination='false'
         :loading='loading'
       >

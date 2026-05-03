@@ -38,6 +38,7 @@
 
       <a-table
         ref='table'
+        rowKey='resourceId'
         :columns='columns'
         :data-source='dataSource'
         :pagination='false'

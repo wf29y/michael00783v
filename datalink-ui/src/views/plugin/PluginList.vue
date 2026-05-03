@@ -23,6 +23,7 @@
     <a-card :body-style='{minHeight:"500px"}' :bordered='false'>
       <a-table
         ref='table'
+        rowKey='pluginId'
         :columns='columns'
         :data-source='dataSource'
         :pagination='false'
