@@ -40,22 +40,17 @@ if [ -z "$JAVA_HOME" ]; then
 fi
 
 export SERVER="datalink-server"
-export FUNCTION_MODE="all"
+export MODE="standalone"
 export MEMBER_LIST=""
-export EMBEDDED_STORAGE=""
-while getopts ":m:f:s:c:p:" opt
+while getopts ":m:s:c:" opt
 do
     case $opt in
         m)
             MODE=$OPTARG;;
-        f)
-            FUNCTION_MODE=$OPTARG;;
         s)
             SERVER=$OPTARG;;
         c)
             MEMBER_LIST=$OPTARG;;
-        p)
-            EMBEDDED_STORAGE=$OPTARG;;
         ?)
         echo "Unknown parameter"
         exit 1;;
@@ -70,7 +65,16 @@ export CUSTOM_SEARCH_LOCATIONS=file:${BASE_DIR}/conf/
 #===========================================================================================
 # JVM Configuration
 #===========================================================================================
-JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m -Xmn256m"
+if [[ "${MODE}" == "cluster" ]]; then
+    JAVA_OPT="${JAVA_OPT} -server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m"
+    JAVA_OPT="${JAVA_OPT} -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${BASE_DIR}/logs/java_heapdump.hprof"
+    JAVA_OPT="${JAVA_OPT} -XX:-UseLargePages"
+     JAVA_OPT="${JAVA_OPT} -Ddatalink.cluster=true"
+else
+    JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m -Xmn256m"
+fi
+
+JAVA_OPT="${JAVA_OPT} -Ddatalink.cluster.member.list=${MEMBER_LIST}"
 
 JAVA_MAJOR_VERSION=$($JAVA -version 2>&1 | sed -E -n 's/.* version "([0-9]*).*$/\1/p')
 if [[ "$JAVA_MAJOR_VERSION" -ge "9" ]] ; then
@@ -92,7 +96,11 @@ if [ ! -d "${BASE_DIR}/logs" ]; then
 fi
 
 echo "$JAVA ${JAVA_OPT}"
-echo "datalink is starting"
+if [[ "${MODE}" == "cluster" ]]; then
+    echo "datalink is starting with cluster"
+else
+    echo "datalink is starting with standalone"
+fi
 
 # check the start.out log output file
 if [ ! -f "${BASE_DIR}/logs/start.out" ]; then
@@ -101,4 +109,4 @@ fi
 # start
 echo "$JAVA ${JAVA_OPT}" > ${BASE_DIR}/logs/start.out 2>&1 &
 nohup $JAVA ${JAVA_OPT} datalink.datalink >> ${BASE_DIR}/logs/start.out 2>&1 &
-echo "datalink is starting，you can check the ${BASE_DIR}/logs/start.out"
+echo "datalink is starting, you can check the ${BASE_DIR}/logs/start.out"

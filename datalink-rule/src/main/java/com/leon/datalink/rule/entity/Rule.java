@@ -22,8 +22,6 @@ public class Rule implements Serializable {
 
     private List<Transform> transformList;
 
-    private Map<String, Object> variables;
-
     private boolean enable = false;
 
     private String searchResourceId;
@@ -89,15 +87,6 @@ public class Rule implements Serializable {
 
     public Rule setTransformList(List<Transform> transformList) {
         this.transformList = transformList;
-        return this;
-    }
-
-    public Map<String, Object> getVariables() {
-        return variables;
-    }
-
-    public Rule setVariables(Map<String, Object> variables) {
-        this.variables = variables;
         return this;
     }
 

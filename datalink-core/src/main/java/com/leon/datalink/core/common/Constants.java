@@ -2,6 +2,8 @@
 
 package com.leon.datalink.core.common;
 
+import com.leon.datalink.core.utils.StringUtils;
+
 import java.nio.file.Paths;
 
 /**
@@ -23,13 +25,17 @@ public class Constants {
 
     public static final String ENCODE = "UTF-8";
 
-    public static final String STORAGE_PATH = "./data";
+    public static final String DATALINK_HOME = System.getProperty("datalink.home");
 
     public static final String USER_DIR = System.getProperty("user.dir");
 
-    public static final String PLUGIN_FILE_PATH = Paths.get(USER_DIR, "plugin").toString();
+    public static final String BASE_DIR = StringUtils.isEmpty(DATALINK_HOME) ? USER_DIR : DATALINK_HOME;
 
-    public static final String BACKUP_FILE_PATH = Paths.get(USER_DIR, "backup").toString();
+    public static final String STORAGE_PATH = Paths.get(BASE_DIR, "data").toString();
+
+    public static final String PLUGIN_FILE_PATH = Paths.get(BASE_DIR, "plugin").toString();
+
+    public static final String BACKUP_FILE_PATH = Paths.get(BASE_DIR, "backup").toString();
 
     public static final String LOCAL_IP_PROPERTY_KEY = "datalink.local.ip";
 }

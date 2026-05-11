@@ -73,24 +73,15 @@ public class ScriptController {
             bind.put(key, globalVariable.get(key));
         }
 
-        Map<String, Object> variables = script.getVariables();
-        for (String key : variables.keySet()) {
-            bind.put(key, variables.get(key));
-        }
-
         scriptEngine.setBindings(bind, ScriptContext.ENGINE_SCOPE);
         scriptEngine.eval(script.getScriptContent());
         Invocable jsInvoke = (Invocable) scriptEngine;
         Object transform = jsInvoke.invokeFunction("transform", JacksonUtils.toObj(script.getParamContent(), Object.class));
 
-        if (MapUtil.isNotEmpty(variables)) {
-            variables.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
-        }
         long time2 = System.currentTimeMillis();
         Map<String, Object> result = new HashMap<>();
         result.put("result", ScriptUtil.toJavaObject(transform));
         result.put("time", time2 - time1);
-        result.put("variables", variables);
         return result;
     }
 

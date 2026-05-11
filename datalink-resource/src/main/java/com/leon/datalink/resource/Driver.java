@@ -3,6 +3,9 @@ package com.leon.datalink.resource;
 import akka.actor.ActorRef;
 import com.leon.datalink.resource.constans.DriverModeEnum;
 import com.leon.datalink.core.config.ConfigProperties;
+import com.leon.datalink.runtime.entity.RuntimeData;
+
+import java.util.function.Consumer;
 
 /**
  * @ClassName Driver
@@ -16,7 +19,7 @@ public interface Driver {
     /**
      * init driver
      */
-    void init(ActorRef ruleActorRef, String ruleId);
+    void init(Consumer<RuntimeData> consumer);
 
     /**
      * create driver

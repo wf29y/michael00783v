@@ -17,9 +17,5 @@ public abstract class DataLinkTransformPlugin implements DataLinkPlugin {
         return variable;
     }
 
-    public void updateVariable(String key, String value) {
-        if (variable.containsKey(key)) variable.put(key, value);
-    }
-
 
 }

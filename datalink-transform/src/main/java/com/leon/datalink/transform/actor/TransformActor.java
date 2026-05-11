@@ -11,17 +11,20 @@ import com.leon.datalink.transform.Transform;
 import com.leon.datalink.transform.handler.TransformHandler;
 import com.leon.datalink.transform.handler.TransformHandlerFactory;
 
-public class TransformWorkerActor extends AbstractActor {
+public class TransformActor extends AbstractActor {
 
     private final Transform transform;
 
     private final TransformHandler handler;
 
-    private final ActorRef nextActor;
+    private final ActorRef nextActorRef;
 
-    public TransformWorkerActor(Transform transform, ActorRef nextActor) throws Exception {
+    private final ActorRef ruleActorRef;
+
+    public TransformActor(Transform transform, ActorRef ruleActorRef, ActorRef nextActorRef) throws Exception {
         this.transform = transform;
-        this.nextActor = nextActor;
+        this.nextActorRef = nextActorRef;
+        this.ruleActorRef = ruleActorRef;
         this.handler = TransformHandlerFactory.getHandler(transform.getTransformMode().getTransformHandler());
     }
 
@@ -36,7 +39,7 @@ public class TransformWorkerActor extends AbstractActor {
             runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("transform actor start error {} : {}", handler.getClass(), e.getMessage());
         } finally {
-            RuntimeManger.handleStatus(transform.getRuleId(), runtimeStatus);
+            ruleActorRef.tell(runtimeStatus,getSelf());
         }
     }
 
@@ -51,7 +54,7 @@ public class TransformWorkerActor extends AbstractActor {
             runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("transform actor stop error {} : {}", handler.getClass(), e.getMessage());
         } finally {
-            RuntimeManger.handleStatus(transform.getRuleId(), runtimeStatus);
+            ruleActorRef.tell(runtimeStatus,getSelf());
         }
     }
 
@@ -61,12 +64,12 @@ public class TransformWorkerActor extends AbstractActor {
             RuntimeData transformRecord = new RuntimeData(RuntimeTypeEnum.TRANSFORM, transform.getTransformRuntimeId());
             try {
                 handler.transform(dataRecord, transformRecord::success);
-                nextActor.tell(transformRecord, getSelf());
+                nextActorRef.tell(transformRecord, getSelf());
             } catch (Exception e) {
                 Loggers.DRIVER.error("transform data error: {}", e.getMessage());
                 transformRecord.fail(e.getMessage());
             } finally {
-                RuntimeManger.handleRecord(transform.getRuleId(), transformRecord);
+                ruleActorRef.tell(transformRecord,getSelf());
             }
         }).build();
     }

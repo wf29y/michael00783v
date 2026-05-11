@@ -3,9 +3,12 @@ package com.leon.datalink.transform;
 import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.transform.constants.TransformModeEnum;
 
-public class Transform {
+import java.io.Serializable;
 
-    private String ruleId;
+public class Transform implements Serializable {
+    private static final long serialVersionUID = 1276156087085594222L;
+
+   // private String ruleId;
 
     private TransformModeEnum transformMode;
 
@@ -15,14 +18,14 @@ public class Transform {
 
     private Integer workerNum;
 
-    public String getRuleId() {
-        return ruleId;
-    }
-
-    public Transform setRuleId(String ruleId) {
-        this.ruleId = ruleId;
-        return this;
-    }
+//    public String getRuleId() {
+//        return ruleId;
+//    }
+//
+//    public Transform setRuleId(String ruleId) {
+//        this.ruleId = ruleId;
+//        return this;
+//    }
 
     public TransformModeEnum getTransformMode() {
         return transformMode;

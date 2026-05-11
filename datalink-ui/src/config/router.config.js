@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-import { home, resource, rule, script, variable, plugin, backup, listener } from '@/core/icons'
+import { home, resource, rule, script, variable, plugin, backup, listener, cluster } from '@/core/icons'
 
 const RouteView = {
   name: 'RouteView',
@@ -83,6 +83,12 @@ export const asyncRouterMap = [
         name: 'backupList',
         component: () => import('@/views/backup/BackupList'),
         meta: { title: '数据备份', keepAlive: true, icon: backup, permission: ['backup'] }
+      },
+      {
+        path: '/cluster/list',
+        name: 'clusterList',
+        component: () => import('@/views/cluster/ClusterList'),
+        meta: { title: '集群节点', keepAlive: true, icon: cluster, permission: ['cluster'] }
       }
     ]
   },

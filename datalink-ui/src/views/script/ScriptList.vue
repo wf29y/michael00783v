@@ -61,14 +61,6 @@ export default {
   data() {
     return {
       columns: [
-       /* {
-          title: '#',
-          scopedSlots: { customRender: 'serial' }
-        },*/
-        /* {
-           title: '脚本Id',
-           dataIndex: 'scriptId'
-         },*/
         {
           title: '脚本名称',
           dataIndex: 'scriptName'

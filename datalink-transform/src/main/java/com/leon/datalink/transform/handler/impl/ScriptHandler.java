@@ -1,10 +1,8 @@
 package com.leon.datalink.transform.handler.impl;
 
-import cn.hutool.core.map.MapUtil;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.ScriptUtil;
 import com.leon.datalink.core.variable.GlobalVariableContent;
-import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.transform.Transform;
 import com.leon.datalink.transform.handler.TransformHandler;
@@ -38,8 +36,6 @@ public class ScriptHandler implements TransformHandler {
             return;
         }
         try {
-            String ruleId = transform.getRuleId();
-
             // 获取并绑定自定义环境变量
             Bindings bind = scriptEngine.createBindings();
 
@@ -48,20 +44,10 @@ public class ScriptHandler implements TransformHandler {
                 bind.put(key, globalVariable.get(key));
             }
 
-            Map<String, Object> variables = RuntimeManger.getVariables(ruleId);
-            for (String key : variables.keySet()) {
-                bind.put(key, variables.get(key));
-            }
-
             scriptEngine.setBindings(bind, ScriptContext.ENGINE_SCOPE);
             scriptEngine.eval(script);
             Invocable jsInvoke = (Invocable) scriptEngine;
             Object scriptResult = jsInvoke.invokeFunction("transform", runtimeData.getData());
-
-            // 更新自定义环境变量
-            if (MapUtil.isNotEmpty(variables)) {
-                variables.replaceAll((k, v) -> scriptEngine.getContext().getAttribute(k));
-            }
 
             consumer.accept(ScriptUtil.toJavaObject(scriptResult));
         } catch (Exception e) {

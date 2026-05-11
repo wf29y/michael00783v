@@ -11,31 +11,37 @@ set BASE_DIR="%BASE_DIR:~0,-5%"
 
 set CUSTOM_SEARCH_LOCATIONS=file:%BASE_DIR%/conf/
 
-set FUNCTION_MODE="all"
+set MODE="standalone"
 set SERVER=datalink-server
 set MODE_INDEX=-1
-set FUNCTION_MODE_INDEX=-1
 set SERVER_INDEX=-1
-set EMBEDDED_STORAGE_INDEX=-1
-set EMBEDDED_STORAGE=""
 
 
 set i=0
 for %%a in (%*) do (
     if "%%a" == "-m" ( set /a MODE_INDEX=!i!+1 )
-    if "%%a" == "-f" ( set /a FUNCTION_MODE_INDEX=!i!+1 )
     if "%%a" == "-s" ( set /a SERVER_INDEX=!i!+1 )
-    if "%%a" == "-p" ( set /a EMBEDDED_STORAGE_INDEX=!i!+1 )
     set /a i+=1
 )
 
 set i=0
 for %%a in (%*) do (
     if %MODE_INDEX% == !i! ( set MODE="%%a" )
-    if %FUNCTION_MODE_INDEX% == !i! ( set FUNCTION_MODE="%%a" )
     if %SERVER_INDEX% == !i! (set SERVER="%%a")
-    if %EMBEDDED_STORAGE_INDEX% == !i! (set EMBEDDED_STORAGE="%%a")
     set /a i+=1
+)
+
+rem if datalink startup mode is standalone
+if %MODE% == "standalone" (
+    echo "datalink is starting with standalone"
+    set "DATALINK_JVM_OPTS=-Xms512m -Xmx512m -Xmn256m"
+)
+
+rem if datalink startup mode is cluster
+if %MODE% == "cluster" (
+    echo "datalink is starting with cluster"
+    set "DATALINK_OPTS=-Ddatalink.cluster=true"
+    set "DATALINK_JVM_OPTS=-server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=%BASE_DIR%\logs\java_heapdump.hprof -XX:-UseLargePages"
 )
 
 rem if datalink startup mode is standalone

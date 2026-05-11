@@ -20,7 +20,7 @@ public class Resource implements Serializable {
 
     private String resourceRuntimeId; //资源运行时id
 
-    private String ruleId;
+    //private String ruleId;
 
     public String getResourceId() {
         return resourceId;
@@ -70,12 +70,12 @@ public class Resource implements Serializable {
         this.resourceRuntimeId = resourceRuntimeId;
     }
 
-    public String getRuleId() {
-        return ruleId;
-    }
-
-    public Resource setRuleId(String ruleId) {
-        this.ruleId = ruleId;
-        return this;
-    }
+//    public String getRuleId() {
+//        return ruleId;
+//    }
+//
+//    public Resource setRuleId(String ruleId) {
+//        this.ruleId = ruleId;
+//        return this;
+//    }
 }

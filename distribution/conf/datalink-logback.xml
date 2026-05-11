@@ -119,6 +119,23 @@
         </encoder>
     </appender>
 
+    <appender name="datalink-cluster"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/datalink-cluster.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/datalink-cluster.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+            <maxFileSize>2GB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>7GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>%date %level %msg%n%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
 
     <root>
         <level value="INFO"/>
@@ -153,6 +170,13 @@
         <level value="INFO"/>
         <level value="ERROR"/>
         <appender-ref ref="datalink-runtime"/>
+    </logger>
+
+
+    <logger name="com.leon.datalink.cluster" additivity="false">
+        <level value="INFO"/>
+        <level value="ERROR"/>
+        <appender-ref ref="datalink-cluster"/>
     </logger>
 
 </configuration>

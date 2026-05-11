@@ -10,7 +10,6 @@ import java.util.LinkedList;
 public class RuntimeEntity implements Serializable {
     private static final long serialVersionUID = 1895166087085804777L;
 
-
     // 当前状态（初始化、正常、异常）
     private RuntimeStatusEnum status;
 

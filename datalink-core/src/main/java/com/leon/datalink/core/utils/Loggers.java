@@ -25,4 +25,6 @@ public class Loggers {
 
     public static final Logger WEB = LoggerFactory.getLogger("com.leon.datalink.web");
 
+    public static final Logger CLUSTER = LoggerFactory.getLogger("com.leon.datalink.cluster");
+
 }

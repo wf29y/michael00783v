@@ -103,23 +103,6 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
     @Override
     public void add(Rule rule) throws KvStorageException {
         if (StringUtils.isEmpty(rule.getRuleId())) rule.setRuleId(SnowflakeIdWorker.getId());
-
-        List<Transform> transformList = rule.getTransformList();
-        for (Transform transform : transformList) {
-            if (null == transform.getWorkerNum() || transform.getWorkerNum() <= 0) {
-                transform.setWorkerNum(3);
-            }
-            transform.setRuleId(rule.getRuleId());
-        }
-        List<Resource> destResourceList = rule.getDestResourceList();
-        for (Resource resource : destResourceList) {
-            resource.setRuleId(rule.getRuleId());
-        }
-        List<Resource> sourceResourceList = rule.getSourceResourceList();
-        for (Resource resource : sourceResourceList) {
-            resource.setRuleId(rule.getRuleId());
-        }
-
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
         runtimeService.initRuntime(rule);
@@ -135,22 +118,6 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
 
     @Override
     public void update(Rule rule) throws KvStorageException {
-        List<Transform> transformList = rule.getTransformList();
-        for (Transform transform : transformList) {
-            if (null == transform.getWorkerNum() || transform.getWorkerNum() <= 0) {
-                transform.setWorkerNum(3);
-            }
-            transform.setRuleId(rule.getRuleId());
-        }
-        List<Resource> destResourceList = rule.getDestResourceList();
-        for (Resource resource : destResourceList) {
-            resource.setRuleId(rule.getRuleId());
-        }
-        List<Resource> sourceResourceList = rule.getSourceResourceList();
-        for (Resource resource : sourceResourceList) {
-            resource.setRuleId(rule.getRuleId());
-        }
-
         this.kvStorage.put(rule.getRuleId().getBytes(), JacksonUtils.toJsonBytes(rule));
         ruleList.put(rule.getRuleId(), rule);
         runtimeService.initRuntime(rule);

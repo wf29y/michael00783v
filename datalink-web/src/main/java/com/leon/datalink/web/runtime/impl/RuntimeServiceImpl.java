@@ -93,7 +93,7 @@ public class RuntimeServiceImpl implements RuntimeService {
         List<String> sourceRuntimeIdList = rule.getSourceResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
         List<String> destRuntimeIdList = rule.getDestResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
         List<String> transformRuntimeIdList = rule.getTransformList().stream().map(Transform::getTransformRuntimeId).collect(Collectors.toList());
-        RuntimeManger.resetRuntime(rule.getRuleId(), new HashMap<>(rule.getVariables()), sourceRuntimeIdList, destRuntimeIdList, transformRuntimeIdList);
+        RuntimeManger.resetRuntime(rule.getRuleId(), sourceRuntimeIdList, destRuntimeIdList, transformRuntimeIdList);
         this.kvStorage.delete(ruleId.getBytes());
     }
 
@@ -103,6 +103,6 @@ public class RuntimeServiceImpl implements RuntimeService {
         List<String> sourceRuntimeIdList = rule.getSourceResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
         List<String> destRuntimeIdList = rule.getDestResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
         List<String> transformRuntimeIdList = rule.getTransformList().stream().map(Transform::getTransformRuntimeId).collect(Collectors.toList());
-        RuntimeManger.init(rule.getRuleId(), new HashMap<>(rule.getVariables()), sourceRuntimeIdList, destRuntimeIdList, transformRuntimeIdList);
+        RuntimeManger.init(rule.getRuleId(), sourceRuntimeIdList, destRuntimeIdList, transformRuntimeIdList);
     }
 }

@@ -156,18 +156,10 @@
       </a-list>
     </a-card>
 
-    <a-card :bordered='false' style='margin-bottom: 24px' v-if='variables.length>0'>
-      <div class='title'>环境变量</div>
-      <a-table :columns='varColumns' :data-source='variables' size='middle' :pagination='false'
-               style='margin-bottom: 20px'>
-      </a-table>
-    </a-card>
-
-    <a-card :bordered='false' style='margin-bottom: 24px'>
+    <a-card :bordered='false' style='margin-bottom: 24px' v-show='rule.description'>
       <a-row>
         <a-col :span='22'>
           <a-descriptions title='备注' :column='2'>
-<!--            <a-descriptions-item label='规则名称'>{{ rule.ruleName }}</a-descriptions-item>-->
             <a-descriptions-item> {{ rule.description ? rule.description : '无' }}</a-descriptions-item>
           </a-descriptions>
         </a-col>
@@ -203,7 +195,6 @@ export default {
       },
       rule: {},
       runtime: {},
-      variables: [],
       transformModeMap: transformModeMap,
       resourceTypeMap: resourceTypeMap,
       varColumns: [
@@ -265,24 +256,8 @@ export default {
       getAction(this.url.runtime, { ruleId: this.ruleId }).then(res => {
         this.runtime = res.data
         if (!this.runtime) return
-
         this.$refs.RuntimeGraph.init(this.rule, this.runtime)
-
-        // 处理变量
-        this.variables = []
-        if (this.rule.variables) {
-          let keys = Object.keys(this.rule.variables)
-          for (let key of keys) {
-            this.variables.push({
-              name: key,
-              value: this.runtime.variables[key],
-              initValue: this.rule.variables[key]
-            })
-          }
-        }
-
         this.countHandle()
-
       })
     },
     onClose() {

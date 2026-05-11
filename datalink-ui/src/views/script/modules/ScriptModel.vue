@@ -2,7 +2,6 @@
   <div>
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
 
-
       <a-card :bordered='false' style='margin-bottom: 20px' :body-style='{padding:"17px 24px"}'>
         <a-row>
           <a-col :span='12' style='font-size: 16px;font-weight: bold;color:rgba(0, 0, 0, 0.85);padding-top: 4px'>
@@ -10,8 +9,6 @@
           </a-col>
           <a-col :span='12' style='text-align: right'>
             <a-space size='small'>
-<!--            <span style='display: inline-block;margin-right: 30px;color: #b8b4b4'
-                  v-if='modal.updateTime'>最后修改：{{ modal.updateTime }}</span>-->
               <a-popconfirm title='放弃未保存的内容?' @confirm='() => {onClose()}' placement="bottom">
                 <a-button style='width:75px;'> 返回</a-button>
               </a-popconfirm>
@@ -24,7 +21,7 @@
 
       <a-row :gutter='24'>
 
-        <a-col :span='openTest?15:24'>
+        <a-col :span='openTest?16:24'>
           <a-card :bordered='false' :body-style='{paddingBottom: 0}'>
             <a-row :gutter='24'>
               <a-col :span='9'>
@@ -50,7 +47,7 @@
             </a-row>
           </a-card>
         </a-col>
-        <a-col :span='9' v-show='openTest'>
+        <a-col :span='8' v-show='openTest'>
 
           <a-card title='调试' :body-style='{paddingBottom:0}' :bordered='false'>
             <span slot='extra'>
@@ -59,18 +56,15 @@
             </span>
 
             <a-form-model-item label='输入参数（Json）' prop='paramContent' class='inputModel'>
-              <monaco-editor height='150px' ref='ParamContentEditor' language='json'></monaco-editor>
+              <monaco-editor height='285px' ref='ParamContentEditor' language='json'></monaco-editor>
             </a-form-model-item>
 
             <a-form-model-item label='运行结果' prop='resultContent' class='outputModel'>
               <div style='margin-top: -30px;width: 100%;text-align: right;height: 30px;color: #000000'>
                 <span v-show='time >= 0' style='display: inline-block;padding-right: 15px'>用时：{{ time }}ms</span>
               </div>
-              <monaco-editor height='150px' ref='ResultContentEditor' language='json'></monaco-editor>
+              <monaco-editor height='285px' ref='ResultContentEditor' language='json'></monaco-editor>
             </a-form-model-item>
-
-            <variables-model ref='VariablesModel'></variables-model>
-
           </a-card>
         </a-col>
 
@@ -83,14 +77,12 @@
 
 <script>
 import { getAction, postAction, putAction } from '@/api/manage'
-//import { formatJson } from '@/utils/util'
-import VariablesModel from './VariablesModel'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
 
 
 export default {
   name: 'ResourceModel',
-  components: { MonacoEditor, VariablesModel },
+  components: { MonacoEditor },
   data() {
     return {
       title: '操作',
@@ -105,7 +97,6 @@ export default {
           '}',
         paramContent: '{}',
         resultContent: '',
-        variables: {}
       },
       url: {
         info: '/api/script/info',
@@ -135,13 +126,11 @@ export default {
   },
   methods: {
     setEditorValue() {
-      this.$refs.VariablesModel.set(this.modal.variables)
       this.$refs.ScriptContentEditor.set(this.modal.scriptContent)
       this.$refs.ParamContentEditor.set(this.modal.paramContent)
       this.$refs.ResultContentEditor.set(this.modal.resultContent)
     },
     getEditorValue() {
-      this.modal.variables = this.$refs.VariablesModel.get()
       this.modal.scriptContent = this.$refs.ScriptContentEditor.get()
       this.modal.paramContent = this.$refs.ParamContentEditor.get()
       this.modal.resultContent = this.$refs.ResultContentEditor.get()
@@ -151,7 +140,6 @@ export default {
       postAction(this.url.run, this.modal).then(res => {
         if (res.code === 200) {
           this.modal.resultContent = JSON.stringify(res.data.result)
-          this.$refs.VariablesModel.set(res.data.variables)
           this.$refs.ResultContentEditor.set(this.modal.resultContent)
           this.time = res.data.time
           this.$message.success('运行成功')

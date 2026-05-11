@@ -1,11 +1,12 @@
 package com.leon.datalink.runtime.entity;
 
-import cn.hutool.core.date.DateTime;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
-public class RuntimeStatus {
+import java.io.Serializable;
+
+public class RuntimeStatus implements Serializable {
+    private static final long serialVersionUID = 1895166087085806666L;
 
     private RuntimeTypeEnum type;
 

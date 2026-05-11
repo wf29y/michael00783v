@@ -161,8 +161,6 @@
         <a-button @click='addResource("dest")' icon='plus'>添加目标资源</a-button>
       </a-card>
 
-      <variables-model ref='VariablesModel'></variables-model>
-
     </a-form-model>
     <resource-model ref='ResourceModel' @update='handleUpdateResource' @add='handleAddResource'></resource-model>
     <points-config-model ref='PointsConfigModel' @update='handleUpdatePoints'></points-config-model>
@@ -181,7 +179,6 @@ import draggable from 'vuedraggable'
 import { postAction, putAction, getAction } from '@/api/manage'
 import MonacoEditor from '@/components/Editor/MonacoEditor'
 import ResourceModel from './modules/ResourceModel'
-import VariablesModel from './modules/VariablesModel'
 import PointsConfigModel from './points/PointsConfigModel'
 import { resourceTypeMap, getResourceDetails } from '@/config/resource.config'
 import { transformModeMap, transformModeList } from '@/config/transform.config'
@@ -194,7 +191,6 @@ export default {
   components: {
     draggable,
     ResourceModel,
-    VariablesModel,
     MonacoEditor,
     PointsConfigModel,
     TransformScriptModel,
@@ -231,9 +227,6 @@ export default {
         let temp = res.data
         if (temp) {
           this.modal = res.data
-          this.$nextTick(() => {
-            this.$refs.VariablesModel.set(this.modal.variables)
-          })
         }
       })
     }
@@ -391,7 +384,6 @@ export default {
         if (valid) {
           that.confirmLoading = true
           let rule = JSON.parse(JSON.stringify(this.modal))
-          rule.variables = this.$refs.VariablesModel.get()
           let obj
           if (this.ruleId) {
             obj = putAction(this.url.update, rule)
