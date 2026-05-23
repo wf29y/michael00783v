@@ -3,7 +3,6 @@ package com.leon.datalink.transform.actor;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import com.leon.datalink.core.utils.Loggers;
-import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.runtime.entity.RuntimeStatus;

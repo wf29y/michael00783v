@@ -22,9 +22,6 @@ public class Runtime implements Serializable {
     // 转换运行状态
     private Map<String, RuntimeEntity> transformRuntimeList;
 
-    // 变量
-    //private Map<String, Object> variables;
-
 
     public DateTime getStartTime() {
         return startTime;
@@ -57,13 +54,5 @@ public class Runtime implements Serializable {
     public void setTransformRuntimeList(Map<String, RuntimeEntity> transformRuntimeList) {
         this.transformRuntimeList = transformRuntimeList;
     }
-
-//    public Map<String, Object> getVariables() {
-//        return variables;
-//    }
-//
-//    public void setVariables(Map<String, Object> variables) {
-//        this.variables = variables;
-//    }
 
 }

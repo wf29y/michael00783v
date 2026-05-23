@@ -3,7 +3,7 @@ package com.leon.datalink.web.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.leon.datalink.core.utils.IdUtil;
 import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.web.rule.RuleService;
+import com.leon.datalink.web.service.RuleService;
 import com.leon.datalink.web.util.ValidatorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

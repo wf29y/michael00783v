@@ -2,7 +2,7 @@ package com.leon.datalink.web.controller;
 
 import com.leon.datalink.core.variable.Variable;
 import com.leon.datalink.web.util.ValidatorUtil;
-import com.leon.datalink.web.variable.VariableService;
+import com.leon.datalink.web.service.VariableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

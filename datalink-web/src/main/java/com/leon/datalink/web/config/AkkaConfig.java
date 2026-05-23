@@ -3,7 +3,8 @@ package com.leon.datalink.web.config;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.event.Logging;
-import com.leon.datalink.core.cluster.ClusterListenerActor;
+import com.leon.datalink.cluster.actor.ClusterListenerActor;
+import com.leon.datalink.cluster.config.ClusterConfig;
 import com.leon.datalink.core.utils.EnvUtil;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -24,14 +25,11 @@ import java.util.stream.Collectors;
 @Configuration
 public class AkkaConfig {
 
-    @Value("${datalink.cluster.member.list}")
-    private String memberList;
-
     @Bean
     public ActorSystem actorSystem() {
         ActorSystem actorSystem;
         if (EnvUtil.isCluster()) {
-            actorSystem = ActorSystem.create("datalink", createClusterConfig());
+            actorSystem = ActorSystem.create("datalink", ClusterConfig.getConfig());
             actorSystem.actorOf(Props.create(ClusterListenerActor.class), "datalinkCluster");
         } else {
             actorSystem = ActorSystem.create("datalink");
@@ -40,23 +38,7 @@ public class AkkaConfig {
         return actorSystem;
     }
 
-    private Config createClusterConfig() {
-        String[] memberArray = memberList.split(",");
-        String[] local = memberArray[0].split(":");
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("akka.actor.provider", "cluster");
-        map.put("akka.actor.allow-java-serialization", true);
-        map.put("akka.remote.artery.enabled", "on");
-        map.put("akka.remote.artery.transport", "tcp");
-        map.put("akka.remote.artery.canonical.hostname", local[0]);
-        map.put("akka.remote.artery.canonical.port", local[1]);
-
-        List<String> nodes = Arrays.stream(memberArray).map(member -> "akka://datalink@" + member).collect(Collectors.toList());
-        map.put("akka.cluster.seed-nodes", nodes);
-
-        return ConfigFactory.parseMap(map);
-    }
 
 
 }

@@ -1,14 +1,9 @@
 package com.leon.datalink.web.controller;
 
 import com.leon.datalink.core.listener.Listener;
-import com.leon.datalink.core.variable.Variable;
-import com.leon.datalink.web.listener.ListenerService;
-import com.leon.datalink.web.util.ValidatorUtil;
-import com.leon.datalink.web.variable.VariableService;
+import com.leon.datalink.web.service.ListenerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.xml.bind.ValidationException;
 
 /**
  * @ClassName ListenerController
