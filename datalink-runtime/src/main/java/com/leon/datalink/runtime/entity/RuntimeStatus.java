@@ -1,12 +1,10 @@
 package com.leon.datalink.runtime.entity;
 
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 
-import java.io.Serializable;
-
-public class RuntimeStatus implements Serializable {
-    private static final long serialVersionUID = 1895166087085806666L;
+public class RuntimeStatus implements ProtostuffSerializable {
 
     private RuntimeTypeEnum type;
 

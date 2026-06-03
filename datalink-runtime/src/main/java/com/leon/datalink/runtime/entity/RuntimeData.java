@@ -1,13 +1,10 @@
 package com.leon.datalink.runtime.entity;
 
-import cn.hutool.core.date.DateTime;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import cn.hutool.core.date.DateUtil;
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 
-import java.io.Serializable;
-
-public class RuntimeData implements Serializable {
-    private static final long serialVersionUID = 1895166087085804888L;
+public class RuntimeData implements ProtostuffSerializable {
 
     private RuntimeTypeEnum type;
 
@@ -15,8 +12,7 @@ public class RuntimeData implements Serializable {
 
     private Object data;
 
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private DateTime time;
+    private String time;
 
     private boolean error;
 
@@ -36,14 +32,14 @@ public class RuntimeData implements Serializable {
 
     public RuntimeData success(Object data) {
         this.data = data;
-        this.time = DateTime.now();
+        this.time = DateUtil.now();
         this.error = false;
         return this;
     }
 
     public RuntimeData fail(String errorMessage) {
         this.errorMessage = errorMessage;
-        this.time = DateTime.now();
+        this.time = DateUtil.now();
         this.error = true;
         return this;
     }
@@ -57,11 +53,11 @@ public class RuntimeData implements Serializable {
         this.data = data;
     }
 
-    public DateTime getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(DateTime time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

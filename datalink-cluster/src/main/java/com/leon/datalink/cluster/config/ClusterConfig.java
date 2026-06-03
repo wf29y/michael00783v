@@ -23,7 +23,12 @@ public class ClusterConfig {
 
         Map<String, Object> map = new HashMap<>();
         map.put("akka.actor.provider", "cluster");
+
         map.put("akka.actor.allow-java-serialization", true);
+
+        map.put("akka.actor.serializers.protostuff", "com.leon.datalink.core.serializer.ProtostuffSerializer");
+        map.put("akka.actor.serialization-bindings.\"com.leon.datalink.core.serializer.ProtostuffSerializable\"", "protostuff");
+
         map.put("akka.remote.artery.enabled", "on");
         map.put("akka.remote.artery.transport", "tcp");
         map.put("akka.remote.artery.canonical.hostname", local[0]);

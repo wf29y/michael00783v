@@ -97,6 +97,7 @@
         <jedis.version>3.1.0</jedis.version>
         <reflections.version>0.9.10</reflections.version>
         <reactor-ql.version>1.0.14</reactor-ql.version>
+        <protostuff.version>1.8.0</protostuff.version>
     </properties>
     <!-- == -->
     <!-- =========================================================Build plugins================================================ -->
@@ -434,6 +435,18 @@
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-cluster_2.12</artifactId>
                 <version>${akka.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-core</artifactId>
+                <version>${protostuff.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-runtime</artifactId>
+                <version>${protostuff.version}</version>
             </dependency>
 
             <dependency>
