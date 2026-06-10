@@ -1,7 +1,7 @@
 # DATA LINK
 
 ### 一、介绍
-datalink是一个在各种异构数据源之间实现数据采集、桥接的工具，采用 Actor 模型开发。
+datalink是一个在各种异构数据源之间实现数据采集、桥接的工具，支持最少两个节点的集群模式。
 
 目前支持的数据源有：
 
@@ -33,6 +33,7 @@ cd datalink/bin
 
 ### 三、启动&停止
 
+单节点模式：
 ```bash
 cd datalink/bin
 
@@ -41,6 +42,23 @@ startup.cmd
 
 #linux start
 sh startup.sh
+
+#windows shutdown
+shutdown.cmd
+
+#linux shutdown
+sh shutdown.sh
+```
+
+集群模式：（需在配置文件中配置节点列表）
+```bash
+cd datalink/bin
+
+#windows start
+startup.cmd -m cluster
+
+#linux start
+sh startup.sh -m cluster
 
 #windows shutdown
 shutdown.cmd
@@ -58,16 +76,13 @@ sh shutdown.sh
 
 ### 五、配置文件
 
-默认端口：9966
+主要配置说明：
 
 ```bash
-#*************** Spring Boot Related Configurations ***************#
-### Default web context path:
-server.servlet.contextPath=/
-### Default web server port:
+### 用于访问管理页面的端口,默认9966
 server.port=9966
 
-#*************** Metrics Related Configurations ***************#
-### Metrics for prometheus
-management.endpoints.web.exposure.include=*
+### 集群模式下节点列表配置,形式为 IP:端口,IP:端口,IP:端口
+### 第一组IP端口必须为本节点的IP端口
+datalink.cluster.member.list=
 ```
