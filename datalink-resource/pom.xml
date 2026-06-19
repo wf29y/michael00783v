@@ -100,11 +100,6 @@
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>datalink-cluster</artifactId>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>datalink-runtime</artifactId>

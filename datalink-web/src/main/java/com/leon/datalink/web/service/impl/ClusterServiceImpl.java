@@ -1,7 +1,7 @@
 package com.leon.datalink.web.service.impl;
 
 import com.leon.datalink.cluster.ClusterMember;
-import com.leon.datalink.cluster.ClusterMemberContent;
+import com.leon.datalink.cluster.ClusterMemberManager;
 import com.leon.datalink.web.service.ClusterService;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public class ClusterServiceImpl implements ClusterService {
 
     @Override
     public List<ClusterMember> list(ClusterMember clusterMember) {
-        Stream<ClusterMember> stream = ClusterMemberContent.getList().stream();
+        Stream<ClusterMember> stream = ClusterMemberManager.getList().stream();
         if (null != clusterMember) {
             if (null != clusterMember.getMemberName()) {
                 stream = stream.filter(r -> r.getMemberName().contains(clusterMember.getMemberName()));

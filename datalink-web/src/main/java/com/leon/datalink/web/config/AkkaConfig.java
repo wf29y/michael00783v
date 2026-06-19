@@ -1,19 +1,10 @@
 package com.leon.datalink.web.config;
 
 import akka.actor.ActorSystem;
-import akka.actor.Props;
-import akka.event.Logging;
-import com.leon.datalink.cluster.actor.ClusterListenerActor;
-import com.leon.datalink.cluster.config.ClusterConfig;
-import com.leon.datalink.core.utils.EnvUtil;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
+import com.leon.datalink.cluster.ActorSystemFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @ClassName AkkaConfig
@@ -25,20 +16,12 @@ import java.util.stream.Collectors;
 @Configuration
 public class AkkaConfig {
 
+    @Value("${datalink.cluster.member.list}")
+    private String memberListConfig;
+
     @Bean
     public ActorSystem actorSystem() {
-        ActorSystem actorSystem;
-        if (EnvUtil.isCluster()) {
-            actorSystem = ActorSystem.create("datalink", ClusterConfig.getConfig());
-            actorSystem.actorOf(Props.create(ClusterListenerActor.class), "datalinkCluster");
-        } else {
-            actorSystem = ActorSystem.create("datalink");
-        }
-        actorSystem.eventStream().setLogLevel(Logging.ErrorLevel());
-        return actorSystem;
+        return ActorSystemFactory.create(memberListConfig);
     }
-
-
-
 
 }

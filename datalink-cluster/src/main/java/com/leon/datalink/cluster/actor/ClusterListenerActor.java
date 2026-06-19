@@ -4,7 +4,7 @@ package com.leon.datalink.cluster.actor;
 import akka.actor.AbstractActor;
 import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent;
-import com.leon.datalink.cluster.ClusterMemberContent;
+import com.leon.datalink.cluster.ClusterMemberManager;
 import com.leon.datalink.core.utils.Loggers;
 
 /**
@@ -26,12 +26,12 @@ public class ClusterListenerActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(ClusterEvent.MemberUp.class, msg -> {
-            ClusterMemberContent.up(msg.member());
+            ClusterMemberManager.up(msg.member());
             Loggers.CLUSTER.info("Member UP {}", msg.member().address());
         }).match(ClusterEvent.UnreachableMember.class, msg -> {
             Loggers.CLUSTER.info("Member unreachable {}", msg.member().address());
         }).match(ClusterEvent.MemberRemoved.class, msg -> {
-            ClusterMemberContent.down(msg.member());
+            ClusterMemberManager.down(msg.member());
             Loggers.CLUSTER.info("Member Removed {}", msg.member().address());
         })
 //                .match(ClusterEvent.MemberEvent.class, msg -> {
