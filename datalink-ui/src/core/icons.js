@@ -20,6 +20,7 @@ import resourceNode from '@/assets/nodes/resource.svg?inline' // path to your '*
 import withoutNode from '@/assets/nodes/rule.svg?inline' // path to your '*.svg?inline' file.
 import scriptNode from '@/assets/nodes/script.svg?inline' // path to your '*.svg?inline' file.
 import pluginNode from '@/assets/nodes/plugin.svg?inline' // path to your '*.svg?inline' file.
+import sqlNode from '@/assets/nodes/sql.svg?inline' // path to your '*.svg?inline' file.
 
 export {
   home,
@@ -34,5 +35,6 @@ export {
   withoutNode,
   scriptNode,
   pluginNode,
-  resourceNode
+  resourceNode,
+  sqlNode
 }

@@ -1,13 +1,32 @@
 <template>
 
-  <a-popover :title='resource.resourceName'>
+  <a-popover>
+    <template slot='title'>
+      <div style='padding: 5px 0'>{{resource.resourceName}}</div>
+    </template>
     <template slot='content'>
-      <p>资源类型：{{resourceTypeMap[resource.resourceType] }}</p>
-      <p v-for='(element,index) in getDetails(resource)' :key='index'>{{ element.name }}：{{ element.value }}</p>
-      <p v-show='runtime.time'>最近时间：{{runtime.time}}</p>
-      <p>处理成功：{{runtime.successCount}}</p>
-      <p>处理失败：{{runtime.failCount}}</p>
-      <p v-show='runtime.message'>失败原因：{{runtime.message}}</p>
+      <a-descriptions :column='2' style='width: 500px'>
+        <a-descriptions-item label='资源类型'>{{ resourceTypeMap[resource.resourceType] }}</a-descriptions-item>
+        <a-descriptions-item label='资源ID'>{{ resource.resourceRuntimeId }}</a-descriptions-item>
+        <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index' :label='element.name'>
+          {{ element.value }}
+        </a-descriptions-item>
+        <a-descriptions-item label='处理成功'>{{ runtime.successCount }}</a-descriptions-item>
+        <a-descriptions-item label='处理失败'>{{ runtime.failCount }}</a-descriptions-item>
+        <a-descriptions-item label='异常原因' v-if='runtime.message'>{{ runtime.message }}</a-descriptions-item>
+      </a-descriptions>
+      <a-table :columns='dataColumns' :data-source='getObjectValues(runtime.runtimeMemberList)' size='small' :pagination='false'>
+            <span slot='status' slot-scope='text,record'>
+                        <a-popover title='说明'>
+                          <template slot='content'>
+                            {{ record.message ? record.message : '—' }}
+                          </template>
+                            <a-badge v-if='text==="INIT"' text='初始化' />
+                            <a-badge v-if='text==="NORMAL"' color='green' text='正常' />
+                            <a-badge v-if='text==="ABNORMAL"' color='red' text='异常' />
+                        </a-popover>
+            </span>
+      </a-table>
     </template>
     <div class='node' :class='nodeClass'>
       <a-icon :component='resourceNode' class='icon'></a-icon>
@@ -29,7 +48,30 @@ export default {
       resourceNode,
       resourceTypeMap: resourceTypeMap,
       resource: {},
-      runtime: {}
+      runtime: {},
+      dataColumns: [
+        {
+          title: '节点',
+          dataIndex: 'memberName',
+          width: 200
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+          width: 100,
+          scopedSlots: { customRender: 'status' }
+        },
+        {
+          title: '成功',
+          dataIndex: 'successCount',
+          width: 100
+        },
+        {
+          title: '失败',
+          dataIndex: 'failCount',
+          width: 100
+        }
+      ]
     }
   },
 
@@ -41,6 +83,12 @@ export default {
     },
     getDetails(resource) {
       return getResourceDetails(resource, 'rule')
+    },
+    getObjectValues(object) {
+      let values = []
+      for (let property in object)
+        values.push(object[property])
+      return values
     }
   },
 

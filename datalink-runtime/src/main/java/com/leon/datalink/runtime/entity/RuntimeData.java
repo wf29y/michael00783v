@@ -1,6 +1,7 @@
 package com.leon.datalink.runtime.entity;
 
 import cn.hutool.core.date.DateUtil;
+import com.leon.datalink.cluster.ClusterMemberManager;
 import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 
@@ -16,7 +17,9 @@ public class RuntimeData implements ProtostuffSerializable {
 
     private boolean error;
 
-    private String errorMessage;
+    private String message;
+
+    private String memberName = ClusterMemberManager.getLocalMemberName();
 
     public RuntimeData() {
     }
@@ -37,8 +40,8 @@ public class RuntimeData implements ProtostuffSerializable {
         return this;
     }
 
-    public RuntimeData fail(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public RuntimeData fail(String message) {
+        this.message = message;
         this.time = DateUtil.now();
         this.error = true;
         return this;
@@ -69,12 +72,12 @@ public class RuntimeData implements ProtostuffSerializable {
         this.error = error;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public RuntimeTypeEnum getType() {
@@ -91,5 +94,13 @@ public class RuntimeData implements ProtostuffSerializable {
 
     public void setEntityRuntimeId(String entityRuntimeId) {
         this.entityRuntimeId = entityRuntimeId;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 }

@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title='最近数据'
-    :width='950'
+    :width='1100'
     :visible='visible'
     @cancel='onClose'
     :bodyStyle='{padding:"10px 15px 15px 15px"}'
@@ -17,7 +17,7 @@
       <span slot='data' slot-scope='text,record'>
         <a-popover title='数据'>
                 <template slot='content'>
-                  {{ text ? text : '—' }}
+                 {{ text ? text : '—' }}
                 </template>
                  {{ text ? text : '—' }}
         </a-popover>
@@ -26,12 +26,12 @@
       <span slot='error' slot-scope='text,record'>
               <a-popover title='说明'>
                 <template slot='content'>
-                  {{ record.errorMessage ? record.errorMessage : '—' }}
+                  {{ record.message ? record.message : '—' }}
                 </template>
                   <a-badge v-if='text===true' color='red' text='失败' />
                   <a-badge v-if='text===false' color='green' text='成功' />
               </a-popover>
-            </span>
+      </span>
     </a-table>
 
   </a-modal>
@@ -49,19 +49,25 @@ export default {
         {
           title: '时间',
           dataIndex: 'time',
+          width: 100
+        },
+        {
+          title: '节点',
+          dataIndex: 'memberName',
+          width: 130
+        },
+        {
+          title: '状态',
+          dataIndex: 'error',
+          width: 60,
+          scopedSlots: { customRender: 'error' }
         },
         {
           title: '数据',
           dataIndex: 'data',
           scopedSlots: { customRender: 'data' },
-          ellipsis:true,
-          width:'70%'
-        },
-        {
-          title: '状态',
-          dataIndex: 'error',
-          width:'10%',
-          scopedSlots: { customRender: 'error' }
+          ellipsis: true,
+          width: 400
         }
       ]
     }

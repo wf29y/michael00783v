@@ -5,8 +5,13 @@ import com.leon.datalink.runtime.constants.Constants;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
+/**
+ * 运行时资源或转换
+ */
 public class RuntimeEntity implements Serializable {
     private static final long serialVersionUID = 1895166087085804777L;
 
@@ -22,11 +27,15 @@ public class RuntimeEntity implements Serializable {
     // 失败统计
     private long failCount;
 
+    // 每个节点上的统计 key为memberName
+    private final Map<String, RuntimeMember> runtimeMemberList;
+
     private final LinkedList<RuntimeData> runtimeDataList;
 
     public RuntimeEntity() {
         status = RuntimeStatusEnum.INIT;
         runtimeDataList = Lists.newLinkedList();
+        runtimeMemberList = new HashMap<>();
     }
 
     public void addDataRecord(RuntimeData runtimeData) {
@@ -36,17 +45,33 @@ public class RuntimeEntity implements Serializable {
         }
         if (runtimeData.isError()) {
             failCount++;
-            status = RuntimeStatusEnum.ABNORMAL;
-            message = runtimeData.getErrorMessage();
         } else {
             successCount++;
-            status = RuntimeStatusEnum.NORMAL;
+        }
+
+        String memberName = runtimeData.getMemberName();
+        RuntimeMember runtimeMember = runtimeMemberList.get(memberName);
+        if(null==runtimeMember){
+            runtimeMember = new RuntimeMember(memberName);
+            runtimeMember.addDataRecord(runtimeData);
+            runtimeMemberList.put(memberName,runtimeMember);
+        }else {
+            runtimeMember.addDataRecord(runtimeData);
         }
     }
 
     public void updateStatus(RuntimeStatus runtimeStatus) {
         this.status = runtimeStatus.getStatus();
-        this.message = runtimeStatus.getErrorMessage();
+        this.message = runtimeStatus.getMessage();
+        String memberName = runtimeStatus.getMemberName();
+        RuntimeMember runtimeMember = runtimeMemberList.get(memberName);
+        if(null==runtimeMember){
+            runtimeMember = new RuntimeMember(memberName);
+            runtimeMember.updateStatus(runtimeStatus);
+            runtimeMemberList.put(memberName,runtimeMember);
+        }else {
+            runtimeMember.updateStatus(runtimeStatus);
+        }
     }
 
     public RuntimeStatusEnum getStatus() {
@@ -85,4 +110,7 @@ public class RuntimeEntity implements Serializable {
         this.failCount = failedCount;
     }
 
+    public Map<String, RuntimeMember> getRuntimeMemberList() {
+        return runtimeMemberList;
+    }
 }

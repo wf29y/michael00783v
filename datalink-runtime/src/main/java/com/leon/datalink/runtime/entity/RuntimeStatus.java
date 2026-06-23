@@ -1,5 +1,6 @@
 package com.leon.datalink.runtime.entity;
 
+import com.leon.datalink.cluster.ClusterMemberManager;
 import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
@@ -10,9 +11,11 @@ public class RuntimeStatus implements ProtostuffSerializable {
 
     private RuntimeStatusEnum status;
 
-    private String errorMessage;
+    private String message;
 
     private String entityRuntimeId;
+
+    private String memberName = ClusterMemberManager.getLocalMemberName();
 
     public RuntimeStatus() {
     }
@@ -28,10 +31,10 @@ public class RuntimeStatus implements ProtostuffSerializable {
         this.entityRuntimeId = entityRuntimeId;
     }
 
-    public RuntimeStatus(RuntimeTypeEnum type,RuntimeStatusEnum status,String errorMessage,String entityRuntimeId) {
+    public RuntimeStatus(RuntimeTypeEnum type,RuntimeStatusEnum status,String message,String entityRuntimeId) {
         this.type = type;
         this.status = status;
-        this.errorMessage = errorMessage;
+        this.message = message;
         this.entityRuntimeId = entityRuntimeId;
     }
 
@@ -43,9 +46,9 @@ public class RuntimeStatus implements ProtostuffSerializable {
         this.status = RuntimeStatusEnum.NORMAL;
     }
 
-    public void abnormal(String errorMessage){
+    public void abnormal(String message){
         this.status = RuntimeStatusEnum.ABNORMAL;
-        this.errorMessage = errorMessage;
+        this.message = message;
     }
 
 
@@ -57,12 +60,12 @@ public class RuntimeStatus implements ProtostuffSerializable {
         this.type = type;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public RuntimeStatusEnum getStatus() {
@@ -79,5 +82,13 @@ public class RuntimeStatus implements ProtostuffSerializable {
 
     public void setEntityRuntimeId(String entityRuntimeId) {
         this.entityRuntimeId = entityRuntimeId;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 }

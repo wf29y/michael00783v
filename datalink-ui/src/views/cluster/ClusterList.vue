@@ -39,7 +39,7 @@
       >
 
         <span slot='memberName' slot-scope='text, record, index'>
-            {{ text }}   <a-tag v-if='record.local'>本地</a-tag>
+            {{ text }}   <a-tag v-if='record.local'>当前节点</a-tag>
         </span>
 
         <span slot='memberState' slot-scope='text, record, index'>
