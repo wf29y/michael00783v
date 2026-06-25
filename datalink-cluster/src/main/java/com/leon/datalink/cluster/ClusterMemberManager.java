@@ -3,6 +3,8 @@ package com.leon.datalink.cluster;
 import akka.cluster.Member;
 import cn.hutool.core.date.DateTime;
 import com.leon.datalink.cluster.constants.ClusterMemberStateEnum;
+import com.leon.datalink.core.utils.EnvUtil;
+import com.leon.datalink.core.variable.GlobalVariableContent;
 
 import java.util.*;
 
@@ -14,6 +16,18 @@ public class ClusterMemberManager {
     private static final Map<String, ClusterMember> members = new HashMap<>();
 
     private static String localMemberName;
+
+    static {
+        if(!EnvUtil.isCluster()){
+            setLocalMemberName("datalink@127.0.0.1");
+            ClusterMember clusterMember = new ClusterMember();
+            clusterMember.setMemberName(localMemberName);
+            clusterMember.setMemberState(ClusterMemberStateEnum.UP);
+            clusterMember.setLocal(true);
+            clusterMember.setUpdateTime(DateTime.now().toString());
+            members.put(localMemberName,clusterMember);
+        }
+    }
 
     public static void up(Member member) {
         String name = getMemberName(member);
@@ -48,5 +62,6 @@ public class ClusterMemberManager {
 
     public static void setLocalMemberName(String localMemberName) {
         ClusterMemberManager.localMemberName = localMemberName;
+        GlobalVariableContent.setValue("localMemberName", localMemberName);
     }
 }

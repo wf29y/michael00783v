@@ -37,5 +37,4 @@ public class Constants {
 
     public static final String BACKUP_FILE_PATH = Paths.get(BASE_DIR, "backup").toString();
 
-    public static final String LOCAL_IP_PROPERTY_KEY = "datalink.local.ip";
 }

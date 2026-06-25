@@ -7,8 +7,8 @@
     </a-tooltip>
 
     <a-tooltip placement='left'>
-      <template slot='title'>服务IP地址</template>
-      <span class='system-info-item'><span>IP：</span>{{ systemInfo.ip }}</span>
+      <template slot='title'>当前服务节点</template>
+      <span class='system-info-item'><span>节点：</span>{{ systemInfo.localMemberName }}</span>
     </a-tooltip>
 
     <a-tooltip placement='left'>

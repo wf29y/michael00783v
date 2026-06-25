@@ -13,7 +13,7 @@ public class SystemInfo {
 
     private String version;
 
-    private String ip;
+    private String localMemberName;
 
     private String time;
 
@@ -27,12 +27,12 @@ public class SystemInfo {
         this.version = version;
     }
 
-    public String getIp() {
-        return ip;
+    public String getLocalMemberName() {
+        return localMemberName;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setLocalMemberName(String localMemberName) {
+        this.localMemberName = localMemberName;
     }
 
     public String getTime() {

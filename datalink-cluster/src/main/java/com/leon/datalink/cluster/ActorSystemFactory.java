@@ -30,10 +30,9 @@ public class ActorSystemFactory {
         ActorSystem actorSystem;
         if (EnvUtil.isCluster()) {
             actorSystem = ActorSystem.create("datalink", getConfig(memberListConfig));
-            actorSystem.actorOf(Props.create(ClusterListenerActor.class), "datalinkCluster");
+            actorSystem.actorOf(Props.create(ClusterListenerActor.class), "datalinkClusterListener");
         } else {
             actorSystem = ActorSystem.create("datalink");
-            ClusterMemberManager.setLocalMemberName("datalink@127.0.0.1");
         }
         actorSystem.eventStream().setLogLevel(Logging.ErrorLevel());
         return actorSystem;

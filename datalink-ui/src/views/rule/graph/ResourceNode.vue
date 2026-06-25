@@ -2,7 +2,7 @@
 
   <a-popover>
     <template slot='title'>
-      <div style='padding: 5px 0'>{{resource.resourceName}}</div>
+      <div style='padding: 5px 0'>{{ resource.resourceName }}</div>
     </template>
     <template slot='content'>
       <a-descriptions :column='2' style='width: 500px'>
@@ -11,11 +11,13 @@
         <a-descriptions-item v-for='(element,index) in getDetails(resource)' :key='index' :label='element.name'>
           {{ element.value }}
         </a-descriptions-item>
+      </a-descriptions>
+      <a-descriptions :column='2' style='width: 500px'>
         <a-descriptions-item label='处理成功'>{{ runtime.successCount }}</a-descriptions-item>
         <a-descriptions-item label='处理失败'>{{ runtime.failCount }}</a-descriptions-item>
-        <a-descriptions-item label='异常原因' v-if='runtime.message'>{{ runtime.message }}</a-descriptions-item>
       </a-descriptions>
-      <a-table :columns='dataColumns' :data-source='getObjectValues(runtime.runtimeMemberList)' size='small' :pagination='false'>
+      <a-table :columns='dataColumns' :data-source='getObjectValues(runtime.runtimeMemberList)' size='small'
+               :pagination='false'>
             <span slot='status' slot-scope='text,record'>
                         <a-popover title='说明'>
                           <template slot='content'>

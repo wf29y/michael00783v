@@ -2,6 +2,7 @@ package com.leon.datalink.web.controller;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import com.leon.datalink.cluster.ClusterMemberManager;
 import com.leon.datalink.core.utils.VersionUtils;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;
@@ -20,8 +21,6 @@ import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.leon.datalink.core.common.Constants.LOCAL_IP_PROPERTY_KEY;
 
 /**
  * @ClassName SystemInfoController
@@ -43,7 +42,7 @@ public class SystemInfoController {
     @GetMapping("/info")
     public Object getSystemInfo() {
         SystemInfo info = new SystemInfo();
-        info.setIp(System.getProperty(LOCAL_IP_PROPERTY_KEY));
+        info.setLocalMemberName(ClusterMemberManager.getLocalMemberName());
         info.setVersion(VersionUtils.version);
         info.setTime(DateUtil.format(DateTime.now(), "yyyy-MM-dd HH:mm"));
         info.setUsername((String) BaseContextUtil.get(BaseContextUtil.USER_NAME));

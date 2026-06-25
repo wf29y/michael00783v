@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.leon.datalink.core.common.Constants.LOCAL_IP_PROPERTY_KEY;
-
 /**
  * 全局变量
  */
@@ -19,7 +17,7 @@ public class GlobalVariableContent {
     private static final Map<String, Variable> globalVariable = new HashMap<>();
 
     static {
-        globalVariable.put("ip", new Variable("ip", System.getProperty(LOCAL_IP_PROPERTY_KEY), "系统本地IP", VariableTypeEnum.SYSTEM));
+        globalVariable.put("localMemberName", new Variable("localMemberName", null, "本地节点", VariableTypeEnum.SYSTEM));
         globalVariable.put("version", new Variable("version", VersionUtils.version, "当前系统版本", VariableTypeEnum.SYSTEM));
         globalVariable.put("timestamp", new Variable("timestamp", null, "当前毫秒时间戳", VariableTypeEnum.SYSTEM));
         globalVariable.put("date", new Variable("date", null, "当前日期", VariableTypeEnum.SYSTEM));

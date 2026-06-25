@@ -138,10 +138,17 @@ export default {
           { id: 'transform-node-port-bottom', group: 'bottom' }
         ]
         if (i === 0) {
-          items = [
-            { id: 'transform-node-port-left', group: 'left' },
-            { id: 'transform-node-port-bottom', group: 'bottom' }
-          ]
+          if (transformList.length === 1) {
+            items = [
+              { id: 'transform-node-port-left', group: 'left' },
+              { id: 'transform-node-port-bottom', group: 'right' }
+            ]
+          } else {
+            items = [
+              { id: 'transform-node-port-left', group: 'left' },
+              { id: 'transform-node-port-bottom', group: 'bottom' }
+            ]
+          }
         } else if (i === transformList.length - 1) {
           items = [
             { id: 'transform-node-port-top', group: 'top' },
@@ -171,7 +178,7 @@ export default {
             id: 'transform-transform-edge-' + i,
             shape: 'dag-edge',
             source: {
-              cell: 'transform-node-' + (i-1),
+              cell: 'transform-node-' + (i - 1),
               port: 'transform-node-port-bottom'
             },
             target: {
