@@ -3,10 +3,8 @@ package com.leon.datalink.runtime;
 import cn.hutool.core.date.DateTime;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
-import com.leon.datalink.runtime.entity.RuntimeData;
+import com.leon.datalink.runtime.entity.*;
 import com.leon.datalink.runtime.entity.Runtime;
-import com.leon.datalink.runtime.entity.RuntimeEntity;
-import com.leon.datalink.runtime.entity.RuntimeStatus;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,56 +21,51 @@ public class RuntimeManger {
     /**
      * 初始化
      */
-    public static void init(String ruleId, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList, List<String> transformIdList) {
+    public static void initRuntime(String ruleId, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList, List<String> transformIdList) {
         Runtime ruleRuntime = runtimeList.get(ruleId);
-        // 非首次初始化
-        if (null != ruleRuntime) {
 
-            // 资源运行状保持
-            Map<String, RuntimeEntity> sourceRuntimeMap = new HashMap<>(sourceRuntimeIdList.size());
-            Map<String, RuntimeEntity> sourceRuntimeList = ruleRuntime.getSourceRuntimeList();
-            for (String id : sourceRuntimeIdList) {
-                if (sourceRuntimeList.containsKey(id)) {
-                    RuntimeEntity runtimeEntity = sourceRuntimeList.get(id);
-                    runtimeEntity.setStatus(RuntimeStatusEnum.INIT);
-                    sourceRuntimeMap.put(id, runtimeEntity);
-                } else {
-                    sourceRuntimeMap.put(id, new RuntimeEntity());
-                }
-            }
-            ruleRuntime.setSourceRuntimeList(sourceRuntimeMap);
-
-            // 资源运行状保持
-            Map<String, RuntimeEntity> destRuntimeMap = new HashMap<>(destRuntimeIdList.size());
-            Map<String, RuntimeEntity> destRuntimeList = ruleRuntime.getDestRuntimeList();
-            for (String id : destRuntimeIdList) {
-                if (destRuntimeList.containsKey(id)) {
-                    RuntimeEntity runtimeEntity = destRuntimeList.get(id);
-                    runtimeEntity.setStatus(RuntimeStatusEnum.INIT);
-                    destRuntimeMap.put(id, runtimeEntity);
-                } else {
-                    destRuntimeMap.put(id, new RuntimeEntity());
-                }
-            }
-            ruleRuntime.setDestRuntimeList(destRuntimeMap);
-
-            // 转换运行状保持
-            Map<String, RuntimeEntity> transformRuntimeMap = new HashMap<>(transformIdList.size());
-            Map<String, RuntimeEntity> transformRuntimeList = ruleRuntime.getTransformRuntimeList();
-            for (String id : transformIdList) {
-                if (transformRuntimeList.containsKey(id)) {
-                    RuntimeEntity runtimeEntity = transformRuntimeList.get(id);
-                    runtimeEntity.setStatus(RuntimeStatusEnum.INIT);
-                    transformRuntimeMap.put(id, runtimeEntity);
-                } else {
-                    transformRuntimeMap.put(id, new RuntimeEntity());
-                }
-            }
-            ruleRuntime.setTransformRuntimeList(transformRuntimeMap);
-
-        } else {
+        if (null == ruleRuntime) {
             resetRuntime(ruleId, sourceRuntimeIdList, destRuntimeIdList, transformIdList);
+            return;
         }
+
+        // 资源运行状保持
+        Map<String, RuntimeEntity> sourceRuntimeMap = new HashMap<>(sourceRuntimeIdList.size());
+        Map<String, RuntimeEntity> sourceRuntimeList = ruleRuntime.getSourceRuntimeList();
+        for (String id : sourceRuntimeIdList) {
+            if (sourceRuntimeList.containsKey(id)) {
+                sourceRuntimeMap.put(id, sourceRuntimeList.get(id));
+            } else {
+                sourceRuntimeMap.put(id, new RuntimeEntity());
+            }
+        }
+        ruleRuntime.setSourceRuntimeList(sourceRuntimeMap);
+
+        // 资源运行状保持
+        Map<String, RuntimeEntity> destRuntimeMap = new HashMap<>(destRuntimeIdList.size());
+        Map<String, RuntimeEntity> destRuntimeList = ruleRuntime.getDestRuntimeList();
+        for (String id : destRuntimeIdList) {
+            if (destRuntimeList.containsKey(id)) {
+                destRuntimeMap.put(id, destRuntimeList.get(id));
+            } else {
+                destRuntimeMap.put(id, new RuntimeEntity());
+            }
+        }
+        ruleRuntime.setDestRuntimeList(destRuntimeMap);
+
+        // 转换运行状保持
+        Map<String, RuntimeEntity> transformRuntimeMap = new HashMap<>(transformIdList.size());
+        Map<String, RuntimeEntity> transformRuntimeList = ruleRuntime.getTransformRuntimeList();
+        for (String id : transformIdList) {
+            if (transformRuntimeList.containsKey(id)) {
+                transformRuntimeMap.put(id, transformRuntimeList.get(id));
+            } else {
+                transformRuntimeMap.put(id, new RuntimeEntity());
+            }
+        }
+        ruleRuntime.setTransformRuntimeList(transformRuntimeMap);
+
+
     }
 
     /**
@@ -100,10 +93,51 @@ public class RuntimeManger {
         return runtime;
     }
 
-    public static void resetRuntime(String ruleId,List<String> sourceRuntimeIdList, List<String> destRuntimeIdList, List<String> transformIdList) {
+    /**
+     * 重置运行时
+     * @param ruleId
+     * @param sourceRuntimeIdList
+     * @param destRuntimeIdList
+     * @param transformIdList
+     */
+    public static void resetRuntime(String ruleId, List<String> sourceRuntimeIdList, List<String> destRuntimeIdList, List<String> transformIdList) {
         runtimeList.put(ruleId, newRuntime(sourceRuntimeIdList, destRuntimeIdList, transformIdList));
     }
 
+    /**
+     * 停止运行时 重置全部状态
+     * @param ruleId
+     */
+    public static void stopRuntime(String ruleId) {
+        Runtime ruleRuntime = runtimeList.get(ruleId);
+
+        if (null == ruleRuntime) {
+            return;
+        }
+        Map<String, RuntimeEntity> sourceRuntimeList = ruleRuntime.getSourceRuntimeList();
+        sourceRuntimeList.values().forEach(RuntimeEntity::initStatus);
+
+        Map<String, RuntimeEntity> transformRuntimeList = ruleRuntime.getTransformRuntimeList();
+        transformRuntimeList.values().forEach(RuntimeEntity::initStatus);
+
+        Map<String, RuntimeEntity> destRuntimeList = ruleRuntime.getDestRuntimeList();
+        destRuntimeList.values().forEach(RuntimeEntity::initStatus);
+    }
+
+    /**
+     * 移除运行时
+     * @param ruleId
+     */
+    public static void removeRuntime(String ruleId) {
+        runtimeList.remove(ruleId);
+    }
+
+
+    /**
+     * 处理数据记录
+     * @param ruleId
+     * @param runtimeData
+     */
     public static void handleRecord(String ruleId, RuntimeData runtimeData) {
         Runtime runtime = runtimeList.get(ruleId);
         if (null == runtime) return;
@@ -130,6 +164,11 @@ public class RuntimeManger {
         }
     }
 
+    /**
+     * 处理状态
+     * @param ruleId
+     * @param runtimeStatus
+     */
     public static void handleStatus(String ruleId, RuntimeStatus runtimeStatus) {
         Runtime runtime = runtimeList.get(ruleId);
         if (null == runtime) return;
@@ -166,10 +205,6 @@ public class RuntimeManger {
 
     public static Runtime getRuntime(String ruleId) {
         return runtimeList.get(ruleId);
-    }
-
-    public static void removeRuntime(String ruleId) {
-        runtimeList.remove(ruleId);
     }
 
 

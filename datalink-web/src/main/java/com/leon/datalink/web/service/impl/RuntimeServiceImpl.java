@@ -102,6 +102,6 @@ public class RuntimeServiceImpl implements RuntimeService {
         List<String> sourceRuntimeIdList = rule.getSourceResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
         List<String> destRuntimeIdList = rule.getDestResourceList().stream().map(Resource::getResourceRuntimeId).collect(Collectors.toList());
         List<String> transformRuntimeIdList = rule.getTransformList().stream().map(Transform::getTransformRuntimeId).collect(Collectors.toList());
-        RuntimeManger.init(rule.getRuleId(), sourceRuntimeIdList, destRuntimeIdList, transformRuntimeIdList);
+        RuntimeManger.initRuntime(rule.getRuleId(), sourceRuntimeIdList, destRuntimeIdList, transformRuntimeIdList);
     }
 }

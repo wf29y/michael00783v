@@ -48,11 +48,11 @@ public class RuntimeEntity implements Serializable {
 
         String memberName = runtimeData.getMemberName();
         RuntimeMember runtimeMember = runtimeMemberList.get(memberName);
-        if(null==runtimeMember){
+        if (null == runtimeMember) {
             runtimeMember = new RuntimeMember(memberName);
             runtimeMember.addDataRecord(runtimeData);
-            runtimeMemberList.put(memberName,runtimeMember);
-        }else {
+            runtimeMemberList.put(memberName, runtimeMember);
+        } else {
             runtimeMember.addDataRecord(runtimeData);
         }
     }
@@ -62,13 +62,18 @@ public class RuntimeEntity implements Serializable {
 
         String memberName = runtimeStatus.getMemberName();
         RuntimeMember runtimeMember = runtimeMemberList.get(memberName);
-        if(null==runtimeMember){
+        if (null == runtimeMember) {
             runtimeMember = new RuntimeMember(memberName);
             runtimeMember.updateStatus(runtimeStatus);
-            runtimeMemberList.put(memberName,runtimeMember);
-        }else {
+            runtimeMemberList.put(memberName, runtimeMember);
+        } else {
             runtimeMember.updateStatus(runtimeStatus);
         }
+    }
+
+    public void initStatus() {
+        this.status = RuntimeStatusEnum.INIT;
+        runtimeMemberList.values().forEach(runtimeMember -> runtimeMember.setStatus(RuntimeStatusEnum.INIT));
     }
 
     public RuntimeStatusEnum getStatus() {

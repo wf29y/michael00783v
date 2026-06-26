@@ -35,6 +35,7 @@ public class RuleActor extends AbstractActor {
     @Override
     public void postStop() throws Exception {
         Loggers.RULE.info("stop rule [{}]", getSelf().path());
+        RuntimeManger.stopRuntime(rule.getRuleId());
     }
 
     /**
@@ -45,8 +46,8 @@ public class RuleActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(RuntimeData.class, runtimeData -> RuntimeManger.handleRecord(rule.getRuleId(),runtimeData))
-                .match(RuntimeStatus.class, runtimeStatus -> RuntimeManger.handleStatus(rule.getRuleId(),runtimeStatus))
+                .match(RuntimeData.class, runtimeData -> RuntimeManger.handleRecord(rule.getRuleId(), runtimeData))
+                .match(RuntimeStatus.class, runtimeStatus -> RuntimeManger.handleStatus(rule.getRuleId(), runtimeStatus))
                 .build();
     }
 

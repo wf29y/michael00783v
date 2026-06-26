@@ -38,22 +38,17 @@ public class TransformActor extends AbstractActor {
             runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("transform actor start error {} : {}", handler.getClass(), e.getMessage());
         } finally {
-            ruleActorRef.tell(runtimeStatus,getSelf());
+            ruleActorRef.tell(runtimeStatus, getSelf());
         }
     }
 
     @Override
     public void postStop() throws Exception {
         Loggers.DRIVER.info("stop transform [{}]", getSelf().path());
-        RuntimeStatus runtimeStatus = new RuntimeStatus(RuntimeTypeEnum.TRANSFORM, transform.getTransformRuntimeId());
         try {
             handler.destroy();
-            runtimeStatus.init();
         } catch (Exception e) {
-            runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("transform actor stop error {} : {}", handler.getClass(), e.getMessage());
-        } finally {
-            ruleActorRef.tell(runtimeStatus,getSelf());
         }
     }
 
@@ -68,7 +63,7 @@ public class TransformActor extends AbstractActor {
                 Loggers.DRIVER.error("transform data error: {}", e.getMessage());
                 transformRecord.fail(e.getMessage());
             } finally {
-                ruleActorRef.tell(transformRecord,getSelf());
+                ruleActorRef.tell(transformRecord, getSelf());
             }
         }).build();
     }

@@ -64,17 +64,11 @@ public class ResourceActor extends AbstractActor {
     @Override
     public void postStop() {
         Loggers.DRIVER.info("stop resource [{}]", getSelf().path());
-        RuntimeStatus runtimeStatus = new RuntimeStatus(DriverModeEnum.SOURCE.equals(driverMode) ? RuntimeTypeEnum.SOURCE : RuntimeTypeEnum.DEST, resource.getResourceRuntimeId());
         try {
             // 销毁驱动
             driver.destroy(driverMode, resource.getProperties());
-            runtimeStatus.init();
         } catch (Exception e) {
-            runtimeStatus.abnormal(e.getMessage());
             Loggers.DRIVER.error("resource actor stop error {} : {}", driver.getClass(), e.getMessage());
-        } finally {
-            // 结果发送到runtime
-            ruleActorRef.tell(runtimeStatus, getSelf());
         }
     }
 
