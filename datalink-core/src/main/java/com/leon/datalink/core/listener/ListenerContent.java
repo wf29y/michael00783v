@@ -9,18 +9,12 @@ public class ListenerContent {
 
     private static final Map<Integer, Listener> listeners = new HashMap<>();
 
-//    static {
-//        Integer port = Integer.parseInt(System.getProperty("server.port"));
-//        System.out.println(port);
-//        listeners.put(port, new Listener(port, ListenerTypeEnum.TCP, "系统端口"));
-//    }
-
     public static void add(int port, ListenerTypeEnum type, String desc) {
-        listeners.put(port, new Listener(port, type, desc));
+        add("0.0.0.0", port, type, desc);
     }
 
-    public static Listener get(int port) {
-        return listeners.get(port);
+    public static void add(String ip, int port, ListenerTypeEnum type, String desc) {
+        listeners.put(port, new Listener(ip, port, type, desc));
     }
 
     public static List<Listener> getList() {

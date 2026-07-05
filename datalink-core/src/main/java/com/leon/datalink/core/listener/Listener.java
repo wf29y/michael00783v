@@ -5,6 +5,8 @@ import java.io.Serializable;
 public class Listener  implements Serializable {
     private static final long serialVersionUID = 1333156087665804264L;
 
+    private String ip;
+
     private Integer port;
 
     private ListenerTypeEnum type;
@@ -14,10 +16,19 @@ public class Listener  implements Serializable {
     public Listener() {
     }
 
-    public Listener(Integer port, ListenerTypeEnum type, String desc) {
+    public Listener(String ip,Integer port, ListenerTypeEnum type, String desc) {
+        this.ip = ip;
         this.port = port;
         this.type = type;
         this.desc = desc;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public Integer getPort() {

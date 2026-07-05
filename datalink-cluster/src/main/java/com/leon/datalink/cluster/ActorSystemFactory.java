@@ -4,6 +4,8 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.event.Logging;
 import com.leon.datalink.cluster.actor.ClusterListenerActor;
+import com.leon.datalink.core.listener.ListenerContent;
+import com.leon.datalink.core.listener.ListenerTypeEnum;
 import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.StringUtils;
 import com.typesafe.config.Config;
@@ -17,12 +19,14 @@ import java.util.stream.Collectors;
 
 /**
  * ActorSystemFactory
+ *
  * @author liyang
  */
 public class ActorSystemFactory {
 
     /**
      * 创建ActorSystem
+     *
      * @param memberListConfig application.properties 成员配置
      * @return ActorSystem
      */
@@ -45,13 +49,16 @@ public class ActorSystemFactory {
 
         // 优先使用命令行里的成员配置
         String memberList = System.getProperty("datalink.cluster.member.list");
-        if(StringUtils.isEmpty(memberList)) memberList = memberListConfig;
+        if (StringUtils.isEmpty(memberList)) memberList = memberListConfig;
 
         String[] memberArray = memberList.split(",");
         String[] local = memberArray[0].split(":");
+        String ip = local[0];
+        String port = local[1];
 
-        String localMemberName = "datalink@" + memberArray[0];
-        ClusterMemberManager.setLocalMemberName(localMemberName);
+        ListenerContent.add(ip, Integer.parseInt(port), ListenerTypeEnum.TCP, "Datalink cluster port");
+
+        ClusterMemberManager.setLocalMemberName("datalink@" + memberArray[0]);
 
         Map<String, Object> map = new HashMap<>();
         map.put("akka.actor.provider", "cluster");
@@ -63,8 +70,8 @@ public class ActorSystemFactory {
 
         map.put("akka.remote.artery.enabled", "on");
         map.put("akka.remote.artery.transport", "tcp");
-        map.put("akka.remote.artery.canonical.hostname", local[0]);
-        map.put("akka.remote.artery.canonical.port", local[1]);
+        map.put("akka.remote.artery.canonical.hostname", ip);
+        map.put("akka.remote.artery.canonical.port", port);
 
         List<String> nodes = Arrays.stream(memberArray).map(member -> "akka://datalink@" + member).collect(Collectors.toList());
         map.put("akka.cluster.seed-nodes", nodes);

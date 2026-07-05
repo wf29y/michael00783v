@@ -14,7 +14,7 @@
                           <template slot='content'>
                             {{ record.message ? record.message : '—' }}
                           </template>
-                            <a-badge v-if='text==="INIT"' text='初始化' />
+                            <a-badge v-if='text==="INIT"' status='default' text='未运行' />
                             <a-badge v-if='text==="NORMAL"' color='green' text='正常' />
                             <a-badge v-if='text==="ABNORMAL"' color='red' text='异常' />
                         </a-popover>
