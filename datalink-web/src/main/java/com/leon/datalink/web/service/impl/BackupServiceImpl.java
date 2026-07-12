@@ -4,13 +4,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ClassUtil;
 import com.leon.datalink.core.backup.Backup;
-import com.leon.datalink.core.common.Constants;
+import com.leon.datalink.core.backup.BackupData;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.storage.kv.FileKvStorage;
 import com.leon.datalink.core.utils.*;
-import com.leon.datalink.core.backup.BackupData;
 import com.leon.datalink.web.service.BackupService;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 /**
  * @ClassNameResourceManager
@@ -54,10 +52,10 @@ public class BackupServiceImpl implements BackupService {
     public BackupServiceImpl() throws Exception {
 
         // init storage
-        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + BACKUP_PATH);
+        this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + BACKUP_PATH);
 
         // init file storage
-        this.fileStorage = new FileKvStorage(Constants.BACKUP_FILE_PATH);
+        this.fileStorage = new FileKvStorage(EnvUtil.getBackupFilePath());
 
         // read backup list form storage
         if (this.kvStorage.allKeys().size() <= 0) return;

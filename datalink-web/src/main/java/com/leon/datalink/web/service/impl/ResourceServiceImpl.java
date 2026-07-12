@@ -4,10 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
-import com.leon.datalink.core.utils.JacksonUtils;
-import com.leon.datalink.core.utils.Loggers;
-import com.leon.datalink.core.utils.SnowflakeIdWorker;
-import com.leon.datalink.core.utils.StringUtils;
+import com.leon.datalink.core.utils.*;
 import com.leon.datalink.resource.Driver;
 import com.leon.datalink.resource.DriverFactory;
 import com.leon.datalink.resource.Resource;
@@ -20,8 +17,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 /**
  * @ClassNameResourceManager
@@ -51,7 +46,7 @@ public class ResourceServiceImpl implements ResourceService, BackupData<Resource
     public ResourceServiceImpl() throws Exception {
 
         // init storage
-        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + RESOURCE_PATH);
+        this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + RESOURCE_PATH);
 
         // read resource list form storage
         if (this.kvStorage.allKeys().size() <= 0) return;

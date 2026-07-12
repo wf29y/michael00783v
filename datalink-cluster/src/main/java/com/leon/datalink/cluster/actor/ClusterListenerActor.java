@@ -26,17 +26,14 @@ public class ClusterListenerActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(ClusterEvent.MemberUp.class, msg -> {
-            ClusterMemberManager.up(msg.member());
-            Loggers.CLUSTER.info("Member UP {}", msg.member().address());
+            boolean isLocal = cluster.selfAddress().equals(msg.member().address());
+            ClusterMemberManager.up(msg.member(), isLocal);
+            Loggers.CLUSTER.info("Member UP {} [{}]", msg.member().address(), isLocal ? "local" : "remote");
         }).match(ClusterEvent.UnreachableMember.class, msg -> {
             Loggers.CLUSTER.info("Member unreachable {}", msg.member().address());
         }).match(ClusterEvent.MemberRemoved.class, msg -> {
             ClusterMemberManager.down(msg.member());
             Loggers.CLUSTER.info("Member Removed {}", msg.member().address());
-        })
-//                .match(ClusterEvent.MemberEvent.class, msg -> {
-//                    Loggers.CLUSTER.info("member event {} : {}", msg.member().address(), msg);
-//                })
-                .build();
+        }).build();
     }
 }

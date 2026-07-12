@@ -1,7 +1,7 @@
 package com.leon.datalink.transform.handler.impl;
 
-import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.config.ConfigProperties;
+import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.variable.GlobalVariableContent;
@@ -25,7 +25,7 @@ public class PluginHandler implements TransformHandler {
         // 创建插件
         Plugin plugin = properties.getObject("plugin", Plugin.class);
         try {
-            this.transformPlugin = PluginFactory.createTransformPlugin(Paths.get(Constants.PLUGIN_FILE_PATH, plugin.getPluginName()).toString(), plugin.getPackagePath());
+            this.transformPlugin = PluginFactory.createTransformPlugin(Paths.get(EnvUtil.getPluginFilePath(), plugin.getPluginName()).toString(), plugin.getPackagePath());
             if (null != transformPlugin) {
                 transformPlugin.create();
             }

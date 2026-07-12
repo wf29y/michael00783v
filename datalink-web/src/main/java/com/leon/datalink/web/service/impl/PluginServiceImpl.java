@@ -1,11 +1,11 @@
 package com.leon.datalink.web.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.storage.kv.FileKvStorage;
+import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 /**
  * @ClassNameResourceManager
@@ -54,10 +52,10 @@ public class PluginServiceImpl implements PluginService {
     public PluginServiceImpl() throws Exception {
 
         // init storage
-        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + PLUGIN_PATH);
+        this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + PLUGIN_PATH);
 
         // init file storage
-        this.fileStorage = new FileKvStorage(Constants.PLUGIN_FILE_PATH);
+        this.fileStorage = new FileKvStorage(EnvUtil.getPluginFilePath());
 
         // read plugin list form storage
         if (this.kvStorage.allKeys().size() <= 0) return;

@@ -6,6 +6,7 @@ import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
+import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.web.exception.AccessException;
 import com.leon.datalink.web.model.User;
@@ -29,8 +30,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 /**
  * datalink user service.
@@ -68,10 +67,10 @@ public class DatalinkUserServiceImpl implements DatalinkUserService, UserDetails
     public DatalinkUserServiceImpl() throws Exception {
 
         // init storage
-        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + USER_PATH);
+        this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + USER_PATH);
 
         // read user list form storage
-        if (this.kvStorage.allKeys().size() <= 0){
+        if (this.kvStorage.allKeys().size() <= 0) {
             // 初始化用户
             User user = new User();
             user.setUsername("datalink");

@@ -18,25 +18,29 @@ public class ClusterMemberManager {
     private static String localMemberName;
 
     static {
-        if(!EnvUtil.isCluster()){
+        // 单机模式下创建本地节点
+        if (!EnvUtil.isCluster()) {
             setLocalMemberName("datalink@127.0.0.1");
             ClusterMember clusterMember = new ClusterMember();
             clusterMember.setMemberName(localMemberName);
             clusterMember.setMemberState(ClusterMemberStateEnum.UP);
             clusterMember.setLocal(true);
             clusterMember.setUpdateTime(DateTime.now().toString());
-            members.put(localMemberName,clusterMember);
+            members.put(localMemberName, clusterMember);
         }
     }
 
-    public static void up(Member member) {
+    public static void up(Member member, boolean local) {
         String name = getMemberName(member);
         ClusterMember clusterMember = new ClusterMember();
         clusterMember.setMemberName(name);
         clusterMember.setMemberState(ClusterMemberStateEnum.UP);
         clusterMember.setUpdateTime(DateTime.now().toString());
-        clusterMember.setLocal(name.equals(localMemberName));
+        clusterMember.setLocal(local);
         members.put(name, clusterMember);
+        if(local){
+           setLocalMemberName(getMemberName(member));
+        }
     }
 
     public static void down(Member member) {
@@ -62,6 +66,7 @@ public class ClusterMemberManager {
 
     public static void setLocalMemberName(String localMemberName) {
         ClusterMemberManager.localMemberName = localMemberName;
+        // 加入环境变量
         GlobalVariableContent.setValue("localMemberName", localMemberName);
     }
 }

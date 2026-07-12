@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
+import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.utils.StringUtils;
@@ -19,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 @Service
 public class VariableServiceImpl implements VariableService, BackupData<Variable> {
@@ -40,7 +39,7 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
 
         // 持久化读入GlobalVariableContent
         // init storage
-        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + VARIABLE_PATH);
+        this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + VARIABLE_PATH);
 
         // read resource list form storage
         if (this.kvStorage.allKeys().size() <= 0) return;

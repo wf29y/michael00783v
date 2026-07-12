@@ -3,6 +3,7 @@ package com.leon.datalink.web.service.impl;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
+import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.resource.Resource;
@@ -17,13 +18,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
-
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 @Service
 public class RuntimeServiceImpl implements RuntimeService {
@@ -47,7 +45,7 @@ public class RuntimeServiceImpl implements RuntimeService {
 
         // 持久化读入RuntimeManger
         // init storage
-        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + RUNTIME_PATH);
+        this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + RUNTIME_PATH);
 
         // read resource list form storage
         if (this.kvStorage.allKeys().size() <= 0) return;

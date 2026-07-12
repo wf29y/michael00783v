@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
+import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.StringUtils;
@@ -16,8 +17,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 /**
  * @ClassNameResourceManager
@@ -47,7 +46,7 @@ public class ScriptServiceImpl implements ScriptService {
     public ScriptServiceImpl() throws Exception {
 
         // init storage
-        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + SCRIPT_PATH);
+        this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + SCRIPT_PATH);
 
         // read script list form storage
         if (this.kvStorage.allKeys().size() <= 0) return;

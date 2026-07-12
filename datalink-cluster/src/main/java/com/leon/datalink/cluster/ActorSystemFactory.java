@@ -56,10 +56,6 @@ public class ActorSystemFactory {
         String ip = local[0];
         String port = local[1];
 
-        ListenerContent.add(ip, Integer.parseInt(port), ListenerTypeEnum.TCP, "Datalink cluster port");
-
-        ClusterMemberManager.setLocalMemberName("datalink@" + memberArray[0]);
-
         Map<String, Object> map = new HashMap<>();
         map.put("akka.actor.provider", "cluster");
 
@@ -75,6 +71,9 @@ public class ActorSystemFactory {
 
         List<String> nodes = Arrays.stream(memberArray).map(member -> "akka://datalink@" + member).collect(Collectors.toList());
         map.put("akka.cluster.seed-nodes", nodes);
+
+        // 加入监听器
+        ListenerContent.add(ip, Integer.parseInt(port), ListenerTypeEnum.TCP, "Datalink cluster port");
 
         return ConfigFactory.parseMap(map);
     }

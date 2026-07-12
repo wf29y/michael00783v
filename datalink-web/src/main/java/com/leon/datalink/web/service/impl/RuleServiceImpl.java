@@ -4,20 +4,15 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import cn.hutool.core.collection.CollectionUtil;
+import com.leon.datalink.core.backup.BackupData;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
-import com.leon.datalink.core.utils.JacksonUtils;
-import com.leon.datalink.core.utils.Loggers;
-import com.leon.datalink.core.utils.SnowflakeIdWorker;
-import com.leon.datalink.core.utils.StringUtils;
+import com.leon.datalink.core.utils.*;
 import com.leon.datalink.rule.actor.RuleActor;
 import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.runtime.RuntimeManger;
-import com.leon.datalink.runtime.entity.Runtime;
 import com.leon.datalink.transform.constants.TransformModeEnum;
 import com.leon.datalink.transform.plugin.Plugin;
-import com.leon.datalink.core.backup.BackupData;
 import com.leon.datalink.web.service.PluginService;
 import com.leon.datalink.web.service.ResourceService;
 import com.leon.datalink.web.service.RuleService;
@@ -28,13 +23,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.leon.datalink.core.common.Constants.STORAGE_PATH;
 
 /**
  * @ClassName RuleServiceImpl
@@ -84,7 +76,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
         this.actorSystem = actorSystem;
 
         // init storage
-        this.kvStorage = new DatalinkKvStorage(STORAGE_PATH + RULE_PATH);
+        this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + RULE_PATH);
 
         // read resource list form storage
         if (this.kvStorage.allKeys().size() <= 0) return;
