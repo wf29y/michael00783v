@@ -2,7 +2,6 @@ package com.leon.datalink.web.service.impl;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.Props;
 import cn.hutool.core.collection.CollectionUtil;
 import com.leon.datalink.core.backup.BackupData;
 import com.leon.datalink.core.exception.KvStorageException;
@@ -166,7 +165,7 @@ public class RuleServiceImpl implements RuleService, BackupData<Rule> {
         ruleList.put(ruleId, rule);
 
         // 创建rule actor
-        ActorRef actorRef = actorSystem.actorOf((Props.create(RuleActor.class, rule)), "rule-" + ruleId);
+        ActorRef actorRef = actorSystem.actorOf((RuleActor.props(rule)), "rule-" + ruleId);
         ruleActorRefList.put(ruleId, actorRef);
 
     }

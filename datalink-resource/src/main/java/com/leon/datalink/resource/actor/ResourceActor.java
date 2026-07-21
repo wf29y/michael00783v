@@ -2,6 +2,7 @@ package com.leon.datalink.resource.actor;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
+import akka.actor.Props;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.resource.Driver;
 import com.leon.datalink.resource.DriverFactory;
@@ -28,6 +29,14 @@ public class ResourceActor extends AbstractActor {
     private final Resource resource;
 
     private final ActorRef ruleActorRef;
+
+    public static Props props(Resource resource, DriverModeEnum driverMode, ActorRef ruleActorRef) {
+        return Props.create(ResourceActor.class, () -> new ResourceActor(resource, driverMode, ruleActorRef, null));
+    }
+
+    public static Props props(Resource resource, DriverModeEnum driverMode, ActorRef ruleActorRef, ActorRef transformActorRef) {
+        return Props.create(ResourceActor.class, () -> new ResourceActor(resource, driverMode, ruleActorRef, transformActorRef));
+    }
 
     public ResourceActor(Resource resource, DriverModeEnum driverMode, ActorRef ruleActorRef, ActorRef transformActorRef) throws Exception {
         this.resource = resource;
@@ -74,21 +83,23 @@ public class ResourceActor extends AbstractActor {
 
     @Override
     public Receive createReceive() {
-        return receiveBuilder().match(RuntimeData.class, runtimeData -> {
-            // 作为目的资源时,处理来自transform的数据
-            if (runtimeData.getType() == RuntimeTypeEnum.TRANSFORM) {
-                RuntimeData destRecord = new RuntimeData(RuntimeTypeEnum.DEST, resource.getResourceRuntimeId());
-                try {
-                    Object publishResult = driver.handleData(runtimeData.getData(), resource.getProperties());
-                    destRecord.success(publishResult);
-                } catch (Exception e) {
-                    Loggers.DRIVER.error("resource actor handle data error: {}", e.getMessage());
-                    destRecord.fail(e.getMessage());
-                } finally {
-                    ruleActorRef.tell(destRecord, getSelf());
-                }
+        return receiveBuilder().match(RuntimeData.class, this::handleData).build();
+    }
+
+    // 作为目的资源时,处理来自transform的数据
+    private void handleData(RuntimeData runtimeData) {
+        if (runtimeData.getType() == RuntimeTypeEnum.TRANSFORM) {
+            RuntimeData destRecord = new RuntimeData(RuntimeTypeEnum.DEST, resource.getResourceRuntimeId());
+            try {
+                Object publishResult = driver.handleData(runtimeData.getData(), resource.getProperties());
+                destRecord.success(publishResult);
+            } catch (Exception e) {
+                Loggers.DRIVER.error("resource actor handle data error: {}", e.getMessage());
+                destRecord.fail(e.getMessage());
+            } finally {
+                ruleActorRef.tell(destRecord, getSelf());
             }
-        }).build();
+        }
     }
 
 

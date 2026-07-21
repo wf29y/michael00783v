@@ -1,6 +1,7 @@
 package com.leon.datalink.rule.actor;
 
 import akka.actor.AbstractActor;
+import akka.actor.Props;
 import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.rule.entity.Rule;
@@ -13,6 +14,10 @@ import com.leon.datalink.runtime.entity.RuntimeStatus;
 public class RuleActor extends AbstractActor {
 
     private final Rule rule;
+
+    public static Props props(Rule rule) {
+        return Props.create(RuleActor.class, () -> new RuleActor(rule));
+    }
 
     public RuleActor(Rule rule) {
         this.rule = rule;

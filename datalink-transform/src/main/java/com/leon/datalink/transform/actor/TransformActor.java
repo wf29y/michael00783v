@@ -2,6 +2,7 @@ package com.leon.datalink.transform.actor;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
+import akka.actor.Props;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;
@@ -19,6 +20,10 @@ public class TransformActor extends AbstractActor {
     private final ActorRef nextActorRef;
 
     private final ActorRef ruleActorRef;
+
+    public static Props props(Transform transform, ActorRef ruleActorRef, ActorRef nextActorRef) {
+        return Props.create(TransformActor.class, () -> new TransformActor(transform, ruleActorRef, nextActorRef));
+    }
 
     public TransformActor(Transform transform, ActorRef ruleActorRef, ActorRef nextActorRef) throws Exception {
         this.transform = transform;

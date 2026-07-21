@@ -27,6 +27,10 @@ public class ResourceBroadcastActor extends AbstractActor {
 
     private final ActorRef ruleActorRef;
 
+    public static Props props(List<Resource> resourceList, ActorRef ruleActorRef) {
+        return Props.create(ResourceBroadcastActor.class, () -> new ResourceBroadcastActor(resourceList, ruleActorRef));
+    }
+
     public ResourceBroadcastActor(List<Resource> resourceList, ActorRef ruleActorRef) throws Exception {
         this.resourceList = resourceList;
         this.ruleActorRef = ruleActorRef;
@@ -35,7 +39,7 @@ public class ResourceBroadcastActor extends AbstractActor {
     @Override
     public void preStart() throws Exception {
         List<Routee> RouteeList = resourceList.stream().map(destResource -> {
-            ActorRef destResourceActor = getContext().actorOf((Props.create(ResourceActor.class, destResource, DriverModeEnum.DEST, ruleActorRef, null)), destResource.getResourceRuntimeId());
+            ActorRef destResourceActor = getContext().actorOf((ResourceActor.props(destResource, DriverModeEnum.DEST, ruleActorRef)), destResource.getResourceRuntimeId());
             getContext().watch(destResourceActor);
             return new ActorRefRoutee(destResourceActor);
         }).collect(Collectors.toList());

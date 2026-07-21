@@ -1,7 +1,6 @@
 package com.leon.datalink.rule.handler.impl;
 
 import akka.actor.ActorRef;
-import akka.actor.Props;
 import akka.cluster.routing.ClusterRouterPool;
 import akka.cluster.routing.ClusterRouterPoolSettings;
 import akka.routing.RoundRobinPool;
@@ -29,7 +28,7 @@ public class ClusterRuleStartHandler extends AbstractRuleStartHandler {
     protected ActorRef createDestResource() {
         return context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
                         new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
-                        .props(Props.create(ResourceBroadcastActor.class, rule.getDestResourceList(), ruleActorRef)),
+                        .props(ResourceBroadcastActor.props(rule.getDestResourceList(), ruleActorRef)),
                 "dest_broadcast");
     }
 
@@ -41,7 +40,7 @@ public class ClusterRuleStartHandler extends AbstractRuleStartHandler {
         for (Transform transform : transformList) {
             ActorRef transformActor = context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
                             new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, transform.getWorkerNum(), true, new HashSet<>()))
-                            .props(Props.create(TransformActor.class, transform, ruleActorRef, next)),
+                            .props(TransformActor.props(transform, ruleActorRef, next)),
                     transform.getTransformRuntimeId());
             transformActorRefList.add(transformActor);
             next = transformActor;
@@ -59,11 +58,11 @@ public class ClusterRuleStartHandler extends AbstractRuleStartHandler {
                 // 集群下每个节点都创建一个源
                 context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
                                 new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
-                                .props(Props.create(ResourceActor.class, sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
+                                .props(ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
                         sourceResource.getResourceRuntimeId());
             } else if (ResourceClusterModeEnum.SINGLETON.equals(mode)) {
-                // 集群下仅有一个源 todo 集群单例
-                context.actorOf((Props.create(ResourceActor.class, sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
+                // 集群下仅有一个源
+                context.actorOf((ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
                         sourceResource.getResourceRuntimeId());
             }
         });
