@@ -88,17 +88,15 @@ public class ResourceActor extends AbstractActor {
 
     // 作为目的资源时,处理来自transform的数据
     private void handleData(RuntimeData runtimeData) {
-        if (runtimeData.getType() == RuntimeTypeEnum.TRANSFORM) {
-            RuntimeData destRecord = new RuntimeData(RuntimeTypeEnum.DEST, resource.getResourceRuntimeId());
-            try {
-                Object publishResult = driver.handleData(runtimeData.getData(), resource.getProperties());
-                destRecord.success(publishResult);
-            } catch (Exception e) {
-                Loggers.DRIVER.error("resource actor handle data error: {}", e.getMessage());
-                destRecord.fail(e.getMessage());
-            } finally {
-                ruleActorRef.tell(destRecord, getSelf());
-            }
+        RuntimeData destRecord = new RuntimeData(RuntimeTypeEnum.DEST, resource.getResourceRuntimeId());
+        try {
+            Object publishResult = driver.handleData(runtimeData.getData(), resource.getProperties());
+            destRecord.success(publishResult);
+        } catch (Exception e) {
+            Loggers.DRIVER.error("resource actor handle data error: {}", e.getMessage());
+            destRecord.fail(e.getMessage());
+        } finally {
+            ruleActorRef.tell(destRecord, getSelf());
         }
     }
 
