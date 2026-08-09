@@ -14,7 +14,7 @@
               <a-button style='margin-left: 8px' @click='reset'>重置</a-button>
             </a-col>
             <a-col :md='7' :sm='24' style='text-align: right'>
-              <a-button  @click='loadData' icon='undo'>刷新</a-button>
+              <a-button @click='loadData' icon='undo'>刷新</a-button>
               <a-button type='primary' @click='handleAdd()' style='margin-left: 8px' icon='plus'>新建变量</a-button>
             </a-col>
           </a-row>
@@ -39,7 +39,7 @@
         </span>
 
         <span slot='type' slot-scope='text, record, index'>
-          {{ text==='SYSTEM'?'系统变量':'自定义变量' }}
+          {{ record.memberName ? record.memberName : (text === 'SYSTEM' ? '系统变量' : '自定义') }}
         </span>
 
         <span slot='desc' slot-scope='text, record, index'>
@@ -85,18 +85,18 @@ export default {
         {
           title: '值',
           dataIndex: 'value',
-          width: '30%'
-        },
-        {
-          title: '类型',
-          dataIndex: 'type',
-          width: '20%',
-          scopedSlots: { customRender: 'type' }
+          width: '25%'
         },
         {
           title: '说明',
           dataIndex: 'desc',
           scopedSlots: { customRender: 'desc' }
+        },
+        {
+          title: '来源',
+          dataIndex: 'type',
+          width: '20%',
+          scopedSlots: { customRender: 'type' }
         },
         {
           title: '操作',

@@ -1,6 +1,9 @@
 package com.leon.datalink.web.service.impl;
 
 import com.google.common.collect.Lists;
+import com.leon.datalink.cluster.distributed.ConsistencyManager;
+import com.leon.datalink.cluster.distributed.ConsistencyWrapper;
+import com.leon.datalink.core.backup.BackupData;
 import com.leon.datalink.core.exception.KvStorageException;
 import com.leon.datalink.core.storage.DatalinkKvStorage;
 import com.leon.datalink.core.storage.KvStorage;
@@ -11,13 +14,10 @@ import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 import com.leon.datalink.core.variable.Variable;
 import com.leon.datalink.core.variable.VariableTypeEnum;
-import com.leon.datalink.core.backup.BackupData;
 import com.leon.datalink.web.service.VariableService;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,19 +37,16 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
 
     public VariableServiceImpl() throws Exception {
 
-        // 持久化读入GlobalVariableContent
         // init storage
         this.kvStorage = new DatalinkKvStorage(EnvUtil.getStoragePath() + VARIABLE_PATH);
 
-        // read resource list form storage
-        if (this.kvStorage.allKeys().size() <= 0) return;
+        Set<Variable> variables = new HashSet<>();
         for (byte[] key : this.kvStorage.allKeys()) {
-            String varKey = new String(key);
             byte[] value = this.kvStorage.get(key);
             Variable variable = JacksonUtils.toObj(value, Variable.class);
-            GlobalVariableContent.set(varKey, variable);
+            variables.add(variable);
         }
-
+        GlobalVariableContent.setAllCustomVariables(variables);
     }
 
     @Override
@@ -59,11 +56,10 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
 
     @Override
     public void add(Variable variable) throws KvStorageException {
-//        Variable var = GlobalVariableContent.get(variable.getKey());
-//        if (null != var) return;
         variable.setType(VariableTypeEnum.CUSTOM);
         GlobalVariableContent.set(variable.getKey(), variable);
         this.kvStorage.put(variable.getKey().getBytes(), JacksonUtils.toJsonBytes(variable));
+        ConsistencyManager.sync(ConsistencyWrapper.add(Variable.class, variable));
     }
 
     @Override
@@ -71,6 +67,7 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
         if (!VariableTypeEnum.CUSTOM.equals(variable.getType())) return;
         GlobalVariableContent.set(variable.getKey(), variable);
         this.kvStorage.put(variable.getKey().getBytes(), JacksonUtils.toJsonBytes(variable));
+        ConsistencyManager.sync(ConsistencyWrapper.add(Variable.class, variable));
     }
 
     @Override
@@ -79,6 +76,7 @@ public class VariableServiceImpl implements VariableService, BackupData<Variable
         if (!VariableTypeEnum.CUSTOM.equals(variable.getType())) return;
         GlobalVariableContent.remove(key);
         this.kvStorage.delete(key.getBytes());
+        ConsistencyManager.sync(ConsistencyWrapper.delete(Variable.class, variable));
     }
 
     @Override

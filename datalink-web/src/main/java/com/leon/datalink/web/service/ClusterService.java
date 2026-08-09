@@ -1,7 +1,7 @@
 package com.leon.datalink.web.service;
 
 
-import com.leon.datalink.cluster.ClusterMember;
+import com.leon.datalink.cluster.member.ClusterMember;
 
 import java.util.List;
 

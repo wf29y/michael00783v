@@ -57,6 +57,10 @@
             <artifactId>akka-cluster_3</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-distributed-data_3</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
             <scope>compile</scope>

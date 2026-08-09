@@ -2,7 +2,7 @@ package com.leon.datalink.web.controller;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.leon.datalink.cluster.ClusterMemberManager;
+import com.leon.datalink.cluster.member.ClusterMemberManager;
 import com.leon.datalink.core.utils.VersionUtils;
 import com.leon.datalink.resource.Resource;
 import com.leon.datalink.rule.entity.Rule;

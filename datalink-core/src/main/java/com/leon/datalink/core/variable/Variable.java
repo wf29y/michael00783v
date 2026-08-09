@@ -1,9 +1,10 @@
 package com.leon.datalink.core.variable;
 
-import java.io.Serializable;
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 
-public class Variable  implements Serializable {
-    private static final long serialVersionUID = 1345156087665804264L;
+import java.util.Objects;
+
+public class Variable  implements ProtostuffSerializable {
 
     private String key;
 
@@ -12,6 +13,8 @@ public class Variable  implements Serializable {
     private String desc;
 
     private VariableTypeEnum type;
+
+    private String memberName;
 
     public Variable() {
     }
@@ -52,5 +55,27 @@ public class Variable  implements Serializable {
 
     public void setType(VariableTypeEnum type) {
         this.type = type;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public Variable setMemberName(String memberName) {
+        this.memberName = memberName;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Variable variable = (Variable) o;
+        return key.equals(variable.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key);
     }
 }

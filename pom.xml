@@ -438,6 +438,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-distributed-data_3</artifactId>
+                <version>${akka.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>io.protostuff</groupId>
                 <artifactId>protostuff-core</artifactId>
                 <version>${protostuff.version}</version>

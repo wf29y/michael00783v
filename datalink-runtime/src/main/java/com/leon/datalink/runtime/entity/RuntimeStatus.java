@@ -1,6 +1,6 @@
 package com.leon.datalink.runtime.entity;
 
-import com.leon.datalink.cluster.ClusterMemberManager;
+import com.leon.datalink.cluster.member.ClusterMemberManager;
 import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;

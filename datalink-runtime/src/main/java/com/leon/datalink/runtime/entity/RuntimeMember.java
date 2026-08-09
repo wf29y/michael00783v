@@ -1,10 +1,7 @@
 package com.leon.datalink.runtime.entity;
 
-import com.leon.datalink.cluster.ClusterMemberManager;
 import com.leon.datalink.core.serializer.ProtostuffSerializable;
-import com.leon.datalink.runtime.constants.Constants;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
-import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 
 /**
  * 集群下每个节点的运行时

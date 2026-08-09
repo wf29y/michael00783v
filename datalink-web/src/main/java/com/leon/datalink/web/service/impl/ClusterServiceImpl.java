@@ -1,7 +1,7 @@
 package com.leon.datalink.web.service.impl;
 
-import com.leon.datalink.cluster.ClusterMember;
-import com.leon.datalink.cluster.ClusterMemberManager;
+import com.leon.datalink.cluster.member.ClusterMember;
+import com.leon.datalink.cluster.member.ClusterMemberManager;
 import com.leon.datalink.web.service.ClusterService;
 import org.springframework.stereotype.Service;
 

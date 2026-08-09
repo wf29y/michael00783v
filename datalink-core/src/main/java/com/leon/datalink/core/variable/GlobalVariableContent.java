@@ -5,16 +5,16 @@ import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.core.utils.SnowflakeIdWorker;
 import com.leon.datalink.core.utils.VersionUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 全局变量
  */
 public class GlobalVariableContent {
 
-    private static final Map<String, Variable> globalVariable = new HashMap<>();
+    private static final ConcurrentHashMap<String, Variable> globalVariable = new ConcurrentHashMap<>();
 
     static {
         globalVariable.put("localMemberName", new Variable("localMemberName", null, "本地节点", VariableTypeEnum.SYSTEM));
@@ -66,6 +66,25 @@ public class GlobalVariableContent {
 
     public static void remove(String key) {
         globalVariable.remove(key);
+    }
+
+    public static synchronized List<Variable> getCustomVariables() {
+        return globalVariable.values().stream().filter(variable -> variable.getType().equals(VariableTypeEnum.CUSTOM)).collect(Collectors.toList());
+    }
+
+    public static synchronized List<Variable> getMemberCustomVariables(String memberName) {
+        return globalVariable.values().stream().filter(variable ->
+                variable.getType().equals(VariableTypeEnum.CUSTOM) && memberName.equals(variable.getMemberName())
+        ).collect(Collectors.toList());
+    }
+
+    public static synchronized void setAllCustomVariables(Set<Variable> variables) {
+//        Collection<Variable> values = globalVariable.values();
+//        if (values.size() == variables.size() && values.containsAll(variables)) return;
+        globalVariable.entrySet().removeIf(entry -> entry.getValue().getType().equals(VariableTypeEnum.CUSTOM));
+        for (Variable variable : variables) {
+            set(variable.getKey(), variable);
+        }
     }
 
 

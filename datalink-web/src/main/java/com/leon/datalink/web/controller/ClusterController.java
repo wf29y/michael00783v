@@ -1,6 +1,6 @@
 package com.leon.datalink.web.controller;
 
-import com.leon.datalink.cluster.ClusterMember;
+import com.leon.datalink.cluster.member.ClusterMember;
 import com.leon.datalink.web.service.ClusterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

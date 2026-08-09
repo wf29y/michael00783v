@@ -1,4 +1,4 @@
-package com.leon.datalink.cluster;
+package com.leon.datalink.cluster.member;
 
 import akka.cluster.Member;
 import cn.hutool.core.date.DateTime;

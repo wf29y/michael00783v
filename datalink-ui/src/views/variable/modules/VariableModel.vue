@@ -91,7 +91,7 @@ export default {
               that.$message.success('保存成功')
               that.$emit('ok')
             } else {
-              that.$message.error('保存失败')
+              that.$message.error(res.message)
             }
           })
             .finally(() => {

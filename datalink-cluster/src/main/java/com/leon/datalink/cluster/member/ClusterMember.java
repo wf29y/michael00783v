@@ -1,4 +1,4 @@
-package com.leon.datalink.cluster;
+package com.leon.datalink.cluster.member;
 
 import com.leon.datalink.cluster.constants.ClusterMemberStateEnum;
 
