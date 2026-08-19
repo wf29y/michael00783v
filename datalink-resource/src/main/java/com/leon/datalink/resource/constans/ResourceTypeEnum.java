@@ -6,32 +6,32 @@ import com.leon.datalink.resource.driver.*;
 
 public enum ResourceTypeEnum {
 
-    MQTT(MqttDriver.class, ResourceClusterModeEnum.SINGLETON),
-    KAFKA(KafkaDriver.class, ResourceClusterModeEnum.SINGLETON),
-    RABBITMQ(RabbitMQDriver.class, ResourceClusterModeEnum.SINGLETON),
-    HTTPCLIENT(HttpClientDriver.class, ResourceClusterModeEnum.SINGLETON),
-    HTTPSERVER(HttpServerDriver.class, ResourceClusterModeEnum.CLUSTER),
-    MYSQL(MysqlDriver.class, ResourceClusterModeEnum.SINGLETON),
-    POSTGRESQL(PostgresqlDriver.class, ResourceClusterModeEnum.SINGLETON),
-    TDENGINE(TDengineDriver.class, ResourceClusterModeEnum.SINGLETON),
-    SQLSERVER(SqlServerDriver.class, ResourceClusterModeEnum.SINGLETON),
-    OPCUA(OpcUADriver.class, ResourceClusterModeEnum.SINGLETON),
-    REDIS(RedisDriver.class, ResourceClusterModeEnum.SINGLETON),
-    TCP(TcpDriver.class, ResourceClusterModeEnum.CLUSTER),
-    UDP(UdpDriver.class, ResourceClusterModeEnum.CLUSTER),
-    SNMP(SnmpDriver.class, ResourceClusterModeEnum.SINGLETON),
-    MODBUSTCP(ModbusTcpDriver.class, ResourceClusterModeEnum.SINGLETON),
-    TIMESCALEDB(TimescaleDBDriver.class, ResourceClusterModeEnum.SINGLETON),
-    MARIADB(MariaDBDriver.class, ResourceClusterModeEnum.SINGLETON),
-    ROCKETMQ(RocketMQDriver.class, ResourceClusterModeEnum.SINGLETON),
-    ACTIVEMQ(ActiveMQDriver.class, ResourceClusterModeEnum.SINGLETON),
-    PULSAR(PulsarDriver.class, ResourceClusterModeEnum.SINGLETON);
+    MQTT(MqttDriver.class, SourceModeEnum.SUBSCRIBE),
+    KAFKA(KafkaDriver.class, SourceModeEnum.SUBSCRIBE),
+    RABBITMQ(RabbitMQDriver.class, SourceModeEnum.SUBSCRIBE),
+    HTTPCLIENT(HttpClientDriver.class, SourceModeEnum.SCHEDULE),
+    HTTPSERVER(HttpServerDriver.class, SourceModeEnum.LISTEN),
+    MYSQL(MysqlDriver.class, SourceModeEnum.SCHEDULE),
+    POSTGRESQL(PostgresqlDriver.class, SourceModeEnum.SCHEDULE),
+    TDENGINE(TDengineDriver.class, SourceModeEnum.SCHEDULE),
+    SQLSERVER(SqlServerDriver.class, SourceModeEnum.SCHEDULE),
+    OPCUA(OpcUADriver.class, SourceModeEnum.SCHEDULE),
+    REDIS(RedisDriver.class, SourceModeEnum.SCHEDULE),
+    TCP(TcpDriver.class, SourceModeEnum.LISTEN),
+    UDP(UdpDriver.class, SourceModeEnum.LISTEN),
+    SNMP(SnmpDriver.class, SourceModeEnum.SCHEDULE),
+    MODBUSTCP(ModbusTcpDriver.class, SourceModeEnum.SCHEDULE),
+    TIMESCALEDB(TimescaleDBDriver.class, SourceModeEnum.SCHEDULE),
+    MARIADB(MariaDBDriver.class, SourceModeEnum.SCHEDULE),
+    ROCKETMQ(RocketMQDriver.class, SourceModeEnum.SUBSCRIBE),
+    ACTIVEMQ(ActiveMQDriver.class, SourceModeEnum.SUBSCRIBE),
+    PULSAR(PulsarDriver.class, SourceModeEnum.SUBSCRIBE);
 
     private final Class<? extends Driver> driver;
 
-    private final ResourceClusterModeEnum mode;
+    private final SourceModeEnum mode;
 
-    ResourceTypeEnum(Class<? extends Driver> driver, ResourceClusterModeEnum mode) {
+    ResourceTypeEnum(Class<? extends Driver> driver, SourceModeEnum mode) {
         this.driver = driver;
         this.mode = mode;
     }
@@ -40,7 +40,7 @@ public enum ResourceTypeEnum {
         return driver;
     }
 
-    public ResourceClusterModeEnum getMode() {
+    public SourceModeEnum getMode() {
         return mode;
     }
 }

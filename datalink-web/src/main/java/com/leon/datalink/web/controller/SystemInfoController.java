@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.cluster.member.ClusterMemberManager;
 import com.leon.datalink.core.utils.VersionUtils;
-import com.leon.datalink.resource.Resource;
+import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.web.model.DiskInfo;
 import com.leon.datalink.web.model.SystemInfo;

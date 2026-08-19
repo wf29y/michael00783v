@@ -5,8 +5,9 @@ import akka.actor.Props;
 import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.rule.entity.Rule;
-import com.leon.datalink.rule.handler.impl.ClusterRuleStartHandler;
-import com.leon.datalink.rule.handler.impl.SingleRuleStartHandler;
+import com.leon.datalink.rule.handler.RuleCreateHandler;
+import com.leon.datalink.rule.handler.impl.ClusterRuleCreateHandler;
+import com.leon.datalink.rule.handler.impl.SingleRuleCreateHandler;
 import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.runtime.entity.RuntimeStatus;
@@ -14,6 +15,8 @@ import com.leon.datalink.runtime.entity.RuntimeStatus;
 public class RuleActor extends AbstractActor {
 
     private final Rule rule;
+
+    private RuleCreateHandler ruleCreateHandler;
 
     public static Props props(Rule rule) {
         return Props.create(RuleActor.class, () -> new RuleActor(rule));
@@ -29,18 +32,19 @@ public class RuleActor extends AbstractActor {
     @Override
     public void preStart() {
         Loggers.RULE.info("start rule [{}]", getSelf().path());
-
         if (EnvUtil.isCluster()) {
-            new ClusterRuleStartHandler().start(rule, getContext());
+            ruleCreateHandler = new ClusterRuleCreateHandler();
         } else {
-            new SingleRuleStartHandler().start(rule, getContext());
+            ruleCreateHandler = new SingleRuleCreateHandler();
         }
+        ruleCreateHandler.create(rule, getContext());
     }
 
     @Override
     public void postStop() throws Exception {
         Loggers.RULE.info("stop rule [{}]", getSelf().path());
         RuntimeManger.stopRuntime(rule.getRuleId());
+        ruleCreateHandler.destroy();
     }
 
     /**

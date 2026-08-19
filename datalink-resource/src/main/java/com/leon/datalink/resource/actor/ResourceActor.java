@@ -6,9 +6,9 @@ import akka.actor.Props;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.resource.Driver;
 import com.leon.datalink.resource.DriverFactory;
-import com.leon.datalink.resource.Resource;
+import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.resource.constans.DriverModeEnum;
-import com.leon.datalink.runtime.RuntimeManger;
+import com.leon.datalink.resource.entity.ScheduleTrigger;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.runtime.entity.RuntimeStatus;
@@ -43,6 +43,8 @@ public class ResourceActor extends AbstractActor {
         this.driverMode = driverMode;
         this.ruleActorRef = ruleActorRef;
         this.driver = DriverFactory.getDriver(resource.getResourceType().getDriver());
+
+        // 设置驱动产生数据的回调
         this.driver.init(runtimeData -> {
             if (!runtimeData.isError()) {
                 runtimeData.setEntityRuntimeId(resource.getResourceRuntimeId());
@@ -83,7 +85,21 @@ public class ResourceActor extends AbstractActor {
 
     @Override
     public Receive createReceive() {
-        return receiveBuilder().match(RuntimeData.class, this::handleData).build();
+        return receiveBuilder()
+                .match(ScheduleTrigger.class, this::scheduleTrigger)
+                .match(RuntimeData.class, this::handleData)
+                .build();
+    }
+
+    // 作为数据源时 触发定时调度
+    private void scheduleTrigger(ScheduleTrigger scheduleTrigger) {
+        try {
+            driver.scheduleTrigger(resource.getProperties());
+        } catch (Exception e) {
+            RuntimeData runtimeData = new RuntimeData(RuntimeTypeEnum.SOURCE, resource.getResourceRuntimeId());
+            runtimeData.fail(e.getMessage());
+            ruleActorRef.tell(runtimeData, getSelf());
+        }
     }
 
     // 作为目的资源时,处理来自transform的数据

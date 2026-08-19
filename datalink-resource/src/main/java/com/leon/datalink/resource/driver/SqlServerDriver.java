@@ -5,25 +5,20 @@ import cn.hutool.db.Entity;
 import cn.hutool.db.handler.EntityListHandler;
 import cn.hutool.db.sql.SqlExecutor;
 import com.alibaba.druid.pool.DruidDataSource;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.resource.AbstractDriver;
 import com.leon.datalink.resource.constans.DriverModeEnum;
-import com.leon.datalink.core.config.ConfigProperties;
 import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class SqlServerDriver extends AbstractDriver {
 
     private DruidDataSource dataSource;
-
-    private ScheduledExecutorService executor;
 
     @Override
     public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
@@ -47,52 +42,10 @@ public class SqlServerDriver extends AbstractDriver {
         dataSource.setMaxActive(properties.getInteger("maxActive", 20)); // 设置连接池大小的上限
         dataSource.setValidationQuery("select 1;");
         this.dataSource = dataSource;
-
-        if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == properties.getLong("initialDelay")) throw new ValidateException();
-            if (null == properties.getLong("period")) throw new ValidateException();
-            if (StringUtils.isEmpty(properties.getString("timeUnit"))) throw new ValidateException();
-
-            this.executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleAtFixedRate(() -> {
-                try {
-                    produceData(select(properties));
-                } catch (Exception e) {
-                    produceDataError(e.getMessage());
-                }
-            }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
-        }
     }
-
-    private Object select(ConfigProperties properties) throws Exception {
-        String sql = properties.getString("sql");
-        if (StringUtils.isEmpty(sql)) throw new ValidateException();
-
-        List<Entity> result = null;
-        try (Connection connection = dataSource.getConnection()) {
-            if (connection != null) {
-                String render = this.templateAnalysis(sql, getVariable(null));
-                if (!StringUtils.isEmpty(render)) sql = render;
-                result = SqlExecutor.query(connection, sql, new EntityListHandler());
-            }
-        } catch (Exception e) {
-            Loggers.DRIVER.error("sqlserver driver error {}", e.getMessage());
-            throw e;
-        }
-
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("sql", sql);
-        map.put("result", result);
-        map.put("driver", properties);
-        return map;
-    }
-
 
     @Override
     public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
-        if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            executor.shutdown();
-        }
         dataSource.close();
     }
 
@@ -117,6 +70,30 @@ public class SqlServerDriver extends AbstractDriver {
             Loggers.DRIVER.error("sqlserver driver test {}", e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public void scheduleTrigger(ConfigProperties properties) throws Exception {
+        String sql = properties.getString("sql");
+        if (StringUtils.isEmpty(sql)) throw new ValidateException();
+
+        List<Entity> result = null;
+        try (Connection connection = dataSource.getConnection()) {
+            if (connection != null) {
+                String render = this.templateAnalysis(sql, getVariable(null));
+                if (!StringUtils.isEmpty(render)) sql = render;
+                result = SqlExecutor.query(connection, sql, new EntityListHandler());
+            }
+        } catch (Exception e) {
+            Loggers.DRIVER.error("sqlserver driver error {}", e.getMessage());
+            throw e;
+        }
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("sql", sql);
+        map.put("result", result);
+        map.put("driver", properties);
+        produceData(map);
     }
 
     @Override

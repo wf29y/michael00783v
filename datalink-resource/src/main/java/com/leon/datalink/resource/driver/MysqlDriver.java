@@ -23,8 +23,6 @@ public class MysqlDriver extends AbstractDriver {
 
     private DruidDataSource dataSource;
 
-    private ScheduledExecutorService executor;
-
     @Override
     public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (StringUtils.isEmpty(properties.getString("ip"))) throw new ValidateException();
@@ -47,53 +45,11 @@ public class MysqlDriver extends AbstractDriver {
         dataSource.setMaxActive(properties.getInteger("maxActive", 20)); // 设置连接池大小的上限
         dataSource.setValidationQuery("select 1;");
         this.dataSource = dataSource;
-
-
-        if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == properties.getLong("initialDelay")) throw new ValidateException();
-            if (null == properties.getLong("period")) throw new ValidateException();
-            if (StringUtils.isEmpty(properties.getString("timeUnit"))) throw new ValidateException();
-
-            this.executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleAtFixedRate(() -> {
-                try {
-                    produceData(select(properties));
-                } catch (Exception e) {
-                    produceDataError(e.getMessage());
-                }
-            }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
-        }
-    }
-
-    private Object select(ConfigProperties properties) throws Exception {
-        String sql = properties.getString("sql");
-        if (StringUtils.isEmpty(sql)) throw new ValidateException();
-
-        List<Entity> result = null;
-        try (Connection connection = dataSource.getConnection()) {
-            if (connection != null) {
-                String render = this.templateAnalysis(sql, getVariable(null));
-                if (!StringUtils.isEmpty(render)) sql = render;
-                result = SqlExecutor.query(connection, sql, new EntityListHandler());
-            }
-        } catch (Exception e) {
-            Loggers.DRIVER.error("mysql driver error {}", e.getMessage());
-            throw e;
-        }
-
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("sql", sql);
-        map.put("result", result);
-        map.put("driver", properties);
-        return map;
     }
 
 
     @Override
     public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
-        if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            executor.shutdown();
-        }
         dataSource.close();
     }
 
@@ -118,6 +74,30 @@ public class MysqlDriver extends AbstractDriver {
             Loggers.DRIVER.error("mysql driver test {}", e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public void scheduleTrigger(ConfigProperties properties) throws Exception {
+        String sql = properties.getString("sql");
+        if (StringUtils.isEmpty(sql)) throw new ValidateException();
+
+        List<Entity> result = null;
+        try (Connection connection = dataSource.getConnection()) {
+            if (connection != null) {
+                String render = this.templateAnalysis(sql, getVariable(null));
+                if (!StringUtils.isEmpty(render)) sql = render;
+                result = SqlExecutor.query(connection, sql, new EntityListHandler());
+            }
+        } catch (Exception e) {
+            Loggers.DRIVER.error("mysql driver error {}", e.getMessage());
+            throw e;
+        }
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("sql", sql);
+        map.put("result", result);
+        map.put("driver", properties);
+        produceData(map);
     }
 
     @Override

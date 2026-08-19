@@ -1,7 +1,7 @@
 package com.leon.datalink.web.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.leon.datalink.resource.Resource;
+import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.web.service.ResourceService;
 import com.leon.datalink.web.service.RuleService;

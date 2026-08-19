@@ -20,4 +20,10 @@ public class Constants {
 
     public static final String ENCODE = "UTF-8";
 
+    public static final String INITIAL_DELAY = "initialDelay";
+
+    public static final String PERIOD = "period";
+
+    public static final String TIME_UNIT = "timeUnit";
+
 }

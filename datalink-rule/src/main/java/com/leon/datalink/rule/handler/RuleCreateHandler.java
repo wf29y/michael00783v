@@ -3,8 +3,10 @@ package com.leon.datalink.rule.handler;
 import akka.actor.ActorContext;
 import com.leon.datalink.rule.entity.Rule;
 
-public interface RuleStartHandler {
+public interface RuleCreateHandler {
 
-    void start(Rule rule, ActorContext actorContext);
+    void create(Rule rule, ActorContext actorContext);
+
+    void destroy();
 
 }

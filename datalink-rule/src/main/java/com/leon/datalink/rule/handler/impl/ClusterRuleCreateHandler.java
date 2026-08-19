@@ -8,8 +8,8 @@ import cn.hutool.core.collection.ListUtil;
 import com.leon.datalink.resource.actor.ResourceActor;
 import com.leon.datalink.resource.actor.ResourceBroadcastActor;
 import com.leon.datalink.resource.constans.DriverModeEnum;
-import com.leon.datalink.resource.constans.ResourceClusterModeEnum;
-import com.leon.datalink.rule.handler.AbstractRuleStartHandler;
+import com.leon.datalink.resource.constans.SourceModeEnum;
+import com.leon.datalink.rule.handler.AbstractRuleCreateHandler;
 import com.leon.datalink.transform.Transform;
 import com.leon.datalink.transform.actor.TransformActor;
 
@@ -22,7 +22,7 @@ import static com.leon.datalink.rule.constants.Constants.CLUSTER_MAX_TOTAL_INSTA
 /**
  * 集群模式下规则启动处理
  */
-public class ClusterRuleStartHandler extends AbstractRuleStartHandler {
+public class ClusterRuleCreateHandler extends AbstractRuleCreateHandler {
 
     @Override
     protected ActorRef createDestResource() {
@@ -53,17 +53,31 @@ public class ClusterRuleStartHandler extends AbstractRuleStartHandler {
         // 创建源actor 绑定第一个转换
         ActorRef transformActorRef = transformActorRefList.getLast();
         rule.getSourceResourceList().forEach(sourceResource -> {
-            ResourceClusterModeEnum mode = sourceResource.getResourceType().getMode();
-            if (ResourceClusterModeEnum.CLUSTER.equals(mode)) {
-                // 集群下每个节点都创建一个源
-                context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
-                                new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
-                                .props(ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
-                        sourceResource.getResourceRuntimeId());
-            } else if (ResourceClusterModeEnum.SINGLETON.equals(mode)) {
-                // 集群下仅有一个源
-                context.actorOf((ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
-                        sourceResource.getResourceRuntimeId());
+            SourceModeEnum mode = sourceResource.getResourceType().getMode();
+
+            switch (mode) {
+                case SUBSCRIBE: {
+                    // 集群下仅有一个源
+                    context.actorOf((ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
+                            sourceResource.getResourceRuntimeId());
+                    break;
+                }
+                case LISTEN: {
+                    // 集群下每个节点都创建一个源
+                    context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
+                                    new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
+                                    .props(ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
+                            sourceResource.getResourceRuntimeId());
+                    break;
+                }
+                case SCHEDULE: {
+                    // 集群下每个节点都创建一个源
+                    ActorRef actorRef = context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
+                                    new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
+                                    .props(ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
+                            sourceResource.getResourceRuntimeId());
+                    createSchedule(sourceResource.getProperties(), actorRef);
+                }
             }
         });
     }

@@ -1,11 +1,10 @@
 package com.leon.datalink.rule.entity;
 
 import com.leon.datalink.transform.Transform;
-import com.leon.datalink.resource.Resource;
+import com.leon.datalink.resource.entity.Resource;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 public class Rule implements Serializable {
     private static final long serialVersionUID = 1345156087085804264L;

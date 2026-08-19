@@ -7,7 +7,7 @@ import akka.routing.ActorRefRoutee;
 import akka.routing.BroadcastRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
-import com.leon.datalink.resource.Resource;
+import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.resource.constans.DriverModeEnum;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;

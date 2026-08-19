@@ -6,7 +6,7 @@ import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
-import com.leon.datalink.resource.Resource;
+import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.rule.entity.Rule;
 import com.leon.datalink.runtime.RuntimeManger;
 import com.leon.datalink.runtime.entity.Runtime;
@@ -54,6 +54,7 @@ public class RuntimeServiceImpl implements RuntimeService {
             byte[] value = this.kvStorage.get(key);
             Runtime runtime = JacksonUtils.toObj(value, Runtime.class);
             RuntimeManger.setRuntime(ruleId, runtime);
+            RuntimeManger.stopRuntime(ruleId);
         }
 
     }

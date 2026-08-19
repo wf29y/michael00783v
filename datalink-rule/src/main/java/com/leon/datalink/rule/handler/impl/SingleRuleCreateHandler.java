@@ -6,7 +6,8 @@ import cn.hutool.core.collection.ListUtil;
 import com.leon.datalink.resource.actor.ResourceActor;
 import com.leon.datalink.resource.actor.ResourceBroadcastActor;
 import com.leon.datalink.resource.constans.DriverModeEnum;
-import com.leon.datalink.rule.handler.AbstractRuleStartHandler;
+import com.leon.datalink.resource.constans.SourceModeEnum;
+import com.leon.datalink.rule.handler.AbstractRuleCreateHandler;
 import com.leon.datalink.transform.Transform;
 import com.leon.datalink.transform.actor.TransformActor;
 
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * 单机模式下规则启动处理
  */
-public class SingleRuleStartHandler extends AbstractRuleStartHandler {
+public class SingleRuleCreateHandler extends AbstractRuleCreateHandler {
 
     @Override
     protected ActorRef createDestResource() {
@@ -39,8 +40,15 @@ public class SingleRuleStartHandler extends AbstractRuleStartHandler {
     @Override
     protected void createSourceResource(LinkedList<ActorRef> transformActorRefList) {
         ActorRef transformActorRef = transformActorRefList.getLast();
-        rule.getSourceResourceList().forEach(sourceResource -> context.actorOf((ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
-                sourceResource.getResourceRuntimeId()));
+        rule.getSourceResourceList().forEach(sourceResource -> {
+            ActorRef resourceActor = context.actorOf((ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
+                    sourceResource.getResourceRuntimeId());
+            if (sourceResource.getResourceType().getMode().equals(SourceModeEnum.SCHEDULE)) {
+               createSchedule(sourceResource.getProperties(),resourceActor);
+            }
+        });
+
+
     }
 
 }

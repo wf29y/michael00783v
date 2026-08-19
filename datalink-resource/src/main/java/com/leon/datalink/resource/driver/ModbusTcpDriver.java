@@ -17,13 +17,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
 
 public class ModbusTcpDriver extends AbstractDriver {
 
     private PlcConnection plcConnection;
-
-    private ScheduledExecutorService executor;
 
     @Override
     public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
@@ -36,29 +34,35 @@ public class ModbusTcpDriver extends AbstractDriver {
                 properties.getString("port"),
                 properties.getString("salve"),
                 properties.getString("timeout")));
-
-        if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == properties.getLong("initialDelay")) throw new ValidateException();
-            if (null == properties.getLong("period")) throw new ValidateException();
-            if (StringUtils.isEmpty(properties.getString("timeUnit"))) throw new ValidateException();
-
-            List<Map<String, Object>> points = properties.getList("points");
-            if (null == points || points.isEmpty()) throw new ValidateException();
-
-            this.executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleAtFixedRate(() -> {
-                try {
-                    read(points);
-                } catch (Exception e) {
-                    produceDataError(e.getMessage());
-                }
-            }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
-        }
-
     }
 
+    @Override
+    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
+        plcConnection.close();
+    }
 
-    private void read(List<Map<String, Object>> points) throws ExecutionException, InterruptedException {
+    @Override
+    public boolean test(ConfigProperties properties) {
+        if (StringUtils.isEmpty(properties.getString("ip"))) return false;
+        if (StringUtils.isEmpty(properties.getString("port"))) return false;
+        if (StringUtils.isEmpty(properties.getString("salve"))) return false;
+        try {
+            PlcConnection plcConnection = new PlcDriverManager().getConnection(String.format("modbus-tcp:tcp://%s:%s?unit-identifier=%s",
+                    properties.getString("ip"),
+                    properties.getString("port"),
+                    properties.getString("salve")));
+            return plcConnection.isConnected();
+        } catch (PlcConnectionException e) {
+            Loggers.DRIVER.error("driver test {}", e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public void scheduleTrigger(ConfigProperties properties) throws Exception {
+        List<Map<String, Object>> points = properties.getList("points");
+        if (null == points || points.isEmpty()) throw new ValidateException();
+
         PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
 
         points.forEach(point -> {
@@ -83,34 +87,4 @@ public class ModbusTcpDriver extends AbstractDriver {
         }
     }
 
-
-    @Override
-    public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
-        if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            executor.shutdown();
-        }
-        plcConnection.close();
-    }
-
-    @Override
-    public boolean test(ConfigProperties properties) {
-        if (StringUtils.isEmpty(properties.getString("ip"))) return false;
-        if (StringUtils.isEmpty(properties.getString("port"))) return false;
-        if (StringUtils.isEmpty(properties.getString("salve"))) return false;
-        try {
-            PlcConnection plcConnection = new PlcDriverManager().getConnection(String.format("modbus-tcp:tcp://%s:%s?unit-identifier=%s",
-                    properties.getString("ip"),
-                    properties.getString("port"),
-                    properties.getString("salve")));
-            return plcConnection.isConnected();
-        } catch (PlcConnectionException e) {
-            Loggers.DRIVER.error("driver test {}", e.getMessage());
-            return false;
-        }
-    }
-
-    @Override
-    public Object handleData(Object data, ConfigProperties properties) throws Exception {
-        throw new UnsupportedOperationException();
-    }
 }

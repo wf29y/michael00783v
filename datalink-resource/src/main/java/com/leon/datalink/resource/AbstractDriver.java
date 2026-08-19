@@ -4,6 +4,7 @@ package com.leon.datalink.resource;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.core.variable.GlobalVariableContent;
@@ -34,10 +35,19 @@ public abstract class AbstractDriver implements Driver {
         };
     }
 
-    @Override
     public final void init(Consumer<RuntimeData> consumer) {
         this.consumer = consumer;
         this.templateEngine = TemplateUtil.createEngine();
+    }
+
+    @Override
+    public void scheduleTrigger(ConfigProperties properties) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object handleData(Object data, ConfigProperties properties) throws Exception {
+        throw new UnsupportedOperationException();
     }
 
     // 获得全局变量

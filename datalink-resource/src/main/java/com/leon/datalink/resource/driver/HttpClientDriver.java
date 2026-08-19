@@ -1,12 +1,11 @@
 package com.leon.datalink.resource.driver;
 
-import cn.hutool.core.exceptions.ValidateException;
 import cn.hutool.core.net.NetUtil;
+import com.leon.datalink.core.config.ConfigProperties;
 import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.resource.AbstractDriver;
 import com.leon.datalink.resource.constans.DriverModeEnum;
-import com.leon.datalink.core.config.ConfigProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.StringUtils;
@@ -17,18 +16,14 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpClientDriver extends AbstractDriver {
 
     private HttpComponentsClientHttpRequestFactory requestFactory;
 
     private RestTemplate restTemplate;
-
-    private ScheduledExecutorService executor;
 
     @Override
     public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
@@ -38,28 +33,10 @@ public class HttpClientDriver extends AbstractDriver {
         requestFactory.setReadTimeout(properties.getInteger("readTimeout", 6000));
 
         this.restTemplate = new RestTemplate(this.requestFactory);
-
-        if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            if (null == properties.getLong("initialDelay")) throw new ValidateException();
-            if (null == properties.getLong("period")) throw new ValidateException();
-            if (StringUtils.isEmpty(properties.getString("timeUnit"))) throw new ValidateException();
-
-            this.executor = Executors.newSingleThreadScheduledExecutor();
-            executor.scheduleAtFixedRate(() -> {
-                try {
-                    produceData(doRequest(null, properties));
-                } catch (Exception e) {
-                    produceDataError(e.getMessage());
-                }
-            }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
-        }
     }
 
     @Override
     public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
-        if (driverMode.equals(DriverModeEnum.SOURCE)) {
-            executor.shutdown();
-        }
         requestFactory.destroy();
     }
 
@@ -75,6 +52,11 @@ public class HttpClientDriver extends AbstractDriver {
             Loggers.DRIVER.error("driver test {}", e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public void scheduleTrigger(ConfigProperties properties) throws Exception {
+        produceData(doRequest(null, properties));
     }
 
     @Override

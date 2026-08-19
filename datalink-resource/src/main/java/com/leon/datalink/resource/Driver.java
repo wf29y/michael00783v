@@ -1,8 +1,7 @@
 package com.leon.datalink.resource;
 
-import akka.actor.ActorRef;
-import com.leon.datalink.resource.constans.DriverModeEnum;
 import com.leon.datalink.core.config.ConfigProperties;
+import com.leon.datalink.resource.constans.DriverModeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;
 
 import java.util.function.Consumer;
@@ -35,6 +34,11 @@ public interface Driver {
      * test ok
      */
     boolean test(ConfigProperties properties);
+
+    /**
+     * handle collect data
+     */
+    void scheduleTrigger(ConfigProperties properties) throws Exception;
 
     /**
      * handle receive data

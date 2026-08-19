@@ -68,10 +68,5 @@ public class HttpServerDriver extends AbstractDriver {
         return NetUtil.isUsableLocalPort(port);
     }
 
-    @Override
-    public Object handleData(Object data, ConfigProperties properties) throws Exception {
-        throw new UnsupportedOperationException();
-    }
-
 
 }

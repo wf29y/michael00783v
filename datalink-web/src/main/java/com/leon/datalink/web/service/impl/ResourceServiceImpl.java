@@ -7,7 +7,7 @@ import com.leon.datalink.core.storage.KvStorage;
 import com.leon.datalink.core.utils.*;
 import com.leon.datalink.resource.Driver;
 import com.leon.datalink.resource.DriverFactory;
-import com.leon.datalink.resource.Resource;
+import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.core.backup.BackupData;
 import com.leon.datalink.web.service.ResourceService;
 import org.springframework.stereotype.Service;

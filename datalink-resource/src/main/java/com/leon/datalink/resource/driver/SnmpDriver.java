@@ -39,8 +39,9 @@ public class SnmpDriver extends AbstractDriver {
 
     private ResponseListener listener;
 
-    private ScheduledExecutorService executor;
+    private List<String> getOidList;
 
+    private List<String> walkOidList;
 
     @Override
     public void create(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
@@ -92,19 +93,8 @@ public class SnmpDriver extends AbstractDriver {
         List<Map<String, Object>> points = properties.getList("points");
         if (null == points || points.isEmpty()) throw new ValidateException();
 
-        List<String> getOidList = points.stream().filter(point -> point.get("type").equals("GET")).map(point -> (String) point.get("oid")).collect(Collectors.toList());
-        List<String> walkOidList = points.stream().filter(point -> point.get("type").equals("WALK")).map(point -> (String) point.get("oid")).collect(Collectors.toList());
-
-        this.executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(() -> {
-            try {
-                sendSnmp(PDU.GET, getOidList);
-                sendSnmp(PDU.GETNEXT, walkOidList);
-            } catch (Exception e) {
-                produceDataError(e.getMessage());
-            }
-        }, properties.getLong("initialDelay"), properties.getLong("period"), TimeUnit.valueOf(properties.getString("timeUnit")));
-
+        getOidList = points.stream().filter(point -> point.get("type").equals("GET")).map(point -> (String) point.get("oid")).collect(Collectors.toList());
+        walkOidList = points.stream().filter(point -> point.get("type").equals("WALK")).map(point -> (String) point.get("oid")).collect(Collectors.toList());
     }
 
     private String getUrl(ConfigProperties properties) {
@@ -133,7 +123,6 @@ public class SnmpDriver extends AbstractDriver {
     @Override
     public void destroy(DriverModeEnum driverMode, ConfigProperties properties) throws Exception {
         if (null != snmp) snmp.close();
-        if (null != executor) executor.shutdown();
     }
 
     @Override
@@ -144,7 +133,8 @@ public class SnmpDriver extends AbstractDriver {
     }
 
     @Override
-    public Object handleData(Object data, ConfigProperties properties) throws Exception {
-        throw new UnsupportedOperationException();
+    public void scheduleTrigger(ConfigProperties properties) throws Exception {
+        sendSnmp(PDU.GET, getOidList);
+        sendSnmp(PDU.GETNEXT, walkOidList);
     }
 }
