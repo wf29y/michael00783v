@@ -3,7 +3,13 @@ package com.leon.datalink.rule.handler;
 import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.Cancellable;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.core.config.ConfigProperties;
+import com.leon.datalink.core.schedule.Schedule;
+import com.leon.datalink.core.schedule.ScheduleManager;
+import com.leon.datalink.core.utils.SnowflakeIdWorker;
+import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.resource.entity.ScheduleTrigger;
 import com.leon.datalink.rule.entity.Rule;
 
@@ -23,8 +29,6 @@ public abstract class AbstractRuleCreateHandler implements RuleCreateHandler {
 
     protected ActorRef ruleActorRef;
 
-    protected List<Cancellable> schedules = new ArrayList<>();
-
     @Override
     public void create(Rule rule, ActorContext context) {
         this.rule = rule;
@@ -42,30 +46,36 @@ public abstract class AbstractRuleCreateHandler implements RuleCreateHandler {
 
     }
 
-    @Override
-    public void destroy() {
-        for (Cancellable schedule : schedules) {
-            schedule.cancel();
-        }
-    }
-
     protected abstract ActorRef createDestResource();
 
     protected abstract LinkedList<ActorRef> createTransform(ActorRef destResourceActorRef);
 
     protected abstract void createSourceResource(LinkedList<ActorRef> transformActorRefList);
 
-    protected void createSchedule(ConfigProperties properties,ActorRef actorRef){
-        ChronoUnit timeUnit = ChronoUnit.valueOf(properties.getString(TIME_UNIT));
+    protected void createSchedule(Resource resource, ActorRef actorRef){
+        ConfigProperties properties = resource.getProperties();
+        Long initialDelay = properties.getLong(INITIAL_DELAY);
+        String timeUnit = properties.getString(TIME_UNIT);
+        Long period = properties.getLong(PERIOD);
+        ChronoUnit unit = ChronoUnit.valueOf(timeUnit);
         Cancellable cancellable = context.system().scheduler().scheduleAtFixedRate(
-                Duration.of(properties.getLong(INITIAL_DELAY), timeUnit),
-                Duration.of(properties.getLong(PERIOD), timeUnit),
+                Duration.of(initialDelay, unit),
+                Duration.of(period, unit),
                 actorRef,
                 new ScheduleTrigger(),
                 context.dispatcher(),
                 ActorRef.noSender());
 
-        schedules.add(cancellable);
+        Schedule schedule = new Schedule();
+        schedule.setId(SnowflakeIdWorker.getId());
+        schedule.setRuleId(rule.getRuleId());
+        schedule.setResourceName(resource.getResourceName());
+        schedule.setInitialDelay(initialDelay);
+        schedule.setPeriod(period);
+        schedule.setTimeUnit(timeUnit);
+        schedule.setCancellable(cancellable);
+        schedule.setCreateTime(DateUtil.now());
+        ScheduleManager.add(schedule);
     }
 
 }

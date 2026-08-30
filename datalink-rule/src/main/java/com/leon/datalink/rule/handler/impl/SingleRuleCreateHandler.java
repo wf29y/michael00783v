@@ -44,7 +44,7 @@ public class SingleRuleCreateHandler extends AbstractRuleCreateHandler {
             ActorRef resourceActor = context.actorOf((ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
                     sourceResource.getResourceRuntimeId());
             if (sourceResource.getResourceType().getMode().equals(SourceModeEnum.SCHEDULE)) {
-               createSchedule(sourceResource.getProperties(),resourceActor);
+               createSchedule(sourceResource,resourceActor);
             }
         });
 

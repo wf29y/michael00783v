@@ -15,6 +15,7 @@ import plugin from '@/assets/icons/plugin.svg?inline' // path to your '*.svg?inl
 import backup from '@/assets/icons/backup.svg?inline' // path to your '*.svg?inline' file.
 import listener from '@/assets/icons/listener.svg?inline' // path to your '*.svg?inline' file.
 import cluster from '@/assets/icons/cluster.svg?inline' // path to your '*.svg?inline' file.
+import schedule from '@/assets/icons/schedule.svg?inline' // path to your '*.svg?inline' file.
 
 import resourceNode from '@/assets/nodes/resource.svg?inline' // path to your '*.svg?inline' file.
 import withoutNode from '@/assets/nodes/rule.svg?inline' // path to your '*.svg?inline' file.
@@ -32,6 +33,7 @@ export {
   backup,
   listener,
   cluster,
+  schedule,
   withoutNode,
   scriptNode,
   pluginNode,

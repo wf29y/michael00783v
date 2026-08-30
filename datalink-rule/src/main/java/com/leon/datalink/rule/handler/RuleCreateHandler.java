@@ -7,6 +7,4 @@ public interface RuleCreateHandler {
 
     void create(Rule rule, ActorContext actorContext);
 
-    void destroy();
-
 }

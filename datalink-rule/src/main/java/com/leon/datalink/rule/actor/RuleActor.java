@@ -2,6 +2,7 @@ package com.leon.datalink.rule.actor;
 
 import akka.actor.AbstractActor;
 import akka.actor.Props;
+import com.leon.datalink.core.schedule.ScheduleManager;
 import com.leon.datalink.core.utils.EnvUtil;
 import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.rule.entity.Rule;
@@ -44,7 +45,7 @@ public class RuleActor extends AbstractActor {
     public void postStop() throws Exception {
         Loggers.RULE.info("stop rule [{}]", getSelf().path());
         RuntimeManger.stopRuntime(rule.getRuleId());
-        ruleCreateHandler.destroy();
+        ScheduleManager.stopByRuleId(rule.getRuleId());
     }
 
     /**

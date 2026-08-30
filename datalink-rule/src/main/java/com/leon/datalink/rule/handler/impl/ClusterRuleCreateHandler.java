@@ -76,7 +76,7 @@ public class ClusterRuleCreateHandler extends AbstractRuleCreateHandler {
                                     new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
                                     .props(ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
                             sourceResource.getResourceRuntimeId());
-                    createSchedule(sourceResource.getProperties(), actorRef);
+                    createSchedule(sourceResource, actorRef);
                 }
             }
         });
