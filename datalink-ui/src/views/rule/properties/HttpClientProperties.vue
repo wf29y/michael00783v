@@ -1,34 +1,36 @@
 <template>
   <a-row :gutter='24'>
     <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
-      <a-col :span='24'>
-        <a-form-model-item label='路径' prop='path'>
-          <a-input v-model='properties.path' placeholder='请输入路径' :addon-before='properties.url' />
-        </a-form-model-item>
-      </a-col>
-      <a-col :span='type==="source"?12:24'>
+      <a-col :span='12'>
         <a-form-model-item label='请求方式' prop='method'>
           <a-select v-model='properties.method' placeholder='请选择请求方式' style='width: 100%'>
             <a-select-option v-for='(item,index) in methodList' :key='index' :value='item'>{{ item }}</a-select-option>
           </a-select>
         </a-form-model-item>
       </a-col>
-      <a-col :span='12' v-if='type==="source"'>
-        <a-form-model-item label='时间单位' prop='timeUnit'>
-          <a-select v-model='properties.timeUnit' placeholder='请选择时间单位' style='width: 100%'>
-            <a-select-option v-for='(item,index) in timeUnitList' :key='index' :value='item.value'>{{ item.name }}
-            </a-select-option>
-          </a-select>
+      <a-col :span='12'>
+        <a-form-model-item label='路径' prop='path'>
+          <a-input v-model='properties.path' placeholder='请输入路径' :addon-before='properties.url' />
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if='type==="source"'>
         <a-form-model-item label='启动延迟' prop='initialDelay'>
-          <a-input-number v-model='properties.initialDelay' placeholder='请输入启动延迟' style='width: 100%' />
+          <a-input v-model='properties.initialDelay' placeholder='请输入启动延迟' style='width: 100%'>
+            <a-select slot='addonAfter' v-model='properties.initialDelayUnit' placeholder='单位' style='width: 80px'>
+              <a-select-option v-for='(item,index) in timeUnitList' :key='index' :value='item.value'>{{ item.name }}
+              </a-select-option>
+            </a-select>
+          </a-input>
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if='type==="source"'>
-        <a-form-model-item label='请求频率' prop='period'>
-          <a-input-number v-model='properties.period' placeholder='请输入请求频率' style='width: 100%' />
+        <a-form-model-item label='执行间隔' prop='interval'>
+          <a-input v-model='properties.interval' placeholder='请输入执行间隔' style='width: 100%'>
+            <a-select slot='addonAfter' v-model='properties.intervalUnit' placeholder='单位' style='width: 80px'>
+              <a-select-option v-for='(item,index) in timeUnitList' :key='index' :value='item.value'>{{ item.name }}
+              </a-select-option>
+            </a-select>
+          </a-input>
         </a-form-model-item>
       </a-col>
       <a-col :span='24'>
@@ -57,16 +59,19 @@ export default {
       properties: {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        body: ''
+        body: '',
+        initialDelayUnit: 'SECONDS',
+        intervalUnit: 'SECONDS'
       },
       methodList: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH', 'OPTIONS', 'TRACE'],
       timeUnitList: timeUnitList,
       rules: {
         path: [{ required: true, message: '请输入路径', trigger: 'blur' }],
         method: [{ required: true, message: '请选择请求方式', trigger: 'blur' }],
-        timeUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }],
         initialDelay: [{ required: true, message: '请输入启动延迟', trigger: 'blur' }],
-        period: [{ required: true, message: '请输入请求频率', trigger: 'blur' }]
+        initialDelayUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }],
+        interval: [{ required: true, message: '请输入执行间隔', trigger: 'blur' }],
+        intervalUnit: [{ required: true, message: '请选择时间单位', trigger: 'change' }]
       }
     }
   },
@@ -106,7 +111,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
+.ant-form-item-with-help{
+  margin-bottom: 6px;
+}
 
 </style>

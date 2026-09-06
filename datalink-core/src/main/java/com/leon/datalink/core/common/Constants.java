@@ -22,8 +22,10 @@ public class Constants {
 
     public static final String INITIAL_DELAY = "initialDelay";
 
-    public static final String PERIOD = "period";
+    public static final String INITIAL_DELAY_UNIT = "initialDelayUnit";
 
-    public static final String TIME_UNIT = "timeUnit";
+    public static final String INTERVAL = "interval";
+
+    public static final String INTERVAL_UNIT = "intervalUnit";
 
 }

@@ -60,11 +60,11 @@ const resourceConfigMap = {
         { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '读取频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -152,11 +152,11 @@ const resourceConfigMap = {
         { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '查询频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -178,11 +178,11 @@ const resourceConfigMap = {
         { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '查询频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -204,11 +204,11 @@ const resourceConfigMap = {
         { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '查询频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -230,11 +230,11 @@ const resourceConfigMap = {
         { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '查询频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -256,11 +256,11 @@ const resourceConfigMap = {
         { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '查询频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -282,11 +282,11 @@ const resourceConfigMap = {
         { name: 'SQL模板', value: (resource) => resource.properties.sql },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '查询频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -302,11 +302,11 @@ const resourceConfigMap = {
         { name: '请求方式', value: (resource) => `${resource.properties.method}` },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '调用频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -340,11 +340,11 @@ const resourceConfigMap = {
         { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '读取频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -360,11 +360,11 @@ const resourceConfigMap = {
         { name: '读取点位', value: (resource) => `${resource.properties.points ? resource.properties.points.length : 0}` },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
-          name: '读取频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }
@@ -386,11 +386,11 @@ const resourceConfigMap = {
         { name: '执行命令', value: (resource) => `${resource.properties.command}` },
         {
           name: '启动延迟',
-          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
         },
         {
           name: '执行频率',
-          value: (resource) => resource.properties.period ? `${resource.properties.period}${timeUnitMap[resource.properties.timeUnit]}` : undefined
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
         }
       ]
     }

@@ -15,9 +15,7 @@ import com.leon.datalink.rule.entity.Rule;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import static com.leon.datalink.core.common.Constants.*;
 
@@ -54,13 +52,16 @@ public abstract class AbstractRuleCreateHandler implements RuleCreateHandler {
 
     protected void createSchedule(Resource resource, ActorRef actorRef){
         ConfigProperties properties = resource.getProperties();
+
         Long initialDelay = properties.getLong(INITIAL_DELAY);
-        String timeUnit = properties.getString(TIME_UNIT);
-        Long period = properties.getLong(PERIOD);
-        ChronoUnit unit = ChronoUnit.valueOf(timeUnit);
+        String initialDelayUnit = properties.getString(INITIAL_DELAY_UNIT);
+
+        Long interval = properties.getLong(INTERVAL);
+        String intervalUnit = properties.getString(INTERVAL_UNIT);
+
         Cancellable cancellable = context.system().scheduler().scheduleAtFixedRate(
-                Duration.of(initialDelay, unit),
-                Duration.of(period, unit),
+                Duration.of(initialDelay, ChronoUnit.valueOf(initialDelayUnit)),
+                Duration.of(interval, ChronoUnit.valueOf(intervalUnit)),
                 actorRef,
                 new ScheduleTrigger(),
                 context.dispatcher(),
@@ -71,8 +72,9 @@ public abstract class AbstractRuleCreateHandler implements RuleCreateHandler {
         schedule.setRuleId(rule.getRuleId());
         schedule.setResourceName(resource.getResourceName());
         schedule.setInitialDelay(initialDelay);
-        schedule.setPeriod(period);
-        schedule.setTimeUnit(timeUnit);
+        schedule.setInitialDelayUnit(initialDelayUnit);
+        schedule.setInterval(interval);
+        schedule.setIntervalUnit(intervalUnit);
         schedule.setCancellable(cancellable);
         schedule.setCreateTime(DateUtil.now());
         ScheduleManager.add(schedule);

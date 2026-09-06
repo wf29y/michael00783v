@@ -13,9 +13,11 @@ public class Schedule implements ProtostuffSerializable {
 
     private Long initialDelay;
 
-    private Long period;
+    private String initialDelayUnit;
 
-    private String timeUnit;
+    private Long interval;
+
+    private String intervalUnit;
 
     private String createTime;
 
@@ -57,21 +59,30 @@ public class Schedule implements ProtostuffSerializable {
         return this;
     }
 
-    public Long getPeriod() {
-        return period;
+    public String getInitialDelayUnit() {
+        return initialDelayUnit;
     }
 
-    public Schedule setPeriod(Long period) {
-        this.period = period;
+    public Schedule setInitialDelayUnit(String initialDelayUnit) {
+        this.initialDelayUnit = initialDelayUnit;
         return this;
     }
 
-    public String getTimeUnit() {
-        return timeUnit;
+    public Long getInterval() {
+        return interval;
     }
 
-    public Schedule setTimeUnit(String timeUnit) {
-        this.timeUnit = timeUnit;
+    public Schedule setInterval(Long interval) {
+        this.interval = interval;
+        return this;
+    }
+
+    public String getIntervalUnit() {
+        return intervalUnit;
+    }
+
+    public Schedule setIntervalUnit(String intervalUnit) {
+        this.intervalUnit = intervalUnit;
         return this;
     }
 

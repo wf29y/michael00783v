@@ -30,8 +30,12 @@
         :loading='loading'
       >
 
-        <span slot='unit' slot-scope='text, record, index'>
-          {{ text }} {{ timeUnitMap[record.timeUnit] }}
+        <span slot='initialDelayUnit' slot-scope='text, record, index'>
+          {{ text }} {{ timeUnitMap[record.initialDelayUnit] }}
+        </span>
+
+        <span slot='intervalUnit' slot-scope='text, record, index'>
+          {{ text }} {{ timeUnitMap[record.intervalUnit] }}
         </span>
 
       </a-table>
@@ -57,12 +61,12 @@ export default {
         {
           title: '启动延迟',
           dataIndex: 'initialDelay',
-          scopedSlots: { customRender: 'unit' }
+          scopedSlots: { customRender: 'initialDelayUnit' }
         },
         {
           title: '调度间隔',
-          dataIndex: 'period',
-          scopedSlots: { customRender: 'unit' }
+          dataIndex: 'interval',
+          scopedSlots: { customRender: 'intervalUnit' }
         },
         {
           title: '启动时间',

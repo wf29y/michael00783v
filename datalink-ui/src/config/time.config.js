@@ -1,8 +1,12 @@
 const timeUnitMap = {
+  MILLIS: '毫秒',
   SECONDS: '秒',
-  MINUTES: '分',
-  HOURS: '时',
-  DAYS: '天'
+  MINUTES: '分钟',
+  HOURS: '小时',
+  DAYS: '天',
+  WEEKS: '周',
+  MONTHS: '月',
+  YEARS: '年',
 }
 
 function createUnitList() {
