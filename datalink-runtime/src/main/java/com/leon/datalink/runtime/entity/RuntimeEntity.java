@@ -1,10 +1,10 @@
 package com.leon.datalink.runtime.entity;
 
 import com.google.common.collect.Lists;
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.runtime.constants.Constants;
 import com.leon.datalink.runtime.constants.RuntimeStatusEnum;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -12,8 +12,7 @@ import java.util.Map;
 /**
  * 运行时资源或转换
  */
-public class RuntimeEntity implements Serializable {
-    private static final long serialVersionUID = 1895166087085804777L;
+public class RuntimeEntity implements ProtostuffSerializable {
 
     // 当前状态（初始化、正常、异常）
     private RuntimeStatusEnum status;

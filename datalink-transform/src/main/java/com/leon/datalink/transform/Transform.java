@@ -1,14 +1,12 @@
 package com.leon.datalink.transform;
 
 import com.leon.datalink.core.config.ConfigProperties;
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.transform.constants.TransformModeEnum;
 
 import java.io.Serializable;
 
-public class Transform implements Serializable {
-    private static final long serialVersionUID = 1276156087085594222L;
-
-   // private String ruleId;
+public class Transform implements ProtostuffSerializable {
 
     private TransformModeEnum transformMode;
 
@@ -17,15 +15,6 @@ public class Transform implements Serializable {
     private String transformRuntimeId; //转换运行时id
 
     private Integer workerNum;
-
-//    public String getRuleId() {
-//        return ruleId;
-//    }
-//
-//    public Transform setRuleId(String ruleId) {
-//        this.ruleId = ruleId;
-//        return this;
-//    }
 
     public TransformModeEnum getTransformMode() {
         return transformMode;

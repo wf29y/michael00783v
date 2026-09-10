@@ -1,9 +1,9 @@
 package com.leon.datalink.transform.plugin;
 
-import java.io.Serializable;
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 
-public class Plugin implements Serializable {
-    private static final long serialVersionUID = 1345166087085804264L;
+
+public class Plugin implements ProtostuffSerializable {
 
     private String pluginId;
 

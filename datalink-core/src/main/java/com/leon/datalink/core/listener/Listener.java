@@ -1,9 +1,9 @@
 package com.leon.datalink.core.listener;
 
-import java.io.Serializable;
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 
-public class Listener  implements Serializable {
-    private static final long serialVersionUID = 1333156087665804264L;
+
+public class Listener implements ProtostuffSerializable {
 
     private String ip;
 
@@ -16,7 +16,7 @@ public class Listener  implements Serializable {
     public Listener() {
     }
 
-    public Listener(String ip,Integer port, ListenerTypeEnum type, String desc) {
+    public Listener(String ip, Integer port, ListenerTypeEnum type, String desc) {
         this.ip = ip;
         this.port = port;
         this.type = type;

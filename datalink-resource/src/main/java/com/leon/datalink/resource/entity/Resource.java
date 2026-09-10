@@ -1,12 +1,10 @@
 package com.leon.datalink.resource.entity;
 
 import com.leon.datalink.core.config.ConfigProperties;
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.resource.constans.ResourceTypeEnum;
 
-import java.io.Serializable;
-
-public class Resource implements Serializable {
-    private static final long serialVersionUID = 1276156087085594264L;
+public class Resource implements ProtostuffSerializable {
 
     private String resourceId;
 

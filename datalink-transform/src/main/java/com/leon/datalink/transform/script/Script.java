@@ -1,11 +1,8 @@
 package com.leon.datalink.transform.script;
 
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 
-import java.io.Serializable;
-import java.util.Map;
-
-public class Script implements Serializable {
-    private static final long serialVersionUID = 1345156089995804264L;
+public class Script implements ProtostuffSerializable {
 
     private String scriptId;
 

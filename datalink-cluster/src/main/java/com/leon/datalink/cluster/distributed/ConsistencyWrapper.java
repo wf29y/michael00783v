@@ -1,9 +1,11 @@
 package com.leon.datalink.cluster.distributed;
 
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
+
 /**
  * 数据同步
  */
-public class ConsistencyWrapper {
+public class ConsistencyWrapper implements ProtostuffSerializable {
 
     private Class<?> clazz;
 

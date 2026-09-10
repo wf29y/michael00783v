@@ -1,9 +1,8 @@
 package com.leon.datalink.core.backup;
 
-import java.io.Serializable;
+import com.leon.datalink.core.serializer.ProtostuffSerializable;
 
-public class Backup implements Serializable {
-    private static final long serialVersionUID = 1895166087085804264L;
+public class Backup implements ProtostuffSerializable {
 
     private String backupId;
 
