@@ -77,15 +77,15 @@ export default {
     }
   },
   mounted () {
-    this.loadTomcatInfo()
+    this.loadSystemInfo()
   },
   methods: {
 
     handleClickUpdate () {
-      this.loadTomcatInfo()
+      this.loadSystemInfo()
     },
 
-    loadTomcatInfo () {
+    loadSystemInfo () {
       this.tableLoading = true
       this.time = moment().format('YYYY年MM月DD日 HH时mm分ss秒')
       const url = this.nodeUrl ? 'http://' + this.nodeUrl : ''

@@ -96,14 +96,14 @@ export default {
     }
   },
   mounted() {
-    this.loadTomcatInfo()
+    this.loadJvmInfo()
   },
   methods: {
     handleClickUpdate() {
-      this.loadTomcatInfo()
+      this.loadJvmInfo()
     },
 
-    loadTomcatInfo() {
+    loadJvmInfo() {
       this.tableLoading = true
       this.time = moment().format('YYYY年MM月DD日 HH时mm分ss秒')
       Promise.all([

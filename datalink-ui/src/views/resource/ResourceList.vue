@@ -11,7 +11,7 @@
             </a-col>
             <a-col :md='6' :sm='24'>
               <a-form-item label='资源类型'>
-                <a-select v-model='queryParam.resourceType' placeholder='请选择资源类型'>
+                <a-select v-model='queryParam.resourceType' placeholder='请选择资源类型' show-search>
                   <a-select-opt-group v-for='(group,groupIndex) in resourceTypeAllList' :key='groupIndex'
                                       :label='group.group'>
                     <a-select-option v-for='(item,itemIndex) in group.list' :value='item.code' :key='itemIndex'>

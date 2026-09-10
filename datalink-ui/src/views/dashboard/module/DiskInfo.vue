@@ -2,7 +2,7 @@
   <a-skeleton active :loading='loading' :paragraph='{ rows: 17 }'>
 
     <a-table
-      rowKey='id'
+      rowKey='name'
       size='middle'
       :columns='columns'
       :dataSource='dataSource'

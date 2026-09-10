@@ -12,7 +12,7 @@
       <a-row :gutter='24'>
         <a-col :span='12'>
           <a-form-model-item label='资源类型' prop='resourceType'>
-            <a-select v-model='modal.resourceType' placeholder='请选择资源类型' :disabled='modal.resourceId'>
+            <a-select v-model='modal.resourceType' placeholder='请选择资源类型' :disabled='modal.resourceId' show-search>
               <a-select-opt-group v-for='(group,groupIndex) in resourceTypeAllList' :key='groupIndex' :label='group.group'>
                 <a-select-option v-for='(item,itemIndex) in group.list' :value='item.code' :key='itemIndex'>{{ item.name
                   }}

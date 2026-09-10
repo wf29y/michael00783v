@@ -66,16 +66,10 @@
         <a-tab-pane key='1' tab='基本信息'>
           <SystemInfo ref='systemInfo' :nodeUrl='node'></SystemInfo>
         </a-tab-pane>
-        <a-tab-pane key='2' tab='Tomact信息'>
-          <TomcatInfo ref='tomcatInfo' :nodeUrl='node'></TomcatInfo>
-        </a-tab-pane>
-        <a-tab-pane key='3' tab='JVM信息'>
+        <a-tab-pane key='2' tab='JVM信息'>
           <JvmInfo ref='jvmInfo' :nodeUrl='node'></JvmInfo>
         </a-tab-pane>
-        <a-tab-pane key='4' tab='HTTP追踪'>
-          <HttpTrace ref='httpTrace' :nodeUrl='node'></HttpTrace>
-        </a-tab-pane>
-        <a-tab-pane key='5' tab='磁盘信息'>
+        <a-tab-pane key='3' tab='磁盘信息'>
           <DiskInfo ref='diskInfo'></DiskInfo>
         </a-tab-pane>
       </a-tabs>
@@ -87,19 +81,15 @@
 import moment from 'moment'
 import { getSystemStatistics } from '@/api/system'
 import { getAction } from '@/api/manage'
-import HttpTrace from './module/HttpTrace'
 import JvmInfo from './module/JvmInfo'
 import SystemInfo from './module/SystemInfo'
-import TomcatInfo from './module/TomcatInfo'
 import DiskInfo from './module/DiskInfo'
 
 export default {
   name: 'Monitor',
   components: {
-    HttpTrace,
     JvmInfo,
     SystemInfo,
-    TomcatInfo,
     DiskInfo
   },
   data() {
@@ -134,14 +124,10 @@ export default {
   methods: {
     nodeSelectChange(node) {
       if (this.activeKey === '1') {
-        this.$refs.systemInfo.loadTomcatInfo()
+        this.$refs.systemInfo.loadSystemInfo()
       } else if (this.activeKey === '2') {
-        this.$refs.tomcatInfo.loadTomcatInfo()
+        this.$refs.jvmInfo.loadJvmInfo()
       } else if (this.activeKey === '3') {
-        this.$refs.jvmInfo.loadTomcatInfo()
-      }else if(this.activeKey === '4'){
-        this.$refs.httpTrace.fetch()
-      } else {
         this.$refs.diskInfo.loadDiskInfo()
       }
     },
