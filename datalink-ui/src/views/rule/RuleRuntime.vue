@@ -12,7 +12,7 @@
         <a-col :span='12' style='text-align: right'>
           <a-space size='small'>
             <a-button @click='refresh' style='width:75px'> 刷新</a-button>
-            <a-button @click='resetRuntime' style='width:75px' type='danger'> 重置</a-button>
+            <a-button @click='resetRuntime' style='width:75px' type='danger' :disabled='rule.enable'> 重置</a-button>
             <a-button @click='onClose' style='width:75px' type='primary'> 返回</a-button>
           </a-space>
         </a-col>

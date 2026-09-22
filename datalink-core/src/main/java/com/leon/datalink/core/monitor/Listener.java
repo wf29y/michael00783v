@@ -1,9 +1,9 @@
-package com.leon.datalink.core.listener;
+package com.leon.datalink.core.monitor;
 
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
+import java.io.Serializable;
 
 
-public class Listener implements ProtostuffSerializable {
+public class Listener implements Serializable {
 
     private String ip;
 

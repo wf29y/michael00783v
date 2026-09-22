@@ -84,7 +84,7 @@ export default {
       this.transformIndex = -1
       this.transform = {
         transformMode: 'PLUGIN',
-        workerNum: 3,
+        workerNum: 1,
         properties: {
           plugin: {}
         }

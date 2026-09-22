@@ -309,7 +309,7 @@ export default {
         case 'WITHOUT': {
           if (this.modal.transformList.length > 0) break // 仅可在无转换的时候添加一个透传处理器
           this.handleAddTransform({
-            workerNum: 3,
+            workerNum: 1,
             transformMode: 'WITHOUT'
           })
           break

@@ -141,7 +141,7 @@ export default {
           if (transformList.length === 1) {
             items = [
               { id: 'transform-node-port-left', group: 'left' },
-              { id: 'transform-node-port-bottom', group: 'right' }
+              { id: 'transform-node-port-right', group: 'right' }
             ]
           } else {
             items = [

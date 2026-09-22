@@ -19,12 +19,9 @@ import javax.annotation.PreDestroy;
 @Configuration
 public class AkkaConfig {
 
-    @Value("${datalink.cluster.member.list}")
-    private String memberListConfig;
-
     @Bean
     public ActorSystem actorSystem() {
-        return ActorSystemFactory.create(memberListConfig);
+        return ActorSystemFactory.create();
     }
 
     @PreDestroy

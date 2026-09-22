@@ -2,11 +2,11 @@ package com.leon.datalink.runtime.entity;
 
 import cn.hutool.core.date.DateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Runtime implements ProtostuffSerializable {
+public class Runtime implements Serializable {
 
     // 启动时间
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

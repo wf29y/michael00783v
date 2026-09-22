@@ -1,9 +1,10 @@
 package com.leon.datalink.cluster.member;
 
 import com.leon.datalink.cluster.constants.ClusterMemberStateEnum;
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
 
-public class ClusterMember implements ProtostuffSerializable {
+import java.io.Serializable;
+
+public class ClusterMember implements Serializable {
 
     private String memberName;
 

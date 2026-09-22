@@ -54,7 +54,7 @@ export default {
       this.transformIndex = -1
       this.transform = {
         transformMode: 'SQL',
-        workerNum: 3,
+        workerNum: 1,
         properties: {
           sql: 'SELECT * FROM [资源ID]'
         }

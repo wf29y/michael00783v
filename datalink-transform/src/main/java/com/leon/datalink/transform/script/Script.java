@@ -1,8 +1,8 @@
 package com.leon.datalink.transform.script;
 
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
+import java.io.Serializable;
 
-public class Script implements ProtostuffSerializable {
+public class Script implements Serializable {
 
     private String scriptId;
 

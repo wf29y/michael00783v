@@ -3,7 +3,7 @@ package com.leon.datalink.cluster.member;
 import akka.cluster.Member;
 import cn.hutool.core.date.DateTime;
 import com.leon.datalink.cluster.constants.ClusterMemberStateEnum;
-import com.leon.datalink.core.utils.EnvUtil;
+import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.core.variable.GlobalVariableContent;
 
 import java.util.*;

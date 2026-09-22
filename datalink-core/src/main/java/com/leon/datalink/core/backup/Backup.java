@@ -1,8 +1,8 @@
 package com.leon.datalink.core.backup;
 
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
+import java.io.Serializable;
 
-public class Backup implements ProtostuffSerializable {
+public class Backup implements Serializable {
 
     private String backupId;
 

@@ -5,6 +5,7 @@ import akka.cluster.routing.ClusterRouterPool;
 import akka.cluster.routing.ClusterRouterPoolSettings;
 import akka.routing.RoundRobinPool;
 import cn.hutool.core.collection.ListUtil;
+import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.resource.actor.ResourceActor;
 import com.leon.datalink.resource.actor.ResourceBroadcastActor;
 import com.leon.datalink.resource.constans.DriverModeEnum;
@@ -17,8 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.leon.datalink.rule.constants.Constants.CLUSTER_MAX_TOTAL_INSTANCES;
-
 /**
  * 集群模式下规则启动处理
  */
@@ -27,7 +26,7 @@ public class ClusterRuleCreateHandler extends AbstractRuleCreateHandler {
     @Override
     protected ActorRef createDestResource() {
         return context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
-                        new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
+                        new ClusterRouterPoolSettings(EnvUtil.getClusterInstancesMax(), 1, true, new HashSet<>()))
                         .props(ResourceBroadcastActor.props(rule.getDestResourceList(), ruleActorRef)),
                 "dest_broadcast");
     }
@@ -39,7 +38,7 @@ public class ClusterRuleCreateHandler extends AbstractRuleCreateHandler {
         ActorRef next = destResourceActorRef;
         for (Transform transform : transformList) {
             ActorRef transformActor = context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
-                            new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, transform.getWorkerNum(), true, new HashSet<>()))
+                            new ClusterRouterPoolSettings(EnvUtil.getClusterInstancesMax(), transform.getWorkerNum(), true, new HashSet<>()))
                             .props(TransformActor.props(transform, ruleActorRef, next)),
                     transform.getTransformRuntimeId());
             transformActorRefList.add(transformActor);
@@ -65,7 +64,7 @@ public class ClusterRuleCreateHandler extends AbstractRuleCreateHandler {
                 case LISTEN: {
                     // 集群下每个节点都创建一个源
                     context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
-                                    new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
+                                    new ClusterRouterPoolSettings(EnvUtil.getClusterInstancesMax(), 1, true, new HashSet<>()))
                                     .props(ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
                             sourceResource.getResourceRuntimeId());
                     break;
@@ -73,7 +72,7 @@ public class ClusterRuleCreateHandler extends AbstractRuleCreateHandler {
                 case SCHEDULE: {
                     // 集群下每个节点都创建一个源
                     ActorRef actorRef = context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
-                                    new ClusterRouterPoolSettings(CLUSTER_MAX_TOTAL_INSTANCES, 1, true, new HashSet<>()))
+                                    new ClusterRouterPoolSettings(EnvUtil.getClusterInstancesMax(), 1, true, new HashSet<>()))
                                     .props(ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
                             sourceResource.getResourceRuntimeId());
                     createSchedule(sourceResource, actorRef);

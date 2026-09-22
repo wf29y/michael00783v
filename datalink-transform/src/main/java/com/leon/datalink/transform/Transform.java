@@ -1,12 +1,11 @@
 package com.leon.datalink.transform;
 
 import com.leon.datalink.core.config.ConfigProperties;
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.transform.constants.TransformModeEnum;
 
 import java.io.Serializable;
 
-public class Transform implements ProtostuffSerializable {
+public class Transform implements Serializable {
 
     private TransformModeEnum transformMode;
 

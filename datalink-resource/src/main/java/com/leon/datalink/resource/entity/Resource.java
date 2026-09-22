@@ -1,10 +1,11 @@
 package com.leon.datalink.resource.entity;
 
 import com.leon.datalink.core.config.ConfigProperties;
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.resource.constans.ResourceTypeEnum;
 
-public class Resource implements ProtostuffSerializable {
+import java.io.Serializable;
+
+public class Resource implements Serializable {
 
     private String resourceId;
 

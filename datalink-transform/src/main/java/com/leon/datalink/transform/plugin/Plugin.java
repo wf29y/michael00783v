@@ -1,9 +1,9 @@
 package com.leon.datalink.transform.plugin;
 
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
+import java.io.Serializable;
 
 
-public class Plugin implements ProtostuffSerializable {
+public class Plugin implements Serializable {
 
     private String pluginId;
 

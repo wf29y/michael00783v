@@ -1,12 +1,12 @@
 package com.leon.datalink.rule.entity;
 
-import com.leon.datalink.core.serializer.ProtostuffSerializable;
 import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.transform.Transform;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Rule implements ProtostuffSerializable {
+public class Rule implements Serializable {
 
     private String ruleId;
 

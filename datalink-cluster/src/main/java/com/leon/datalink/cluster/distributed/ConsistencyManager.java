@@ -4,7 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.leon.datalink.cluster.actor.VariableConsistencyActor;
-import com.leon.datalink.core.utils.EnvUtil;
+import com.leon.datalink.core.evn.EnvUtil;
 import com.leon.datalink.core.variable.Variable;
 
 import java.util.HashMap;

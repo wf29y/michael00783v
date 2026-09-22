@@ -1,4 +1,7 @@
-package com.leon.datalink.core.utils;
+package com.leon.datalink.core.evn;
+
+import com.leon.datalink.core.utils.StringUtils;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.nio.file.Paths;
 
@@ -18,6 +21,18 @@ public class EnvUtil {
 
     private static final String LOCAL_IP = "datalink.local.ip";
 
+    private static final String CLUSTER_MEMBER_LIST = "datalink.cluster.member.list";
+
+    private static final String CLUSTER_INSTANCES_MAX = "datalink.cluster.instances.max";
+
+    private static final String RUNTIME_RECORD_LIMIT = "datalink.rule.runtime.record.limit";
+
+    private static String clusterMemberList;
+
+    private static Integer clusterInstancesMax;
+
+    private static Integer runtimeRecordLimit;
+
     private static String localIp;
 
     private static String datalinkHome;
@@ -34,11 +49,34 @@ public class EnvUtil {
 
     private static Boolean isCluster;
 
+    private static ConfigurableEnvironment environment;
+
+    public static void setEnvironment(ConfigurableEnvironment environment) {
+        EnvUtil.environment = environment;
+    }
+
     public static boolean isCluster() {
         if (null == isCluster) {
             isCluster = Boolean.parseBoolean(System.getProperty(CLUSTER));
         }
         return isCluster;
+    }
+
+    public static String getClusterMemberList() {
+        if (StringUtils.isBlank(clusterMemberList)) {
+            clusterMemberList = System.getProperty(CLUSTER_MEMBER_LIST);
+            if (StringUtils.isBlank(clusterMemberList)) {
+                clusterMemberList = environment.getProperty(CLUSTER_MEMBER_LIST);
+            }
+        }
+        return clusterMemberList;
+    }
+
+    public static Integer getClusterInstancesMax() {
+        if (null == clusterInstancesMax) {
+            clusterInstancesMax = environment.getProperty(CLUSTER_INSTANCES_MAX, Integer.class);
+        }
+        return clusterInstancesMax;
     }
 
     public static String getLocalIp() {
@@ -94,6 +132,13 @@ public class EnvUtil {
             backFilePath = Paths.get(getBaseDir(), BACKUP_FILE_PATH).toString();
         }
         return backFilePath;
+    }
+
+    public static Integer getRuntimeRecordLimit() {
+        if (null == runtimeRecordLimit) {
+            runtimeRecordLimit = environment.getProperty(RUNTIME_RECORD_LIMIT, Integer.class);
+        }
+        return runtimeRecordLimit;
     }
 
 }

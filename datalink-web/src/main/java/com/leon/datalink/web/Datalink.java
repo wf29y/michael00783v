@@ -1,12 +1,10 @@
 package com.leon.datalink.web;
 
-import com.leon.datalink.core.utils.EnvUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
@@ -21,7 +19,6 @@ import java.net.UnknownHostException;
 @ServletComponentScan
 public class Datalink {
     public static void main(String[] args) throws UnknownHostException {
-        EnvUtil.setLocalIp(InetAddress.getLocalHost().getHostAddress());
         SpringApplication.run(Datalink.class, args);
     }
 }

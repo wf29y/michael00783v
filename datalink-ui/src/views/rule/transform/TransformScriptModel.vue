@@ -58,7 +58,7 @@ export default {
       this.transformIndex = -1
       this.transform = {
         transformMode: 'SCRIPT',
-        workerNum: 3,
+        workerNum: 1,
         properties: {
           script: '/**\n' +
             '* 方法名transform不可修改,入参：data Object 源数据,出参：data Object 目标数据\n' +

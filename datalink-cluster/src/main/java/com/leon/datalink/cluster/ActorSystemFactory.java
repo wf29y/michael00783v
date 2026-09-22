@@ -4,10 +4,9 @@ import akka.actor.ActorSystem;
 import akka.event.Logging;
 import com.leon.datalink.cluster.actor.ClusterListenerActor;
 import com.leon.datalink.cluster.distributed.ConsistencyManager;
-import com.leon.datalink.core.listener.ListenerContent;
-import com.leon.datalink.core.listener.ListenerTypeEnum;
-import com.leon.datalink.core.utils.EnvUtil;
-import com.leon.datalink.core.utils.StringUtils;
+import com.leon.datalink.core.monitor.ListenerContent;
+import com.leon.datalink.core.monitor.ListenerTypeEnum;
+import com.leon.datalink.core.evn.EnvUtil;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
@@ -27,13 +26,12 @@ public class ActorSystemFactory {
     /**
      * 创建ActorSystem
      *
-     * @param memberListConfig application.properties 成员配置
      * @return ActorSystem
      */
-    public static ActorSystem create(String memberListConfig) {
+    public static ActorSystem create() {
         ActorSystem actorSystem;
         if (EnvUtil.isCluster()) {
-            actorSystem = ActorSystem.create("datalink", getConfig(memberListConfig));
+            actorSystem = ActorSystem.create("datalink", getConfig());
             actorSystem.actorOf(ClusterListenerActor.props(), "datalinkClusterListener");
             ConsistencyManager.init(actorSystem);
         } else {
@@ -46,13 +44,9 @@ public class ActorSystemFactory {
     /**
      * 获取配置
      */
-    private static Config getConfig(String memberListConfig) {
+    private static Config getConfig() {
 
-        // 优先使用命令行里的成员配置
-        String memberList = System.getProperty("datalink.cluster.member.list");
-        if (StringUtils.isEmpty(memberList)) memberList = memberListConfig;
-
-        String[] memberArray = memberList.split(",");
+        String[] memberArray = EnvUtil.getClusterMemberList().split(",");
         String[] local = memberArray[0].split(":");
         String ip = local[0];
         String port = local[1];
