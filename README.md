@@ -1,18 +1,20 @@
 # DATA LINK
 
 ### 一、介绍
-datalink是一个在各种异构数据源之间实现数据采集、桥接的工具，支持最少两个节点的集群模式。
+datalink可以在各种异构数据源之间实现数据桥接，基于akka开发，支持最少两个节点的集群模式。
 
-目前支持的数据源有：
+![link.png](img/link.png)
 
-MQTT、Kafka、RabbitMQ、RocketMQ、ActiveMQ、Pulsar、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis、TCP、UDP、HTTP、OPC UA、SNMP、Modbus TCP
+#### 支持数据源：
+通讯协议：TCP、UDP、HTTP、OPC UA、SNMP、Modbus TCP \
+消息通道：MQTT、Kafka、RabbitMQ、RocketMQ、ActiveMQ、Pulsar \
+数据存储：Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis 
 
+#### 支持数据处理方式:
+JavaScript脚本、Java插件、SQL脚本、无处理透传
 
-支持无转换透传、JavaScript脚本、Java插件、SQL语句四种数据转换方式。
 
 ### 二、打包&安装
-
-datalink是跨平台的，支持 Linux、Unix、macOS 以及 Windows，这意味着datalink可以部署在 x86_64 架构的服务器上。
 
 #### 源码打包
 
@@ -24,10 +26,8 @@ mvn -Prelease-datalink -Dmaven.test.skip=true clean install -U
 
 #### 安装
 
-使用源码打包或下载 datalink-server-$version.zip 或 datalink-server-$version.tar.gz 包
-
 ```bash
-unzip datalink-server-$version.zip 或者 tar -xvf datalink-server-$version.tar.gz
+unzip datalink-server-version.zip 或者 tar -xvf datalink-server-version.tar.gz
 cd datalink/bin
 ```
 
@@ -67,12 +67,12 @@ shutdown.cmd
 sh shutdown.sh
 ```
 
-### 四、Dashboard
+### 四、管理页面
 
-程序启动后，使用浏览器访问 http://127.0.0.1:9966/ 即可打开管理页面，
+程序启动后，使用浏览器访问 http://127.0.0.1:9966/ 即可打开管理页面 \
 默认用户名：datalink   密码：aaaaaa
 
-![img.png](datalink-ui/public/img.png)
+![dashboard.png](img/dashboard.png)
 
 ### 五、配置文件
 
@@ -86,3 +86,11 @@ server.port=9966
 ### 第一组IP端口必须为本节点的IP端口
 datalink.cluster.member.list=
 ```
+
+## 六、使用文档
+详细参见
+[wiki](https://gitee.com/liyang9512/datalink/wikis)
+
+## 七、开源许可
+
+Apache License 2.0, 详见 [LICENSE](./LICENSE)。
