@@ -1,5 +1,6 @@
 # DATA LINK
-
+<a href='https://gitee.com/liyang9512/datalink/stargazers'><img src='https://gitee.com/liyang9512/datalink/badge/star.svg?theme=gray' alt='star'></img></a>
+<a href='https://gitee.com/liyang9512/datalink/members'><img src='https://gitee.com/liyang9512/datalink/badge/fork.svg?theme=gray' alt='fork'></img></a>
 ### 一、介绍
 datalink可以在各种异构数据源之间实现数据桥接，基于akka开发，支持最少两个节点的集群模式。
 
@@ -10,7 +11,7 @@ datalink可以在各种异构数据源之间实现数据桥接，基于akka开�
 消息通道：MQTT、Kafka、RabbitMQ、RocketMQ、ActiveMQ、Pulsar \
 数据存储：Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis 
 
-#### 支持数据处理方式:
+#### 支持数据处理方式：
 JavaScript脚本、Java插件、SQL脚本、无处理透传
 
 
@@ -88,7 +89,7 @@ datalink.cluster.member.list=
 ```
 
 ## 六、使用文档
-详细参见
+详见
 [wiki](https://gitee.com/liyang9512/datalink/wikis)
 
 ## 七、开源许可
