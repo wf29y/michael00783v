@@ -44,6 +44,7 @@
       <rocket-m-q-properties v-if="modal.resourceType === 'ROCKETMQ'" ref='PropertiesModal' :type='resourceMode'></rocket-m-q-properties>
       <active-m-q-properties v-if="modal.resourceType === 'ACTIVEMQ'" ref='PropertiesModal' :type='resourceMode'></active-m-q-properties>
       <pulsar-properties v-if="modal.resourceType === 'PULSAR'" ref='PropertiesModal' :type='resourceMode'></pulsar-properties>
+      <d-m8-properties v-if="modal.resourceType === 'DM8'" ref='PropertiesModal' :type='resourceMode'></d-m8-properties>
     </a-form-model>
     <div
       :style="{
@@ -87,6 +88,7 @@ import MariaDBProperties from '../properties/MariaDBProperties'
 import RocketMQProperties from '../properties/RocketMQProperties'
 import ActiveMQProperties from '../properties/ActiveMQProperties'
 import PulsarProperties from '../properties/PulsarProperties'
+import DM8Properties from '../properties/DM8Properties'
 
 export default {
   name: 'ResourceModel',
@@ -110,7 +112,8 @@ export default {
     MariaDBProperties,
     RocketMQProperties,
     ActiveMQProperties,
-    PulsarProperties
+    PulsarProperties,
+    DM8Properties
   },
   data() {
     return {

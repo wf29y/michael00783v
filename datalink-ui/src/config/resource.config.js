@@ -291,6 +291,32 @@ const resourceConfigMap = {
       ]
     }
   },
+  DM8: {
+    name: 'DM8',
+    type: 'all',
+    group: 'DATABASE',
+    details: {
+      resource: {
+        name: '地址',
+        value: (resource) => `${resource.properties.ip}:${resource.properties.port}`
+      },
+      rule: [
+        {
+          name: '地址',
+          value: (resource) => `${resource.properties.ip}:${resource.properties.port}`
+        },
+        { name: 'SQL模板', value: (resource) => resource.properties.sql },
+        {
+          name: '启动延迟',
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
+        },
+        {
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+        }
+      ]
+    }
+  },
   HTTPCLIENT: {
     name: 'HTTP Client',
     type: 'all',

@@ -62,7 +62,13 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.dameng</groupId>
+            <artifactId>dm-jdbc</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/java/com/leon/datalink/resource/lib/DmJdbcDriver18.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>

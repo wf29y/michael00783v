@@ -25,7 +25,8 @@ public enum ResourceTypeEnum {
     MARIADB(MariaDBDriver.class, SourceModeEnum.SCHEDULE),
     ROCKETMQ(RocketMQDriver.class, SourceModeEnum.SUBSCRIBE),
     ACTIVEMQ(ActiveMQDriver.class, SourceModeEnum.SUBSCRIBE),
-    PULSAR(PulsarDriver.class, SourceModeEnum.SUBSCRIBE);
+    PULSAR(PulsarDriver.class, SourceModeEnum.SUBSCRIBE),
+    DM8(DM8Driver.class, SourceModeEnum.SCHEDULE);
 
     private final Class<? extends Driver> driver;
 
