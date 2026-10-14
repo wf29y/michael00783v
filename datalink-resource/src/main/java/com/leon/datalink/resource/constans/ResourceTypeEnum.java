@@ -26,7 +26,8 @@ public enum ResourceTypeEnum {
     ROCKETMQ(RocketMQDriver.class, SourceModeEnum.SUBSCRIBE),
     ACTIVEMQ(ActiveMQDriver.class, SourceModeEnum.SUBSCRIBE),
     PULSAR(PulsarDriver.class, SourceModeEnum.SUBSCRIBE),
-    DM8(DM8Driver.class, SourceModeEnum.SCHEDULE);
+    DM8(DM8Driver.class, SourceModeEnum.SCHEDULE),
+    KINGBASE(KingbaseDriver.class, SourceModeEnum.SCHEDULE);
 
     private final Class<? extends Driver> driver;
 

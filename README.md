@@ -9,7 +9,7 @@ datalink可以在各种异构数据源之间实现数据桥接，基于akka开�
 #### 支持数据源：
 通讯协议：TCP、UDP、HTTP、OPC UA、SNMP、Modbus TCP \
 消息通道：MQTT、Kafka、RabbitMQ、RocketMQ、ActiveMQ、Pulsar \
-数据存储：达梦、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis
+数据存储：达梦DM8、KingbaseES、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis
 
 #### 支持数据处理方式：
 JavaScript脚本、Java插件、SQL脚本、无处理透传

@@ -71,6 +71,13 @@
             <systemPath>${basedir}/src/main/java/com/leon/datalink/resource/lib/DmJdbcDriver18.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>com.kingbase</groupId>
+            <artifactId>kingbase-jdbc</artifactId>
+            <version>8.6.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/java/com/leon/datalink/resource/lib/kingbase8-8.6.0.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>sqljdbc4</artifactId>
         </dependency>
