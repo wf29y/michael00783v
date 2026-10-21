@@ -3,7 +3,9 @@ package com.leon.datalink.transform.actor;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
+import com.leon.datalink.core.utils.JacksonUtils;
 import com.leon.datalink.core.utils.Loggers;
+import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.runtime.constants.RuntimeTypeEnum;
 import com.leon.datalink.runtime.entity.RuntimeData;
 import com.leon.datalink.runtime.entity.RuntimeStatus;
@@ -63,7 +65,9 @@ public class TransformActor extends AbstractActor {
             RuntimeData transformRecord = new RuntimeData(RuntimeTypeEnum.TRANSFORM, transform.getTransformRuntimeId());
             try {
                 handler.transform(dataRecord, transformRecord::success);
-                nextActorRef.tell(transformRecord, getSelf());
+                if (null != transformRecord.getData() && !StringUtils.isEmpty(JacksonUtils.toJson(transformRecord.getData()))) {
+                    nextActorRef.tell(transformRecord, getSelf());
+                }
             } catch (Exception e) {
                 Loggers.DRIVER.error("transform data error: {}", e.getMessage());
                 transformRecord.fail(e.getMessage());
