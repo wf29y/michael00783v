@@ -69,12 +69,11 @@ if [[ "${MODE}" == "cluster" ]]; then
     JAVA_OPT="${JAVA_OPT} -server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m"
     JAVA_OPT="${JAVA_OPT} -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${BASE_DIR}/logs/java_heapdump.hprof"
     JAVA_OPT="${JAVA_OPT} -XX:-UseLargePages"
-     JAVA_OPT="${JAVA_OPT} -Ddatalink.cluster=true"
+    JAVA_OPT="${JAVA_OPT} -Ddatalink.cluster=true"
+    JAVA_OPT="${JAVA_OPT} -Ddatalink.cluster.member-list=${MEMBER_LIST}"
 else
     JAVA_OPT="${JAVA_OPT} -Xms512m -Xmx512m -Xmn256m"
 fi
-
-JAVA_OPT="${JAVA_OPT} -Ddatalink.cluster.member.list=${MEMBER_LIST}"
 
 JAVA_MAJOR_VERSION=$($JAVA -version 2>&1 | sed -E -n 's/.* version "([0-9]*).*$/\1/p')
 if [[ "$JAVA_MAJOR_VERSION" -ge "9" ]] ; then

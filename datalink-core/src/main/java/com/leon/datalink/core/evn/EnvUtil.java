@@ -21,7 +21,9 @@ public class EnvUtil {
 
     private static final String LOCAL_IP = "datalink.local.ip";
 
-    private static final String CLUSTER_MEMBER_LIST = "datalink.cluster.member.list";
+    private static final String CLUSTER_MEMBER_LIST_PROPERTY = "datalink.cluster.member-list"; // 启动脚本
+
+    private static final String CLUSTER_MEMBER_LIST_ENV = "datalink.cluster.member.list"; // 配置文件
 
     private static final String CLUSTER_INSTANCES_MAX = "datalink.cluster.instances.max";
 
@@ -64,9 +66,9 @@ public class EnvUtil {
 
     public static String getClusterMemberList() {
         if (StringUtils.isBlank(clusterMemberList)) {
-            clusterMemberList = System.getProperty(CLUSTER_MEMBER_LIST);
+            clusterMemberList = System.getProperty(CLUSTER_MEMBER_LIST_PROPERTY);
             if (StringUtils.isBlank(clusterMemberList)) {
-                clusterMemberList = environment.getProperty(CLUSTER_MEMBER_LIST);
+                clusterMemberList = environment.getProperty(CLUSTER_MEMBER_LIST_ENV);
             }
         }
         return clusterMemberList;
