@@ -203,7 +203,7 @@ export default {
     ,
     resourceChange(resourceId) {
       let index = this.resourceList.findIndex(resource => resource.resourceId === resourceId)
-      this.modal = this.resourceList[index]
+      this.modal = Object.assign({}, this.resourceList[index])
       this.$nextTick(() => {
         if (this.modal.resourceType) {
           this.$refs.PropertiesModal.set(this.modal.properties)

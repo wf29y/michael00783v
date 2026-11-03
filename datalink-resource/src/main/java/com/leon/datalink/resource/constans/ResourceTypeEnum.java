@@ -1,39 +1,55 @@
 package com.leon.datalink.resource.constans;
 
 
+import com.leon.datalink.core.config.ConfigProperties;
+import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.resource.Driver;
 import com.leon.datalink.resource.driver.*;
+import com.leon.datalink.resource.mode.SourceMode;
+import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 
 public enum ResourceTypeEnum {
 
-    MQTT(MqttDriver.class, SourceModeEnum.SUBSCRIBE),
-    KAFKA(KafkaDriver.class, SourceModeEnum.SUBSCRIBE),
-    RABBITMQ(RabbitMQDriver.class, SourceModeEnum.SUBSCRIBE),
-    HTTPCLIENT(HttpClientDriver.class, SourceModeEnum.SCHEDULE),
-    HTTPSERVER(HttpServerDriver.class, SourceModeEnum.LISTEN),
-    MYSQL(MysqlDriver.class, SourceModeEnum.SCHEDULE),
-    POSTGRESQL(PostgresqlDriver.class, SourceModeEnum.SCHEDULE),
-    TDENGINE(TDengineDriver.class, SourceModeEnum.SCHEDULE),
-    SQLSERVER(SqlServerDriver.class, SourceModeEnum.SCHEDULE),
-    OPCUA(OpcUADriver.class, SourceModeEnum.SCHEDULE),
-    REDIS(RedisDriver.class, SourceModeEnum.SCHEDULE),
-    TCP(TcpDriver.class, SourceModeEnum.LISTEN),
-    UDP(UdpDriver.class, SourceModeEnum.LISTEN),
-    SNMP(SnmpDriver.class, SourceModeEnum.SCHEDULE),
-    MODBUSTCP(ModbusTcpDriver.class, SourceModeEnum.SCHEDULE),
-    TIMESCALEDB(TimescaleDBDriver.class, SourceModeEnum.SCHEDULE),
-    MARIADB(MariaDBDriver.class, SourceModeEnum.SCHEDULE),
-    ROCKETMQ(RocketMQDriver.class, SourceModeEnum.SUBSCRIBE),
-    ACTIVEMQ(ActiveMQDriver.class, SourceModeEnum.SUBSCRIBE),
-    PULSAR(PulsarDriver.class, SourceModeEnum.SUBSCRIBE),
-    DM8(DM8Driver.class, SourceModeEnum.SCHEDULE),
-    KINGBASE(KingbaseDriver.class, SourceModeEnum.SCHEDULE);
+    /**
+     * 订阅型
+     */
+    MQTT(MqttDriver.class, prop -> prop.getBoolean("share", false) ? SourceModeEnum.SUBSCRIBE_MULTI : SourceModeEnum.SUBSCRIBE_SINGLE),
+    KAFKA(KafkaDriver.class, prop -> StringUtils.isEmpty(prop.getString("group")) ? SourceModeEnum.SUBSCRIBE_SINGLE : SourceModeEnum.SUBSCRIBE_MULTI),
+    PULSAR(PulsarDriver.class, prop -> prop.getString("subscriptionType", "Exclusive").equals("Exclusive") ? SourceModeEnum.SUBSCRIBE_SINGLE : SourceModeEnum.SUBSCRIBE_MULTI),
+    ROCKETMQ(RocketMQDriver.class, prop -> prop.getString("model", "BROADCASTING").equals("BROADCASTING") ? SourceModeEnum.SUBSCRIBE_SINGLE : SourceModeEnum.SUBSCRIBE_MULTI),
+    ACTIVEMQ(ActiveMQDriver.class, prop -> prop.getString("model", "topic").equals("topic") ? SourceModeEnum.SUBSCRIBE_SINGLE : SourceModeEnum.SUBSCRIBE_MULTI),
+    RABBITMQ(RabbitMQDriver.class, prop -> SourceModeEnum.SUBSCRIBE_MULTI),
+
+    /**
+     * 监听型
+     */
+    TCP(TcpDriver.class, prop -> SourceModeEnum.LISTEN),
+    UDP(UdpDriver.class, prop -> SourceModeEnum.LISTEN),
+    HTTPSERVER(HttpServerDriver.class, prop -> SourceModeEnum.LISTEN),
+
+    /**
+     * 定时调度型
+     */
+    HTTPCLIENT(HttpClientDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    MYSQL(MysqlDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    POSTGRESQL(PostgresqlDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    TDENGINE(TDengineDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    SQLSERVER(SqlServerDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    OPCUA(OpcUADriver.class, prop -> SourceModeEnum.SCHEDULE),
+    REDIS(RedisDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    SNMP(SnmpDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    MODBUSTCP(ModbusTcpDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    TIMESCALEDB(TimescaleDBDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    MARIADB(MariaDBDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    DM8(DM8Driver.class, prop -> SourceModeEnum.SCHEDULE),
+    KINGBASE(KingbaseDriver.class, prop -> SourceModeEnum.SCHEDULE);
+
 
     private final Class<? extends Driver> driver;
 
-    private final SourceModeEnum mode;
+    private final SourceMode mode;
 
-    ResourceTypeEnum(Class<? extends Driver> driver, SourceModeEnum mode) {
+    ResourceTypeEnum(Class<? extends Driver> driver, SourceMode mode) {
         this.driver = driver;
         this.mode = mode;
     }
@@ -42,7 +58,7 @@ public enum ResourceTypeEnum {
         return driver;
     }
 
-    public SourceModeEnum getMode() {
-        return mode;
+    public SourceModeEnum getMode(ConfigProperties configProperties) {
+        return mode.get(configProperties);
     }
 }

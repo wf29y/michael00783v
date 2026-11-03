@@ -1,7 +1,7 @@
 <template>
   <a-row :gutter='24'>
     <a-form-model layout='vertical' :model='properties' ref='propForm' :rules='rules'>
-      <a-col :span='12'>
+      <a-col :span='24'>
         <a-form-model-item label='Topic' prop='topic'>
           <a-input v-model='properties.topic' placeholder='请输入Topic' />
         </a-form-model-item>
@@ -9,6 +9,14 @@
       <a-col :span="12">
         <a-form-model-item label='Qos' prop='qos'>
           <a-input-number v-model='properties.qos' placeholder='请输入Qos' style='width: 100%' />
+        </a-form-model-item>
+      </a-col>
+      <a-col :span='12' v-if="type==='source'">
+        <a-form-model-item label='共享订阅' prop='share'>
+          <a-select v-model='properties.share' placeholder='请选择是否共享订阅'>
+            <a-select-option :value='true'>是</a-select-option>
+            <a-select-option :value='false'>否</a-select-option>
+          </a-select>
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if="type==='dest'">
@@ -21,21 +29,21 @@
       </a-col>
       <a-col :span='12' v-if="type==='dest'">
         <a-form-model-item label='连接池大小' prop='maxTotal'>
-          <a-input-number v-model='properties.maxTotal' placeholder='请输入连接池大小' style='width: 100%'/>
+          <a-input-number v-model='properties.maxTotal' placeholder='请输入连接池大小' style='width: 100%' />
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if="type==='dest'">
         <a-form-model-item label='最大空闲' prop='maxIdle'>
-          <a-input-number v-model='properties.maxIdle' placeholder='请输入最大空闲数' style='width: 100%'/>
+          <a-input-number v-model='properties.maxIdle' placeholder='请输入最大空闲数' style='width: 100%' />
         </a-form-model-item>
       </a-col>
       <a-col :span='12' v-if="type==='dest'">
         <a-form-model-item label='最小空闲' prop='minIdle'>
-          <a-input-number v-model='properties.minIdle' placeholder='请输入最小空闲数' style='width: 100%'/>
+          <a-input-number v-model='properties.minIdle' placeholder='请输入最小空闲数' style='width: 100%' />
         </a-form-model-item>
       </a-col>
       <a-col :span='24' class='payload' v-if="type==='dest'">
-        <a-form-model-item label='消息模板'  style='margin-bottom: 0'>
+        <a-form-model-item label='消息模板' style='margin-bottom: 0'>
           <monaco-editor ref='MonacoEditor' language='freemarker2'></monaco-editor>
         </a-form-model-item>
       </a-col>
@@ -57,15 +65,17 @@ export default {
         maxTotal: 8,
         maxIdle: 8,
         minIdle: 4,
-        retained: false
+        retained: false,
+        share: false
       },
       rules: {
         topic: [{ required: true, message: '请输入Topic', trigger: 'blur' }],
         retained: [{ required: true, message: '请选择是否消息保留', trigger: 'change' }],
+        share: [{ required: true, message: '请选择是否共享订阅', trigger: 'change' }],
         qos: [{ required: true, message: '请输入Qos', trigger: 'blur' }],
         maxTotal: [{ required: true, message: '请输入连接池大小', trigger: 'blur' }],
         maxIdle: [{ required: true, message: '请输入最大空闲数', trigger: 'blur' }],
-        minIdle: [{ required: true, message: '请输入最小空闲数', trigger: 'blur' }],
+        minIdle: [{ required: true, message: '请输入最小空闲数', trigger: 'blur' }]
       }
     }
   },

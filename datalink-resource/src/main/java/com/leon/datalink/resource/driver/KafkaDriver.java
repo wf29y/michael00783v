@@ -39,12 +39,13 @@ public class KafkaDriver extends AbstractDriver {
         if (driverMode.equals(DriverModeEnum.SOURCE)) {
             String topic = properties.getString("topic");
             if (StringUtils.isEmpty(topic)) throw new ValidateException();
+            String group = properties.getString("group");
 
             Properties prop = new Properties();
             prop.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
             prop.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
             prop.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-            prop.put(ConsumerConfig.GROUP_ID_CONFIG, properties.getString("group"));
+            if (!StringUtils.isEmpty(group)) prop.put(ConsumerConfig.GROUP_ID_CONFIG, group);
             this.kafkaConsumer = new KafkaConsumer<>(prop);
             kafkaConsumer.subscribe(Collections.singletonList(topic));
             new Thread(() -> {

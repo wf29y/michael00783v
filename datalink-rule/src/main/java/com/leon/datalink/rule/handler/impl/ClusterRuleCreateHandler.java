@@ -52,16 +52,18 @@ public class ClusterRuleCreateHandler extends AbstractRuleCreateHandler {
         // 创建源actor 绑定第一个转换
         ActorRef transformActorRef = transformActorRefList.getLast();
         rule.getSourceResourceList().forEach(sourceResource -> {
-            SourceModeEnum mode = sourceResource.getResourceType().getMode();
+            SourceModeEnum mode = sourceResource.getResourceType().getMode(sourceResource.getProperties());
 
             switch (mode) {
-                case SUBSCRIBE: {
+                case SUBSCRIBE_SINGLE: {
                     // 集群下仅有一个源
                     context.actorOf((ResourceActor.props(sourceResource, DriverModeEnum.SOURCE, ruleActorRef, transformActorRef)),
                             sourceResource.getResourceRuntimeId());
                     break;
                 }
-                case LISTEN: {
+                case SUBSCRIBE_MULTI:
+                case LISTEN:
+                {
                     // 集群下每个节点都创建一个源
                     context.actorOf(new ClusterRouterPool(new RoundRobinPool(0),
                                     new ClusterRouterPoolSettings(EnvUtil.getClusterInstancesMax(), 1, true, new HashSet<>()))

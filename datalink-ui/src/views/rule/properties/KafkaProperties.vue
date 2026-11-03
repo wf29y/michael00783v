@@ -31,7 +31,7 @@ export default {
       properties: {},
       rules: {
         topic: [{ required: true, message: '请输入Topic', trigger: 'blur' }],
-        group: [{ required: true, message: '请输入消费组', trigger: 'blur' }],
+        //group: [{ required: true, message: '请输入消费组', trigger: 'blur' }],
       }
     }
   },
