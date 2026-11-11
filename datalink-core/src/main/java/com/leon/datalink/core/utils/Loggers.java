@@ -17,8 +17,6 @@ public class Loggers {
 
     public static final Logger DRIVER = LoggerFactory.getLogger("com.leon.datalink.driver");
 
-    public static final Logger RESOURCE = LoggerFactory.getLogger("com.leon.datalink.resources");
-
     public static final Logger RULE = LoggerFactory.getLogger("com.leon.datalink.rule");
 
     public static final Logger RUNTIME = LoggerFactory.getLogger("com.leon.datalink.runtime");

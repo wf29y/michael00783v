@@ -1,17 +1,17 @@
 # DATA LINK
 <a href='https://gitee.com/liyang9512/datalink/stargazers'><img src='https://gitee.com/liyang9512/datalink/badge/star.svg?theme=gray' alt='star'></img></a>
 <a href='https://gitee.com/liyang9512/datalink/members'><img src='https://gitee.com/liyang9512/datalink/badge/fork.svg?theme=gray' alt='fork'></img></a>
-### 一、介绍
-datalink可以在各种异构数据源之间实现数据桥接，基于akka开发，支持最少两个节点的集群模式。
+### 一、简介
+datalink是一个进行数据采集、转发、桥接的网关服务，南向支持订阅消息中间件、定时读取数据库、监听各类协议端口等，南向获取数据后，可以进行多种形式的数据处理，然后将数据转发到北向连接，包括发布到消息中间件、写入数据库、推送到其他服务接口等。基于actor异步并发模型开发，支持最少两个节点的集群模式。
 
 ![link.png](img/link.png)
 
-#### 支持数据源：
-通讯协议：TCP、UDP、HTTP、OPC UA、SNMP、Modbus TCP \
-消息通道：MQTT、Kafka、RabbitMQ、RocketMQ、ActiveMQ、Pulsar \
-数据存储：达梦DM8、KingbaseES、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis
+#### 支持数据连接
+通讯协议类：TCP、UDP、HTTP、OPC UA、SNMP、Modbus TCP \
+消息通道类：MQTT、Kafka、RabbitMQ、RocketMQ、ActiveMQ、Pulsar \
+数据存储类：达梦DM8、KingbaseES、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis
 
-#### 支持数据处理方式：
+#### 支持处理方式
 JavaScript脚本、Java插件、SQL脚本、无处理透传
 
 
@@ -88,10 +88,11 @@ server.port=9966
 datalink.cluster.member.list=
 ```
 
-## 六、使用文档
+### 六、使用文档
 详见
 [wiki](https://gitee.com/liyang9512/datalink/wikis)
 
-## 七、开源许可
+### 七、开源许可
 
 Apache License 2.0, 详见 [LICENSE](./LICENSE)。
+

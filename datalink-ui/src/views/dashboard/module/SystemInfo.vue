@@ -66,11 +66,11 @@ export default {
       dataSource: [],
       // 列表通过 textInfo 渲染出颜色、描述和单位
       textInfo: {
-        'system.cpu.count': { color: 'green', text: 'CPU 数量', unit: '核' },
-        'system.cpu.usage': { color: 'green', text: '系统 CPU 使用率', unit: '%' },
-        'process.start.time': { color: 'purple', text: '应用启动时间点', unit: '' },
-        'process.uptime': { color: 'purple', text: '应用已运行时间', unit: '秒' },
-        'process.cpu.usage': { color: 'purple', text: '当前应用 CPU 使用率', unit: '%' }
+        'system.cpu.count': { color: 'blue', text: 'CPU 数量', unit: '核' },
+        'system.cpu.usage': { color: 'blue', text: '系统 CPU 使用率', unit: '%' },
+        'process.start.time': { color: 'blue', text: '应用启动时间点', unit: '' },
+        'process.uptime': { color: 'blue', text: '应用已运行时间', unit: '秒' },
+        'process.cpu.usage': { color: 'blue', text: '当前应用 CPU 使用率', unit: '%' }
       },
       // 当一条记录中需要取出多条数据的时候需要配置该字段
       moreInfo: {}

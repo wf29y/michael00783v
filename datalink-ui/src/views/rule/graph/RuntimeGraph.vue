@@ -73,7 +73,7 @@ export default {
   mounted() {
     this.graph = new Graph({
       container: document.getElementById('graph'),
-      grid: true,
+      grid: false,
       autoResize: true
       // connecting: {
       //   connector: 'algo-connector'
