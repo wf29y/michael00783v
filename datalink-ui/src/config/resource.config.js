@@ -381,6 +381,44 @@ const resourceConfigMap = {
       ]
     }
   },
+  COAPCLIENT: {
+    name: 'CoAP Client',
+    type: 'all',
+    group: 'PROTOCOL',
+    details: {
+      resource: { name: '地址', value: (resource) => `coap://${resource.properties.ip}:${resource.properties.port}` },
+      rule: [
+        { name: '请求路径', value: (resource) => `coap://${resource.properties.ip}:${resource.properties.port}/${resource.properties.path}` },
+        { name: '请求方式', value: (resource) => `${resource.properties.method}` },
+        {
+          name: '启动延迟',
+          value: (resource) => resource.properties.initialDelay ? `${resource.properties.initialDelay}${timeUnitMap[resource.properties.initialDelayUnit]}` : undefined
+        },
+        {
+          name: '执行频率',
+          value: (resource) => resource.properties.interval ? `${resource.properties.interval}${timeUnitMap[resource.properties.intervalUnit]}` : undefined
+        }
+      ]
+    }
+  },
+  COAPSERVER: {
+    name: 'CoAP Server',
+    type: 'source',
+    group: 'PROTOCOL',
+    details: {
+      resource: {
+        name: '监听地址',
+        value: (resource) => `coap://0.0.0.0:${resource.properties.port}/${resource.properties.path}`
+      },
+      rule: [
+        { name: '监听地址', value: (resource) => `coap://0.0.0.0:${resource.properties.port}/${resource.properties.path}` },
+        {
+          name: '响应内容',
+          value: (resource) => resource.properties.response ? `${resource.properties.response}` : undefined
+        }
+      ]
+    }
+  },
   OPCUA: {
     name: 'OPC UA',
     type: 'source',

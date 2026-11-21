@@ -65,6 +65,7 @@
         <activemq-core.version>5.7.0</activemq-core.version>
         <pulsar-client.version>2.10.2</pulsar-client.version>
         <plc4j.version>0.10.0</plc4j.version>
+        <californium.version>3.7.0</californium.version>
         <utgard-external.version>1.2.25</utgard-external.version>
         <utgard-core.version>2.1.8</utgard-core.version>
         <utgard-deps.version>1.5.0</utgard-deps.version>
@@ -385,6 +386,11 @@
                 <groupId>com.ibeetl</groupId>
                 <artifactId>beetl</artifactId>
                 <version>${beetl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.californium</groupId>
+                <artifactId>californium-core</artifactId>
+                <version>${californium.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.plc4x</groupId>

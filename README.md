@@ -2,12 +2,12 @@
 <a href='https://gitee.com/liyang9512/datalink/stargazers'><img src='https://gitee.com/liyang9512/datalink/badge/star.svg?theme=gray' alt='star'></img></a>
 <a href='https://gitee.com/liyang9512/datalink/members'><img src='https://gitee.com/liyang9512/datalink/badge/fork.svg?theme=gray' alt='fork'></img></a>
 ### 一、简介
-datalink是一个进行数据采集、转发、桥接的网关服务，南向支持订阅消息中间件、定时读取数据库、监听各类协议端口等，南向获取数据后，可以进行多种形式的数据处理，然后将数据转发到北向连接，包括发布到消息中间件、写入数据库、推送到其他服务接口等。基于actor异步并发模型开发，支持最少两个节点的集群模式。
+datalink是一个进行数据采集、转发、桥接的网关服务，南向支持订阅消息中间件、定时读取数据库、监听各类协议端口等，支持多种形式的数据处理，北向支持发布到消息中间件、写入数据库、推送到其他服务接口等。基于actor异步并发模型开发，支持最少两个节点的集群模式。
 
 ![link.png](img/link.png)
 
 #### 支持数据连接
-通讯协议类：TCP、UDP、HTTP、OPC UA、SNMP、Modbus TCP \
+通讯协议类：TCP、UDP、HTTP、CoAP、OPC UA、SNMP、Modbus TCP \
 消息通道类：MQTT、Kafka、RabbitMQ、RocketMQ、ActiveMQ、Pulsar \
 数据存储类：达梦DM8、KingbaseES、Mysql、PostgreSQL、SQL Server、TDengine、TimescaleDB、MariaDB、Redis
 

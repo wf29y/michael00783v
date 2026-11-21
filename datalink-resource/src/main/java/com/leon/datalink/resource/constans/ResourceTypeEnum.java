@@ -6,7 +6,6 @@ import com.leon.datalink.core.utils.StringUtils;
 import com.leon.datalink.resource.Driver;
 import com.leon.datalink.resource.driver.*;
 import com.leon.datalink.resource.mode.SourceMode;
-import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 
 public enum ResourceTypeEnum {
 
@@ -26,11 +25,13 @@ public enum ResourceTypeEnum {
     TCP(TcpDriver.class, prop -> SourceModeEnum.LISTEN),
     UDP(UdpDriver.class, prop -> SourceModeEnum.LISTEN),
     HTTPSERVER(HttpServerDriver.class, prop -> SourceModeEnum.LISTEN),
+    COAPSERVER(CoapServerDriver.class, prop -> SourceModeEnum.LISTEN),
 
     /**
      * 定时调度型
      */
     HTTPCLIENT(HttpClientDriver.class, prop -> SourceModeEnum.SCHEDULE),
+    COAPCLIENT(CoapClientDriver.class, prop -> SourceModeEnum.SCHEDULE),
     MYSQL(MysqlDriver.class, prop -> SourceModeEnum.SCHEDULE),
     POSTGRESQL(PostgresqlDriver.class, prop -> SourceModeEnum.SCHEDULE),
     TDENGINE(TDengineDriver.class, prop -> SourceModeEnum.SCHEDULE),

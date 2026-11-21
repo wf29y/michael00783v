@@ -30,6 +30,8 @@
       <postgresql-properties v-if="modal.resourceType === 'POSTGRESQL'" ref='PropertiesModal' :type='resourceMode'></postgresql-properties>
       <http-client-properties v-if="modal.resourceType === 'HTTPCLIENT'" ref='PropertiesModal' :type='resourceMode'></http-client-properties>
       <http-server-properties  v-if="modal.resourceType === 'HTTPSERVER'" ref='PropertiesModal' :type='resourceMode'></http-server-properties>
+      <coap-client-properties  v-if="modal.resourceType === 'COAPCLIENT'" ref='PropertiesModal' :type='resourceMode'></coap-client-properties>
+      <coap-server-properties  v-if="modal.resourceType === 'COAPSERVER'" ref='PropertiesModal' :type='resourceMode'></coap-server-properties>
       <t-dengine-properties v-if="modal.resourceType === 'TDENGINE'" ref='PropertiesModal' :type='resourceMode'></t-dengine-properties>
       <sqlserver-properties v-if="modal.resourceType === 'SQLSERVER'" ref='PropertiesModal' :type='resourceMode'></sqlserver-properties>
       <opc-u-a-properties v-if="modal.resourceType === 'OPCUA'" ref='PropertiesModal' :type='resourceMode'></opc-u-a-properties>
@@ -75,6 +77,8 @@ import MysqlProperties from '../properties/MysqlProperties'
 import PostgresqlProperties from '../properties/PostgresqlProperties'
 import HttpClientProperties from '../properties/HttpClientProperties'
 import HttpServerProperties from '../properties/HttpServerProperties'
+import CoapClientProperties from '../properties/CoapClientProperties'
+import CoapServerProperties from '../properties/CoapServerProperties'
 import TDengineProperties from '../properties/TDengineProperties'
 import SqlserverProperties from '../properties/SqlserverProperties'
 import OpcUAProperties from '../properties/OpcUAProperties'
@@ -101,6 +105,8 @@ export default {
     PostgresqlProperties,
     HttpClientProperties,
     HttpServerProperties,
+    CoapClientProperties,
+    CoapServerProperties,
     TDengineProperties,
     SqlserverProperties,
     OpcUAProperties,
