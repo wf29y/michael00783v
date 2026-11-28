@@ -6,12 +6,27 @@
     @cancel='handleCancel'
     :destroyOnClose='true'
     :maskClosable='false'
-    :bodyStyle='{padding:0}'
+    :bodyStyle='{paddingBottom:0}'
   >
-
-    <div class='scriptView'>
-      <monaco-editor ref='MonacoEditor' height='400px' :border='false' language='sql'></monaco-editor>
-    </div>
+    <a-form-model ref='sqlForm' layout='vertical'>
+      <a-row :gutter='24'>
+        <a-col :span='24'>
+          <a-form-model-item label='SQL语句'>
+            <monaco-editor ref='MonacoEditor' height='200px' language='sql'></monaco-editor>
+          </a-form-model-item>
+        </a-col>
+        <a-col :span='12'>
+          <a-form-model-item label='模拟数据（Json）'>
+            <monaco-editor ref='MonacoEditorData' height='150px' language='json'></monaco-editor>
+          </a-form-model-item>
+        </a-col>
+        <a-col :span='12'>
+          <a-form-model-item label='输出结果'>
+            <monaco-editor ref='MonacoEditorResult' height='150px' language='json'></monaco-editor>
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+    </a-form-model>
 
     <template slot='footer'>
       <div class='table-page-search-wrapper'>
@@ -19,10 +34,11 @@
           <a-row :gutter='24'>
             <a-col :md='6' :sm='24'>
               <a-form-item label='处理器数量' style='margin-bottom: 0'>
-                <a-input-number v-model='transform.workerNum' placeholder='处理器数量' style='width: 100%' :min='1'/>
+                <a-input-number v-model='transform.workerNum' placeholder='处理器数量' style='width: 100%' :min='1' />
               </a-form-item>
             </a-col>
             <a-col :md='18' :sm='24'>
+              <a-button key='test' @click='handleTest'>执行SQL</a-button>
               <a-button key='submit' type='primary' @click='handleOk'>确定</a-button>
             </a-col>
           </a-row>
@@ -35,6 +51,7 @@
 
 <script>
 import MonacoEditor from '@/components/Editor/MonacoEditor'
+import { postAction } from '@/api/manage'
 
 export default {
   name: 'TransformSqlModel',
@@ -56,7 +73,7 @@ export default {
         transformMode: 'SQL',
         workerNum: 1,
         properties: {
-          sql: 'SELECT * FROM [资源ID]'
+          sql: 'SELECT * FROM 资源ID'
         }
       }
     },
@@ -71,6 +88,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.MonacoEditor.set(transform.properties.sql)
       })
+      this.$nextTick(() => {
+        this.$refs.MonacoEditorData.set('{}')
+      })
     },
     handleOk() {
       this.transform.properties.sql = this.$refs.MonacoEditor.get()
@@ -80,6 +100,23 @@ export default {
         this.$emit('add', this.transform)
       }
       this.visible = false
+    },
+    handleTest() {
+      let sql = this.$refs.MonacoEditor.get()
+      let data = this.$refs.MonacoEditorData.get()
+      if (!sql || !data) {
+        this.$message.error('请输入要执行的SQL和模拟数据')
+        return
+      }
+      postAction('/api/rule/testSql', { sql: sql, data: JSON.parse(data) }).then((res) => {
+        if (res.code === 200) {
+          this.$nextTick(() => {
+            this.$refs.MonacoEditorResult.set(JSON.stringify(res.data))
+          })
+        }else {
+          this.$message.error(res.message)
+        }
+      })
     },
     handleCancel() {
       this.init()

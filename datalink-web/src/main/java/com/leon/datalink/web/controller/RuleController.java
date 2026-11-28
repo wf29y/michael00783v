@@ -2,13 +2,24 @@ package com.leon.datalink.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.leon.datalink.core.utils.IdUtil;
+import com.leon.datalink.core.utils.JacksonUtils;
+import com.leon.datalink.core.utils.Loggers;
 import com.leon.datalink.rule.entity.Rule;
+import com.leon.datalink.web.model.RestResult;
+import com.leon.datalink.web.model.RestResultUtils;
+import com.leon.datalink.web.model.SqlParamVO;
 import com.leon.datalink.web.service.RuleService;
 import com.leon.datalink.web.util.ValidatorUtil;
+import org.jetlinks.reactor.ql.ReactorQL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName RulesController
@@ -113,6 +124,26 @@ public class RuleController {
         String ruleId = rule.getRuleId();
         ValidatorUtil.isNotEmpty(ruleId);
         ruleService.stopRule(ruleId);
+    }
+
+
+    /**
+     * 测试sql
+     */
+    @PostMapping("/testSql")
+    public void testSql(@RequestBody SqlParamVO sqlParamVO, HttpServletResponse response) throws Exception {
+        ValidatorUtil.isNotEmpty(sqlParamVO.getSql(), sqlParamVO.getData());
+        ServletOutputStream outputStream = response.getOutputStream();
+
+        ReactorQL.builder().sql(sqlParamVO.getSql()).build().start(name -> Flux.just(sqlParamVO.getData()))
+                .doOnNext(result -> {
+                    try {
+                        RestResult<Map<String, Object>> success = RestResultUtils.success(result);
+                        outputStream.write(JacksonUtils.toJsonBytes(success));
+                    } catch (IOException e) {
+                        Loggers.WEB.error(e.getMessage());
+                    }
+                }).subscribe();
     }
 
 }
