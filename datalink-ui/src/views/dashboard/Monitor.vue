@@ -3,7 +3,7 @@
     <div style='padding-bottom: 20px'>
       <a-row :gutter='24'>
         <a-col :span='6'>
-          <a-card hoverable :bordered='false'>
+          <a-card :bordered='false'>
             <a-statistic
               title='总CPU使用情况'
               :value="' '+Number(useCPU / totalCPU).toFixed(2) + '%'"
@@ -17,7 +17,7 @@
           </a-card>
         </a-col>
         <a-col :span='6'>
-          <a-card hoverable :bordered='false'>
+          <a-card :bordered='false'>
             <a-statistic
               title='总内存使用情况'
               :value="' '+Number(useMem).toFixed(2) + 'M'"
@@ -32,7 +32,7 @@
           </a-card>
         </a-col>
         <a-col :span='6'>
-          <a-card hoverable :bordered='false'>
+          <a-card :bordered='false'>
             <a-statistic
               title='总资源数量'
               :value="' '+systemStatistics.resourceCount"
@@ -46,7 +46,7 @@
           </a-card>
         </a-col>
         <a-col :span='6'>
-          <a-card hoverable :bordered='false'>
+          <a-card :bordered='false'>
             <a-statistic
               title='总规则数量'
               :value="' '+systemStatistics.ruleCount"
@@ -72,6 +72,15 @@
         <a-tab-pane key='3' tab='磁盘信息'>
           <DiskInfo ref='diskInfo'></DiskInfo>
         </a-tab-pane>
+        <a-tab-pane key='4' tab='监听器'>
+          <ListenerInfo ref='listenerInfo'></ListenerInfo>
+        </a-tab-pane>
+        <a-tab-pane key='5' tab='定时调度'>
+          <ScheduleInfo ref='scheduleInfo'></ScheduleInfo>
+        </a-tab-pane>
+        <a-tab-pane key='6' tab='集群节点'>
+          <ClusterInfo ref='clusterInfo'></ClusterInfo>
+        </a-tab-pane>
       </a-tabs>
     </a-card>
   </page-header-wrapper>
@@ -84,17 +93,22 @@ import { getAction } from '@/api/manage'
 import JvmInfo from './module/JvmInfo'
 import SystemInfo from './module/SystemInfo'
 import DiskInfo from './module/DiskInfo'
+import ListenerInfo from './module/ListenerInfo'
+import ScheduleInfo from './module/ScheduleInfo'
+import ClusterInfo from './module/ClusterInfo'
 
 export default {
   name: 'Monitor',
   components: {
     JvmInfo,
     SystemInfo,
-    DiskInfo
+    DiskInfo,
+    ListenerInfo,
+    ScheduleInfo,
+    ClusterInfo
   },
   data() {
     return {
-      dateTime: moment(new Date()).format('YYYY-MM-DD'),
       node: '',
       nodeList: [],
       totalCPU: 1,
@@ -122,15 +136,6 @@ export default {
     }, 10000)
   },
   methods: {
-    nodeSelectChange(node) {
-      if (this.activeKey === '1') {
-        this.$refs.systemInfo.loadSystemInfo()
-      } else if (this.activeKey === '2') {
-        this.$refs.jvmInfo.loadJvmInfo()
-      } else if (this.activeKey === '3') {
-        this.$refs.diskInfo.loadDiskInfo()
-      }
-    },
     getTotalSystemInfo() {
       this.totalCPU = 1
       this.useCPU = 0

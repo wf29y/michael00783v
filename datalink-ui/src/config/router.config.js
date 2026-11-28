@@ -12,14 +12,14 @@ export const asyncRouterMap = [
     path: '/',
     name: 'index',
     component: BasicLayout,
-    meta: { title: '监控' },
+    meta: { title: '服务监控' },
     redirect: '/dashboard/monitor',
     children: [
       {
         path: '/dashboard/monitor',
         name: 'monitor',
         component: () => import('@/views/dashboard/Monitor'),
-        meta: { title: '监控', keepAlive: false, icon: home, permission: 'dashboard' }
+        meta: { title: '服务监控', keepAlive: false, icon: home, permission: 'dashboard' }
       },
       {
         path: '/resource/list',
@@ -71,24 +71,6 @@ export const asyncRouterMap = [
         name: 'variableList',
         component: () => import('@/views/variable/VariableList'),
         meta: { title: '全局变量', keepAlive: true, icon: variable, permission: 'variable' }
-      },
-      {
-        path: '/listener/list',
-        name: 'listenerList',
-        component: () => import('@/views/listener/ListenerList'),
-        meta: { title: '监听器', keepAlive: true, icon: listener, permission: 'listener' }
-      },
-      {
-        path: '/schedule/list',
-        name: 'scheduleList',
-        component: () => import('@/views/schedule/ScheduleList'),
-        meta: { title: '定时调度', keepAlive: true, icon: schedule, permission: 'schedule' }
-      },
-      {
-        path: '/cluster/list',
-        name: 'clusterList',
-        component: () => import('@/views/cluster/ClusterList'),
-        meta: { title: '集群节点', keepAlive: true, icon: cluster, permission: 'cluster' }
       },
       {
         path: '/user/list',
