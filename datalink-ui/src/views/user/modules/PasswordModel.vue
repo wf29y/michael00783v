@@ -1,9 +1,10 @@
 <template>
   <a-modal
     title='修改密码'
-    :width='500'
+    :width='600'
     :visible='visible'
     @cancel='onClose'
+    :destroyOnClose='true'
   >
 
     <a-form-model ref='ruleForm' :model='modal' layout='vertical' :rules='rules'>
@@ -46,7 +47,7 @@
 </template>
 
 <script>
-import { updatePassword } from '@/api/login'
+import { getAction } from '@/api/manage'
 
 export default {
   name: 'PasswordModel',
@@ -62,8 +63,9 @@ export default {
     }
   },
   methods: {
-    open() {
-      this.modal = {}
+    open(username) {
+      if (!username) return
+      this.modal = { username: username }
       this.visible = true
     },
     onClose() {
@@ -77,7 +79,7 @@ export default {
             that.$message.error('两次新密码不一致')
             return
           }
-          updatePassword(that.modal).then(res => {
+          getAction('/api/user/password', that.modal).then(res => {
             if (res.code === 200) {
               that.$message.success('修改成功')
               that.visible = false

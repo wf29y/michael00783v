@@ -3,7 +3,6 @@ import request from '@/utils/request'
 const userApi = {
   Login: '/api/auth/user/login',
   Logout: '/auth/logout',
-  UpdatePassword: '/api/auth/user/password',
   UserInfo: '/api/auth/user/info',
   UserMenu: '/api/auth/user/nav'
 }
@@ -52,14 +51,6 @@ export function logout() {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
-  })
-}
-
-export function updatePassword(parameter) {
-  return request({
-    url: userApi.UpdatePassword,
-    method: 'put',
-    params: parameter
   })
 }
 

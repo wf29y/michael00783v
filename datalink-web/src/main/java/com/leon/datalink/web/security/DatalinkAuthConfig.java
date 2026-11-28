@@ -3,7 +3,7 @@
 package com.leon.datalink.web.security;
 
 
-import com.leon.datalink.web.auth.DatalinkUserServiceImpl;
+import com.leon.datalink.web.service.impl.UserServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import com.leon.datalink.web.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class DatalinkAuthConfig extends WebSecurityConfigurerAdapter {
     private JwtTokenManager tokenProvider;
 
     @Autowired
-    private DatalinkUserServiceImpl userDetailsService;
+    private UserServiceImpl userService;
 
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override
@@ -69,7 +69,7 @@ public class DatalinkAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 
     @Override

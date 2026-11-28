@@ -14,7 +14,7 @@ public class Constants {
 
     public static final String TOKEN_TTL = "tokenTtl";
 
-    public static final String GLOBAL_ADMIN = "globalAdmin";
+    public static final String PERMISSIONS = "permissions";
 
     public static final String USERNAME = "username";
 

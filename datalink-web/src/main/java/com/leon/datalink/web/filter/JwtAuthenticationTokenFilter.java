@@ -3,12 +3,11 @@
 package com.leon.datalink.web.filter;
 
 
-import com.leon.datalink.web.security.JwtTokenManager;
+import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.web.security.DatalinkAuthConfig;
+import com.leon.datalink.web.security.JwtTokenManager;
 import com.leon.datalink.web.util.BaseContextUtil;
 import org.apache.commons.lang3.StringUtils;
-
-import com.leon.datalink.core.common.Constants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -27,26 +26,26 @@ import java.io.IOException;
  * @author Leon
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
-    
+
     private static final String TOKEN_PREFIX = "Bearer ";
-    
+
     private final JwtTokenManager tokenManager;
-    
+
     public JwtAuthenticationTokenFilter(JwtTokenManager tokenManager) {
         this.tokenManager = tokenManager;
     }
-    
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        
+
         String jwt = resolveToken(request);
-        
+
         if (StringUtils.isNotBlank(jwt) && SecurityContextHolder.getContext().getAuthentication() == null) {
             this.tokenManager.validateToken(jwt);
             Authentication authentication = this.tokenManager.getAuthentication(jwt);
-            User user = (User)authentication.getPrincipal();
-            BaseContextUtil.set(BaseContextUtil.USER_NAME, user.getUsername());
+            User user = (User) authentication.getPrincipal();
+            BaseContextUtil.set(Constants.USERNAME, user.getUsername());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             // 鉴权失败
@@ -58,7 +57,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             BaseContextUtil.remove();
         }
     }
-    
+
     /**
      * Get token from header.
      */

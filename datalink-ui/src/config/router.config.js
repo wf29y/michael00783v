@@ -1,6 +1,6 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
-import { home, resource, rule, script, variable, plugin, backup, listener, cluster, schedule } from '@/core/icons'
+import { BasicLayout, UserLayout } from '@/layouts'
+import { backup, cluster, home, listener, plugin, resource, rule, schedule, script, variable, user } from '@/core/icons'
 
 const RouteView = {
   name: 'RouteView',
@@ -17,21 +17,21 @@ export const asyncRouterMap = [
     children: [
       {
         path: '/dashboard/monitor',
-        name: 'Monitor',
+        name: 'monitor',
         component: () => import('@/views/dashboard/Monitor'),
-        meta: { title: '监控', keepAlive: false, icon: home, permission: ['dashboard'] }
+        meta: { title: '监控', keepAlive: false, icon: home, permission: 'dashboard' }
       },
       {
         path: '/resource/list',
         name: 'resourceList',
         component: () => import('@/views/resource/ResourceList'),
-        meta: { title: '资源管理', keepAlive: true, icon: resource, permission: ['resource'] }
+        meta: { title: '资源管理', keepAlive: true, icon: resource, permission: 'resource' }
       },
       {
         path: '/rule/list',
         name: 'ruleList',
         component: () => import('@/views/rule/RuleList'),
-        meta: { title: '连接规则', keepAlive: true, icon: rule, permission: ['rule'] }
+        meta: { title: '连接规则', keepAlive: true, icon: rule, permission: 'rule' }
       },
       {
         path: '/rule/info/:ruleId',
@@ -51,7 +51,7 @@ export const asyncRouterMap = [
         path: '/script/list',
         name: 'scriptList',
         component: () => import('@/views/script/ScriptList'),
-        meta: { title: '脚本管理', keepAlive: true, icon: script, permission: ['script'] }
+        meta: { title: '脚本管理', keepAlive: true, icon: script, permission: 'script' }
       },
       {
         path: '/script/info/:scriptId',
@@ -64,37 +64,43 @@ export const asyncRouterMap = [
         path: '/plugin/list',
         name: 'pluginList',
         component: () => import('@/views/plugin/PluginList'),
-        meta: { title: '插件管理', keepAlive: true, icon: plugin, permission: ['plugin'] }
+        meta: { title: '插件管理', keepAlive: true, icon: plugin, permission: 'plugin' }
       },
       {
         path: '/variable/list',
         name: 'variableList',
         component: () => import('@/views/variable/VariableList'),
-        meta: { title: '全局变量', keepAlive: true, icon: variable, permission: ['variable'] }
+        meta: { title: '全局变量', keepAlive: true, icon: variable, permission: 'variable' }
       },
       {
         path: '/listener/list',
         name: 'listenerList',
         component: () => import('@/views/listener/ListenerList'),
-        meta: { title: '监听器', keepAlive: true, icon: listener, permission: ['listener'] }
+        meta: { title: '监听器', keepAlive: true, icon: listener, permission: 'listener' }
       },
       {
         path: '/schedule/list',
         name: 'scheduleList',
         component: () => import('@/views/schedule/ScheduleList'),
-        meta: { title: '定时调度', keepAlive: true, icon: schedule, permission: ['schedule'] }
+        meta: { title: '定时调度', keepAlive: true, icon: schedule, permission: 'schedule' }
       },
       {
         path: '/cluster/list',
         name: 'clusterList',
         component: () => import('@/views/cluster/ClusterList'),
-        meta: { title: '集群节点', keepAlive: true, icon: cluster, permission: ['cluster'] }
+        meta: { title: '集群节点', keepAlive: true, icon: cluster, permission: 'cluster' }
+      },
+      {
+        path: '/user/list',
+        name: 'userList',
+        component: () => import('@/views/user/UserList'),
+        meta: { title: '用户管理', keepAlive: true, icon: user, permission: 'user' }
       },
       {
         path: '/backup/list',
         name: 'backupList',
         component: () => import('@/views/backup/BackupList'),
-        meta: { title: '数据备份', keepAlive: true, icon: backup, permission: ['backup'] }
+        meta: { title: '数据备份', keepAlive: true, icon: backup, permission: 'backup' }
       }
     ]
   },

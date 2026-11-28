@@ -2,7 +2,7 @@
   <a-modal
     :confirmLoading='confirmLoading'
     title='插件'
-    :width='500'
+    :width='600'
     :visible='visible'
     @cancel='onClose'
     :destroyOnClose='true'

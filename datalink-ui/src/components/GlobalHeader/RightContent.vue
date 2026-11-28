@@ -25,7 +25,7 @@
 <script>
 import AvatarDropdown from './AvatarDropdown'
 import SelectLang from '@/components/SelectLang'
-import PasswordModel from '../../views/user/PasswordModel'
+import PasswordModel from '../../views/user/modules/PasswordModel'
 import { getSystemInfo } from '@/api/system'
 
 export default {
@@ -57,7 +57,7 @@ export default {
     return {
       showMenu: true,
       currentUser: {
-        name: '-'
+        username: '-'
       },
       systemInfo: {
         ip: '-',
@@ -87,12 +87,12 @@ export default {
   },
   methods: {
     updatePassword() {
-      this.$refs.PasswordModel.open()
+      this.$refs.PasswordModel.open(this.currentUser.username)
     },
     getInfo() {
       getSystemInfo().then((res) => {
         this.systemInfo = res.data
-        this.currentUser.name = res.data.username
+        this.currentUser.username = res.data.username
       })
     }
   }

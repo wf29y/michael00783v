@@ -1,9 +1,9 @@
 <template>
-  <a-dropdown v-if='currentUser && currentUser.name' placement='bottomRight'>
+  <a-dropdown v-if='currentUser && currentUser.username' placement='bottomRight'>
     <span class='ant-pro-account-avatar'>
 <!--        <a-icon type='user' style='font-size: 14px;margin-right:5px;display: inline-block;vertical-align: middle' />
         <span style='font-size: 15px;display: inline-block;vertical-align: middle'>{{ currentUser.name }}</span>-->
-        <span style='font-size: 14px;display: inline-block;vertical-align: middle'><span style='font-weight: bold'>用户：</span>{{ currentUser.name }}</span>
+        <span style='font-size: 14px;display: inline-block;vertical-align: middle'><span style='font-weight: bold'>用户：</span>{{ currentUser.username }}</span>
 
     </span>
     <template v-slot:overlay>

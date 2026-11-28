@@ -5,8 +5,6 @@ import java.util.Map;
 
 public class BaseContextUtil {
 
-    public static final String USER_NAME = "username";
-
     public static ThreadLocal<Map<String, Object>> threadLocal = new ThreadLocal<Map<String, Object>>();
 
     public static void set(String key, Object value) {

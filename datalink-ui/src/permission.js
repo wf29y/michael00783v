@@ -24,7 +24,7 @@ router.beforeEach((to, from, next) => {
             NProgress.done()
         } else {
             // check login user.roles is null
-            if (store.getters.roles.length === 0) {
+            if (store.getters.permissions.length === 0) {
                 // request login userInfo
                 store
                     .dispatch('GetInfo')

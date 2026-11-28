@@ -3,6 +3,7 @@ package com.leon.datalink.web.controller;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.leon.datalink.cluster.member.ClusterMemberManager;
+import com.leon.datalink.core.common.Constants;
 import com.leon.datalink.core.utils.VersionUtils;
 import com.leon.datalink.resource.entity.Resource;
 import com.leon.datalink.rule.entity.Rule;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  **/
 @RestController
 @RequestMapping({"/api/system"})
-public class SystemInfoController {
+public class SystemController {
 
     @Autowired
     private ResourceService resourceService;
@@ -45,7 +46,7 @@ public class SystemInfoController {
         info.setLocalMemberName(ClusterMemberManager.getLocalMemberName());
         info.setVersion(VersionUtils.version);
         info.setTime(DateUtil.format(DateTime.now(), "yyyy-MM-dd HH:mm"));
-        info.setUsername((String) BaseContextUtil.get(BaseContextUtil.USER_NAME));
+        info.setUsername((String) BaseContextUtil.get(Constants.USERNAME));
         return info;
     }
 

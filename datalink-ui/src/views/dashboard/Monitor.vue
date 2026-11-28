@@ -32,7 +32,7 @@
           </a-card>
         </a-col>
         <a-col :span='6'>
-          <a-card hoverable @click='$router.push({name:"resourceList"})' :bordered='false'>
+          <a-card hoverable :bordered='false'>
             <a-statistic
               title='总资源数量'
               :value="' '+systemStatistics.resourceCount"
@@ -46,7 +46,7 @@
           </a-card>
         </a-col>
         <a-col :span='6'>
-          <a-card hoverable @click='$router.push({name:"ruleList"})' :bordered='false'>
+          <a-card hoverable :bordered='false'>
             <a-statistic
               title='总规则数量'
               :value="' '+systemStatistics.ruleCount"

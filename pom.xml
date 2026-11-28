@@ -78,7 +78,7 @@
         <logback.version>1.2.3</logback.version>
         <log4j.version>2.13.3</log4j.version>
         <guava.version>30.1-jre</guava.version>
-        <hutool-all.version>5.8.4</hutool-all.version>
+        <hutool.version>5.8.11</hutool.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <commons-io.version>2.7</commons-io.version>
         <commons-collections.version>3.2.2</commons-collections.version>
@@ -476,8 +476,23 @@
 
             <dependency>
                 <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool-all.version}</version>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-extra</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-http</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-db</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
 
             <!-- Apache commons -->

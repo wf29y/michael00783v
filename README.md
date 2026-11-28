@@ -71,7 +71,7 @@ sh shutdown.sh
 ### 四、管理页面
 
 程序启动后，使用浏览器访问 http://127.0.0.1:9966/ 即可打开管理页面 \
-默认用户名：datalink   密码：aaaaaa
+默认用户名：admin   密码：datalink
 
 ![dashboard.png](img/dashboard.png)
 
